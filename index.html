@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>게임 모음</title>
+<style>
+:root{--bg:#141821;--card:#1D2330;--line:#353F52;--text:#F2EEE4;--soft:#B9BECB;--gold:#E8B64C;color-scheme:dark;
+  --font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;word-break:keep-all}
+.wrap{max-width:520px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0px)) 16px 40px;display:flex;flex-direction:column;gap:14px}
+h1{margin:0;font-size:26px;letter-spacing:-.03em;color:var(--gold)}
+p{margin:0;color:var(--soft);font-size:14px}
+a.app{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);color:inherit;text-decoration:none}
+a.app img{width:60px;height:60px;border-radius:14px;flex:none}
+a.app b{display:block;font-size:17px}
+a.app span{font-size:13px;color:var(--soft)}
+h2{margin:10px 0 0;font-size:15px}
+ol{margin:0;padding-left:1.2em;font-size:14px;color:var(--soft);display:flex;flex-direction:column;gap:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>게임 모음</h1>
+  <p>눌러서 열고, 사파리 공유 버튼으로 홈 화면에 추가하면 앱처럼 할 수 있습니다.</p>
+  <a class="app" href="./2048/"><img src="./2048/icon-180.png" alt=""><div><b>쑥쑥 2048</b><span>같은 과일을 합쳐 아기를 만나는 퍼즐</span></div></a>
+  <h2>홈 화면에 추가 (아이폰)</h2>
+  <ol>
+    <li>사파리로 위 게임을 엽니다.</li>
+    <li>아래 공유 버튼(네모에 위 화살표) → 「홈 화면에 추가」.</li>
+    <li>홈 화면 아이콘으로 한 번 열어두면 그다음부터는 인터넷 없이도 됩니다.</li>
+  </ol>
+</div>
+</body>
+</html>
