@@ -18,6 +18,19 @@
   function pat(s, x, y, rows, map) {
     rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) { const c = map[r[i]]; if (c) px(s, x + i, y + j, c); } });
   }
+  function line(s, x0, y0, x1, y1, c, w) {
+    w = w || 1; const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) || 1;
+    for (let i = 0; i <= n; i++) { const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); rect(s, x - (w >> 1), y - (w >> 1), w, w, c); }
+  }
+  function tri(s, x0, y0, x1, y1, x2, y2, c) {
+    const minX = Math.min(x0, x1, x2), maxX = Math.max(x0, x1, x2), minY = Math.min(y0, y1, y2), maxY = Math.max(y0, y1, y2);
+    const d = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0); if (!d) return;
+    for (let y = minY; y <= maxY; y++) for (let x = minX; x <= maxX; x++) {
+      const px_ = x + 0.5, py = y + 0.5;
+      const a = ((x1 - px_) * (y2 - py) - (x2 - px_) * (y1 - py)) / d, b = ((x2 - px_) * (y0 - py) - (x0 - px_) * (y2 - py)) / d;
+      if (a >= 0 && b >= 0 && a + b <= 1) px(s, x, y, c);
+    }
+  }
   function get(s, x, y) { return (x < 0 || y < 0 || x >= s.w || y >= s.h) ? 0 : s.p[y * s.w + x]; }
   function outline(s) {
     const o = s.p.slice();
@@ -270,6 +283,189 @@
     ell(s, 8, 22, 3, 2, C); rect(s, 4, 21, 3, 2, '#b0b0bc');
     pat(s, 30, 6, ['...M', '..M.', '..M.', '.M..', '.M..', 'M...', 'GGG.', '.o..'], { M: '#d0d4e0', G: '#6a6a74', o: '#26222e' });
     ell(s, 31, 15, 3, 2, C);
+    return outline(s);
+  };
+
+
+  // ── 1~2장 ──
+  FOE.wolf = function () { // 들늑대
+    const s = mk(40, 40), F = '#7c7066', F2 = '#5a5048', L = '#aa9c8e';
+    line(s, 30, 22, 36, 12, F, 3); line(s, 36, 12, 37, 9, F2, 2);          // 꼬리
+    rect(s, 27, 27, 3, 9, F2); rect(s, 16, 27, 3, 9, F2);                   // 뒷다리(먼 쪽)
+    ell(s, 22, 23, 11, 6, F); ell(s, 22, 26, 9, 3, L);                      // 몸통
+    for (let x = 14; x < 32; x += 3) px(s, x, 17, F2);                      // 등털
+    rect(s, 31, 28, 3, 8, F); rect(s, 12, 28, 3, 8, F);                     // 앞다리
+    rect(s, 11, 35, 4, 1, F2); rect(s, 30, 35, 4, 1, F2);
+    ell(s, 11, 21, 6, 6, F); ell(s, 11, 24, 4, 3, L);                       // 가슴·목
+    ell(s, 9, 16, 5, 4, F);                                                 // 머리
+    rect(s, 2, 16, 6, 3, F); rect(s, 2, 19, 6, 1, L);                       // 주둥이
+    px(s, 2, 16, '#1a1420'); px(s, 1, 17, '#1a1420');                       // 코
+    pat(s, 6, 9, ['F...F', 'FF.FF', 'FFFFF'], { F });                        // 귀
+    px(s, 7, 10, '#c89a8a'); px(s, 11, 10, '#c89a8a');
+    px(s, 8, 15, '#f0c030'); px(s, 9, 15, '#1a1420');                       // 노란 눈
+    pat(s, 3, 19, ['w.w.w'], { w: '#f4f0e0' });                             // 이빨
+    return outline(s);
+  };
+
+  FOE.willow = function () { // 묵은숲 버드나무
+    const s = mk(40, 40), B = '#6c4c32', B2 = '#4a3222', M = '#6a8a3a', LV = '#86ae4e';
+    line(s, 15, 17, 5, 7, B, 3); line(s, 25, 15, 35, 5, B, 3); line(s, 16, 23, 6, 27, B2, 2); // 가지 팔
+    for (const [x, y] of [[4, 7], [3, 9], [6, 5], [34, 5], [36, 7], [32, 4]])
+      for (let k = 0; k < 7; k++) px(s, x + (k % 2), y + k, k % 3 ? LV : M);               // 늘어진 잎
+    rect(s, 14, 6, 12, 29, B); rect(s, 13, 10, 1, 25, B2); rect(s, 26, 10, 1, 25, B2);        // 줄기
+    ell(s, 20, 7, 7, 4, B);
+    for (let y = 9; y < 34; y += 4) px(s, 16 + (y % 3), y, B2);
+    rect(s, 22, 12, 1, 6, B2); rect(s, 18, 27, 1, 5, B2);
+    line(s, 13, 33, 6, 37, B, 2); line(s, 26, 33, 34, 37, B, 2); line(s, 18, 35, 16, 38, B2, 2); line(s, 22, 35, 25, 38, B2, 2); // 뿌리
+    ell(s, 17, 17, 2.2, 1.6, '#150e08'); ell(s, 23, 17, 2.2, 1.6, '#150e08');                 // 옹이 눈
+    px(s, 17, 17, '#e8d060'); px(s, 23, 17, '#e8d060');
+    pat(s, 15, 22, ['kkkkkkkkk', 'k.k.k.k.k', '.........'], { k: '#150e08' });               // 갈라진 입
+    for (const [x, y] of [[15, 9], [24, 26], [14, 30]]) px(s, x, y, M);                      // 이끼
+    return outline(s);
+  };
+
+  FOE.spider = function () { // 숲 거미
+    const s = mk(40, 40), D = '#2e2638', D2 = '#453a52', R = '#b8402c';
+    const legs = [[14, 22, 6, 14, 2, 24], [14, 24, 5, 20, 1, 31], [16, 26, 8, 28, 5, 36], [18, 27, 12, 32, 10, 38],
+                  [24, 22, 32, 12, 37, 18], [25, 24, 34, 20, 38, 28], [23, 26, 31, 28, 35, 36], [21, 27, 27, 32, 29, 38]];
+    for (const [a, b, c, d, e, f] of legs) { line(s, a, b, c, d, D2, 2); line(s, c, d, e, f, D, 1); }
+    ell(s, 26, 17, 10, 8, D); ell(s, 26, 15, 7, 4, D2);                     // 배
+    pat(s, 22, 13, ['R.....R', '.R...R.', '..RRR..', '...R...'], { R });    // 붉은 무늬
+    ell(s, 15, 24, 6, 5, D2);                                               // 머리가슴
+    pat(s, 11, 21, ['r.r.r', '.r.r.'], { r: '#f04030' });                   // 눈 여럿
+    pat(s, 11, 27, ['w...w', '.w.w.'], { w: '#e8e0d0' });                   // 집게
+    return outline(s);
+  };
+
+  FOE.midges = function () { // 늪 모기 떼
+    const s = mk(40, 40), M = '#4a4038', W = '#cfe4ee';
+    ell(s, 13, 15, 6, 3, W); ell(s, 26, 15, 6, 3, W);                       // 큰 모기 날개
+    ell(s, 20, 20, 3, 6, '#6a5a48'); ell(s, 20, 26, 2, 4, '#8a5a3a');      // 몸
+    ell(s, 20, 13, 3, 3, M); line(s, 20, 15, 20, 7, '#2a2018', 1);         // 머리·침
+    px(s, 19, 12, '#e84030'); px(s, 21, 12, '#e84030');
+    for (const [a, b, c, d] of [[18, 19, 11, 27], [22, 19, 29, 27], [18, 22, 13, 32], [22, 22, 27, 32]]) line(s, a, b, c, d, M, 1);
+    const pts = [[5, 6], [33, 5], [6, 29], [34, 30], [9, 36], [30, 37], [3, 18], [37, 20], [14, 34], [27, 3], [11, 2], [36, 12]];
+    for (const [x, y] of pts) { rect(s, x, y, 2, 1, M); px(s, x, y - 1, W); }  // 작은 모기들
+    return outline(s);
+  };
+
+  FOE.ruffian = function () { // 브리 불량배
+    const s = mk(40, 40), SK = '#e0b08a', SK2 = '#c08a66', C = '#7a4a3a', C2 = '#5a3428';
+    rect(s, 13, 31, 5, 6, '#3e3a34'); rect(s, 22, 31, 5, 6, '#3e3a34'); rect(s, 12, 36, 6, 2, '#2a221a'); rect(s, 22, 36, 6, 2, '#2a221a');
+    rect(s, 11, 19, 18, 13, C); rect(s, 11, 19, 2, 13, C2); rect(s, 27, 19, 2, 13, C2); rect(s, 11, 28, 18, 2, '#3a2a1a');
+    rect(s, 7, 20, 4, 8, C); rect(s, 29, 20, 4, 8, C); rect(s, 7, 28, 4, 2, SK); rect(s, 29, 28, 4, 2, SK);
+    line(s, 31, 29, 36, 12, '#6a4424', 3); ell(s, 36, 10, 3, 4, '#7a5030'); px(s, 35, 8, '#9a9aa4'); px(s, 37, 11, '#9a9aa4'); // 몽둥이
+    ell(s, 20, 12, 7, 8, SK); rect(s, 13, 14, 1, 4, SK2); rect(s, 26, 14, 1, 4, SK2);
+    pat(s, 12, 3, ['..HHHHHHHHHHH..', '.HHHHHHHHHHHHHH', 'HHHHHHHHHHHHHHH', 'hhhhhhhhhhhhhhh'], { H: '#4a4a3e', h: '#34342c' }); // 모자
+    rect(s, 16, 10, 3, 1, '#2a2018'); rect(s, 22, 10, 3, 1, '#2a2018');    // 찡그린 눈
+    px(s, 17, 11, '#2a2018'); px(s, 23, 11, '#2a2018');
+    rect(s, 15, 16, 10, 3, '#8a6a52'); rect(s, 18, 17, 4, 1, '#5a2a22');   // 수염 자국·입
+    px(s, 26, 11, '#c86a5a'); px(s, 25, 12, '#c86a5a');                    // 흉터
+    return outline(s);
+  };
+
+  FOE.wight = function () { // 무덤 악령 (1장 우두머리) 56×56
+    const s = mk(56, 56), G = '#c6ceda', G2 = '#8e98ac', D = '#1e1e2a', AU = '#d8b040';
+    for (let y = 18; y < 52; y++) { const w = Math.min(19, 7 + (y - 18) * 0.42); rect(s, Math.round(28 - w), y, Math.round(w * 2), 1, y % 6 < 2 ? G2 : G); }
+    for (let x = 10; x < 47; x += 4) rect(s, x, 50 + (x % 3), 2, 3, G);    // 누더기 끝단
+    rect(s, 27, 22, 2, 28, G2);
+    line(s, 18, 24, 5, 34, G, 3); line(s, 5, 34, 2, 40, G2, 2);             // 뻗은 팔
+    line(s, 38, 24, 51, 32, G, 3); line(s, 51, 32, 54, 38, G2, 2);
+    for (const [x, y] of [[1, 40], [3, 41], [53, 38], [55, 39]]) px(s, x, y, '#e8ecf4');   // 손톱
+    ell(s, 28, 14, 8, 9, G); ell(s, 28, 16, 6, 6, G2);                     // 머리
+    ell(s, 24, 14, 2.5, 3, D); ell(s, 32, 14, 2.5, 3, D);                   // 퀭한 눈
+    px(s, 24, 14, '#9fe8ff'); px(s, 32, 14, '#9fe8ff');
+    rect(s, 25, 20, 6, 1, D); px(s, 26, 21, D); px(s, 28, 21, D); px(s, 30, 21, D);
+    pat(s, 20, 5, ['A.A..A..A.A', 'AAAAAAAAAAA', '.r...b...r.'], { A: AU, r: '#c83030', b: '#3a70d0' }); // 금관
+    for (let y = 26; y < 44; y += 3) px(s, 28, y, AU);                      // 금 장신구
+    return outline(s);
+  };
+
+  // ── 4장 이후 ──
+  FOE.watcher = function () { // 물속의 감시자 56×56
+    const s = mk(56, 56), T = '#4c6e4a', T2 = '#30503a', SU = '#c8d8b0', WA = '#2a4a6a', WA2 = '#3e6e92';
+    const arms = [[10, 50, 6, 30, 12, 12], [20, 50, 22, 32, 18, 18], [34, 50, 32, 28, 38, 8], [46, 50, 50, 34, 46, 20]];
+    for (const [a, b, c, d, e, f] of arms) { line(s, a, b, c, d, T, 4); line(s, c, d, e, f, T, 3); line(s, e, f, e + 3, f - 4, T2, 2); }
+    for (const [a, b, c, d] of [[10, 46, 7, 34], [34, 46, 33, 30], [46, 46, 49, 36]]) for (let k = 0; k < 4; k++) px(s, Math.round(a + (c - a) * k / 4), Math.round(b + (d - b) * k / 4), SU);
+    rect(s, 0, 46, 56, 10, WA); for (let x = 0; x < 56; x += 6) { rect(s, x, 46, 3, 1, WA2); rect(s, x + 3, 49, 2, 1, WA2); }
+    ell(s, 28, 45, 10, 3, '#0e1a26'); ell(s, 24, 45, 2, 1, '#f0e060'); ell(s, 32, 45, 2, 1, '#f0e060'); // 물속의 눈
+    return outline(s);
+  };
+
+  FOE.troll = function () { // 동굴 트롤 56×56
+    const s = mk(56, 56), SK = '#7e8c78', SK2 = '#5c6a58', H = '#6a5040';
+    rect(s, 16, 42, 9, 10, SK2); rect(s, 32, 42, 9, 10, SK2); rect(s, 14, 50, 12, 3, SK); rect(s, 31, 50, 12, 3, SK);
+    ell(s, 28, 30, 17, 14, SK); ell(s, 30, 33, 12, 9, '#8e9c88');         // 큰 몸
+    rect(s, 14, 38, 28, 6, H); for (let x = 15; x < 41; x += 4) px(s, x, 43, '#4a3428');
+    ell(s, 9, 30, 5, 9, SK); ell(s, 8, 40, 5, 4, SK2);                      // 왼팔
+    ell(s, 47, 26, 5, 8, SK); ell(s, 48, 17, 4, 4, SK2);                    // 들어 올린 오른팔
+    rect(s, 45, 2, 7, 13, '#6a4a2c'); rect(s, 44, 1, 9, 6, '#5a5a62');      // 망치
+    for (const [x, y] of [[44, 2], [52, 3], [48, 0]]) px(s, x, y, '#8a8a94');
+    rect(s, 5, 36, 7, 2, '#8a8a94'); px(s, 12, 37, '#8a8a94'); px(s, 13, 38, '#8a8a94'); // 팔목 쇠사슬
+    ell(s, 26, 14, 8, 7, SK); ell(s, 26, 18, 7, 4, SK2);                    // 작은 머리, 큰 턱
+    px(s, 23, 12, '#f0c040'); px(s, 29, 12, '#f0c040'); rect(s, 22, 11, 3, 1, SK2); rect(s, 28, 11, 3, 1, SK2);
+    rect(s, 21, 19, 10, 1, '#2a2418'); px(s, 22, 18, '#e8e0c0'); px(s, 29, 18, '#e8e0c0');
+    return outline(s);
+  };
+
+  FOE.uruk = function () { // 우루크하이
+    const s = mk(40, 40), SK = '#4a403a', SK2 = '#342c28', A = '#3c3c46', A2 = '#2a2a32';
+    rect(s, 12, 30, 6, 7, A2); rect(s, 22, 30, 6, 7, A2); rect(s, 11, 36, 7, 2, '#1e1a18'); rect(s, 22, 36, 7, 2, '#1e1a18');
+    rect(s, 10, 17, 20, 14, A); rect(s, 10, 17, 20, 2, A2); rect(s, 10, 28, 20, 2, '#5a3a22');
+    rect(s, 5, 18, 5, 10, SK); rect(s, 30, 18, 5, 10, SK);
+    ell(s, 7, 24, 5, 7, '#4a4a54'); ell(s, 7, 24, 3, 5, '#5a5a66'); px(s, 7, 24, '#e8e8e0'); px(s, 6, 23, '#e8e8e0'); px(s, 8, 23, '#e8e8e0'); // 방패
+    line(s, 33, 27, 37, 4, '#9a9ca6', 3); rect(s, 31, 26, 6, 2, '#5a4a3a'); // 넓은 칼
+    ell(s, 20, 11, 7, 7, SK); ell(s, 20, 14, 7, 4, SK2); rect(s, 14, 3, 12, 3, A2); rect(s, 13, 5, 14, 2, A); px(s, 20, 2, A2);   // 머리·투구
+    rect(s, 15, 9, 3, 1, '#e8402a'); rect(s, 22, 9, 3, 1, '#e8402a');
+    pat(s, 17, 11, ['w.w.w', 'wwwww', '.www.'], { w: '#e8e8e0' });         // 얼굴의 흰 손자국
+    rect(s, 16, 14, 8, 1, '#1a1410'); px(s, 16, 13, '#ece4c8'); px(s, 23, 13, '#ece4c8');
+    return outline(s);
+  };
+
+  FOE.crebain = function () { // 까마귀 떼
+    const s = mk(40, 40), B = '#24222c', B2 = '#3c3a4c', B3 = '#52506a';
+    function crow(ox, oy, k) {
+      const r = v => Math.round(v);
+      tri(s, r(ox - 1 * k), r(oy - 1 * k), r(ox - 9 * k), r(oy - 11 * k), r(ox + 3 * k), r(oy - 2 * k), B2);   // 뒤 날개
+      tri(s, r(ox + 1 * k), r(oy - 1 * k), r(ox + 12 * k), r(oy - 10 * k), r(ox + 5 * k), r(oy + 1 * k), B2);  // 앞 날개
+      for (let i = 1; i <= 3; i++) px(s, r(ox + (4 + i * 2) * k), r(oy - (3 + i * 2) * k), B3);             // 깃털 결
+      ell(s, ox, oy, 5 * k, 3 * k, B);                                                                     // 몸
+      tri(s, r(ox + 4 * k), r(oy), r(ox + 9 * k), r(oy - 1 * k), r(ox + 9 * k), r(oy + 3 * k), B);            // 꼬리
+      ell(s, ox - 5 * k, oy - 2 * k, 2.6 * k, 2.4 * k, B);                                                   // 머리
+      tri(s, r(ox - 7 * k), r(oy - 3 * k), r(ox - 11 * k), r(oy - 1 * k), r(ox - 7 * k), r(oy - 1 * k), '#6a6a74'); // 부리
+      px(s, r(ox - 6 * k), r(oy - 3 * k), '#e03020');                                                       // 붉은 눈
+    }
+    crow(20, 26, 1.5); crow(9, 11, 0.75); crow(32, 9, 0.7);
+    return outline(s);
+  };
+
+  FOE.gollum = function () { // 골룸
+    const s = mk(40, 40), SK = '#b8baa0', SK2 = '#8e9078', E = '#dff4f0';
+    line(s, 14, 28, 8, 36, SK, 3); line(s, 26, 28, 32, 36, SK, 3);          // 쪼그린 다리
+    rect(s, 5, 36, 6, 2, SK2); rect(s, 30, 36, 6, 2, SK2);
+    ell(s, 20, 26, 7, 6, SK); rect(s, 15, 29, 10, 3, '#6a5a44');             // 앙상한 몸·허리천
+    for (let y = 22; y < 29; y += 2) { px(s, 16, y, SK2); px(s, 24, y, SK2); }
+    line(s, 14, 22, 8, 30, SK, 2); line(s, 26, 22, 31, 29, SK, 2);          // 팔
+    ell(s, 34, 30, 4, 2, '#8aa0b0'); px(s, 37, 29, '#8aa0b0'); px(s, 38, 31, '#8aa0b0'); px(s, 32, 29, '#1a1420'); // 손에 든 물고기
+    ell(s, 20, 13, 9, 8, SK); ell(s, 20, 17, 6, 3, SK2);                    // 큰 머리
+    ell(s, 16, 12, 3, 3.5, E); ell(s, 24, 12, 3, 3.5, E);                   // 커다란 눈
+    px(s, 16, 12, '#2a3a4a'); px(s, 24, 12, '#2a3a4a'); px(s, 17, 13, '#2a3a4a'); px(s, 25, 13, '#2a3a4a');
+    rect(s, 17, 18, 6, 1, '#4a4038'); px(s, 18, 19, '#f0ece0'); px(s, 21, 19, '#f0ece0');
+    for (const [x, y] of [[18, 5], [21, 4], [23, 5]]) line(s, x, y, x + 1, y - 2, '#5a5448', 1); // 머리카락 몇 가닥
+    ell(s, 10, 13, 2, 3, SK); ell(s, 30, 13, 2, 3, SK);                     // 귀
+    return outline(s);
+  };
+
+  FOE.shelob = function () { // 쉴로브 56×56
+    const s = mk(56, 56), D = '#1e1a24', D2 = '#342c40', P = '#6a5a7a';
+    const legs = [[22, 30, 10, 12, 2, 20], [22, 33, 6, 26, 1, 40], [24, 36, 10, 42, 6, 54], [27, 38, 18, 46, 16, 55],
+                  [34, 30, 46, 10, 54, 16], [34, 33, 50, 24, 55, 38], [32, 36, 46, 42, 50, 54], [29, 38, 38, 46, 40, 55]];
+    for (const [a, b, c, d, e, f] of legs) { line(s, a, b, c, d, D2, 3); line(s, c, d, e, f, D, 2); }
+    ell(s, 34, 22, 16, 13, D); ell(s, 34, 19, 12, 8, D2);                   // 부푼 배
+    pat(s, 26, 14, ['P.......P.......P', '.P.....P.P.....P.', '..PPPPP...PPPPP..'], { P });
+    ell(s, 24, 34, 8, 7, D2);                                               // 머리
+    pat(s, 18, 30, ['g.g.g.g', '.g.g.g.', 'g.g.g.g'], { g: '#9aff6a' });     // 여러 눈
+    pat(s, 18, 38, ['w.....w', '.w...w.', '..w.w..'], { w: '#e8e0d0' });   // 독니
     return outline(s);
   };
 
