@@ -1,0 +1,1491 @@
+{
+"Airdramon": {
+"name": "에어드라몬",
+"grade": "성숙기",
+"type": "환수형",
+"dir": "airdramon",
+"first": "DA - Episode 39",
+"n": 12,
+"lv": [
+"a"
+]
+},
+"Angewomon": {
+"name": "엔젤우몬",
+"grade": "완전체",
+"type": "대천사형",
+"dir": "angewomon",
+"first": "DA - Episode 37",
+"n": 27,
+"lv": [
+"p"
+]
+},
+"Ankylomon": {
+"name": "황금아르마몬",
+"grade": "성숙기",
+"type": "갑룡형",
+"dir": "ankylomon",
+"first": "DA 02 - Episode 24",
+"n": 15,
+"lv": [
+"a"
+]
+},
+"Anomalocarimon": {
+"name": "스콜피오몬",
+"grade": "완전체",
+"type": "고대갑각류형",
+"dir": "anomalocarimon",
+"first": "DA - Episode 41",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Apocalymon": {
+"first": "DA - Episode 53",
+"n": 2,
+"lv": [
+"u"
+],
+"name": "아포카리몬",
+"grade": "궁극체",
+"dir": "apoclymon"
+},
+"Aquilamon": {
+"name": "아큐라몬",
+"grade": "성숙기",
+"type": "거조형",
+"dir": "aquilamon",
+"first": "DA 02 - Episode 25",
+"n": 19,
+"lv": [
+"a"
+]
+},
+"Armadimon": {
+"name": "아르마몬",
+"grade": "성장기",
+"type": "포유류형",
+"dir": "armadimon",
+"first": "DA 02 - Episode 02",
+"n": 47,
+"lv": [
+"c"
+]
+},
+"Armagemon": {
+"name": "아마게몬",
+"grade": "궁극체",
+"type": "종족불명",
+"dir": "armagemon",
+"first": "DA 02: Diablomon Strikes Back",
+"n": 1,
+"lv": [
+"u"
+]
+},
+"Bakemon": {
+"name": "고스몬",
+"grade": "성숙기",
+"type": "고스트형",
+"dir": "bakemon",
+"first": "DA - Episode 11",
+"n": 21,
+"lv": [
+"a"
+]
+},
+"Bakumon": {
+"name": "테이파몬",
+"grade": "성장기",
+"type": "성수형",
+"dir": "bakumon",
+"first": "DA 02 - Episode 36",
+"n": 3,
+"lv": [
+"c"
+]
+},
+"Belial Vamdemon": {
+"name": "베리얼묘티스몬",
+"grade": "궁극체",
+"type": "마왕형",
+"dir": "belialvamdemon",
+"first": "DA 02 - Episode 47",
+"n": 4,
+"lv": [
+"u"
+]
+},
+"Big Mamemon": {
+"name": "빅콩알몬",
+"grade": "완전체",
+"type": "돌연변이형",
+"dir": "bigmamemon",
+"first": "DA 02 - Episode 41",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Black War Greymon": {
+"name": "블랙워그레이몬",
+"grade": "궁극체",
+"type": "용인형",
+"dir": "blackwargreymon",
+"first": "DA 02 - Episode 30",
+"n": 10,
+"lv": [
+"u"
+]
+},
+"Blossomon": {
+"name": "브롯사몬",
+"grade": "완전체",
+"type": "식물형",
+"dir": "blossomon",
+"first": "DA - Episode 43",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Botamon": {
+"name": "깜몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "botamon",
+"first": "DA - Episode 12",
+"n": 10,
+"lv": [
+"b"
+]
+},
+"Bubbmon": {
+"name": "뽀글몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "bubbmon",
+"first": "DA - Episode 24",
+"n": 3,
+"lv": [
+"b"
+]
+},
+"Centalmon": {
+"name": "켄터스몬",
+"grade": "성숙기",
+"type": "수인형",
+"dir": "centalmon",
+"first": "DA - Episode 10",
+"n": 11,
+"lv": [
+"a"
+]
+},
+"Chibimon": {
+"name": "꼬마몬",
+"grade": "유년기Ⅱ",
+"type": "유룡형",
+"dir": "chibimon",
+"first": "DA 02 - Episode 02",
+"n": 33,
+"lv": [
+"b"
+]
+},
+"Chicomon": {
+"name": "치코몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "chicomon",
+"first": "DA 02 - Episode 27",
+"n": 6,
+"lv": [
+"b"
+]
+},
+"Chimairamon": {
+"name": "키메라몬",
+"grade": "완전체",
+"type": "합성형",
+"dir": "chimairamon",
+"first": "DA 02 - Episode 18",
+"n": 6,
+"lv": [
+"p"
+]
+},
+"Cockatrimon": {
+"name": "꼬끼몬",
+"grade": "성숙기",
+"type": "거조형",
+"dir": "cockatrimon",
+"first": "DA - Episode 17",
+"n": 2,
+"lv": [
+"a"
+]
+},
+"Coelamon": {
+"name": "실리컨몬",
+"grade": "성숙기",
+"type": "고대어형",
+"dir": "coelamon",
+"first": "DA 02 - Episode 41",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Dagomon": {
+"name": "드라고몬",
+"grade": "완전체",
+"type": "수생수인형",
+"dir": "dagomon",
+"first": "DA 02 - Episode 13",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Dark Tyranomon": {
+"name": "다크티라노몬",
+"grade": "성숙기",
+"type": "공룡형",
+"dir": "darktyranomon",
+"first": "DA - Episode 35",
+"n": 9,
+"lv": [
+"a"
+]
+},
+"Death Meramon": {
+"name": "데드메라몬",
+"grade": "완전체",
+"type": "화염형",
+"dir": "deathmeramon",
+"first": "DA - Episode 27",
+"n": 5,
+"lv": [
+"p"
+]
+},
+"Deltamon": {
+"name": "델타몬",
+"grade": "성숙기",
+"type": "합성형",
+"dir": "deltamon",
+"first": "DA 02 - Episode 08",
+"n": 2,
+"lv": [
+"a"
+]
+},
+"Delumon": {
+"name": "뿌띠몬",
+"grade": "완전체",
+"type": "새형",
+"dir": "delumon",
+"first": "DA - Episode 43",
+"n": 7,
+"lv": [
+"p"
+]
+},
+"Demon": {
+"name": "마왕몬",
+"grade": "궁극체",
+"type": "마왕형",
+"dir": "demon",
+"first": "DA 02 - Episode 43",
+"n": 3,
+"lv": [
+"u"
+]
+},
+"Devidramon": {
+"name": "데블드라몬",
+"grade": "성숙기",
+"type": "사룡형",
+"dir": "devidramon",
+"first": "DA - Episode 26",
+"n": 7,
+"lv": [
+"a"
+]
+},
+"Dokugumon": {
+"name": "스파이더몬",
+"grade": "성숙기",
+"type": "곤충형",
+"dir": "dokugumon",
+"first": "DA - Episode 28",
+"n": 5,
+"lv": [
+"a"
+]
+},
+"Ebidramon": {
+"name": "가재드라몬",
+"grade": "성숙기",
+"type": "수생형",
+"dir": "ebidramon",
+"first": "DA 02 - Episode 05",
+"n": 4,
+"lv": [
+"a"
+]
+},
+"Evilmon": {
+"name": "이블몬",
+"grade": "성숙기",
+"type": "소악마형",
+"dir": "evilmon",
+"first": "DA - Episode 52",
+"n": 3,
+"lv": [
+"a"
+]
+},
+"Fantomon": {
+"name": "팬텀몬",
+"grade": "완전체",
+"type": "고스트형",
+"dir": "fantomon",
+"first": "DA - Episode 26",
+"n": 7,
+"lv": [
+"p"
+]
+},
+"Flare Lizarmon": {
+"first": "DA 02 - Episode 40",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Floramon": {
+"name": "플로라몬",
+"grade": "성장기",
+"type": "식물형",
+"dir": "floramon",
+"first": "DA - Episode 43",
+"n": 11,
+"lv": [
+"c"
+]
+},
+"Ganimon": {
+"name": "크랩몬",
+"grade": "성장기",
+"type": "갑각류형",
+"dir": "ganimon",
+"first": "DA 02 - Episode 41",
+"n": 3,
+"lv": [
+"c"
+]
+},
+"Gazimon": {
+"name": "가지몬",
+"grade": "성장기",
+"type": "포유류형",
+"dir": "gazimon",
+"first": "DA - Episode 15",
+"n": 22,
+"lv": [
+"c"
+]
+},
+"Gerbemon": {
+"name": "가비지몬",
+"grade": "완전체",
+"type": "돌연변이형",
+"dir": "gerbemon",
+"first": "DA - Episode 44",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Gesomon": {
+"name": "연체몬",
+"grade": "성숙기",
+"type": "연체형",
+"dir": "gesomon",
+"first": "DA - Episode 27",
+"n": 5,
+"lv": [
+"a"
+]
+},
+"Gigadramon": {
+"name": "기가드라몬",
+"grade": "완전체",
+"type": "사이보그형",
+"dir": "gigadramon",
+"first": "DA - Episode 48",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Giromon": {
+"name": "째리몬",
+"grade": "완전체",
+"type": "기뢰형",
+"dir": "giromon",
+"first": "DA 02 - Episode 41",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Gizamon": {
+"name": "기자몬",
+"grade": "성장기",
+"type": "수생포유류형",
+"dir": "gizamon",
+"first": "DA - Episode 35",
+"n": 7,
+"lv": [
+"c"
+]
+},
+"Gokimon": {
+"name": "고키몬",
+"grade": "성숙기",
+"type": "곤충형",
+"dir": "gokimon",
+"first": "DA 02 - Episode 06",
+"n": 3,
+"lv": [
+"a"
+]
+},
+"Golemon": {
+"name": "록몬",
+"grade": "성숙기",
+"type": "광물형",
+"dir": "golemon",
+"first": "DA 02 - Episode 25",
+"n": 2,
+"lv": [
+"a"
+]
+},
+"Gorimon": {
+"name": "고릴라몬",
+"grade": "성숙기",
+"type": "수인형",
+"dir": "gorimon",
+"first": "DA - Episode 39",
+"n": 5,
+"lv": [
+"a"
+]
+},
+"Guardromon": {
+"name": "가드로몬",
+"grade": "성숙기",
+"type": "머신형",
+"dir": "guardromon",
+"first": "DA - Episode 45",
+"n": 3,
+"lv": [
+"a"
+]
+},
+"Hagurumon": {
+"name": "톱니몬",
+"grade": "성장기",
+"type": "머신형",
+"dir": "hagurumon",
+"first": "DA - Episode 48",
+"n": 2,
+"lv": [
+"c"
+]
+},
+"Hangyomon": {
+"name": "다이버몬",
+"grade": "완전체",
+"type": "수생수인형",
+"dir": "hangyomon",
+"first": "DA - Episode 42",
+"n": 5,
+"lv": [
+"p"
+]
+},
+"Holsmon": {
+"name": "호루스몬",
+"grade": "아머체",
+"type": "짐승형",
+"dir": "holsmon",
+"first": "DA 02 - Episode 02",
+"n": 17,
+"lv": [
+"ar"
+]
+},
+"Igamon": {
+"name": "닌자몬",
+"grade": "성숙기",
+"type": "돌연변이",
+"dir": "igamon",
+"first": "DA 02 - Episode 15",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Imperialdramon: Fighter Mode": {
+"name": "황제드라몬: 파이터 모드",
+"grade": "궁극체",
+"type": "고대용인형",
+"dir": "imperialdramonfightermode",
+"first": "DA 02 - Episode 43",
+"n": 4,
+"lv": [
+"u"
+]
+},
+"Jyureimon": {
+"name": "쥬레이몬",
+"grade": "완전체",
+"type": "식물형",
+"dir": "jyureimon",
+"first": "DA - Episode 44",
+"n": 3,
+"lv": [
+"p"
+]
+},
+"Keramon": {
+"name": "케라몬",
+"grade": "성장기",
+"type": "종족불명",
+"dir": "keramon",
+"first": "DA: Our War Game!",
+"n": 1,
+"lv": [
+"c"
+]
+},
+"Kiwimon": {
+"name": "키위몬",
+"grade": "성숙기",
+"type": "고대새형",
+"dir": "kiwimon",
+"first": "DA - Episode 43",
+"n": 6,
+"lv": [
+"a"
+]
+},
+"Knightmon": {
+"name": "나이트몬",
+"grade": "완전체",
+"type": "전사형",
+"dir": "knightmon",
+"first": "DA 02 - Episode 32",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Kuramon": {
+"name": "쿠라몬",
+"grade": "유아기Ⅰ",
+"type": "종족불명",
+"dir": "kuramon",
+"first": "DA: Our War Game!",
+"n": 2,
+"lv": [
+"b"
+]
+},
+"Kuwagamon": {
+"name": "쿠가몬",
+"grade": "성숙기",
+"type": "곤충형",
+"dir": "kuwagamon",
+"first": "DA - Episode 01",
+"n": 15,
+"lv": [
+"a"
+]
+},
+"Lady Devimon": {
+"name": "레이디데블몬",
+"grade": "완전체",
+"type": "타천사형",
+"dir": "ladydevimon",
+"first": "DA - Episode 50",
+"n": 3,
+"lv": [
+"p"
+]
+},
+"Leafmon": {
+"name": "잎새몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "leafmon",
+"first": "DA 02 - Episode 23",
+"n": 8,
+"lv": [
+"b"
+]
+},
+"Marin Devimon": {
+"name": "마린데블몬",
+"grade": "완전체",
+"type": "수생수인형",
+"dir": "marindevimon",
+"first": "DA 02 - Episode 43",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Mechanorimon": {
+"name": "메카노몬",
+"grade": "성숙기",
+"type": "머신형",
+"dir": "mechanorimon",
+"first": "DA - Episode 45",
+"n": 10,
+"lv": [
+"a"
+]
+},
+"Megadramon": {
+"name": "메가드라몬",
+"grade": "완전체",
+"type": "사이보그형",
+"dir": "megadramon",
+"first": "DA - Episode 48",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Metal Greymon (Virus)": {
+"first": "DA 02 - Episode 10",
+"n": 2,
+"lv": [
+"p"
+],
+"name": "메탈그레이몬(바이러스종)",
+"grade": "완전체",
+"dir": "metalgreymon_vi"
+},
+"Metal Mamemon": {
+"name": "메탈콩알몬",
+"grade": "완전체",
+"type": "사이보그형",
+"dir": "metalmamemon",
+"first": "DA 02 - Episode 41",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Metal Seadramon": {
+"name": "메탈시드라몬",
+"grade": "궁극체",
+"type": "사이보그형",
+"dir": "metalseadramon",
+"first": "DA - Episode 40",
+"n": 4,
+"lv": [
+"u"
+]
+},
+"Millenniumon": {
+"name": "밀레니엄몬",
+"grade": "궁극체",
+"type": "합성형",
+"dir": "millenniumon",
+"first": "DA 02 - Episode 43",
+"n": 1,
+"lv": [
+"u"
+]
+},
+"Minomon": {
+"name": "데롱몬",
+"grade": "유년기Ⅱ",
+"type": "유충형",
+"dir": "minomon",
+"first": "DA 02 - Episode 24",
+"n": 5,
+"lv": [
+"b"
+]
+},
+"Minotaurmon": {
+"name": "미노타몬",
+"grade": "성숙기",
+"type": "수인형",
+"dir": "minotaurmon",
+"first": "DA 02 - Episode 26",
+"n": 3,
+"lv": [
+"a"
+]
+},
+"Mochimon": {
+"name": "모티몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "mochimon",
+"first": "DA - Episode 01",
+"n": 16,
+"lv": [
+"b"
+]
+},
+"Mojyamon": {
+"name": "모털몬",
+"grade": "성숙기",
+"type": "희귀짐승형",
+"dir": "mojyamon",
+"first": "DA - Episode 09",
+"n": 9,
+"lv": [
+"a"
+]
+},
+"Monochromon": {
+"name": "모노크로몬",
+"grade": "성숙기",
+"type": "갑룡형",
+"dir": "monochromon",
+"first": "DA - Episode 03",
+"n": 13,
+"lv": [
+"a"
+]
+},
+"Monzaemon": {
+"name": "퍼펫몬",
+"grade": "완전체",
+"type": "퍼펫형",
+"dir": "monzaemon",
+"first": "DA - Episode 06",
+"n": 9,
+"lv": [
+"p"
+]
+},
+"Mugendramon": {
+"name": "파워드라몬",
+"grade": "궁극체",
+"type": "머신형",
+"dir": "mugendramon",
+"first": "DA - Episode 40",
+"n": 6,
+"lv": [
+"u"
+]
+},
+"Mummymon": {
+"name": "미이라몬",
+"grade": "완전체",
+"type": "언데드형",
+"dir": "mummymon",
+"first": "DA 02 - Episode 29",
+"n": 19,
+"lv": [
+"p"
+]
+},
+"Mushamon": {
+"first": "DA 02 - Episode 33",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Mushmon": {
+"name": "머슈몬",
+"grade": "성장기",
+"type": "식물형",
+"dir": "mushmon",
+"first": "DA - Episode 43",
+"n": 7,
+"lv": [
+"c"
+]
+},
+"Nanimon": {
+"name": "모야몬",
+"grade": "성숙기",
+"type": "인베이드형",
+"dir": "nanimon",
+"first": "DA - Episode 27",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Nanomon": {
+"name": "데이터몬",
+"grade": "완전체",
+"type": "머신형",
+"dir": "nanomon",
+"first": "DA - Episode 19",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Nefertimon": {
+"name": "네페르티몬",
+"grade": "아머체",
+"type": "성수형",
+"dir": "nefertimon",
+"first": "DA 02 - Episode 03",
+"n": 24,
+"lv": [
+"ar"
+]
+},
+"Numemon": {
+"name": "워매몬",
+"grade": "성숙기",
+"type": "연체형",
+"dir": "numemon",
+"first": "DA - Episode 06",
+"n": 11,
+"lv": [
+"a"
+]
+},
+"Nyaromon": {
+"name": "야옹몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "nyaromon",
+"first": "DA - Episode 34",
+"n": 2,
+"lv": [
+"b"
+]
+},
+"Nyokimon": {
+"name": "새싹몬",
+"grade": "유아기Ⅰ",
+"type": "종자형",
+"dir": "nyokimon",
+"first": "DA - Episode 45",
+"n": 3,
+"lv": [
+"b"
+]
+},
+"Octmon": {
+"name": "옥토몬",
+"grade": "성숙기",
+"type": "연체형",
+"dir": "octmon",
+"first": "DA 02 - Episode 40",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Otamamon": {
+"name": "올챙몬",
+"grade": "성장기",
+"type": "양서류형",
+"dir": "otamamon",
+"first": "DA - Episode 25",
+"n": 7,
+"lv": [
+"c"
+]
+},
+"Pagumon": {
+"name": "퍼그몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "pagumon",
+"first": "DA - Episode 15",
+"n": 5,
+"lv": [
+"b"
+]
+},
+"Paildramon": {
+"name": "파일드라몬",
+"grade": "완전체",
+"type": "용인형",
+"dir": "paildramon",
+"first": "DA 02 - Episode 26",
+"n": 18,
+"lv": [
+"p"
+]
+},
+"Parrotmon": {
+"name": "패롯몬",
+"grade": "완전체",
+"type": "거조형",
+"dir": "parrotmon",
+"first": "DA - Episode 29",
+"n": 6,
+"lv": [
+"p",
+"u"
+]
+},
+"Pegasmon": {
+"name": "페가수스몬",
+"grade": "아머체",
+"type": "성수형",
+"dir": "pegasmon",
+"first": "DA 02 - Episode 03",
+"n": 25,
+"lv": [
+"ar"
+]
+},
+"Piccolomon": {
+"first": "DA - Episode 18",
+"n": 3,
+"lv": [
+"p"
+]
+},
+"Pinochimon": {
+"name": "피노키몬",
+"grade": "궁극체",
+"type": "퍼펫형",
+"dir": "pinochimon",
+"first": "DA - Episode 40",
+"n": 9,
+"lv": [
+"u"
+]
+},
+"Pipimon": {
+"name": "통통몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "pipimon",
+"first": "DA 02 - Episode 50",
+"n": 1,
+"lv": [
+"b"
+]
+},
+"Pitchmon": {
+"name": "피치몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "pitchmon",
+"first": "DA - Episode 45",
+"n": 2,
+"lv": [
+"b"
+]
+},
+"Poromon": {
+"name": "포로몬",
+"grade": "유년기Ⅱ",
+"type": "작은새형",
+"dir": "poromon",
+"first": "DA 02 - Episode 02",
+"n": 31,
+"lv": [
+"b"
+]
+},
+"Poyomon": {
+"name": "포요몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "poyomon",
+"first": "DA - Episode 12",
+"n": 9,
+"lv": [
+"b"
+]
+},
+"Pukamon": {
+"name": "둥실몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "pukamon",
+"first": "DA - Episode 01",
+"n": 10,
+"lv": [
+"b"
+]
+},
+"Pumpmon": {
+"name": "펌프몬",
+"grade": "완전체",
+"type": "퍼펫형",
+"dir": "pumpmon",
+"first": "DA - Episode 27",
+"n": 5,
+"lv": [
+"p"
+]
+},
+"Punimon": {
+"name": "푸니몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "punimon",
+"first": "DA - Episode 12",
+"n": 9,
+"lv": [
+"b"
+]
+},
+"Pururumon": {
+"name": "푸르르몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "pururumon",
+"first": "DA 02 - Episode 31",
+"n": 4,
+"lv": [
+"b"
+]
+},
+"Pyocomon": {
+"name": "어니몬",
+"grade": "유년기Ⅱ",
+"type": "알뿌리형",
+"dir": "pyocomon",
+"first": "DA - Episode 01",
+"n": 21,
+"lv": [
+"b"
+]
+},
+"Qinglongmon": {
+"name": "청룡몬",
+"grade": "궁극체",
+"type": "성룡형",
+"dir": "qinglongmon",
+"first": "DA 02 - Episode 34",
+"n": 4,
+"lv": [
+"u"
+]
+},
+"Raremon": {
+"name": "레어몬",
+"grade": "성숙기",
+"type": "언데드형",
+"dir": "raremon",
+"first": "DA - Episode 31",
+"n": 5,
+"lv": [
+"a"
+]
+},
+"Red Vegimon": {
+"name": "레드베지몬",
+"grade": "성숙기",
+"type": "식물형",
+"dir": "redvegimon",
+"first": "DA - Episode 47",
+"n": 5,
+"lv": [
+"a"
+]
+},
+"Revolmon": {
+"name": "카우보이몬",
+"grade": "성숙기",
+"type": "돌연변이형",
+"dir": "revolmon",
+"first": "DA 02 - Episode 12",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Scumon": {
+"name": "스카몬",
+"grade": "성숙기",
+"type": "뮤턴트형",
+"dir": "scumon",
+"first": "DA - Episode 10",
+"n": 7,
+"lv": [
+"a"
+]
+},
+"Seadramon": {
+"name": "시드라몬",
+"grade": "성숙기",
+"type": "수생형",
+"dir": "seadramon",
+"first": "DA - Episode 03",
+"n": 8,
+"lv": [
+"a"
+]
+},
+"Shakkoumon": {
+"name": "토우몬",
+"grade": "완전체",
+"type": "돌연변이형",
+"dir": "shakkoumon",
+"first": "DA 02 - Episode 36",
+"n": 7,
+"lv": [
+"p"
+]
+},
+"Shakomon": {
+"name": "샤코몬",
+"grade": "성장기",
+"type": "갑각류형",
+"dir": "shakomon",
+"first": "DA 02 - Episode 40",
+"n": 2,
+"lv": [
+"c"
+]
+},
+"Shellmon": {
+"name": "쉘몬",
+"grade": "성숙기",
+"type": "연체형",
+"dir": "shellmon",
+"first": "DA - Episode 03",
+"n": 7,
+"lv": [
+"a"
+]
+},
+"Shurimon": {
+"name": "수리몬",
+"grade": "아머체",
+"type": "돌연변이형",
+"dir": "shurimon",
+"first": "DA 02 - Episode 14",
+"n": 8,
+"lv": [
+"ar"
+]
+},
+"Skull Greymon": {
+"name": "스컬그레이몬",
+"grade": "완전체",
+"type": "언데드형",
+"dir": "skullgreymon",
+"first": "DA - Episode 16",
+"n": 5,
+"lv": [
+"p"
+]
+},
+"Skull Satamon": {
+"name": "스컬사탄몬",
+"grade": "완전체",
+"type": "언데드형",
+"dir": "skullsatamon",
+"first": "DA 02 - Episode 43",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Starmon": {
+"name": "스타몬",
+"grade": "성숙기",
+"type": "돌연변이형",
+"dir": "starmon",
+"first": "DA 02 - Episode 12",
+"n": 2,
+"lv": [
+"a"
+]
+},
+"Submarimon": {
+"first": "DA 02 - Episode 16",
+"n": 7,
+"lv": [
+"ar"
+]
+},
+"Tanemon": {
+"name": "시드몬",
+"grade": "유년기Ⅱ",
+"type": "알뿌리형",
+"dir": "tanemon",
+"first": "DA - Episode 01",
+"n": 10,
+"lv": [
+"b"
+]
+},
+"Tankmon": {
+"name": "탱크몬",
+"grade": "성숙기",
+"type": "사이보그형",
+"dir": "tankmon",
+"first": "DA - Episode 48",
+"n": 1,
+"lv": [
+"a"
+]
+},
+"Tokomon": {
+"name": "토코몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "tokomon",
+"first": "DA - Episode 01",
+"n": 19,
+"lv": [
+"b"
+]
+},
+"Tonosama Gekomon": {
+"name": "왕개굴몬",
+"grade": "완전체",
+"type": "양서류형",
+"dir": "tonosamagekomon",
+"first": "DA - Episode 25",
+"n": 8,
+"lv": [
+"p"
+]
+},
+"Tortamon": {
+"name": "토타몬",
+"grade": "성숙기",
+"type": "파충류형",
+"dir": "tortamon",
+"first": "DA 02 - Episode 22",
+"n": 3,
+"lv": [
+"a"
+]
+},
+"Triceramon": {
+"name": "트리케라몬",
+"grade": "완전체",
+"type": "각룡형",
+"dir": "triceramon",
+"first": "DA 02 - Episode 39",
+"n": 1,
+"lv": [
+"p"
+]
+},
+"Tsubumon": {
+"name": "츠브몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "tsubumon",
+"first": "DA 02 - Episode 37",
+"n": 2,
+"lv": [
+"b"
+]
+},
+"Tsumemon": {
+"name": "츠메몬",
+"grade": "유년기Ⅱ",
+"type": "종족불명",
+"dir": "tsumemon",
+"first": "DA: Our War Game!",
+"n": 1,
+"lv": [
+"b"
+]
+},
+"Tunomon": {
+"name": "뿔몬",
+"grade": "유년기Ⅱ",
+"type": "렛서형",
+"dir": "tunomon",
+"first": "DA - Episode 01",
+"n": 19,
+"lv": [
+"b"
+]
+},
+"Tuskmon": {
+"name": "태스크몬",
+"grade": "성숙기",
+"type": "공룡형",
+"dir": "tuskmon",
+"first": "DA - Episode 36",
+"n": 9,
+"lv": [
+"a"
+]
+},
+"Tyranomon": {
+"name": "티라노몬",
+"grade": "성숙기",
+"type": "공룡형",
+"dir": "tyranomon",
+"first": "DA - Episode 18",
+"n": 10,
+"lv": [
+"a"
+]
+},
+"Tyumon": {
+"name": "츄몬",
+"grade": "성장기",
+"type": "짐승형",
+"dir": "tyumon",
+"first": "DA - Episode 10",
+"n": 6,
+"lv": [
+"c"
+]
+},
+"Unimon": {
+"first": "DA - Episode 07",
+"n": 10,
+"lv": [
+"a"
+],
+"name": "유니몬",
+"grade": "성숙기",
+"dir": "yunimon"
+},
+"Upamon": {
+"name": "우파몬",
+"grade": "유년기Ⅱ",
+"type": "양서류형",
+"dir": "upamon",
+"first": "DA 02 - Episode 02",
+"n": 31,
+"lv": [
+"b"
+]
+},
+"Vademon": {
+"name": "베이더몬",
+"grade": "완전체",
+"type": "우주인형",
+"dir": "vademon",
+"first": "DA - Episode 24",
+"n": 3,
+"lv": [
+"p"
+]
+},
+"Vamdemon": {
+"name": "묘티스몬",
+"grade": "완전체",
+"type": "언데드형",
+"dir": "vamdemon",
+"first": "DA - Episode 22",
+"n": 19,
+"lv": [
+"p"
+]
+},
+"Vegimon": {
+"name": "베지몬",
+"grade": "성숙기",
+"type": "식충식물형",
+"dir": "vegimon",
+"first": "DA - Episode 23",
+"n": 8,
+"lv": [
+"a"
+]
+},
+"Venom Vamdemon": {
+"name": "베놈묘티스몬",
+"grade": "궁극체",
+"type": "마수형",
+"dir": "venomvamdemon",
+"first": "DA - Episode 38",
+"n": 3,
+"lv": [
+"u"
+]
+},
+"Waru Monzaemon": {
+"name": "배드퍼펫몬",
+"grade": "완전체",
+"type": "퍼펫형",
+"dir": "warumonzaemon",
+"first": "DA - Episode 49",
+"n": 2,
+"lv": [
+"p"
+]
+},
+"Whamon": {
+"name": "고래몬",
+"grade": "완전체",
+"type": "수생포유류형",
+"dir": "whamon",
+"first": "DA - Episode 14",
+"n": 7,
+"lv": [
+"a"
+]
+},
+"Woodmon": {
+"name": "우드몬",
+"grade": "성숙기",
+"type": "식물형",
+"dir": "woodmon",
+"first": "DA - Episode 46",
+"n": 7,
+"lv": [
+"a"
+]
+},
+"Yukidarumon": {
+"name": "프리지몬",
+"grade": "성숙기",
+"type": "빙설형",
+"dir": "yukidarumon",
+"first": "DA - Episode 09",
+"n": 12,
+"lv": [
+"a"
+]
+},
+"Yukimi Botamon": {
+"name": "하얀몬",
+"grade": "유아기Ⅰ",
+"type": "슬라임형",
+"dir": "yukimibotamon",
+"first": "DA 02 - Episode 25",
+"n": 3,
+"lv": [
+"b"
+]
+},
+"Yuramon": {
+"name": "유라몬",
+"grade": "유아기Ⅰ",
+"type": "종자형",
+"dir": "yuramon",
+"first": "DA - Episode 12",
+"n": 7,
+"lv": [
+"b"
+]
+}
+}
