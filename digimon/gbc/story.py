@@ -22,7 +22,7 @@ MAPS = {}
 MAP_SONG = {'house2f': 'town', 'house1f': 'town', 'town': 'town', 'camp': 'town', 'forest': 'field', 'route1': 'field',
             'village': 'village', 'beach': 'field', 'center': 'village', 'dshop': 'village', 'neighbor': 'town', 'store': 'town',
             'lodge': 'town', 'office': 'town', 'route2': 'field', 'savanna': 'village', 'center2': 'village', 'shop2': 'village',
-            'temple1': 'field'}
+            'temple1': 'field', 'route3': 'field', 'toytown': 'village', 'center3': 'village', 'shop3': 'village', 'temple2': 'field'}
 
 # ── 오프닝 (흰수염 도사) ──
 OPENING = [
@@ -390,18 +390,20 @@ MAPS['savanna'] = Map('기어 사바나', [
     'J..............J',
     'J..............J',
     'J......:.......J',
-    'J..::::::::::..J',
+    'J..:::::::::::::',
     'J.....:...:....J',
     'J.....:...:....J',
     'J.....:...:....J',
     'J.....:...:....J',
     'J.....:::::....J',
     'J......:.......J',
-    'JJJJJJJ::JJJJJJJ'], {'J': 'r_canopy', '.': 'r_grass2', ':': 'r_path', ',': 'r_tall'}, 'r_canopy', open=[(7, 14, 8, 29, 'r_path')],
+    'JJJJJJJ::JJJJJJJ'], {'J': 'r_canopy', '.': 'r_grass2', ':': 'r_path', ',': 'r_tall'}, 'r_canopy',
     objs=[('c_shrine', 6, 1), ('v_center', 1, 6), ('v_shop', 11, 7), ('r_tree', 1, 1), ('r_tree', 13, 1), ('r_palm', 13, 11), ('r_rock', 3, 1)],
-    warps=edge([7, 8], 14, 'route2', 4, 0) + [Warp_(7, 2, 'temple1', 4, 8, 'up'), Warp_(3, 10, 'center2', 4, 7, 'up'), Warp_(12, 9, 'shop2', 3, 6, 'up')],
+    open=[(7, 14, 8, 29, 'r_path'), (16, 6, 29, 6, 'r_path')],
+    warps=edge([7, 8], 14, 'route2', 4, 0) + edgeV(16, [6], 'route3', 0, 6) + [Warp_(7, 2, 'temple1', 4, 8, 'up'), Warp_(3, 10, 'center2', 4, 7, 'up'), Warp_(12, 9, 'shop2', 3, 6, 'up')],
     npcs=[NPC(9, 4, 'blob:koromon', 'down', [Say('코로몬: 레오몬님이 이상해!\f신전 안에서 검은 톱니가 반짝였어…')]),
-          NPC(4, 12, 'blob:tsunomon', 'down', [Say('뿔몬: 회복 센터는 마을마다 있어.\n쓰러지면 마지막에 들른 곳으로 돌아가!')])],
+          NPC(4, 12, 'blob:tsunomon', 'down', [Say('뿔몬: 회복 센터는 마을마다 있어.\n쓰러지면 마지막에 들른 곳으로 돌아가!')]),
+          NPC(15, 6, 'blob:koromon', 'left', [Say('코로몬: 이쪽은 장난감 마을로 가는 길이야.\f레오몬님이 이상해진 뒤로 위험해서 막고 있어…\n(신전의 레오몬을 먼저 도와주자)')], hide_if='leomon', fixed=True)],
     on_enter=[IfFlag('savanna', 'e'), SetFlag('savanna'),
               Say('땅속에 커다란 톱니바퀴가 박혀 있는 사바나다.\f언덕 위에 오래된 신전이 보인다.'), Label('e')])
 MAPS['center2'] = center_map('center2', 'savanna', 3, 10)
@@ -414,7 +416,7 @@ LEOMON = [IfFlag('leomon', 'done'),
           Say('레오몬: …고맙다.\n머릿속의 검은 톱니가 부서졌다.'),
           Say('레오몬: 이 신전에 잠든 문장을 가져가라.\n너와 디지몬이라면 쓸 수 있을 것이다.'), Close(), Flash(1),
           Crest('우정'), Say('우정의 문장을 손에 넣었다!'),
-          Say('레오몬: 문장은 파트너를 더 높은 곳으로 이끈다.\f북쪽의 장난감 마을에도 이상한 기운이 감돈다…\n(다음 이야기는 준비 중)'), End(),
+          Say('레오몬: 문장은 파트너를 더 높은 곳으로 이끈다.\f동쪽 장난감 마을에도 이상한 기운이 감돈다.\n가 봐 다오.'), End(),
           Label('done'), Say('레오몬: 우정의 문장이 너를 지켜 줄 것이다.')]
 MAPS['temple1'] = Map('우정의 신전', [
     'SSSSSSSSSS',
@@ -430,6 +432,77 @@ MAPS['temple1'] = Map('우정의 신전', [
     npcs=[NPC(4, 1, 'blob:leomon', 'down', LEOMON, fixed=True)],
     warps=[Warp_(4, 9, 'savanna', 7, 3, 'down'), Warp_(5, 9, 'savanna', 7, 3, 'down')],
     on_enter=[IfFlag('temple1', 'e'), SetFlag('temple1'), Say('차가운 돌기둥이 늘어선 신전이다.\f안쪽에서 낮은 으르렁 소리가 들린다…'), Label('e')])
+
+# ── 3번 길 (가로 길, Lv12~16: 성장기 + 못 잡는 야생 성숙기) ──
+MAPS['route3'] = Map('3번 길', [
+    'JJJJJJJJJJJJJJJJJJJJ',
+    'J..,,,....J..,,,,..J',
+    'J..,,,....J..,,,,..J',
+    'J.........J........J',
+    'J..LLLL...:...LLL..J',
+    'J.........:........J',
+    '::::::::::::::::::::',
+    'J....,,,,.....,,,..J',
+    'J....,,,,.....,,,..J',
+    'J..*......J.....*..J',
+    'J.,,,.....J....,,,.J',
+    'JJJJJJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path'), (20, 6, 29, 6, 'r_path')],
+    objs=[('r_tree', 7, 9), ('r_rock', 12, 1), ('r_bush', 17, 9)],
+    warps=edgeV(-1, [6], 'savanna', 15, 6) + edgeV(20, [6], 'toytown', 0, 6),
+    npcs=[Challenger(6, 3, 'numemon', '워매몬', 14, 'down', 'r3c1', '야생 워매몬이 길을 막아섰다!\f워매몬: 우헤헤~ 비트 내놔!'),
+          Challenger(15, 9, 'nanimon', '모야몬', 15, 'up', 'r3c2', '야생 모야몬이 선글라스를 고쳐 쓴다…!\f모야몬: 덤벼 봐!'),
+          ItemBall(18, 1, '성장기 그물', 1, 'r3i1'), ItemBall(1, 10, '고급 회복 디스크', 1, 'r3i2')],
+    enc=(28, [('patamon', 12, 14, 10), ('piyomon', 12, 14, 15), ('palmon', 12, 14, 15), ('gabumon', 13, 14, 8), ('picodevimon', 12, 15, 17),
+              ('numemon', 14, 16, 18), ('nanimon', 14, 16, 17)]),
+    on_enter=[IfFlag('route3', 'e'), SetFlag('route3'),
+              Say('성숙기 디지몬의 기척이 느껴진다.\f성숙기는 너무 강해서 잡을 수 없지만,\n이기면 경험치와 비트를 많이 준다.'), Label('e')])
+
+# ── 장난감 마을 (A14 그림 오기 전: 행복의 마을 장난감 블록을 씀) ──
+MAPS['toytown'] = Map('장난감 마을', [
+    'WWWWWWWWWWWWWWWW',
+    'W..............W',
+    'W..............W',
+    'W..............W',
+    'W..............W',
+    'W..............W',
+    '::::::::::::::.W',
+    'W......::......W',
+    'W......::......W',
+    'W......::......W',
+    'W......::......W',
+    'W......::......W',
+    'W..............W',
+    'WWWWWWWWWWWWWWWW'], {'W': 'r_canopy', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}, 'r_canopy', open=[(-9, 6, -1, 6, 'v_path')],
+    objs=[('c_shrine', 6, 1), ('v_center', 1, 7), ('v_shop', 11, 8), ('v_block4', 1, 1), ('v_block6', 11, 1), ('v_block7', 10, 4)],
+    warps=edgeV(-1, [6], 'route3', 19, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 4, 7, 'up'), Warp_(12, 10, 'shop3', 3, 6, 'up')],
+    npcs=[NPC(9, 9, 'blob:numemon', 'down', [Say('워매몬: 퍼펫몬님이 이상해…\f예전엔 다 같이 놀았는데,\n지금은 장난감들을 마구 부숴!')]),
+          NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')])],
+    on_enter=[IfFlag('toytown', 'e'), SetFlag('toytown'),
+              Say('알록달록한 장난감 블록으로 지은 마을이다.\f…그런데 아무도 웃고 있지 않다.'), Label('e')])
+MAPS['center3'] = center_map('center3', 'toytown', 3, 11)
+MAPS['shop3'] = shop_map('toytown', 12, 10)
+
+MONZAEMON = [IfFlag('monzaemon', 'done'),
+             Say('퍼펫몬: …장난감은… 부숴야 해…\n크아아!'), Close(),
+             Battle('monzaemon', 20, 'boss'), SetFlag('monzaemon'),
+             Say('퍼펫몬: …어라? 나는 무슨 짓을…\f고마워. 등의 검은 톱니가 떨어졌어.'),
+             Say('퍼펫몬: 이 신전의 문장은 순수한 마음을 비춘대.\n네가 가져가 줘.'), Close(), Flash(1),
+             Crest('순수'), Say('순수의 문장을 손에 넣었다!'),
+             Say('퍼펫몬: 검은 톱니는 북쪽 무한산에서 날아온대.\f(다음 이야기는 준비 중)'), End(),
+             Label('done'), Say('퍼펫몬: 다시 다 같이 놀 수 있게 됐어!\n고마워!')]
+MAPS['temple2'] = Map('순수의 신전', [
+    'SSSSSSSSSS',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S........S',
+    'SSSS..SSSS'], {'S': 'r_stone', '.': 'v_path', 'P': 'r_rocks'}, 'r_stone',
+    npcs=[NPC(4, 1, 'blob:monzaemon', 'down', MONZAEMON, fixed=True)],
+    warps=[Warp_(4, 9, 'toytown', 7, 3, 'down'), Warp_(5, 9, 'toytown', 7, 3, 'down')])
 
 # ── 해변 ──
 SHELLMON = [
