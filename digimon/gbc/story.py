@@ -6,9 +6,10 @@ from dsl import *
 KEY = {'.': 'grass', ',': 'tall', 'T': 'tree', ':': 'path', '*': 'flower', 's': 'sand', '~': 'sea', 'w': 'shore',
        'D': 'dtree', 'd': 'dgrass', 'S': 'sign', 'F': 'fire', 'c': 'crib', 'e': 'egg'}
 CRESTS = ['용기', '우정', '사랑', '지식', '순수', '성실', '희망', '빛']
-KIDS = ['taichi', 'yamato', 'sora', 'koushiro', 'mimi', 'jou', 'takeru', 'hikari']
-PARTNER = {'taichi': 'agumon', 'yamato': 'gabumon', 'sora': 'piyomon', 'koushiro': 'tentomon', 'mimi': 'palmon', 'jou': 'gomamon', 'takeru': 'patamon', 'hikari': 'salamon'}
-BABY = {'taichi': 'koromon', 'yamato': 'tsunomon', 'sora': 'pyocomon', 'koushiro': 'mochimon', 'mimi': 'tanemon', 'jou': 'bukamon', 'takeru': 'tokomon', 'hikari': 'nyaromon'}
+KIDS = ['taichi', 'yamato', 'takeru', 'hikari']          # 고를 수 있는 주인공 4명 (2026-10-01 사용자 결정)
+COMP = ('yamato', 'taichi')                                 # 동행: 매튜, 주인공이 매튜면 신태일
+PARTNER = {'taichi': 'agumon', 'yamato': 'gabumon', 'takeru': 'patamon', 'hikari': 'salamon'}
+BABY = {'taichi': 'koromon', 'yamato': 'tsunomon', 'takeru': 'tokomon', 'hikari': 'nyaromon'}
 EGGS = ['koromon', 'tsunomon', 'pyocomon', 'mochimon', 'tanemon', 'bukamon', 'tokomon', 'nyaromon']
 ITEMS = [('회복 디스크', 20, '디지몬의 체력을 20 회복한다'), ('고급 회복 디스크', 50, '디지몬의 체력을 50 회복한다')]
 START = ('camp', 6, 7, 'up')
@@ -35,15 +36,11 @@ OPENING = [
 KID_LINE = {
     'taichi': '한여름에 눈이라니… 축구공이 다 젖겠는걸.',
     'yamato': '…리키는 어디 갔지? 너무 멀리 가지 말라고 했는데.',
-    'sora': '모자 챙겨 오길 잘했다. 눈이 그칠 생각을 안 하네.',
-    'koushiro': '노트북에 전파가 안 잡혀요. 이상한데요…',
-    'mimi': '추워~! 그러니까 캠프 같은 거 오기 싫었단 말이야!',
-    'jou': '다들 선생님 말씀 잘 들어! 함부로 돌아다니면 안 돼!',
     'takeru': '와, 눈이다! 여름인데 눈이 와!',
+    'hikari': '여름인데 눈이 오다니… 무슨 일이 생기려나.',
 }
-KID_NAME = {'taichi': '신태일', 'yamato': '매튜', 'sora': '한소라', 'koushiro': '장한솔', 'mimi': '이미나', 'jou': '정석', 'takeru': '리키', 'hikari': '신나리'}
-CAMP_SPOTS = {'taichi': (4, 4, 'right'), 'yamato': (7, 5, 'left'), 'sora': (4, 6, 'up'), 'koushiro': (2, 7, 'up'),
-              'mimi': (3, 2, 'down'), 'jou': (5, 8, 'up'), 'takeru': (7, 4, 'down')}
+KID_NAME = {'taichi': '신태일', 'yamato': '매튜', 'takeru': '리키', 'hikari': '신나리'}
+CAMP_SPOTS = {'taichi': (4, 4, 'right'), 'yamato': (7, 5, 'left'), 'takeru': (7, 4, 'down'), 'hikari': (4, 6, 'up')}
 
 AURORA = [
     Say('하늘에 오로라가 펼쳐졌다…!'), Close(), Flash(2),

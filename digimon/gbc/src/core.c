@@ -108,6 +108,7 @@ void ui_open(uint8_t top) {
     // top 줄부터 창이 덮음. 덮이는 곳 중 글상자(12줄~) 위쪽은 배경 타일을 그대로 베껴 옴
     static uint8_t row[20], arow[20];
     uint8_t y, x, bx = SCX_REG >> 3, by = SCY_REG >> 3;
+    HIDE_WIN;                       // 베끼는 동안 지저분하게 보이지 않게
     win_top = top;
     for (y = top; y < 18; y++) {
         for (x = 0; x < 20; x++) {
@@ -157,7 +158,7 @@ static void emit_num(uint16_t v) {
     do { d[n++] = v % 10; v /= 10; } while (v);
     while (n) emit(DIGCH[d[--n]]);
 }
-static uint8_t comp_kid(void) { return G.kid == KID_JOU ? KID_TAICHI : KID_JOU; }
+static uint8_t comp_kid(void) { return G.kid == COMP_KID ? COMP_ALT : COMP_KID; }
 static void emit_var(uint8_t v, uint8_t depth) {
     uint8_t sp;
     switch (v) {

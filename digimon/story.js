@@ -7,7 +7,7 @@
 
   const KEY = { '.': 'grass', ',': 'tall', T: 'tree', ':': 'path', '*': 'flower', s: 'sand', '~': 'sea', w: 'shore', D: 'dtree', d: 'dgrass', S: 'sign', F: 'fire', c: 'crib', e: 'egg' };
   const CRESTS = ['용기', '우정', '사랑', '지식', '순수', '성실', '희망', '빛'];
-  const ORDER = ['taichi', 'yamato', 'sora', 'koushiro', 'mimi', 'jou', 'takeru', 'hikari'];
+  const ORDER = ['taichi', 'yamato', 'takeru', 'hikari'];   // 고를 수 있는 주인공 4명
   const PARTNER = { taichi: 'agumon', yamato: 'gabumon', sora: 'piyomon', koushiro: 'tentomon', mimi: 'palmon', jou: 'gomamon', takeru: 'patamon', hikari: 'salamon' };
   const BABY = { taichi: 'koromon', yamato: 'tsunomon', sora: 'pyocomon', koushiro: 'mochimon', mimi: 'tanemon', jou: 'bukamon', takeru: 'tokomon', hikari: 'nyaromon' };
   const BABY2 = ['koromon', 'tsunomon', 'pyocomon', 'mochimon', 'tanemon', 'bukamon', 'tokomon', 'nyaromon'];
@@ -36,7 +36,7 @@
     mimi: '추워~! 그러니까 캠프 같은 거 오기 싫었단 말이야!',
     jou: '다들 선생님 말씀 잘 들어! 함부로 돌아다니면 안 돼!',
     takeru: '와, 눈이다! 여름인데 눈이 와!',
-    hikari: '…감기 기운이 있어서 오늘은 쉬고 싶었는데.'
+    hikari: '여름인데 눈이 오다니… 무슨 일이 생기려나.'
   };
 
   // ───── 지도 ─────
@@ -67,7 +67,7 @@
     }
   };
   // 캠프장의 다른 아이들 (주인공으로 고른 아이와 나리는 빠짐)
-  const CAMP_SPOTS = { taichi: [4, 4, 'right'], yamato: [7, 5, 'left'], sora: [4, 6, 'up'], koushiro: [2, 7, 'up'], mimi: [3, 2, 'down'], jou: [5, 8, 'up'], takeru: [7, 4, 'down'] };
+  const CAMP_SPOTS = { taichi: [4, 4, 'right'], yamato: [7, 5, 'left'], takeru: [7, 4, 'down'], hikari: [4, 6, 'up'] };
   for (const k in CAMP_SPOTS) {
     const [x, y, dir] = CAMP_SPOTS[k];
     maps.camp.npcs.push({ x, y, spr: k, dir, cond: (G) => G.kid !== k && !G.flags.aurora, text: () => root.DigiField.KIDS[k].name + ': ' + KID_LINE[k] });
@@ -268,7 +268,7 @@
       await A.say('바닷바람이 분다.\f모래사장에 웬 전화박스가 늘어서 있다…');
     }
   };
-  const companion = (G) => (G.kid === 'jou' ? 'taichi' : 'jou');
+  const companion = (G) => (G.kid === 'yamato' ? 'taichi' : 'yamato');
   async function shellmonTalk(A) {
     const G = A.G, n = A.nm('shellmon');
     await A.say('바다 쪽에서 땅이 울린다…!');

@@ -52,7 +52,7 @@ uint8_t kid_pick(void) BANKED {
     for (;;) {
         DISPLAY_OFF;
         screen_clear(); scene = SCENE_OTHER; pool_reset(1);
-        draw_frame(TGT_BG, 0, 0, 10, 18, 0);
+        draw_frame(TGT_BG, 0, 0, 10, N_KIDS * 2 + 2, 0);
         for (i = 0; i < N_KIDS; i++) print_at(TGT_BG, 2, 1 + i * 2, KID_NAME[i]);
         print_at(TGT_BG, 11, 1, S_KP_TITLE);
         print_at(TGT_BG, 11, 9, S_KP_PARTNER);

@@ -471,7 +471,7 @@ for mname, M in story.MAPS.items():
     def scr(s_):
         scripts.append(s_); return len(scripts) - 1
     for n in M.npcs:
-        if n.spr == 'COMP': a_ = sprset('jou'); b_ = sprset('taichi'); altkid = KIDI['jou']
+        if n.spr == 'COMP': a_ = sprset(story.COMP[0]); b_ = sprset(story.COMP[1]); altkid = KIDI[story.COMP[0]]
         else: a_ = sprset(n.spr); b_ = a_; altkid = 0xFF
         cond = 0xFFFF; ctype = 0
         if n.show_if: cond = dsl.flag(n.show_if); ctype = 1
@@ -707,6 +707,7 @@ for k, v in dsl.OP.items(): h += '#define OP_%s %d\n' % (k, v)
 h += '#define START_MAP %d\n#define START_X %d\n#define START_Y %d\n#define START_DIR %d\n' % (MAPI[story.START[0]], story.START[1], story.START[2], DIRS[story.START[3]])
 h += '#define N_FLAGS %d\n' % len(dsl.FLAGS)
 h += '#define CH_SPACE %d\n' % S.charidx[' ']
+h += '#define COMP_KID %d\n#define COMP_ALT %d\n' % (KIDI[story.COMP[0]], KIDI[story.COMP[1]])
 h += '#endif\n'
 open(os.path.join(GEN, 'gen.h'), 'w').write(h)
 print('깃발', len(dsl.FLAGS), '문자열', len(S.items), '기술', len(MOVES))
