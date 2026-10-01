@@ -48,58 +48,68 @@ OBJ = {'tree': ['tree0', 'tree1', 'tree2', 'tree3'], 'house': ['house0', 'house1
 KEY = {'.': 'grass', 'g': 'dots', '*': 'flower', ',': 'tall', 'b': 'bush', 'c': 'crop', '-': 'fence', '|': 'post',
        ':': 'path', '~': 'water', '=': 'dock', 'S': 'sign', 'k': 'cat', 'o': 'barrel', 'p': 'pot'}
 
-# ── 샤이어 지도 (32×24). T = 숲(2×2 나무를 짝 맞춰 깔기), 집은 objs 로 찍음 ──
-SHIRE = [
-    'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
-    'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
-    'TT..*.......g.....TT,,,,,..----T',
-    'TT......p...*.....TT,,,,,..|cc|T',
-    'TT.:::::::::::....,,,,,,,..|cc|T',
-    'TT.:.......g..:...,,,,,,...|cc|T',
-    'TT.:..*.......::::::::::::::..|T',
-    'TT.:...........,,,..,,,,...:cc|T',
-    'TT.::::::::....,,,..,,,,...:cc|T',
-    'TT......*.:.......*........:..|T',
-    'TT.g......:..TT..TT..o.....:..|T',
-    'TT....S...:..TT..TT........:--|T',
-    'TT........:.............,,,:..TT',
-    'TTTTTTTT..:::::::::..,,,,,,:,,TT',
-    'TTTTTTTT.........:...,,,,,,:,,TT',
-    'TTTTTTTTTTTTTTTT.:.TTTTT,,.:..TT',
-    'TTTTTTTTTTTTTTTT.:.TTTTT...:..TT',
-    'TTTTTTTTTTTTTTTT.:::::::::::..TT',
-    'TTTTTTTTTTTTTTTT...TTTTTTTT:TTTT',
-    'TTTTTTTTTTTTTTTTTTTTTTTTTTT:TTTT',
-    '~~~~~~~~~~~~~~~~~~~~~~~~~~T:TTTT',
-    '~~~~~~~~~~~~~~~~~~~~~~~~~~~=~~~~',
-    '~~~~~~~~~~~~~~~~~~~~~~~~~~~=~~~~',
-    '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+# ── 샤이어 지도: 큰 칸(2×2) 밑그림으로 숲·물·밭을 잡고(나무가 반쪽으로 잘리지 않게), 길·집·울타리를 덧그림 ──
+COARSE = [            # T 숲  . 빈터  , 풀숲  F 밭  W 물
+    'TTTTTTTTTTTTTTTT',
+    'T.......T....FFT',
+    'T.......T....FFT',
+    'T..............T',
+    'T........,,....T',
+    'T.....,,.,,..,,T',
+    'TTTT..,,.....,,T',
+    'TTTTTTTTTTTT.TTT',
+    'TTTTTTTTTTTT.TTT',
+    'TTTTTTTTTTTT.TTT',
+    'WWWWWWWWWWWW.WWW',
+    'WWWWWWWWWWWWWWWW',
 ]
+def build(coarse, paints):
+    H, W = len(coarse) * 2, len(coarse[0]) * 2
+    g = [['.'] * W for _ in range(H)]
+    for cy, r in enumerate(coarse):
+        for cx, ch in enumerate(r):
+            v = {'T': 'T', '.': '.', ',': ',', 'F': 'c', 'W': '~'}[ch]
+            for dy in range(2):
+                for dx in range(2): g[cy * 2 + dy][cx * 2 + dx] = v
+    for ch, cells in paints:
+        for x, y in cells: g[y][x] = ch
+    return [''.join(r) for r in g]
+def hline(y, x0, x1): return [(x, y) for x in range(min(x0, x1), max(x0, x1) + 1)]
+def vline(x, y0, y1): return [(x, y) for y in range(min(y0, y1), max(y0, y1) + 1)]
+SHIRE = build(COARSE, [
+    (':', hline(6, 3, 26) + vline(5, 4, 6) + vline(11, 4, 6) + vline(5, 6, 10) + vline(24, 6, 21) + vline(25, 14, 19)),
+    ('=', [(24, 20), (25, 20), (24, 21), (25, 21)]),                    # 노루말 나루
+    ('-', hline(8, 2, 3) + hline(8, 8, 9) + [(16, 8), (17, 8)]),         # 정원 울타리
+    ('*', [(2, 4), (8, 3), (13, 3), (3, 10), (9, 10), (14, 5), (20, 4)]),
+    ('g', [(7, 9), (12, 9), (18, 2), (22, 3)]),
+    ('o', [(27, 7)]), ('p', [(7, 3)]),
+])
 MAPS = [dict(
-    name='샤이어', rows=SHIRE, start=(5, 6, 0),
-    objs=[('house', 4, 4 - 2), ('house', 9, 2), ('house', 6, 9), ('tree', 13, 10), ('tree', 17, 10)],
+    name='샤이어', rows=SHIRE, start=(5, 4, 0),
+    objs=[('house', 4, 2), ('house', 10, 2), ('house', 4, 8), ('house', 26, 6)],
     wild=['dogW', 'dogW', 'crowW'], rate=12,
     npcs=[   # x, y, 대사
-        (7, 6, '샘의 아버지 햄: 프로도 나리, 우리 샘 녀석 잘 부탁드려요. 손은 굼떠도 마음은 단단한 놈이에요.'),
-        (11, 8, '호빗 아주머니: 동쪽 풀숲엔 매곳 영감네 개들이 돌아다녀요. 풀숲에 들어가면 조심하세요!'),
-        (16, 13, '호빗 아이: 요즘 밤마다 검은 옷 입은 사람이 말 타고 돌아다닌대요. 「배긴스」를 찾는대요!'),
-        (25, 9, '매곳네 일꾼: 영감님 밭에서 버섯 훔쳐 가면 개를 푼다니까!'),
+        (7, 5, '샘의 아버지 햄: 프로도 나리, 우리 샘 녀석 잘 부탁드려요. 손은 굼떠도 마음은 단단한 놈이에요.'),
+        (13, 7, '호빗 아주머니: 동쪽 풀숲엔 매곳 영감네 개들이 돌아다녀요. 풀숲에 들어가면 조심하세요!'),
+        (19, 5, '호빗 아이: 요즘 밤마다 검은 옷 입은 사람이 말 타고 돌아다닌대요. 「배긴스」를 찾는대요!'),
+        (28, 8, '매곳네 일꾼: 영감님 밭에서 버섯 훔쳐 가면 개를 푼다니까!'),
     ],
-    signs=[(6, 11, '호빗골 → 동쪽 매곳 농장 · 남동쪽 노루말 나루'), (26, 16, '이 길 끝은 노루말 나루. 강을 건너면 샤이어 밖이다.')],
-    items=[(3, 9, 'herb'), (22, 3, 'herb'), (29, 14, 'lembas')],
-    # 사건 자리: (x, y, w, h, 그 단계일 때만)
-    triggers=[(27, 5, 1, 3, 1), (16, 13, 1, 1, 99), (27, 17, 1, 3, 2)],
+    signs=[(8, 5, '호빗골 → 동쪽 매곳 농장 · 남동쪽 노루말 나루'), (23, 13, '이 길 끝은 노루말 나루. 강을 건너면 샤이어 밖이다.')],
+    items=[(9, 13, 'herb'), (29, 13, 'herb'), (2, 7, 'lembas')],
+    # 사건 자리 (x, y, w, h, 그 단계까지): 농장 어귀(동쪽으로 가려면 꼭 지나감) → 숲길
+    triggers=[(22, 2, 2, 12, 1), (24, 16, 2, 1, 2)],
 )]
-# 같은 자리 겹침 정리: 아이(16,13)는 사람, 트리거 99 는 쓰지 않음
-MAPS[0]['triggers'] = [t for t in MAPS[0]['triggers'] if t[4] != 99]
-
 def grid_names(m):
     H, W = len(m['rows']), len(m['rows'][0])
     g = [[None] * W for _ in range(H)]
     for y, r in enumerate(m['rows']):
         assert len(r) == W, (m['name'], y, len(r))
         for x, ch in enumerate(r):
-            g[y][x] = 'tree%d' % ((x & 1) + 2 * (y & 1)) if ch == 'T' else KEY[ch]
+            if ch == 'T':
+                bx, by = x & ~1, y & ~1
+                whole = all(0 <= by + j < H and 0 <= bx + i < W and m['rows'][by + j][bx + i] == 'T' for j in range(2) for i in range(2))
+                g[y][x] = 'tree%d' % ((x & 1) + 2 * (y & 1)) if whole else 'bush'
+            else: g[y][x] = KEY[ch]
     for o, ox, oy in m['objs']:
         for i, n in enumerate(OBJ[o]): g[oy + i // 2][ox + i % 2] = n
     for x, y, _ in m['signs']: g[y][x] = 'sign'
@@ -140,8 +150,8 @@ def sprite16(path):
     return out
 def obj_tiles(img):   # 8×16 순서: 왼쪽 위·아래, 오른쪽 위·아래
     return enc(img[0:8, 0:8]) + enc(img[8:16, 0:8]) + enc(img[0:8, 8:16]) + enc(img[8:16, 8:16])
-PLAYER = ['down1', 'down2', 'up1', 'up2', 'left1', 'left2', 'right1', 'right2']
-pspr = sum((obj_tiles(sprite16(GBM + 'pc-walk-%s.png' % f)) for f in PLAYER), [])
+import sys as _s; _s.path.insert(0, HERE + '/art'); import frodo_walk
+pspr = sum((obj_tiles(np.array(frodo_walk.tones(f))) for f in frodo_walk.FRAMES), [])   # 프로도 (임시 손그림)
 npc_spr = obj_tiles(sprite16(TS[0:16, 32:48]))   # 마을 사람 (타일 묶음의 사람 칸)
 
 def cstr(s): return json.dumps(s, ensure_ascii=False)
