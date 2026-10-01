@@ -126,6 +126,7 @@ def walk_scripts():
 for sc in walk_scripts():
     for it in sc:
         if isinstance(it, tuple) and it[0] in ('SAY', 'ASK'): sid(it[1])
+for m in story.MAPS.values(): sid(m.name)          # 지도 이름 글자도
 CHARS = S.finalize(extra='▶▼?!.…')
 print('글자 수', len(CHARS))
 # 글꼴: 글자마다 8×16 1bpp = 16바이트

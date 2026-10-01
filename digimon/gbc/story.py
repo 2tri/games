@@ -20,7 +20,8 @@ START = ('house2f', 3, 3, 'down')
 MAPS = {}
 # 지도마다 배경 음악 (tools/midi2gb.py 곡 이름)
 MAP_SONG = {'house2f': 'town', 'house1f': 'town', 'town': 'town', 'camp': 'town', 'forest': 'field', 'route1': 'field',
-            'village': 'village', 'beach': 'field'}
+            'village': 'village', 'beach': 'field', 'center': 'village', 'dshop': 'village', 'neighbor': 'town', 'store': 'town',
+            'lodge': 'town', 'office': 'town'}
 
 # ── 오프닝 (흰수염 도사) ──
 OPENING = [
@@ -45,6 +46,14 @@ KEYC = {'F': 'c_forest', '.': 'c_grass', ':': 'c_path', 'd': 'c_dirt'}
 KEYV = {'W': 'v_sea', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}
 KEYR = {'J': 'r_canopy', '.': 'r_grass', ':': 'r_path', ',': 'r_tall', '*': 'r_flowers'}                 # 파일섬 숲·길 (A6 타일)
 KEYB = {'J': 'r_canopy', ',': 'r_tall2', 's': 'r_sand', '~': 'r_sea', 'w': 'r_shore', '.': 'r_grass'}  # 해변
+
+def room(w, h):
+    """실내 바닥: 위 2줄은 벽(위·아래)"""
+    return ['W' * w, 'b' * w] + ['.' * w] * (h - 2)
+
+def mat_warps(x, y, to, tx, ty):
+    """출입구 깔개(2칸) → 바깥 문 아래"""
+    return [Warp_(x, y, to, tx, ty, 'down'), Warp_(x + 1, y, to, tx, ty, 'down')]
 
 # ── 주인공 집 2층 (내 방) ──
 MAPS['house2f'] = Map('내 방', [
@@ -105,10 +114,28 @@ MAPS['town'] = Map('우리 동네', [
     'FFFFFFFFFFFFFFFF'], KEYT, 't_forest', open=[(7, -9, 8, -1, 't_path')],
     objs=[('t_house', 2, 2), ('t_house2', 10, 3), ('t_shop', 10, 8), ('t_sign', 6, 2), ('t_sign2', 9, 6),
           ('t_tree', 14, 1), ('t_tree', 1, 8), ('t_tree', 5, 9), ('t_flowerbed', 2, 11), ('t_tree', 14, 5)],
-    warps=[Warp_(3, 6, 'house1f', 4, 7, 'up')],
+    warps=[Warp_(3, 6, 'house1f', 4, 7, 'up'), Warp_(11, 4, 'neighbor', 4, 6, 'up'), Warp_(11, 10, 'store', 3, 6, 'up')],
     signs=[Sign(6, 2, [Say('↑ 캠프 버스 정류장')]), Sign(9, 6, [Say('여기는 우리 동네.\f← 우리 집   → 편의점')]),
-           Sign(11, 4, [Say('이웃집이다.\f아무도 없는 것 같다.')]), Sign(11, 10, [Say('편의점이다.\f「오늘은 쉽니다」라고 쓰여 있다.')])],
+           ],
     triggers=[Trigger(7, 0, 2, 1, BUS)])
+
+# ── 이웃집 ──
+MAPS['neighbor'] = Map('이웃집', room(10, 7), KEYH, 'h_void',
+    objs=[('h_tv2', 1, 1), ('h_table', 5, 3), ('h_stool', 4, 4), ('h_stool', 7, 4), ('h_shelf', 9, 2), ('h_plant2', 0, 4), ('h_mat', 4, 6)],
+    signs=[Sign(x, y, [Say('식탁 위에 쪽지가 있다.\f「캠프 가는 아이들에게:\n하늘이 이상하니 조심하렴」')]) for (x, y) in ((5, 3), (6, 3), (5, 4), (6, 4))] +
+          [Sign(x, 2, [Say('텔레비전에서 이상한 오로라 소식이 나오고 있다…')]) for x in (1, 2, 3)],
+    warps=mat_warps(4, 6, 'town', 11, 5))
+
+# ── 동네 편의점 ──
+MAPS['store'] = Map('편의점', room(8, 7), KEYH, 'h_void',
+    objs=[('h_table', 2, 2), ('h_table', 4, 2), ('h_shelf', 0, 2), ('h_kitchen', 7, 2), ('h_shelf', 6, 2), ('h_plant2', 1, 5), ('h_mat', 3, 6)],
+    signs=[Sign(x, 3, [IfFlag('storegift', 'g'), SetFlag('storegift'),
+                       Say('점원: 어서 와!\n캠프 가는 거니?'), Say('점원: 이거 가져가렴.\n다쳤을 때 쓰는 거란다.'),
+                       GiveItem('회복 디스크', 2), Say('회복 디스크를 2개 받았다!\f…이상한 모양의 원반이다.'), End(),
+                       Label('g'), Say('점원: 캠프 재미있게 다녀와!')]) for x in (2, 3, 4, 5)] +
+          [Sign(7, y, [Say('냉장고에 시원한 음료수가 가득하다.')]) for y in (2, 3, 4)] +
+          [Sign(0, y, [Say('과자가 잔뜩 진열되어 있다.')]) for y in (2, 3, 4)],
+    warps=mat_warps(3, 6, 'town', 11, 11))
 
 # ── 여름 캠프장 ──
 KID_LINE = {
@@ -147,12 +174,27 @@ MAPS['camp'] = Map('여름 캠프장', [
           ('c_tent1', 12, 9), ('c_tent2', 14, 9), ('c_tent3', 13, 11), ('c_tent4', 11, 12), ('c_tent5', 14, 12), ('c_stump', 11, 10),
           ('c_sign', 4, 12), ('c_tree', 1, 7), ('c_tree', 6, 1), ('c_tree', 11, 1)],
     npcs=[NPC(x, y, k, d, [Say(KID_NAME[k] + ': ' + KID_LINE[k])], hide_kid=k, hide_if='aurora') for k, (x, y, d) in CAMP_SPOTS.items()],
-    signs=[Sign(3, 6, [Say('캠프 산장.\f지금은 모두 밖에 나와 있다.')]), Sign(8, 4, [Say('캠프 관리 사무소.\f「오늘의 일정: 캠프파이어」')]),
+    warps=[Warp_(3, 6, 'lodge', 4, 6, 'up'), Warp_(8, 4, 'office', 3, 5, 'up')],
+    signs=[
            Sign(4, 12, [Say('여름 캠프장\n― 버스 정류장 ―')]), Sign(5, 12, [Say('여름 캠프장\n― 버스 정류장 ―')])],
     triggers=[Trigger(13, 3, 1, 1, AURORA, once='aurora')],
     on_enter=[IfFlag('campIntro', 'e'), SetFlag('campIntro'),
               Say('여름 캠프장에 도착했다.\f그런데 한여름인데도 갑자기 눈이 내리기 시작했다…'),
               Say('모두 언덕 위 사당 쪽이 이상하다며 웅성거리고 있다.\n(오른쪽 위 사당으로 가 보자)'), Label('e')])
+
+# ── 캠프 산장 ──
+MAPS['lodge'] = Map('캠프 산장', room(10, 7), KEYH, 'h_void',
+    objs=[('h_bed', 0, 1), ('h_bed', 2, 1), ('h_bed', 8, 1), ('h_table', 5, 3), ('h_stool', 4, 4), ('h_stool', 7, 4), ('h_mat', 4, 6)],
+    signs=[Sign(x, y, [Say('캠프 일정표가 놓여 있다.\f「1일째: 캠프파이어\n2일째: 등산」')]) for (x, y) in ((5, 3), (6, 3), (5, 4), (6, 4))] +
+          [Sign(x, 4, [Say('2층 침대다.\f아직 잘 시간이 아니다.')]) for x in (0, 1, 2, 3, 8, 9)],
+    warps=mat_warps(4, 6, 'camp', 3, 7))
+
+# ── 캠프 관리 사무소 ──
+MAPS['office'] = Map('관리 사무소', room(8, 6), KEYH, 'h_void',
+    objs=[('h_desk', 1, 0), ('h_shelf', 7, 2), ('h_plant', 0, 1), ('h_window', 4, 0), ('h_mat', 3, 5)],
+    signs=[Sign(x, 2, [Say('컴퓨터 화면에 이상한 숫자가 흘러가고 있다…\f0과 1이 끝없이…')]) for x in (1, 2, 3)] +
+          [Sign(7, y, [Say('구급 상자와 지도가 꽂혀 있다.')]) for y in (2, 3, 4)],
+    warps=mat_warps(3, 5, 'camp', 8, 5))
 
 # ── 파일섬 숲 ──
 KUWAGA = [
@@ -234,7 +276,7 @@ ELECMON = [
     Say('에렉몬: 디지몬에게는 속성이 있어.\f백신은 바이러스에 강하고,\n바이러스는 데이터에 강하고,\f데이터는 백신에 강해.\n잘 기억해 둬!'),
     Label('heal'),
     Ask('에렉몬: 디지몬들을 쉬게 해 줄까?'), IfNo('no'),
-    Close(), FadeOut(), Heal(), SetHeal('village', 7, 7, 'up'), Wait(20), FadeIn(),
+    Close(), FadeOut(), Heal(), SetHeal('village', 7, 6, 'down'), Wait(20), FadeIn(),
     Say('에렉몬: 다들 기운을 되찾았어!\n또 와!'), End(),
     Label('no'), Say('에렉몬: 조심해서 다녀!'),
 ]
@@ -255,14 +297,29 @@ MAPS['village'] = Map('행복의 마을', [
     'WWWWWWW::WWWWWWW'], KEYV, 'v_sea', open=[(7, 14, 8, 29, 'v_path'), (16, 6, 29, 8, 'v_path')],
     objs=[('v_center', 5, 1), ('v_shop', 11, 2), ('v_egg1', 1, 2), ('v_tree', 3, 4), ('v_block2', 3, 8), ('v_egg2', 9, 10),
           ('v_pond', 12, 9), ('v_tree', 10, 7)],
-    warps=edge([7, 8], 14, 'route1', 4, 0) + edgeV(16, [6, 7, 8], 'beach', 0, 6),
-    npcs=[NPC(6, 6, 'elecmon', 'down', ELECMON),
-          NPC(2, 6, 'blob:botamon', 'down', [Say('깜몬: 뽀글… 뽀글…')]),
+    warps=edge([7, 8], 14, 'route1', 4, 0) + edgeV(16, [6, 7, 8], 'beach', 0, 6) +
+          [Warp_(7, 5, 'center', 4, 7, 'up'), Warp_(12, 4, 'dshop', 3, 6, 'up')],
+    npcs=[NPC(2, 6, 'blob:botamon', 'down', [Say('깜몬: 뽀글… 뽀글…')]),
           NPC(11, 11, 'blob:punimon', 'down', [Say('푸니몬: 푸니~ 푸니~')]),
           NPC(6, 10, 'blob:koromon', 'down', [Say('코로몬: 이 마을에서는 디지몬이 디지타마에서 태어나!\f다시 태어날 때도 여기로 돌아온대.')])],
-    signs=[Sign(12, 4, [Say('디지몬 상점.\f「곧 문을 엽니다」라고 쓰여 있다.')]), Sign(7, 5, [Say('디지몬 회복 센터.\f에렉몬에게 말을 걸면 디지몬을 쉬게 해 준다.')])],
     on_enter=[IfFlag('village', 'e'), SetFlag('village'),
-              Say('알록달록한 블록과 요람이 가득한 마을이다.\f아기 디지몬들이 잠들어 있다.'), Label('e')])
+              Say('알록달록한 블록과 요람이 가득한 마을이다.\f아기 디지몬들이 잠들어 있다.'),
+              Say('빨간 지붕 건물은 디지몬 회복 센터,\n파란 지붕 건물은 상점인 것 같다.'), Label('e')])
+
+# ── 행복의 마을 회복 센터 (포켓몬 센터 오마주) ──
+MAPS['center'] = Map('회복 센터', room(10, 8), KEYH, 'h_void',
+    objs=[('h_table', 3, 2), ('h_table', 5, 2), ('h_plant2', 0, 1), ('h_plant2', 9, 1), ('h_tv2', 7, 1), ('h_stool', 1, 5), ('h_stool', 8, 5), ('h_mat', 4, 7)],
+    npcs=[NPC(4, 1, 'elecmon', 'down', ELECMON, fixed=True)],
+    signs=[Sign(x, 3, ELECMON) for x in (3, 4, 5, 6)] + [Sign(x, 2, [Say('화면에 디지몬 보관함이 떠 있다.\f(보관함은 아직 준비 중)')]) for x in (7, 8, 9)],
+    warps=mat_warps(4, 7, 'village', 7, 6))
+
+# ── 행복의 마을 상점 ──
+SHOPKEEP = [Say('워매몬: 어서 오세요!\n필요한 거 있으면 골라 봐.'), Shop(), Say('워매몬: 또 오세요~')]
+MAPS['dshop'] = Map('디지몬 상점', room(8, 7), KEYH, 'h_void',
+    objs=[('h_table', 2, 2), ('h_table', 4, 2), ('h_shelf', 0, 2), ('h_shelf', 7, 2), ('h_kitchen', 6, 2), ('h_plant2', 1, 5), ('h_mat', 3, 6)],
+    npcs=[NPC(3, 1, 'blob:numemon', 'down', SHOPKEEP, fixed=True)],
+    signs=[Sign(x, 3, SHOPKEEP) for x in (2, 3, 4, 5)] + [Sign(0, y, [Say('그물과 디스크가 가지런히 놓여 있다.')]) for y in (2, 3, 4)],
+    warps=mat_warps(3, 6, 'village', 12, 5))
 
 # ── 해변 ──
 SHELLMON = [
