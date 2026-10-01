@@ -108,7 +108,8 @@
   }
 
   // ───────── 프로도 ─────────
-  function frodoF() {
+  function frodoF(o) {
+    o = o || {};
     const s = mk();
     fill(s, body(16, 20, 9.5, 11), 1, { cx: 16, cy: 22, rx: 11, ry: 10, shade: 2 });                // 망토
     fill(s, (x, y) => y >= 21 && Math.abs(x - 16) <= 4 - (y > 27 ? 0 : 0), 2, { noLine: false });      // 조끼
@@ -121,8 +122,7 @@
     stamp(s, 12, 13, EYE.map(c => c)); stamp(s, 19, 13, EYE);                                          // 눈
     stamp(s, 15, 17, ['22']);                                                                          // 입
     // 지팡이 + 손
-    fill(s, R(2, 6, 4, 32), 2, { cx: 3, cy: 18, rx: 2, ry: 14, shade: 3 }); fill(s, E(3, 6, 2, 2), 2);
-    fill(s, E(4, 24, 2.2, 2), 0);
+    if (o.staff !== false) { fill(s, R(2, 6, 4, 32), 2, { cx: 3, cy: 18, rx: 2, ry: 14, shade: 3 }); fill(s, E(3, 6, 2, 2), 2); fill(s, E(4, 24, 2.2, 2), 0); }
     return finish(s);
   }
   function frodoB() {
@@ -323,10 +323,22 @@
     for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) { const t = s.p[y * s.w + x]; if (t >= 0) { g.fillStyle = pal[t]; g.fillRect(x * scale, y * scale, scale, scale); } }
     return c;
   }
+  // 여러 그림을 한 장에 겹쳐 놓기 (앞에 올 것을 나중에)
+  function compose(w, h, items) {
+    const out = mk(w, h);
+    for (const { s: sp, dx, dy } of items) for (let y = 0; y < sp.h; y++) for (let x = 0; x < sp.w; x++) {
+      const t = sp.p[y * sp.w + x], X = x + dx, Y = y + (dy || 0); if (t < 0 || !inb(out, X, Y)) continue; out.p[Y * w + X] = t;
+    }
+    return out;
+  }
+  // 프로도와 샘 — 한 캐릭터, 그림만 둘이 나란히 (앞: 프로도 왼쪽·샘 오른쪽 / 뒤: 반대로 보임)
+  const pairF = () => compose(44, 32, [{ s: samF(), dx: 13 }, { s: frodoF({ staff: false }), dx: -4 }]);
+  const pairB = () => compose(44, 32, [{ s: samB(), dx: -3 }, { s: frodoB(), dx: 13 }]);
+
   root.RingGB32 = {
     GB, toCanvas, dog,
     heroes: [
-      { name: '프로도', front: frodoF, back: frodoB }, { name: '샘', front: samF, back: samB },
+      { name: '프로도와 샘', front: pairF, back: pairB },
       { name: '아라곤', front: aragornF, back: aragornB }, { name: '레골라스', front: legolasF, back: legolasB },
       { name: '김리', front: gimliF, back: gimliB }, { name: '간달프', front: gandalfF, back: gandalfB },
     ],

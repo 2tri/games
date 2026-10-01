@@ -1,7 +1,7 @@
 <!doctype html><meta charset="utf-8">
 <style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
 body{margin:0;background:#20242a;color:#e6e6ee;font:15px Galmuri9,sans-serif;width:1200px}
-.grid{display:grid;grid-template-columns:repeat(6,192px);gap:8px;padding:12px 12px 0}
+.grid{display:grid;grid-template-columns:264px repeat(4,192px);gap:8px;padding:12px 12px 0}
 .cell{text-align:center}.cell div{margin:2px 0 4px}
 canvas{image-rendering:pixelated;display:block;margin:0 auto;background:#f8f8f0}
 .row{display:flex;gap:16px;padding:8px 12px;align-items:flex-start}</style>
@@ -25,13 +25,13 @@ canvas{image-rendering:pixelated;display:block;margin:0 auto;background:#f8f8f0}
     c.fillStyle=P[0];c.fillRect(0,0,160,144);
     c.fillStyle=P[1];for(let y=0;y<7;y++){const w=Math.round(30*Math.sqrt(1-((y-3)/3.5)**2));c.fillRect(124-w,42+y,w*2,1);}
     c.drawImage(A.toCanvas(A.dog(),1),104,6);
-    c.drawImage(A.toCanvas(me,2),10,32);
+    c.drawImage(A.toCanvas(me,2),me.w>32?0:10,32);
     text(c,'송곳니',8,4);text(c,'Lv3',62,4);c.fillStyle=P[3];c.fillRect(8,22,72,1);c.fillRect(79,14,1,9);hp(c,10,16);
-    text(c,mname,88,56);text(c,'Lv5',136,56);c.fillStyle=P[3];c.fillRect(82,92,74,1);c.fillRect(82,64,1,29);hp(c,88,68);text(c,'22/ 22',112,76);
+    text(c,mname,90,56);text(c,'Lv5',139,56);c.fillStyle=P[3];c.fillRect(88,92,70,1);c.fillRect(88,64,1,29);hp(c,90,68);text(c,'22/ 22',114,76);
     box(c,0,96,160,48);text(c,msg1,8,106);text(c,msg2,8,122);
   }
-  battle('bt', A.heroes[0].back(), '프로도','농부 매곳네 개 송곳니가','으르렁거리며 달려들었다!');
-  battle('bt2', A.heroes[4].back(), '김리','김리는 도끼를','힘껏 휘둘렀다!');
+  battle('bt', A.heroes[0].back(), '프로도·샘','농부 매곳네 개 송곳니가','으르렁거리며 달려들었다!');
+  battle('bt2', A.heroes[3].back(), '김리','김리는 도끼를','힘껏 휘둘렀다!');
   const sm=document.getElementById('sm');
   for (const h of A.heroes) for (const v of ['front','back']) { const k=A.toCanvas(h[v](),2); k.style.margin='0'; sm.appendChild(k); }
 })();
