@@ -7,6 +7,7 @@
 #include "story.h"
 #include "steps.h"
 #include "fieldrt.h"
+#include "music.h"
 
 // 걷는 화면이 맡는 이야기 단계 (지금은 샤이어: 1~2단계). 그 밖은 이야기 장면을 차례로
 #define FIELD_FIRST 1
@@ -34,6 +35,7 @@ void main(void) {
     eng_init();
     for (;;) {
         has_save = load() && !S.done && S.step > 0;
+        music_play(MUS_TITLE);
         set_scene(titleScene); titleScene();
         c = has_save ? choose(0, T_CONT, 2, NOCANCEL) : (choose(0, T_NEW, 1, NOCANCEL), 1);
         if (c == 1) newGame();
@@ -48,7 +50,11 @@ void main(void) {
                     // 건너뛴 단계가 있으면 차례로 (사건 순서가 꼬이지 않게)
                     while (S.step <= ev_arg && S.step < N_STEPS) { before = S.step; run_step(S.step); if (S.step == before) break; }
                 }
-            } else { before = S.step; run_step(S.step); (void)before; }
+            } else {
+                // 이야기 장면 곡: 1부 메인 테마 · 2부 미나스 티리스 · 3부 곤도르 · 끝 Into the West
+                music_play(S.step >= 40 ? MUS_END : S.step >= 32 ? MUS_STORY3 : S.step >= 25 ? MUS_STORY2 : MUS_STORY1);
+                before = S.step; run_step(S.step); (void)before;
+            }
         }
         S.done = 1; save();
     }

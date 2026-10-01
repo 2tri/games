@@ -9,6 +9,7 @@
 #include "story.h"
 #include "field.h"
 #include "fieldrt.h"
+#include "music.h"
 
 static MapDef MD;
 static int16_t camx, camy;
@@ -88,6 +89,7 @@ void field_enter(void) {
     for (r = 0; r < 40; r++) move_sprite(r, 0, 0);
     render_all(); set_cam(0, 0); draw_npcs(); draw_player(0);
     DISPLAY_ON;
+    music_play(MUS_SHIRE);
     SWITCH_ROM(sv);
 }
 static void talk(const char *t) {   // 글상자 아래로 내려가는 그림은 잠시 숨김

@@ -5,6 +5,7 @@ set -e
 cd "$(dirname "$0")"
 G=$1; FONT=$2
 node story.js 8          # index.html 의 이야기 → src/story_*.c
+python3 music/convert.py  # 영화 음악 → 게임보이 3채널 src/music_data.c
 python3 field.py         # 걷는 화면 지도·타일 → src/field_data.c
 python3 gen.py "$FONT"   # 자료·그림·글꼴(쓰인 글자만) → src/data.c, spr*.c, font.c
 rm -rf obj; mkdir -p obj

@@ -5,6 +5,7 @@
 #include "engine.h"
 #include "data.h"
 #include "game.h"
+#include "music.h"
 
 State S;
 static const Foe *F; static uint8_t foeId;
@@ -173,11 +174,19 @@ static uint8_t foeTurn(void) {
     return 0;
 }
 static const char *MAIN_OPTS[4] = { "싸운다", "가방", "동료", "도망" };
+static uint8_t prevMusic;
+static uint8_t battle_(uint8_t id, uint8_t noRun, uint8_t turns);
 uint8_t battle(uint8_t id, uint8_t noRun, uint8_t turns) BANKED {
+    uint8_t r = battle_(id, noRun, turns);
+    if (prevMusic != MUS_NONE) music_play(prevMusic);
+    return r;
+}
+static uint8_t battle_(uint8_t id, uint8_t noRun, uint8_t turns) {
     const Hero *H; const char *opts[5]; char ib[4][24]; uint8_t c, k, i, n, others[5], r, heroFirst, turn = 0;
     foeId = id; F = &FOES[id]; fhp = fmax = fShown = F->hp; fAtkB = fDefB = 0; hShown = S.hp;
     heroSleep = heroBind = hide = foeSleep = phialUsed = 0; foeShow = heroShow = 1;
     S.buffAtk = S.buffDef = 0;
+    prevMusic = music_cur(); music_play(F->boss ? MUS_BOSS : MUS_BATTLE);
     set_scene(battleScene); battleScene();
     sb_clear(); if (!F->boss) sb_add("야생의 "); sb_add(F->name); sb_josa("이", "가"); sb_add(F->boss ? " 앞을 가로막았다!" : " 덤벼들었다!"); say(SB);
     if (S.sting && F->type == TY_ORC) say("스팅의 칼날이 푸르게 빛난다! 오크가 가까이 있다.");
