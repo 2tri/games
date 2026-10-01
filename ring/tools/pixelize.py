@@ -27,7 +27,7 @@ def flood_bg(gray, light=True, tol=28):
     return bg
 
 
-def pixelize(img, size=56, bg='white', gamma=1.0, dither=0.5, outline=True, lo=2, hi=98):
+def pixelize(img, size=56, bg='white', gamma=1.0, dither=0.5, outline=True, lo=2, hi=98, tol=12, edges=0.0):
     rgb = img.convert('RGB')
     gray = np.asarray(rgb.convert('L'))
     if bg == 'none':
@@ -36,7 +36,7 @@ def pixelize(img, size=56, bg='white', gamma=1.0, dither=0.5, outline=True, lo=2
         # 큰 그림은 줄여서 배경 판정 (속도)
         k = max(1, max(gray.shape) // 600)
         small = gray[::k, ::k]
-        bgm = flood_bg(small, light=(bg == 'white'))
+        bgm = flood_bg(small, light=(bg == 'white'), tol=tol)
         mask = ~np.asarray(Image.fromarray(bgm.astype(np.uint8) * 255).resize(gray.shape[::-1], Image.NEAREST)).astype(bool)
     ys, xs = np.where(mask)
     y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
@@ -48,6 +48,14 @@ def pixelize(img, size=56, bg='white', gamma=1.0, dither=0.5, outline=True, lo=2
     gi = np.asarray(Image.fromarray((g * m * 255 + (1 - m) * 255).astype(np.uint8)).resize((tw, th), Image.BOX)).astype(float) / 255
     mi = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).resize((tw, th), Image.BOX)).astype(float) / 255
     alpha = mi > 0.45
+    # 안쪽 윤곽선: 4배 해상도에서 밝기 경사를 구해 칸마다 최댓값 → 강한 곳은 검은 선
+    edge = np.zeros((th, tw))
+    if edges > 0:
+        g4 = np.asarray(Image.fromarray((g * m * 255 + (1 - m) * 255).astype(np.uint8)).resize((tw * 4, th * 4), Image.BOX)).astype(float) / 255
+        gx = np.zeros_like(g4); gy = np.zeros_like(g4)
+        gx[:, 1:-1] = g4[:, 2:] - g4[:, :-2]; gy[1:-1, :] = g4[2:, :] - g4[:-2, :]
+        mag = np.hypot(gx, gy)
+        edge = mag.reshape(th, 4, tw, 4).max(axis=(1, 3))
     # 대비 늘리기 (대상 안쪽 밝기 분포 기준)
     vals = gi[alpha]
     a, b = np.percentile(vals, lo), np.percentile(vals, hi)
@@ -59,6 +67,8 @@ def pixelize(img, size=56, bg='white', gamma=1.0, dither=0.5, outline=True, lo=2
     yy, xx = np.mgrid[0:th, 0:tw]
     thr = 0.5 + (BAYER[yy % 2, xx % 2] - 0.625) * dither * 1.6
     tone = np.clip(base + (frac > thr), 0, 3).astype(int)
+    if edges > 0:
+        tone = np.where((edge > edges) & alpha, 3, tone)
     out = -np.ones((size, size), int)
     oy, ox = (size - th) // 2, (size - tw) // 2
     if size - th > 2:
@@ -112,10 +122,14 @@ if __name__ == '__main__':
     ap.add_argument('--gamma', type=float, default=1.0)
     ap.add_argument('--dither', type=float, default=0.5)
     ap.add_argument('--scale', type=int, default=1)
+    ap.add_argument('--tol', type=int, default=12)
+    ap.add_argument('--edges', type=float, default=0.0)
+    ap.add_argument('--hi', type=float, default=98)
+    ap.add_argument('--lo', type=float, default=2)
     a = ap.parse_args()
     im = Image.open(a.src)
     if a.box:
         im = im.crop(tuple(int(v) for v in a.box.split(',')))
-    t = pixelize(im, a.size, a.bg, a.gamma, a.dither)
+    t = pixelize(im, a.size, a.bg, a.gamma, a.dither, tol=a.tol, edges=a.edges, lo=a.lo, hi=a.hi)
     to_image(t, a.scale, bg=(248, 248, 240)).save(a.dst)
     print('saved', a.dst)
