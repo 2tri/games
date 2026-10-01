@@ -27,6 +27,12 @@ static void newGame(void) {
     S.step = START_STEP; S.lv = 19; S.hp = statOf(HE_FRODOSAM, 19, ST_HP); S.mlv[0] = 19; S.lembas = 6; S.herb = 3; S.shadow = 4;
     S.dagger = S.sting = S.mithril = S.cloak = S.phial = S.gollum = 1;
 #endif
+#ifdef START_MAP    // 시험용: 그 지역 처음 자리에서
+    S.map = START_MAP; field_start_pos(); addMember(HE_ARAGORN, S.lv);
+#endif
+#ifdef START_FULL   // 시험용: 원정대 다섯
+    addMember(HE_LEGOLAS, 15); addMember(HE_GIMLI, 15); addMember(HE_GANDALF, 16);
+#endif
 }
 static const char * const T_NEW[] = { "처음부터" };
 static const char * const T_CONT[] = { "이어하기", "처음부터" };

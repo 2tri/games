@@ -247,11 +247,13 @@ static uint8_t after_step(void) {
         }
     }
     if (trainer_check()) return EV_NONE;
+#ifndef NOWILD   // 시험용 롬은 야생 끔
     if (MTDEF[cell_at(S.x, S.y)][4] == MK_GRASS && rnd100() < MD.rate) {
         const uint8_t *w = MD.wild + (rnd() % MD.nw) * 3;   // 적, 최저·최고 레벨
         wild_lv = w[1] + rnd() % (w[2] - w[1] + 1);
         encounter_fx(); fight(w[0], 0); wild_lv = 0;
     }
+#endif
     return EV_NONE;
 }
 static const char * const SAMLINE[] = {
