@@ -26,7 +26,10 @@ def ingest(name, src, mw, mh, lb=0.28, crop=0):
     if crop and t.shape[0] > crop: t = t[:crop].copy(); t[-1] = np.where(t[-1] >= 0, 3, -1)
     f = shrink(t, mw, mh, line_bias=lb)
     np.save(f'../ai/{name}.npy', f)
-    js = '../ai/sprites.js'; d = json.loads(open(js).read()[len('window.AISPR='):-1]); d[name] = f.tolist()
+    js = '../ai/sprites.js'; s = open(js).read(); d = json.loads(s[s.index('{'):s.rindex('}') + 1])
+    # 8의 배수로 채움(GBC 타일): 가로 가운데, 세로 아래 맞춤
+    h, w = f.shape; H, W = -(-h // 8) * 8, -(-w // 8) * 8; l = (W - w) // 2
+    g = np.full((H, W), -1, f.dtype); g[H - h:, l:l + w] = f; d[name] = g.tolist()
     open(js, 'w').write('window.AISPR=' + json.dumps(d, separators=(',', ':')) + ';')
     print(name, '칸', [round(float(v), 1) for v in c], t.shape, '->', f.shape)
     return f
