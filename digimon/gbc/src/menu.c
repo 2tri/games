@@ -203,6 +203,45 @@ static void status_screen(uint8_t slot) {
     }
 }
 
+// ───────── 기술 익히기 (포켓몬처럼: 4개가 꽉 차면 무엇을 잊을지 고름) ─────────
+static uint8_t forget_pick(mon_t *m) {
+    uint8_t i, sel = 0, mk = pool_mark();
+    say_nowait(S_FORGET_WHICH);
+    ui_open(1); tb_shown = 0; win_top = 1; tb_place();
+    draw_frame(TGT_WIN, 4, 1, 16, 10, 0);
+    for (i = 0; i < 4; i++) { var_mv = m->mv[i]; print_at(TGT_WIN, 6, 2 + i * 2, S_NAME_M0); }
+    for (;;) {
+        for (i = 0; i < 4; i++) draw_cursor(TGT_WIN, 5, 2 + i * 2, i == sel);
+        frame();
+        if (joy_new & J_UP) sel = sel ? sel - 1 : 3;
+        if (joy_new & J_DOWN) sel = sel == 3 ? 0 : sel + 1;
+        if (joy_new & J_A) { sfx_play(SFX_SELECT); break; }
+        if (joy_new & J_B) { sel = 0xFF; break; }
+    }
+    pool_release(mk);
+    win_top = 12; move_win(7, 96); tb_shown = 0; tb_open();
+    return sel;
+}
+uint8_t learn_ui(mon_t *m, uint8_t mv) BANKED {
+    uint8_t j;
+    var_sp[0] = m->sp; var_mv = mv;
+    for (j = 0; j < 4; j++) if (m->mv[j] == 0xFF) { m->mv[j] = mv; m->pp[j] = MOVES[mv].pp; say(S_LEARN); return 1; }
+    for (;;) {
+        var_sp[0] = m->sp; var_mv = mv; say(S_LEARN_FULL);
+        if (ask(S_LEARN_Q)) {
+            j = forget_pick(m);
+            if (j != 0xFF) {
+                var_sp[0] = m->sp; var_mv = m->mv[j]; say(S_FORGOT);
+                m->mv[j] = mv; m->pp[j] = MOVES[mv].pp;
+                var_mv = mv; say(S_LEARN);
+                return 1;
+            }
+        }
+        var_mv = mv;
+        if (ask(S_GIVEUP_Q)) { var_sp[0] = m->sp; say(S_DIDNT); return 0; }
+    }
+}
+
 // ───────── 가방 ─────────
 // 물건 종류 (IT_KIND): 0 회복 1 디지바이스 2·3 그물 4 고기 5 검은 톱니 6 이블 스파이럴
 #define BAG_VIS 4

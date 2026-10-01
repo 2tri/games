@@ -56,8 +56,14 @@ def load_state(e, path):
     with open(path, 'rb') as f: e.pb.load_state(f)
 
 def tb(e): return e.pb.memory[SYM['_tb_shown']]
-def settle(e, maxn=400, fight_move=0):
-    """글상자·장면이 끝나 필드에서 자유롭게 움직일 수 있을 때까지 A (싸움이면 fight_move 기술)"""
+def pick_slot(e):
+    """첫째 디지몬의 기술 중 PP 남은 필살기(기술 번호 6 이상) → 없으면 PP 남은 아무 기술"""
+    m = e.pb.memory; P = SYM['_G'] + 15
+    ok = [i for i in range(4) if m[P + 10 + i] != 0xFF and m[P + 14 + i]]
+    sig = [i for i in ok if m[P + 10 + i] >= 6]
+    return (sig or ok or [0])[-1] if sig else (ok or [0])[0]
+def settle(e, maxn=400, fight_move=None):
+    """글상자·장면이 끝나 필드에서 자유롭게 움직일 수 있을 때까지 A. fight_move='sig' 이면 기술 고를 때 필살기"""
     idle = 0
     for i in range(maxn):
         if e.pb.memory[SYM['_field_idle']] and not tb(e):
@@ -65,6 +71,14 @@ def settle(e, maxn=400, fight_move=0):
             if idle > 4: return True
             e.tick(1); continue
         idle = 0
+        if fight_move == 'sig' and e.pb.memory[SYM['_win_top']] == 8:      # 기술 창: 다 그려진 뒤 천천히
+            e.tick(25)
+            for k in range(pick_slot(e)): e.press('down', 3, 15)
+            e.press('a', 3, 20)
+            for w in range(120):
+                if e.pb.memory[SYM['_win_top']] != 8: break
+                e.tick(1)
+            continue
         e.press('a', 3, 8)
     return False
 def oam(e, i): return e.pb.memory[0xFE00 + i * 4], e.pb.memory[0xFE00 + i * 4 + 1]

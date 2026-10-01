@@ -1,7 +1,7 @@
 """처음부터 해변 쉘몬까지 자동 진행 (단계마다 화면·상태 기록)"""
 import sys, os, faulthandler; faulthandler.dump_traceback_later(280, exit=True)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from emu import Emu, gstate, walk, load_state, save_state, scene, settle, tb, oam
+from emu import Emu, gstate, walk, load_state, save_state, scene, settle, tb, oam, SYM
 S = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'build')
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
@@ -38,7 +38,8 @@ for i in range(8):                       # 쉘몬 앞(위쪽 1줄)까지
     if gstate(e)['y'] <= 1 or tb(e): break
     walk(e, 'up', 1)
 log('before shell', gstate(e))
-for i in range(12): e.press('a', 3, 10)
+G_ = SYM['_G']; e.pb.memory[G_ + 16] = 11; e.pb.memory[G_ + 19] = 40; e.pb.memory[G_ + 20] = 0   # 시험용: 해변에서 Lv11까지 올린 것으로
+for i in range(4): e.press('a', 3, 10)
 e.shot('16_shell_pic')
-settle(e, 600); log('after shell', gstate(e)); e.shot('17_after_shell')
+settle(e, 1500, 'sig'); log('after shell', gstate(e), 'crests', bin(e.pb.memory[G_ + 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16 + 32])); e.shot('17_after_shell')
 e.stop()

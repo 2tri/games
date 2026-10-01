@@ -278,6 +278,27 @@ def build_all():
     put('r_ledge', ld.astype(np.uint8), False, extra={'ledge': True})
     # 숲 테두리: 정글 나무 우듬지 (이어 붙임)
     put('r_canopy', R[72:88, 4:20].copy())
+    # 임시 설원 (A16 받으면 교체): 풀색 → 눈색, 물 → 얼음
+    def snowify(arr, water=False):
+        a = arr.astype(float); r, g, b = a[..., 0], a[..., 1], a[..., 2]
+        lum = 0.3 * r + 0.59 * g + 0.11 * b
+        green = ground_hsv(arr, ('green',)) | ((g > r + 10) & (g > b))
+        out = a.copy()
+        snow = np.stack([lum * 0.55 + 120, lum * 0.55 + 128, lum * 0.5 + 140], -1)
+        out[green] = snow[green]
+        if water:
+            blue = (b > r + 20)
+            ice = np.stack([lum * 0.5 + 110, lum * 0.5 + 140, lum * 0.4 + 170], -1)
+            out[blue] = ice[blue]
+        return np.clip(out, 0, 255).astype(np.uint8)
+    sg = snowify(rg)
+    put('s_snow', sg, False)
+    put('s_tall', snowify(R[12:28, 104:120].copy()), False, extra={'grass': True})
+    put('s_path', np.clip(R[107:123, 12:28].astype(int) * 0.6 + 95, 0, 255).astype(np.uint8), False)
+    put('s_ice', snowify(R[143:159, 104:120].copy(), True))
+    put('s_canopy', snowify(R[72:88, 4:20].copy()))
+    put('s_tree', snowify(stamp(R, (0, 68, 25, 99), 2, 2, rg, white, 30)))
+    put('s_rocks', stamp(R, (150, 40, 169, 59), 1, 1, sg, white, 30))
     return A
 
 

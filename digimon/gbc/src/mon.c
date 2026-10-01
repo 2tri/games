@@ -6,8 +6,9 @@
 
 // ───────── 디지몬 계산 ─────────
 uint16_t mon_stat(const mon_t *m, uint8_t i) BANKED {
-    uint16_t b = SPECIES[m->sp].base[i];
-    uint16_t v = (b * 2 * m->lv) / 100;
+    uint16_t b = SPECIES[m->sp].base[i], v;
+    if (i) b = 30 + (b >> 1);        // 공격·방어·스피드는 등급 차이를 반으로 (초반 성숙기 우두머리가 너무 세지 않게)
+    v = (b * 2 * m->lv) / 100;
     return i == 0 ? v + m->lv + 10 : v + 5;
 }
 uint32_t exp_at(uint8_t lv) BANKED { return lv <= 1 ? 0 : (uint32_t)lv * lv * lv; }
@@ -32,15 +33,8 @@ uint8_t learn_sig(mon_t *m, uint8_t sp, uint8_t *got) BANKED {
         for (j = 0; j < 4; j++) if (m->mv[j] == mv) break;
         if (j < 4) continue;
         got[n++] = mv;
-        for (j = 0; j < 4; j++) if (m->mv[j] == 0xFF) break;
-        if (j == 4) {   // 가장 앞의 기본기를 잊음
-            for (j = 0; j < 4; j++) if (MOVES[m->mv[j]].kind == 0) break;
-            if (j == 4) j = 0;
-            for (k = j; k < 3; k++) { m->mv[k] = m->mv[k + 1]; m->pp[k] = m->pp[k + 1]; }
-            j = 3;
-        }
-        m->mv[j] = mv; m->pp[j] = MOVES[mv].pp;
     }
+    (void)k;
     return n;
 }
 void set_seen(uint8_t sp) BANKED { G.seen[sp >> 3] |= 1 << (sp & 7); }

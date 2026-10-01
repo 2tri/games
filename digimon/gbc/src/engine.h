@@ -110,7 +110,8 @@ uint8_t alive_count(void) BANKED;
 uint8_t first_alive(void) BANKED;
 void set_seen(uint8_t sp) BANKED;
 void set_own(uint8_t sp) BANKED;
-uint8_t learn_sig(mon_t *m, uint8_t sp, uint8_t *got) BANKED;   // 진화 뒤 필살기 익히기, 익힌 기술 수
+uint8_t learn_sig(mon_t *m, uint8_t sp, uint8_t *got) BANKED;   // 진화 뒤 새로 익힐 필살기 목록 (수)
+uint8_t learn_ui(mon_t *m, uint8_t mv) BANKED;                   // 익히기 (꽉 차면 무엇을 잊을지 고름) → 1 익힘
 
 // ── 깃발 ──
 uint8_t flag_get(uint16_t f);

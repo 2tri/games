@@ -26,7 +26,7 @@ MAP_SONG = {'house2f': 'town', 'house1f': 'town', 'town': 'town', 'camp': 'town'
             'village': 'village', 'beach': 'field', 'center': 'village', 'dshop': 'village', 'neighbor': 'town', 'store': 'town',
             'lodge': 'town', 'office': 'town', 'route2': 'field', 'savanna': 'village', 'center2': 'village', 'shop2': 'village',
             'temple1': 'field', 'route3': 'field', 'toytown': 'village', 'center3': 'village', 'shop3': 'village', 'temple2': 'field',
-            'route4': 'field', 'cave1': 'boss', 'summit': 'boss', 'temple3': 'boss'}
+            'route4': 'field', 'snow': 'field', 'cave1': 'boss', 'summit': 'boss', 'temple3': 'boss'}
 
 # ── 오프닝 (흰수염 도사) ──
 OPENING = [
@@ -441,10 +441,10 @@ MAPS['temple1'] = Map('우정의 신전', [
 
 # ── 3번 길 (가로 길, Lv12~16: 성장기 + 못 잡는 야생 성숙기) ──
 MAPS['route3'] = Map('3번 길', [
-    'JJJJJJJJJJJJJJJJJJJJ',
-    'J..,,,....J..,,,,..J',
-    'J..,,,....J..,,,,..J',
-    'J.........J........J',
+    'JJJJJJJJJJ:JJJJJJJJJ',
+    'J..,,,....:..,,,,..J',
+    'J..,,,....:..,,,,..J',
+    'J.........:........J',
     'J..LLLL...:...LLL..J',
     'J.........:........J',
     '::::::::::::::::::::',
@@ -452,9 +452,10 @@ MAPS['route3'] = Map('3번 길', [
     'J....,,,,.....,,,..J',
     'J..*......J.....*..J',
     'J.,,,.....J....,,,.J',
-    'JJJJJJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path'), (20, 6, 29, 6, 'r_path')],
+    'JJJJJJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path'), (20, 6, 29, 6, 'r_path'), (10, -9, 10, -1, 'r_path')],
     objs=[('r_tree', 7, 9), ('r_rock', 12, 1), ('r_bush', 17, 9)],
-    warps=edgeV(-1, [6], 'savanna', 15, 6) + edgeV(20, [6], 'toytown', 0, 6),
+    warps=edgeV(-1, [6], 'savanna', 15, 6) + edgeV(20, [6], 'toytown', 0, 6) + edge([10], -1, 'snow', 7, 13),
+    signs=[Sign(9, 0, [Say('북쪽: 얼음 설원\n(야생 디지몬 Lv16~20 · 조심!)')])],
     npcs=[Challenger(6, 3, 'numemon', '워매몬', 14, 'down', 'r3c1', '야생 워매몬이 길을 막아섰다!\f워매몬: 우헤헤~ 비트 내놔!'),
           Challenger(15, 9, 'nanimon', '모야몬', 15, 'up', 'r3c2', '야생 모야몬이 선글라스를 고쳐 쓴다…!\f모야몬: 덤벼 봐!'),
           ItemBall(18, 1, '성장기 그물', 1, 'r3i1'), ItemBall(1, 10, '고급 회복 디스크', 1, 'r3i2')],
@@ -604,12 +605,38 @@ MAPS['temple3'] = Map('데블몬의 성', [
     npcs=[NPC(4, 1, 'blob:devimon', 'down', DEVIMON, fixed=True)],
     warps=[Warp_(4, 9, 'summit', 5, 2, 'down'), Warp_(5, 9, 'summit', 5, 2, 'down')])
 
+# ── 얼음 설원 (곁가지, 포켓몬의 들러도 되는 길 오마주): 3번 길 북쪽 ──
+MAPS['snow'] = Map('얼음 설원', [
+    'TTTTTTTTTTTTTTTT',
+    'T,,,,...T...o..T',
+    'T,,,,...T......T',
+    'T......~~~..,,,T',
+    'T..o...~~~..,,,T',
+    'T......~~~.....T',
+    'T..,,,.........T',
+    'T..,,,...o..,,,T',
+    'TTTT......TT,,,T',
+    'T.....::.....,,T',
+    'T.,,,.::.......T',
+    'T.,,,.::..o....T',
+    'T.....::.......T',
+    'TTTTTTT::TTTTTTT'], {'T': 's_canopy', '.': 's_snow', ',': 's_tall', '~': 's_ice', ':': 's_path', 'o': 's_rocks'}, 's_canopy',
+    open=[(7, 14, 8, 29, 's_path')],
+    objs=[('s_tree', 13, 9)],
+    warps=edge([7, 8], 14, 'route3', 10, 0),
+    npcs=[Challenger(9, 6, 'frigimon', '프리지몬', 19, 'left', 'snc1', '프리지몬: 으으, 추워…\f어? 손님이다! 같이 몸 좀 데우자!'),
+          ItemBall(1, 1, '고기', 3, 'sni1'), ItemBall(14, 12, '고급 회복 디스크', 2, 'sni2'),
+          NPC(10, 4, 'item', 'down', [Say('얼음 속에 검은 톱니가 박혀 있다…\f{kid}{은/는} 얼음을 깨고\n검은 톱니를 꺼냈다!'), GiveItem('검은 톱니', 1), SetFlag('sni3')],
+              hide_if='sni3', fixed=True)],
+    enc=(28, [('bukamon', 16, 18, 20), ('mochimon', 16, 18, 15), ('gomamon', 17, 19, 25), ('frigimon', 18, 20, 25), ('ikkakumon', 19, 20, 15)]),
+    on_enter=[IfFlag('snow', 'e'), SetFlag('snow'), Say('눈보라가 몰아치는 설원이다.\f얼어붙은 호수 너머로\n무언가가 반짝인다…'), Label('e')])
+
 # ── 해변 ──
 SHELLMON = [
     Say('바다 쪽에서 땅이 울린다…!'), Close(), Shake(10),
     Pic('shellmon'),
     Say('쉘몬: 여기는 내 바다다!\n인간 따위가 발을 들이다니!'), Close(), PicOff(),
-    Battle('shellmon', 10, 'boss'),
+    Battle('shellmon', 9, 'boss'),
     SetFlag('shellmon'),
     Say('쉘몬은 바닷속으로 도망쳐 버렸다!'),
     Say('???: 어이~! 괜찮아?'),

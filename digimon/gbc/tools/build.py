@@ -100,6 +100,9 @@ ES = {
     'dark_force': '{s0}{은/는} 유대가 약해서\n어둠을 억누르지 못했다…!', 'nothing': '아무 일도 일어나지 않았다.',
     'purify_q': '에렉몬: {s0}에게서 어둠의 기운이 느껴져.\f원래 모습으로 되돌려 줄까?', 'purified': '어둠이 걷혔다!\n{s0}{은/는} {s1}{으로/로} 돌아왔다!',
     'evo_stop': '어라…? {s0}의 진화가 멈췄다!', 'meat': '{s0}{은/는} 고기를 맛있게 먹었다!\n유대가 깊어졌다!',
+    'learn_full': '{s0}{은/는} {m0}{을/를} 익히고 싶다…\f하지만 기술은 4개까지만\n쓸 수 있다!', 'learn_q': '다른 기술을 잊고\n{m0}{을/를} 익힐까?',
+    'forget_which': '어느 기술을 잊게 할까?', 'forgot': '하나, 둘, …짠!\f{s0}{은/는} {m0}{을/를}\n깨끗이 잊었다!\f그리고…',
+    'giveup_q': '{m0} 익히기를 그만둘까?', 'didnt': '{s0}{은/는} {m0}{을/를}\n익히지 않았다!',
     'st_bond': '유대', 'bond0': '·····', 'bond1': '♥····', 'bond2': '♥♥···', 'bond3': '♥♥♥··', 'bond4': '♥♥♥♥·', 'bond5': '♥♥♥♥♥',
 }
 ESID = {k: sid(v) for k, v in ES.items()}
@@ -886,7 +889,7 @@ for k, v in SONGI.items(): h += '#define SONG_%s %d\n' % (k.upper(), v)
 h += '#endif\n'
 open(os.path.join(GEN, 'gen.h'), 'w').write(h)
 print('깃발', len(dsl.FLAGS), '문자열', len(S.items), '기술', len(MOVES))
-json.dump({'flags': dsl.FLAGS, 'maps': MAPI}, open(os.path.join(ROOT, 'build', 'ids.json'), 'w'), ensure_ascii=False)
+json.dump({'flags': dsl.FLAGS, 'maps': MAPI, 'moves': [m[0] for m in MOVES], 'crests': story.CRESTS}, open(os.path.join(ROOT, 'build', 'ids.json'), 'w'), ensure_ascii=False)
 
 # ───────── 컴파일 ─────────
 SRC = os.path.join(ROOT, 'src')

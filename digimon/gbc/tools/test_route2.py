@@ -11,7 +11,7 @@ G = SYM['_G']; m = e.pb.memory
 FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16          # game_t 안 flags 위치
 def setflag(n): i = FL[n]; m[G + FLAGS_OFF + (i >> 3)] |= 1 << (i & 7)
 def crests(): return m[G + FLAGS_OFF + 32]
-setflag('shellmon')
+setflag('shellmon'); m[G + FLAGS_OFF + 32] |= 1 << 5         # 쉘몬을 이긴 것으로: 성실의 문장도
 m[G + 16] = 30; m[G + 19] = 150; m[G + 20] = 0          # 시험용: 파트너 Lv30, 체력 150
 walk(e, 'right', 8); walk(e, 'up', 6); log('beach top', gstate(e))      # 쉘몬 그림은 지도에 다시 들어올 때 사라지므로 옆 칸(8)으로
 walk(e, 'up', 1); settle(e); log('route2', gstate(e), MP['route2'])

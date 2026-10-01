@@ -68,6 +68,19 @@ static void draw_static(void) {
     uint8_t i;
     for (i = 0; i < N_BMAP; i++) put_tile(TGT_BG, BMAP[i * 3], BMAP[i * 3 + 1], BMAP[i * 3 + 2], 0x80);
 }
+// 전투 시작: 상대가 왼쪽에서 미끄러져 들어온 뒤 상자들이 나타남 (포켓몬 금 오마주)
+static void intro_slide(void) {
+    uint8_t x;
+    DISPLAY_OFF;
+    screen_clear(); scene = SCENE_OTHER; pool_reset(1);
+    pic_load(SPECIES[foe.sp].front, 1, FOE_T, 4);
+    pic_place(12, 0, 7, 7, FOE_T, 4 | 0x08);
+    move_bkg(152, 0); pal_apply();
+    DISPLAY_ON;
+    for (x = 152; x; x -= 4) { move_bkg(x, 0); frame(); }
+    move_bkg(0, 0);
+    draw_static(); show_foe();
+}
 static void screen_full(uint8_t with_me) {
     DISPLAY_OFF;
     screen_clear(); scene = SCENE_OTHER; pool_reset(1);
@@ -130,13 +143,15 @@ static void use_move(uint8_t who, uint8_t slot) {
     }
     {
         uint16_t A = mon_stat(att, 1), D = stat_of(def, 2, who ? sme : sfoe), lvf = att->lv * 2 / 5 + 2;
-        dmg = ((uint32_t)lvf * M_->power * A / D) / 50 + 2;
+        uint16_t pw = M_->power, cap = 20 + 3 * (uint16_t)att->lv;      // 레벨이 낮으면 큰 기술도 힘을 다 못 냄
+        if (pw > cap) pw = cap;
+        dmg = ((uint32_t)lvf * pw * A / D) / 50 + 2;
     }
     if (M_->kind) dmg = dmg * 3 / 2;              // 필살기: 포켓몬 자속 보정처럼 1.5배
     crit = rnd8(16) == 0; if (crit) dmg *= 2;
     aa = SPECIES[att->sp].attr; da = SPECIES[def->sp].attr;
     mult = beats(aa, da) ? 2 : beats(da, aa) ? 0 : 1;
-    if (mult == 2) dmg = dmg * 3 / 2; else if (mult == 0) dmg = dmg * 3 / 4;
+    if (mult == 2) dmg = dmg * 5 / 4; else if (mult == 0) dmg = dmg * 4 / 5;      // 상성 1.25배 / 0.8배 (속성이 하나뿐이라 포켓몬보다 약하게)
     dmg = dmg * (217 + rnd8(39)) / 255; if (!dmg) dmg = 1;
     tb_close();
     blink_pic(!who);
@@ -294,7 +309,7 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
     me = first_alive(); used = 1 << me;
     tb_close(); music_play(kind ? SONG_BOSS : SONG_BATTLE); flash(2);
     dfoe = foe.hp;
-    screen_full(0);
+    intro_slide();
     var_sp[0] = sp; say(kind ? S_BOSS_APPEAR : S_WILD_APPEAR);
     var_sp[0] = G.party[me].sp; say_nowait(S_GO); show_me(); wait_frames(20);
     while (!res) {
@@ -440,7 +455,7 @@ uint8_t evolve_scene(uint8_t slot, uint8_t to, uint8_t can_cancel) BANKED {
     old = mon_maxhp(m); m->sp = to; m->hp += mon_maxhp(m) - old; set_own(to);
     var_sp[0] = from; var_sp[1] = to; say(S_EVO2);
     n = learn_sig(m, to, got);
-    for (i = 0; i < n; i++) { var_sp[0] = to; var_mv = got[i]; say(S_LEARN); }
+    for (i = 0; i < n; i++) learn_ui(m, got[i]);
     tb_close();
     music_play(ps);
     return 1;
