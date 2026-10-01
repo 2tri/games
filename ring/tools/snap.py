@@ -32,6 +32,14 @@ def grid(g):
         dd = np.abs(np.diff(g, axis=axis)).sum(axis=1 - axis)
         o = max(np.arange(0, p, 0.25), key=lambda o: sum(dd[int(round(o + k * p))] for k in range(int((n - o) / p)) if int(round(o + k * p)) < n))
         res.append((p, o))
+    # 한쪽이 다른 쪽의 절반·배수로 잡히면(잔무늬 때문) 큰 칸에 맞추고 시작점 다시 찾기
+    (pw, ox), (ph, oy) = res
+    if max(pw, ph) / min(pw, ph) > 1.5:
+        p = max(pw, ph); res = []
+        for axis in (1, 0):
+            dd = np.abs(np.diff(g, axis=axis)).sum(axis=1 - axis); n = len(dd)
+            o = max(np.arange(0, p, 0.25), key=lambda o: sum(dd[int(round(o + k * p))] for k in range(int((n - o) / p)) if int(round(o + k * p)) < n))
+            res.append((p, o))
     return res  # [(칸폭, x시작), (칸높이, y시작)]
 
 def snap(img, size=None, tol=20):
