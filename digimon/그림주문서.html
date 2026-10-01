@@ -60,6 +60,7 @@ section { display: grid; gap: 12px }
   <header>
     <h1>디지몬 그림 주문서</h1>
     <p class="lead">GBC 롬에 들어갈 그림 전체 목록을 중요한 순서로. 제미나이가 될 때마다 위에서부터 한 장씩 뽑아 대화에 올려 주면 이쪽에서 칸 맞춤·색 정리해서 넣는다. 디지몬은 앞·뒤가 다 필요하면 한 장에 세트로.</p>
+    <p class="lead"><b>정확하게 뽑는 법</b> — 디지몬 카드의 「도감에서 보기」로 공식 그림을 열어 저장한 뒤, 재미나이에 그 그림을 같이 올리고 프롬프트를 붙여 넣는다. 프롬프트는 공식 그림을 보고 다시 적었다 (유년기는 팔다리 없음, 쉘몬·캅테리몬 생김새 등).</p>
   </header>
 
   <div class="how">
@@ -296,6 +297,67 @@ mon(105, "필수", "C69", "스컬그레이몬", "SkullGreymon", "giant skeletal 
 mon(106, "필수", "C70", "레이디데블몬", "LadyDevimon", "female fallen angel in tight black leather with pale skin, long silver hair, a red mask over her eyes, huge tattered black bat wings, long red claws", true, "암흑 진화: 빛의 문장 없이 가트몬을 진화시키면 · 검은 톱니");
 mon(107, "필수", "C71", "아트라캅테리몬", "MegaKabuterimon (AtlurKabuterimon, red)", "huge red rhinoceros beetle Digimon with one giant forked horn on its head, thick shiny red armor, four strong arms, transparent insect wings", true, "지식의 문장 진화 (캅테리몬)");
 mon(108, "권장", "C72", "메탈그레이몬(바이러스종)", "MetalGreymon (Virus species)", "the dark-evolved version seen in Digimon Adventure 02, dark blue dinosaur with a metal left arm with claws, metal chest armor, metal helmet and wings, menacing red eyes", true, "이블 스파이럴 암흑 진화 (2부)");
+// ── 공식 도감 그림을 보고 생김새를 다시 적음 (2026-10-01): 팔다리 없는 유년기에 다리가 생기는 등 틀린 그림이 나와서 ──
+const REFURL = d => "https://digimon.net/reference_ko/detail.php?directory_name=" + d;
+const RULE = ". Follow the official Digimon design exactly; do not add any arms, legs, feet or features that are not described. If an official reference image is attached, copy its design and colors";
+function refFix(id, dir, desc, blob) {
+  const o = L.find(x => x.id === id); if (!o) return;
+  o.ref = REFURL(dir);
+  if (o.st === "done") return;
+  let suf = /세트/.test(o.size) ? T.set : /^뒤/.test(o.size) ? T.back : T.front;
+  if (blob) suf = suf.replace(/dynamic pose/g, "simple calm pose");
+  const body = (o.en || o.name) + " from Digimon Adventure, " + desc + RULE;
+  o.prompts = [[o.prompts.length ? o.prompts[0][0] : "프롬프트 복사", body + suf]];
+  if (!/공식 그림/.test(o.why || "")) o.why = (o.why ? o.why + " · " : "") + "공식 그림을 보고 생김새를 다시 적었다";
+}
+[
+ ["C13", "botamon", "a tiny round blob covered in short spiky black fur, two small rounded cat-like ear bumps on top, two glowing yellow eyes, no visible mouth. It is ONE round fuzzy ball and nothing else: no arms, no legs, no feet, no tail", true],
+ ["C14", "punimon", "a tiny shiny red jelly blob shaped like a rounded dome, two short rounded horn-like bumps on top, two big round white eyes with small black pupils, no visible mouth. ONE jelly body only: no arms, no legs, no feet, no spikes", true],
+ ["C15", "koromon", "a round pink blob head with no separate body, two long thin wavy ear tendrils streaming backward from the top of the head like ribbons, red eyes with black outlines, a small mouth with two tiny fangs. No arms, no legs, no feet", true],
+ ["C16", "tunomon", "a small round furry blob, orange-brown fur on the top and back, a white face, ONE long curved gray horn sticking up from the top of the head, red eyes, pink blush cheeks. No arms, no legs, no feet", true],
+ ["C17", "tokomon", "a tiny white round marshmallow-like creature with two very short stubby feet and two tiny nub arms, two long thin wavy white antenna-like ears on top, small red eyes, a small closed cute mouth", false],
+ ["C18", "nyaromon", "a yellow cat head with no body: a round yellow head with two big pointed cat ears, red-brown eyes, a small cat mouth, and one long tail coming out of the back of the head; the tail is yellow with purple stripes and a purple tip. No arms, no legs, no feet", true],
+ ["C19", "pyocomon", "a pale pink round onion-bulb shaped body, a large blue flower with wide blue petals on top of the head with a yellow curly stamen rising from the center, small green eyes, a tiny smile, a few tiny root stubs under the body instead of feet. No arms, no legs", true],
+ ["C20", "mochimon", "a soft pink-white rice cake (mochi) creature shaped like a little ghost, two stubby arms with three tiny dark claws each, the bottom edge is a wavy blob with NO legs, big round black eyes and an open happy mouth", false],
+ ["C23", "tanemon", "an onion-bulb shaped body: green on top, cream-white face, big brown eyes, a small cat-like mouth, three or four long green leaves sprouting from the top of the head, four tiny root-like feet with little claws under the body. No arms", false],
+ ["C24", "pukamon", "a small GRAY seal-like baby that floats: gray body, white belly patch, a bright red-orange flame-shaped tuft of hair on top of the head, blue eyes, two small front flippers, a long fish-like tail with a fin. No legs", true],
+ ["C8", "plotmon", "a small white puppy-like creature sitting on four short stubby legs, very long floppy ears hanging down to the ground, big blue-green eyes, pink blush cheeks, a golden collar with a small ring around its neck, a happy open mouth", false],
+ ["C11", "elecmon", "a small red four-legged mammal with blue stripes on its body and face, two pointed ears, a big fan of nine spiky tails (red with blue tips) spread out behind it, blue eyes, small white claws", false],
+ ["C12", "picodevimon", "a tiny round dark blue bat-like imp: one round blue head-body, a pair of very big ragged blue bat wings, a big mischievous grin with fangs, small red feet with claws. No arms", false],
+ ["C9", "kuwagamon", "a red giant stag beetle monster standing upright on two legs: two huge red pincers on its head with serrated white inner edges, a mouth full of teeth between the pincers, four thin red arms with sharp claws, two pairs of transparent insect wings, red armored segmented body", false],
+ ["C10", "shellmon", "a pink-magenta dinosaur-like sea creature crawling low on four short stubby legs, green seaweed-like hair on top of its head, a big gray-blue spiked conch shell carried on its BACK behind the head like a hermit crab (the shell does NOT cover the whole body), small eyes, an open mouth with small teeth", false],
+ ["C24b", "kabuterimon", "a DARK BLUE armored humanoid insect standing upright, a silver-gray helmet-like head with one large horn pointing up and forward, four long arms with sharp claws, two pairs of large transparent insect wings on its back, dark blue segmented armor. It is NOT red and NOT a ladybug", false],
+ ["C25", "togemon", "a big green cactus body covered in small needles, red boxing gloves on both hands, round hole eyes and a round hole mouth, a small orange flower tuft on top of the head, two stubby legs", false],
+ ["C26", "ikkakumon", "a big walrus-like beast covered in long shaggy WHITE fur, one long gray horn on its forehead, two long white tusks, blue eyes, four short legs with dark claws", false],
+ ["C31", "leomon", "a muscular lion-man warrior with a golden mane, black pants with a belt, a sword at his side, bare muscular chest", false],
+ ["C32", "orgemon", "a green ogre with wild white hair, two horns, a fierce face with fangs, holding a big bone club, black pants", false],
+ ["C55", "monzaemon", "a giant yellow teddy bear with a big white round belly, a small stitched bandage patch on the belly, small round ears, small black eyes", false],
+ ["C41", "numemon", "a green slug with two long eye stalks topped with big bloodshot eyes, a huge open mouth with big white teeth and a long pink tongue sticking out, purple spots on its body. No arms, no legs", true],
+ ["C42", "nanimon", "a round black ball-shaped body wearing dark sunglasses, two big muscular arms with red boxing-glove fists, two short legs with shoes", false],
+ ["C39", "gekomon", "a green frog standing upright on two thin legs, a golden tuba-like horn instrument growing from its back and curling over its head, huge round eyes on top of its head, a long pink tongue, pink round nose bulbs", false],
+ ["C56", "tonosamagekomon", "a giant red frog with a huge round yellow-green belly, a collar of big green leaves around its neck, two golden tuba-like horns on its back, a purple hair topknot, small red limbs with round suction-cup fingers", false],
+ ["C47", "yukidarumon", "a big white snowman-like body with a round head and tiny round ears, small black dot eyes, red round buttons on the chest, thick arms, a light blue icy swirl around its feet", false],
+ ["C33", "devimon", "a tall thin black demon with huge ragged black bat wings, a black horned head with a mask-like face, long thin arms wrapped in red belts, long claws", false],
+ ["C35", "monochromon", "a gray armored triceratops-like dinosaur on four legs, one long black horn on its nose, gray and black armor plates on its back, green eyes", false],
+ ["C36", "centalmon", "a centaur: an armored humanoid upper body with blue armor plates and a helmet with one eye, an arm cannon on one arm, a brown horse-like lower body with four legs", false],
+ ["C37", "cockatrimon", "a big white rooster-like bird with white feathers tipped with red and orange spikes, a yellow beak, small wings, strong clawed legs", false],
+ ["C38", "drimogemon", "a mole with a blue-gray head and a big metal drill on its nose, a cream-white furry body, small clawed feet, a wide open mouth with teeth", false],
+ ["C40", "kiwimon", "a kiwi bird: an elongated white body with a long beak, a spiky crest of green feathers on its head, a brown lower body, long gray legs with pink claws. No wings", false],
+ ["C43", "vegimon", "a yellow-green plant monster: a round green body, a Venus flytrap-like mouth with sharp teeth, a crown of red and blue petals on top, long green vine arms", false],
+ ["C44", "seadramon", "a long teal sea serpent with a yellow armored mask over its face, blue eyes, a red fin at the tip of its tail. No arms, no legs", false],
+ ["C45", "tyranomon", "a red tyrannosaurus with a white belly, green spikes along its back, short arms with big claws, strong legs", false],
+ ["C46", "wizarmon", "a small wizard with a wide-brimmed blue hat with a skull ornament, a blue cloak, a cloth mask over the face, holding a staff with a round sun-like orb", false],
+ ["C59", "mamemon", "a small round silver-gray ball head with a smiley face, a small body with red mechanical armor parts and big red armored fists", false],
+ ["C58", "digitamamon", "a big white egg shell with a jagged crack showing a dark void with two glowing yellow eyes inside, green clawed dinosaur legs with pink claws coming out of the bottom. No arms", false],
+ ["C71", "atlurkabuterimon", "a huge RED armored beetle crouching low, a big red horn with a forked tip on its head, a green round gem on the top of its shell, four purple clawed arms, red shell-like body", false],
+ ["C72", "metalgreymon-web", "the dark version: a DARK BLUE dinosaur with a metal mask on its face, a big metal left arm with claws, metal chest armor, dark purple wings", false],
+ ["C69", "skullgreymon", "a giant skeletal dinosaur made of bare white bones, a large missile mounted along its spine, glowing eyes inside the skull, hunched aggressive pose", false],
+ ["C70", "ladydevimon", "a female fallen angel in a tight black and silver suit, pale face, long silver hair, a red mask over her eyes, huge tattered black bat wings, long red claws", false],
+ ["C4", "tentomon", "a red ladybug-like shell with black spots covering its back, big round green compound eyes, two long yellow curly antennae, four short gray limbs with dark claws, two pairs of thin transparent insect wings under the shell", false],
+ ["C6", "gomamon", "a small white seal-like creature lying low, an orange-red spiky mohawk on its head, purple stripe markings on its back, arms and tail, friendly green eyes (NOT red), a cute smile with tiny fangs, two front legs with black claws", false],
+].forEach(a => refFix(...a));
+[["C1","agumon"],["C2","gabumon"],["C3","piyomon"],["C4","tentomon"],["C5","palmon"],["C6","gomamon"],["C7","patamon"],["C21","greymon-first"],["C22","garurumon"],["C27","angemon"],["C28","tailmon"]].forEach(([id, d]) => { const o = L.find(x => x.id === id); if (o) o.ref = REFURL(d); });
+setDone("A11", "지형 타일 (턱·다리·절벽·동굴 입구·바위·캡슐)"); setDone("A7", "회복 센터 안"); setDone("A8", "상점 안"); setDone("B10a", "신태일 초상");
 L.sort((a, b) => a.r - b.r);
 const TIERS = [[1, 49, "지금 바로", "지금 만든 부분과 바로 다음 작업 (게임 뼈대 · 주인공 · 파트너 · 첫 야생)"],
                [50, 99, "파일섬 확장", "지역 2~6: 지역마다 장면 그림 + 보스·야생 (포켓몬 체육관 길 구조)"],
@@ -323,7 +385,7 @@ function render() {
       const room = ROOM[o.id[0]] || "";
       c.innerHTML = `<div class="top"><span class="id">${o.st === "done" ? "✓" : "#" + (++rank)}</span><span class="name">${esc(o.name)}${o.en ? ` <span class="id">${esc(o.en)}</span>` : ""}</span>
         <span class="pill ${o.st === "done" ? "done" : NEEDC[o.need]}">${o.st === "done" ? "받음" : o.st === "redo" ? "다시 · " + o.need : o.need}</span><span class="pri">${esc(o.id)} · ${esc(room)} 대화방</span></div>
-        ${o.st === "done" ? "" : `<div class="meta"><span><b>쓰는 곳</b> ${esc(o.use || "")}</span>${o.why ? `<span><b>왜 필요</b> ${esc(o.why)}</span>` : ""}${o.alt ? `<span><b>없으면</b> ${esc(o.alt)}</span>` : ""}<span><b>크기</b> ${esc(o.size || "")}</span></div>`}
+        ${o.st === "done" ? "" : `<div class="meta"><span><b>쓰는 곳</b> ${esc(o.use || "")}</span>${o.why ? `<span><b>왜 필요</b> ${esc(o.why)}</span>` : ""}${o.alt ? `<span><b>없으면</b> ${esc(o.alt)}</span>` : ""}<span><b>크기</b> ${esc(o.size || "")}</span>${o.ref ? `<span><b>공식 그림</b> <a href="${o.ref}" target="_blank" rel="noopener">도감에서 보기</a> — 그림을 저장해 재미나이에 같이 올리면 더 정확</span>` : ""}</div>`}
         ${box}
         ${o.st === "done" ? "" : `<div class="row">${btns}<label class="chk"><input type="checkbox" id="g-${o.id}" ${got[o.id] ? "checked" : ""}> 뽑았음</label></div>`}`;
       sec.appendChild(c);
