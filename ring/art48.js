@@ -93,14 +93,29 @@
     for (let x = 15; x < 30; x += 3) px(s, x, 30, CLOAK[0]);
     // 목덜미·셔츠 깃
     ell(s, 22, 26, 5, 2.5, SKIN, { flat: 0.3 });
-    // 머리 — 바탕 덩어리 위에 곱슬 덩어리를 겹친다
-    ell(s, 22, 15, 11.5, 11.5, HAIR, { bias: -0.15 });
-    const curls = [[14, 9], [19, 6], [25, 6], [30, 10], [12, 15], [17, 12], [23, 11], [29, 15], [33, 16], [15, 19], [21, 17],
-                   [27, 20], [11, 21], [18, 23], [24, 24], [31, 22], [20, 4], [26, 3]];
-    curls.forEach(([x, y], i) => ell(s, x, y, 3.1, 2.8, HAIR, { bias: i % 3 === 0 ? 0.05 : -0.02 }));
+    // 머리 — 바탕 덩어리(조금 작게) + 곱슬 무늬: 빛 쪽으로 열린 작은 호(밝은 3점) + 아래 그늘 2점
+    const HX = 22, HY = 15.5, HR = 9.6;
+    const inHead = (x, y) => ((x + 0.5 - HX) / HR) ** 2 + ((y + 0.5 - HY) / (HR + 0.6)) ** 2 <= 1;
+    // 실루엣 가장자리를 곱슬곱슬하게: 테두리에 작은 혹을 붙인다
+    const bumps = [];
+    for (let k = 0; k < 15; k++) { const t = Math.PI * (0.95 + k * 1.15 / 14) ; bumps.push([HX + Math.cos(t) * (HR + 0.3), HY + Math.sin(t) * (HR + 0.9)]); }
+    for (let k = 0; k < 4; k++) { const t = Math.PI * (0.55 + k * 0.13); bumps.push([HX + Math.cos(t) * (HR + 0.3), HY + Math.sin(t) * (HR + 0.6)]); }
+    const inHair = (x, y) => inHead(x - 0.5, y - 0.5) || bumps.some(([bx, by]) => (x - bx) ** 2 + (y - by) ** 2 <= 3.2);
+    part(s, inHair, HX - 1, HY - 1, HR + 1.5, HR + 2, HAIR, { bias: -0.08 });
+    const hid = s.n - 1;
+    const tone = (x, y) => { const d = (-(x - HX) * 0.6 - (y - HY) * 0.8) / HR; return d > 0.35 ? 3 : d > -0.35 ? 2 : 1; };
+    for (let row = 0, y = 7; y <= 25; y += 3, row++) for (let x = 11 + (row % 2) * 2; x <= 34; x += 4) {
+      const cx = x + ((x * 7 + y * 3) % 3 === 0 ? 1 : 0), cy = y;
+      if (!inb(s, cx, cy) || s.id[cy * s.w + cx] !== hid) continue;
+      const t = tone(cx, cy), hi = HAIR[t], lo = HAIR[Math.max(0, t - 2)];
+      const set = (X, Y, c) => { if (inb(s, X, Y) && s.id[Y * s.w + X] === hid) s.p[Y * s.w + X] = c; };
+      set(cx - 1, cy, hi); set(cx, cy - 1, hi); set(cx + 1, cy - 1, t === 3 ? '#b88454' : hi);
+      set(cx + 1, cy + 1, lo); set(cx, cy + 1, lo); set(cx + 2, cy, lo);
+    }
+    // 머리 아래쪽(목덜미)으로 드리운 그늘
+    for (let x = 14; x <= 30; x++) for (let y = 23; y <= 26; y++) if (s.id[y * s.w + x] === hid && !inHead(x, y - 2)) s.p[y * s.w + x] = HAIR[0];
     // 왼쪽 귀(살짝 뾰족한 호빗 귀)
-    ell(s, 10.5, 19, 2, 3, SKIN);
-    px(s, 10, 15, SKIN[2]); px(s, 10, 16, SKIN[2]);
+    poly(s, [[13, 21], [11, 19], [10, 15], [12, 16], [14, 18]], SKIN, { cx: 13, cy: 18, rx: 3, ry: 4 });
     return outline(s);
   }
 
@@ -110,15 +125,16 @@
   function maggotDog() {
     const s = mk(48, 48);
     // 꼬리 (치켜든)
-    [[44, 26], [45, 22], [45.5, 18], [45, 14]].forEach(([x, y], i) => ell(s, x, y, 2.6 - i * 0.3, 2.6, FUR_D));
+    for (let i = 0; i <= 12; i++) { const t = i / 12; ell(s, 41 + 4 * Math.sin(t * 1.7), 27 - 14 * t, 2.4 - t * 1.1, 2.2, FUR_D, { noShadow: true }); }
     // 뒷다리(먼 쪽)
     poly(s, [[32, 36], [37, 36], [38, 44], [35, 46], [32, 46]], FUR_D);
     // 몸통
-    ell(s, 30, 30, 14, 9, FUR);
+    ell(s, 29, 28.5, 13.5, 7.8, FUR);
+    poly(s, [[20, 30], [38, 30], [34, 36], [22, 37]], FUR, { cx: 29, cy: 28.5, rx: 13.5, ry: 7.8, bias: -0.1 });
     for (const [x, y] of [[24, 22], [28, 21], [33, 22], [38, 24]]) { px(s, x, y, FUR_D[1]); px(s, x + 1, y + 1, FUR_D[1]); } // 등 줄무늬
     // 뒷다리(가까운 쪽) 허벅지 + 발
-    ell(s, 38, 33, 6.5, 7.5, FUR);
-    poly(s, [[36, 38], [42, 38], [43, 45], [41, 47], [36, 47]], FUR);
+    ell(s, 37.5, 31.5, 5.5, 6.5, FUR);
+    poly(s, [[35, 35], [41, 35], [41, 41], [42, 47], [36, 47], [37, 41]], FUR);
     // 가슴
     ell(s, 17, 31, 9, 9.5, FUR, { bias: 0.08 });
     // 앞다리 두 개
