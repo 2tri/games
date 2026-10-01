@@ -15,21 +15,22 @@
 html,body{height:100%;margin:0}
 body{background:var(--body);font-family:Galmuri9,-apple-system,"Apple SD Gothic Neo",sans-serif;color:var(--ink);
   -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:manipulation}
-.gb{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:calc(10px + var(--safe-t)) 14px calc(14px + var(--safe-b))}
-.bezel{background:var(--bezel);border-radius:10px 10px 36px 10px;padding:14px 16px 10px;box-shadow:inset 0 2px 0 rgba(255,255,255,.12)}
-canvas{display:block;width:100%;aspect-ratio:160/144;image-rendering:pixelated;background:#f8f8f0;border-radius:2px}
-.brand{color:#d8d4ca;font-size:11px;letter-spacing:.08em;margin-top:6px;text-align:left;opacity:.85}
-.pad{flex:1;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:18px 6px 6px;min-height:230px}
-.dpad{position:relative;width:132px;height:132px}
-.dpad button{position:absolute;width:44px;height:44px;background:#2b2f3a;border:0;border-radius:6px;box-shadow:0 3px 0 #15171d}
-.dpad .u{left:44px;top:0}.dpad .d{left:44px;bottom:0}.dpad .l{left:0;top:44px}.dpad .r{right:0;top:44px}
-.dpad .c{left:44px;top:44px;width:44px;height:44px;background:#2b2f3a;position:absolute;border-radius:0}
-.ab{justify-self:end;position:relative;width:150px;height:110px;transform:rotate(-24deg)}
-.ab button{position:absolute;width:58px;height:58px;border-radius:50%;background:var(--btn);border:0;color:#f0e6ea;font:bold 18px Galmuri9,sans-serif;box-shadow:0 4px 0 #57182c}
-.ab .a{right:0;top:0}.ab .b{left:0;top:34px}
-.ss{grid-column:1/3;display:flex;justify-content:center;gap:26px;margin-top:6px}
-.ss button{width:62px;height:16px;border-radius:8px;border:0;background:#6d7180;transform:rotate(-24deg);box-shadow:0 2px 0 #44474f}
-.ss span{display:block;font-size:10px;text-align:center;margin-top:8px;color:#6d7180;letter-spacing:.06em}
+.gb{max-width:560px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:calc(6px + var(--safe-t)) 6px calc(8px + var(--safe-b))}
+.bezel{background:var(--bezel);border-radius:8px 8px 22px 8px;padding:8px 8px 4px;box-shadow:inset 0 2px 0 rgba(255,255,255,.12)}
+/* 화면은 남는 높이에 맞춰 최대한 크게 (버튼 영역 약 200px 남김) */
+canvas{display:block;width:min(100%, calc((100dvh - 250px - var(--safe-t) - var(--safe-b)) * 160 / 144));margin:0 auto;aspect-ratio:160/144;image-rendering:pixelated;background:#f8f8f0;border-radius:2px}
+.brand{color:#d8d4ca;font-size:10px;letter-spacing:.08em;margin-top:3px;opacity:.8}
+.pad{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8px 10px 0;gap:4px 0}
+.dpad{position:relative;width:126px;height:126px}
+.dpad button{position:absolute;width:42px;height:42px;background:#2b2f3a;border:0;border-radius:6px;box-shadow:0 3px 0 #15171d}
+.dpad .u{left:42px;top:0}.dpad .d{left:42px;bottom:0}.dpad .l{left:0;top:42px}.dpad .r{right:0;top:42px}
+.dpad .c{left:42px;top:42px;width:42px;height:42px;background:#2b2f3a;position:absolute}
+.ab{justify-self:end;position:relative;width:140px;height:100px;transform:rotate(-24deg)}
+.ab button{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--btn);border:0;color:#f0e6ea;font:bold 18px Galmuri9,sans-serif;box-shadow:0 4px 0 #57182c}
+.ab .a{right:0;top:0}.ab .b{left:0;top:32px}
+.ss{grid-column:1/3;display:flex;justify-content:center;gap:26px}
+.ss button{width:56px;height:14px;border-radius:7px;border:0;background:#6d7180;transform:rotate(-24deg);box-shadow:0 2px 0 #44474f}
+.ss span{display:block;font-size:9px;text-align:center;margin-top:6px;color:#6d7180;letter-spacing:.06em}
 button:active,button.on{filter:brightness(1.35);transform-origin:center}
 </style>
 </head>
