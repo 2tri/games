@@ -1,0 +1,74 @@
+<!doctype html><meta charset="utf-8">
+<style>
+@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;font-family:Galmuri9,sans-serif;color:#dde}
+.row{display:flex;gap:24px;padding:20px}
+.cell{display:flex;flex-direction:column;gap:8px;font-size:18px}
+canvas{image-rendering:pixelated;width:480px;height:432px;border-radius:6px}
+</style>
+<div class="row">
+  <div class="cell"><span>필드</span><canvas id="a" width="160" height="144"></canvas></div>
+  <div class="cell"><span>원정대 고르기</span><canvas id="b" width="160" height="144"></canvas></div>
+  <div class="cell"><span>전투</span><canvas id="c" width="160" height="144"></canvas></div>
+</div>
+<script src="pix.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('10px Galmuri9');
+  const {WALK,BATTLE,TILE,toCanvas,K}=RingPix;
+  // 글자를 또렷한 점으로 (반투명 가장자리 제거)
+  function text(g,str,x,y,col){
+    const c=document.createElement('canvas');c.width=160;c.height=14;const t=c.getContext('2d');
+    t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=col||'#181018';t.fillText(str,0,1);
+    const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);
+    g.drawImage(c,x,y);
+  }
+  function box(g,x,y,w,h){g.fillStyle='#181018';g.fillRect(x,y,w,h);g.fillStyle='#f8f8f0';g.fillRect(x+1,y+1,w-2,h-2);g.fillStyle='#181018';g.fillRect(x+3,y+3,w-6,1);g.fillRect(x+3,y+h-4,w-6,1);g.fillRect(x+3,y+3,1,h-6);g.fillRect(x+w-4,y+3,1,h-6);}
+  const put=(g,s,x,y)=>g.drawImage(toCanvas(s,1),x,y);
+
+  // ── 필드 ──
+  const a=document.getElementById('a').getContext('2d');
+  const map=['TTTTTTTTTT','THHgfgTtt.','THHgggttt.','TgPPPPPggt','TgPgfFFFFg','TgPggggggT','TgPPPPPPPT','TgggfgggPT','TTTTTTTTPT'];
+  const key={T:'tree',g:'grass',f:'flower',t:'tall',P:'path',F:'fence',H:'grass','.':'tall'};
+  map.forEach((r,y)=>[...r].forEach((ch,x)=>{ if(ch!=='T')put(a,TILE[key[ch]],x*16,y*16); else {put(a,TILE.grass,x*16,y*16);put(a,TILE.tree,x*16,y*16);} }));
+  put(a,TILE.hobbitHole,16,16);
+  put(a,WALK.frodo,48,48); put(a,WALK.sam,64,48);
+  box(a,0,96,160,48); text(a,'샘: 프로도 나리,',10,106); text(a,'정말 오늘 떠나시는 거예요?',10,122);
+  a.fillStyle=K; a.fillRect(146,134,5,1);a.fillRect(147,135,3,1);a.fillRect(148,136,1,1);
+
+  // ── 원정대 고르기 ──
+  const b=document.getElementById('b').getContext('2d');
+  b.fillStyle='#f8f8f0';b.fillRect(0,0,160,144);
+  text(b,'원정대에서 한 명을 고르세요',9,5);
+  const heroes=[['frodo','프로도'],['sam','샘'],['aragorn','아라곤'],['legolas','레골라스'],['gimli','김리'],['gandalf','간달프']];
+  heroes.forEach(([k,n],i)=>{const cx=6+(i%3)*50,cy=22+Math.floor(i/3)*40;
+    b.fillStyle=i===0?'#181018':'#c8c8c0';b.fillRect(cx,cy,48,38);b.fillStyle=i===0?'#fff8d8':'#f8f8f0';b.fillRect(cx+1,cy+1,46,36);
+    b.fillStyle='#d8e8b8';b.fillRect(cx+12,cy+19,24,3);
+    put(b,WALK[k],cx+16,cy+4);
+    const w=b.measureText?0:0; text(b,n,cx+24-n.length*5,cy+24);});
+  b.fillStyle=K;b.fillRect(3,38,2,5);b.fillRect(5,39,1,3);b.fillRect(6,40,1,1);
+  box(b,0,104,160,40);
+  text(b,'프로도 · 호빗 · 반지 운반자',8,112);text(b,'작지만 끈질기다. 반지를 끼면',8,126);
+
+  // ── 전투 ──
+  const c=document.getElementById('c').getContext('2d');
+  c.fillStyle='#f8f8f0';c.fillRect(0,0,160,144);
+  c.fillStyle='#d8e8b8';for(let y=0;y<8;y++){const w=Math.round(30*Math.sqrt(1-((y-3.5)/4)**2));c.fillRect(116-w,52+y,w*2,1);}
+  for(let y=0;y<8;y++){const w=Math.round(34*Math.sqrt(1-((y-3.5)/4)**2));c.fillRect(44-w,88+y,w*2,1);}
+  put(c,BATTLE.wolf,100,24);
+  put(c,BATTLE.frodoBack,28,62);
+  // 적 정보
+  text(c,'들늑대',8,4); text(c,'Lv3',60,4);
+  c.fillStyle=K;c.fillRect(8,20,70,1);c.fillRect(8,14,1,7);
+  text(c,'HP',10,11,'#e0a030'); c.fillRect(24,15,52,4); c.fillStyle='#58c048'; c.fillRect(25,16,50,2);
+  // 내 정보
+  text(c,'프로도',86,58); text(c,'Lv5',136,58);
+  c.fillStyle=K;c.fillRect(84,92,72,1);c.fillRect(155,70,1,23);
+  text(c,'HP',88,66,'#e0a030'); c.fillRect(102,70,52,4); c.fillStyle='#58c048'; c.fillRect(103,71,50,2);
+  text(c,'22/ 22',112,78);
+  // 대사창 + 메뉴
+  box(c,0,96,76,48); text(c,'프로도는',8,105); text(c,'무엇을 할까?',8,119);
+  box(c,74,96,86,48); text(c,'싸운다',90,106); text(c,'가방',128,106); text(c,'동료',90,124); text(c,'도망',128,124);
+  c.fillStyle=K;c.fillRect(83,107,2,7);c.fillRect(85,108,1,5);c.fillRect(86,109,1,3);c.fillRect(87,110,1,1);
+})();
+</script>
