@@ -63,3 +63,19 @@ if __name__ == '__main__':
         t = t[:a.crop].copy(); t[-1] = np.where(t[-1] >= 0, 3, -1)
     to_image(t, a.scale, bg=(248, 248, 240)).save(a.dst); np.save(a.dst.rsplit('.', 1)[0] + '.npy', t)
     print('칸 크기', c, '도트', t.shape, '→', a.dst)
+
+def shrink(t, maxw, maxh, line_bias=0.28):
+    """도트 그림 줄이기: 칸 덩어리마다 검정 비율이 line_bias 넘으면 검정(선 보존), 아니면 다수결"""
+    h, w = t.shape; k = min(1.0, maxw / w, maxh / h)
+    if k >= 1: return t
+    th, tw = max(1, round(h * k)), max(1, round(w * k))
+    out = -np.ones((th, tw), int)
+    for j in range(th):
+        for i in range(tw):
+            y0, y1 = int(j / k), max(int(j / k) + 1, int((j + 1) / k)); x0, x1 = int(i / k), max(int(i / k) + 1, int((i + 1) / k))
+            b = t[y0:y1, x0:x1].ravel(); fg = b[b >= 0]
+            if len(fg) < 0.5 * len(b): continue
+            if (fg == 3).mean() >= line_bias: out[j, i] = 3
+            else:
+                vals, cnt = np.unique(fg, return_counts=True); out[j, i] = vals[np.argmax(cnt)]
+    return out

@@ -1,0 +1,25 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;width:1000px;display:flex;flex-wrap:wrap;gap:12px;padding:10px}
+canvas{image-rendering:pixelated;width:320px;height:288px}</style>
+<script src="ai/sprites.js"></script>
+<script>
+const P=['#f8f8f0','#b0b0a8','#606060','#181818'];
+function spr(c,t,x0,y0){for(let y=0;y<t.length;y++)for(let x=0;x<t[0].length;x++){const v=t[y][x];if(v>=0){c.fillStyle=P[v];c.fillRect(x0+x,y0+y,1,1);}}}
+function text(c,s,x,y){const k=document.createElement('canvas');k.width=160;k.height=14;const t=k.getContext('2d');t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=P[3];t.fillText(s,0,1);const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);c.drawImage(k,x,y);}
+function hp(c,x,y){text(c,'HP',x,y-4);c.fillStyle=P[3];c.fillRect(x+16,y,48,4);c.fillStyle=P[2];c.fillRect(x+17,y+1,46,2);}
+(async()=>{await document.fonts.load('10px Galmuri9');
+for(const [k,name,msg] of [['frodosam','프로도·샘','프로도와 샘은 어떻게 할까?'],['aragorn','아라곤','아라곤은 어떻게 할까?'],['legolas','레골라스','레골라스는 어떻게 할까?'],['gimli','김리','김리는 어떻게 할까?'],['gandalf','간달프','간달프는 어떻게 할까?']]){
+  const cv=document.createElement('canvas');cv.width=160;cv.height=144;document.body.appendChild(cv);const c=cv.getContext('2d');
+  c.fillStyle=P[0];c.fillRect(0,0,160,144);
+  c.fillStyle=P[1];for(let y=0;y<6;y++){const w=Math.round(34*Math.sqrt(1-((y-2.5)/3)**2));c.fillRect(124-w,58+y,w*2,1);}
+  const g=AISPR.gollum;spr(c,g,160-g[0].length-6,0);
+  const b=AISPR[k];spr(c,b,2,104-b.length);
+  text(c,'골룸',4,4);text(c,'Lv12',52,4);c.fillStyle=P[3];c.fillRect(4,22,72,1);c.fillRect(75,14,1,9);hp(c,6,16);
+  c.fillStyle=P[0];c.fillRect(86,62,74,34);
+  text(c,name,90,62);text(c,'Lv5',140,62);c.fillStyle=P[3];c.fillRect(86,94,72,1);c.fillRect(86,72,1,23);hp(c,90,76);text(c,'22/ 22',114,82);
+  c.fillStyle=P[3];c.fillRect(0,96,160,48);c.fillStyle=P[0];c.fillRect(1,97,158,46);c.fillStyle=P[3];c.fillRect(3,99,154,1);c.fillRect(3,140,154,1);c.fillRect(3,99,1,42);c.fillRect(156,99,1,42);
+  text(c,msg,8,106);text(c,'▶싸운다  가방',8,122);text(c,'  동료    도망',84,122);
+}
+document.title='ok';})();
+</script>
