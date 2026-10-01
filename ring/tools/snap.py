@@ -57,8 +57,10 @@ def snap(img, size=None, tol=20):
     for _ in range(20):
         lab = np.argmin(np.abs(v[:, None] - c[None]), 1)
         c = np.array([v[lab == k].mean() if (lab == k).any() else c[k] for k in range(4)])
-    c = np.sort(c)[::-1]
-    t = np.argmin(np.abs(cells[..., None] - c[None, None]), 2); t = np.where(bg, -1, t)
+    # 무리마다 실제 밝기로 톤을 정함 (어두운 그림이 회색으로 밀리지 않게)
+    lab = np.argmin(np.abs(cells[..., None] - c[None, None]), 2)
+    tone_of = np.array([0 if v > 205 else 1 if v > 135 else 2 if v > 62 else 3 for v in c])
+    t = tone_of[lab]; t = np.where(bg, -1, t)
     ys, xs = np.where(t >= 0); t = t[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     return t, (pw, ph)
 
