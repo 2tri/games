@@ -8,7 +8,8 @@
 #include "music.h"
 
 State S;
-static const Foe *F; static uint8_t foeId;
+static const Foe *F; static uint8_t foeId; static Foe FR;
+uint8_t wild_lv;          // 0 이 아니면 그 레벨로 (걷는 화면 야생)
 static int16_t fhp, fmax, fShown, hShown;
 static int8_t fAtkB, fDefB;
 static uint8_t heroSleep, heroBind, hide, foeSleep, phialUsed, foeShow, heroShow;
@@ -183,7 +184,14 @@ uint8_t battle(uint8_t id, uint8_t noRun, uint8_t turns) BANKED {
 }
 static uint8_t battle_(uint8_t id, uint8_t noRun, uint8_t turns) {
     const Hero *H; const char *opts[5]; char ib[4][24]; uint8_t c, k, i, n, others[5], r, heroFirst, turn = 0;
-    foeId = id; F = &FOES[id]; fhp = fmax = fShown = F->hp; fAtkB = fDefB = 0; hShown = S.hp;
+    foeId = id; F = &FOES[id];
+    if (wild_lv && wild_lv != F->lv) {   // 야생: 지역 레벨에 맞춰 능력치를 늘이고 줄임
+        uint8_t b = F->lv, L = wild_lv;
+        FR = *F; FR.lv = L;
+        FR.hp = (uint16_t)((uint32_t)F->hp * L / b);
+        FR.atk = (uint8_t)(((uint16_t)F->atk * (L + b)) / (2 * b)); FR.def = (uint8_t)(((uint16_t)F->def * (L + b)) / (2 * b));
+        FR.spd = (uint8_t)(((uint16_t)F->spd * (L + b)) / (2 * b)); F = &FR;
+    } fhp = fmax = fShown = F->hp; fAtkB = fDefB = 0; hShown = S.hp;
     heroSleep = heroBind = hide = foeSleep = phialUsed = 0; foeShow = heroShow = 1;
     S.buffAtk = S.buffDef = 0;
     prevMusic = music_cur(); music_play(F->boss ? MUS_BOSS : MUS_BATTLE);

@@ -87,7 +87,7 @@ SHIRE = build(COARSE, [
 MAPS = [dict(
     name='샤이어', rows=SHIRE, start=(5, 4, 0),
     objs=[('house', 4, 2), ('house', 10, 2), ('house', 4, 8), ('house', 26, 6)],
-    wild=['dogW', 'dogW', 'crowW'], rate=12,
+    wild=[('dogW', 3, 5)], rate=12,                               # 샤이어: 매곳네 개들
     npcs=[   # (x, y, 대사) 말하기 · ('inn'|'shop', x, y, 대사) · ('trainer', x, y, 보는 방향, 적, 은화, 덤빌 때, 진 뒤)
         (7, 5, '샘의 아버지 햄: 프로도 나리, 우리 샘 녀석 잘 부탁드려요. 손은 굼떠도 마음은 단단한 놈이에요.'),
         ('inn', 12, 5, '초록용 주막 주인: 어서 오세요! 쉬어 가시겠어요? 한숨 자고 나면 기운이 날 거예요.'),
@@ -101,6 +101,7 @@ MAPS = [dict(
     items=[(9, 13, 'herb'), (29, 13, 'herb'), (2, 7, 'lembas')],
     # 사건 자리 (x, y, w, h, 그 단계까지): 농장 어귀(동쪽으로 가려면 꼭 지나감) → 숲길
     triggers=[(22, 2, 2, 12, 1), (24, 16, 2, 1, 2, 1, 2, 20)],   # 숲길 사건 뒤 나룻배로 강 건너 묵은숲(지도 1)
+    exits=[(24, 21, 1, 2, 21, 3), (25, 21, 1, 2, 21, 3)],          # 나루 → 묵은숲 (x, y, 지도, 도착 x, y, 필요한 단계)
 )]
 # ── 묵은숲·무덤 언덕 ──
 OLDFOREST = build([
@@ -117,20 +118,85 @@ OLDFOREST = build([
     'W......,,,.....T',
     'TTTTTTTTTTTTTTTT',
 ], [
-    (':', hline(21, 1, 13) + vline(2, 12, 21) + hline(12, 2, 6) + vline(6, 6, 12) + hline(6, 6, 18) + vline(18, 6, 15) + hline(15, 18, 28) + vline(28, 4, 15)),
+    (':', hline(21, 1, 13) + vline(2, 12, 21) + hline(12, 2, 6) + vline(6, 6, 12) + hline(6, 6, 18) + vline(18, 6, 15) + hline(15, 18, 30) + vline(28, 4, 15)),
     ('b', [(26, 2), (29, 6), (27, 5)]), ('*', [(9, 16), (21, 4)]), ('g', [(14, 3), (5, 17)]),
 ])
 MAPS.append(dict(
     name='묵은숲', rows=OLDFOREST, start=(2, 21, 1),
     objs=[('house', 25, 16), ('tree', 8, 12)],
-    wild=['rootW', 'crowW', 'rootW', 'wightW'], rate=14,
+    wild=[('rootW', 5, 7), ('rootW', 5, 7), ('rootW', 6, 7), ('wightW', 7, 8)], rate=14,   # 묵은숲: 성난 나무, 가끔 무덤 안개
     npcs=[
         ('inn', 27, 17, '톰 봄바딜: 헤이 돌! 메리 돌! 지친 나그네여, 톰의 집에서 쉬어 가렴!'),
         (4, 19, '샘: 이 숲은 나무들이 우릴 노려보는 것 같아요, 나리. 길에서 벗어나지 말아요.'),
     ],
     signs=[(3, 20, '묵은숲. 길은 자꾸 강가로 이어진다.')],
     items=[(13, 3, 'herb'), (29, 2, 'lembas'), (15, 17, 'herb')],
-    triggers=[(18, 11, 1, 2, 3), (28, 4, 1, 1, 4)],                 # 버드나무 영감(강가) → 무덤 언덕
+    triggers=[(18, 11, 1, 2, 3), (28, 4, 1, 1, 4, 2, 2, 12)],       # 버드나무 영감(강가) → 무덤 언덕 → 브리로
+    exits=[(1, 21, 0, 25, 20, 3), (30, 15, 2, 2, 12, 5)],
+))
+# ── 브리 (5단계: 달리는 조랑말) ──
+BREE = build([
+    'TTTTTTTTTTTTTTTT',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'T..............T',
+    'TT,,,......,,,TT',
+    'TT,,,......,,,TT',
+    'TTTTTTTTTTTTTTTT',
+], [
+    ('-', hline(2, 2, 29) + hline(16, 2, 29)), ('|', vline(2, 3, 10) + vline(2, 14, 15) + vline(29, 3, 10) + vline(29, 14, 15)),
+    (':', hline(12, 0, 31) + hline(13, 0, 31) + vline(15, 5, 12) + vline(8, 6, 12) + vline(22, 6, 12) + hline(5, 9, 21)),
+    ('*', [(5, 4), (26, 4), (11, 9), (19, 9)]), ('o', [(12, 4), (13, 4), (25, 8)]), ('g', [(4, 10), (27, 10)]),
+])
+MAPS.append(dict(
+    name='브리', rows=BREE, start=(2, 12, 3),
+    objs=[('house', 4, 4), ('house', 7, 4), ('house', 14, 3), ('house', 16, 3), ('house', 21, 4), ('house', 24, 4), ('house', 5, 8), ('house', 23, 8)],
+    wild=[('dogW', 6, 8), ('dogW', 6, 8), ('wolfW', 7, 8)], rate=10,   # 브리 주변: 들개, 늑대
+    npcs=[
+        ('inn', 18, 6, '버터버: 「달리는 조랑말」에 어서 오십쇼! 방 하나 내 드릴까요? 푹 쉬고 가세요.'),
+        ('shop', 11, 11, '브리 장사꾼: 길 떠나는 분들 필요한 건 다 있습죠!'),
+        (6, 11, '브리 사람: 요즘 큰길에 수상한 자들이 많아요. 검은 옷 입은 기사들 말이에요.'),
+        (25, 11, '브리 아낙: 동쪽 문 밖은 황야예요. 늑대가 내려온대요.'),
+        ('trainer', 20, 14, 'left', 'fernyT', 60, '빌 퍼니: 꼬마 호빗들이 어딜 가시나? 내 개들 맛 좀 봐라!', '빌 퍼니: 흥, 두고 보자고…'),
+    ],
+    signs=[(13, 11, '브리. 「달리는 조랑말」 여관은 마을 한가운데.'), (28, 11, '동쪽 문 → 황야 · 바람마루')],
+    items=[(3, 15, 'herb'), (28, 3, 'lembas')],
+    triggers=[(15, 5, 1, 1, 5)],                                    # 여관 문 앞: 성큼걸이를 만남
+    exits=[(0, 12, 1, 29, 15, 5), (0, 13, 1, 29, 15, 5), (31, 12, 3, 1, 12, 6), (31, 13, 3, 1, 12, 6)],
+))
+# ── 황야: 미지워터 늪(6) · 바람마루(7) · 트롤숲(8) · 브루이넨 여울(9) ──
+WILDS = build([
+    'TTTTTTTTTTTTTTTT',
+    'T......TT......T',
+    'T.,,,.T..T.TT..T',
+    'T.,,,.T..T.TT,,T',
+    'T.WW.,.TT..TT,,T',
+    'T.WW.,,......,.T',
+    '.,,..,,TTTT....T',
+    'T..WW..TTTT.TT.W',
+    'T..WW,,......T.W',
+    'T.....,,.TT..T.W',
+    'T..,,....TT....W',
+    'TTTTTTTTTTTTTTTT',
+], [
+    (':', hline(12, 0, 6) + vline(6, 4, 12) + hline(4, 6, 17) + vline(17, 4, 17) + hline(17, 17, 29) + vline(29, 13, 21) + hline(13, 26, 29)),
+    ('b', [(15, 2), (16, 2), (14, 3), (18, 3), (15, 6), (16, 6)]),       # 바람마루 꼭대기 돌무더기
+    ('=', [(30, 20), (31, 20), (30, 21), (31, 21)]),                     # 여울
+])
+MAPS.append(dict(
+    name='황야', rows=WILDS, start=(1, 12, 3),
+    objs=[('tree', 24, 18), ('tree', 26, 16)],
+    wild=[('wolfW', 8, 11), ('wolfW', 8, 11), ('wolfW', 9, 11), ('trollW', 10, 12)], rate=14,   # 황야: 늑대, 트롤숲 근처 어린 트롤
+    npcs=[(9, 13, '순찰자의 흔적이 있다. 「바람마루 꼭대기에서 기다리시오. — 간달프」라고 적힌 쪽지가 박혀 있다.')],
+    signs=[(5, 11, '서쪽 → 브리 · 동쪽 → 바람마루')],
+    items=[(3, 5, 'herb'), (14, 20, 'lembas'), (27, 3, 'herb')],
+    triggers=[(6, 9, 1, 2, 6), (17, 4, 1, 1, 7), (17, 15, 1, 2, 8), (29, 20, 1, 2, 9)],
+    exits=[(0, 12, 2, 30, 12, 6)],
 ))
 D = json.loads(__import__('subprocess').check_output(['node', HERE + '/extract.js']))
 fids = list(D['FOES'])
@@ -224,9 +290,10 @@ for i, m in enumerate(MAPS):
     out.append('const Sign MAP%d_SIGN[] = {%s};' % (i, ','.join('{%d,%d,%s}' % (x, y, cstr(t)) for x, y, t in m['signs']) or '{0}'))
     out.append('const Item MAP%d_ITEM[] = {%s};' % (i, ','.join('{%d,%d,%d,%d}' % (x, y, {'herb': 0, 'lembas': 1}[k], j) for j, (x, y, k) in enumerate(m['items'])) or '{0}'))
     out.append('const Trig MAP%d_TRIG[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d,%d,%d,%d}' % (tuple(t) + (255, 0, 0))[:8] for t in m['triggers']) or '{0}'))
-    out.append('const uint8_t MAP%d_WILD[] = {%s};' % (i, ','.join(str(fids.index(f)) for f in m['wild'])))
-    hdr.append('{%d,%d,MAP%d_CELLS,%d,MAP%d_NPC,%d,MAP%d_SIGN,%d,MAP%d_ITEM,%d,MAP%d_TRIG,%d,MAP%d_WILD,%d,%d,%d,%d,%d}' % (
-        W, H, i, len(m['npcs']), i, len(m['signs']), i, len(m['items']), i, len(m['triggers']), i, len(m['wild']), i, m['rate'], *m['start'], names.index('grass')))
+    out.append('const uint8_t MAP%d_WILD[] = {%s};' % (i, ','.join('%d,%d,%d' % (fids.index(f), lo, hi) for f, lo, hi in m['wild'])))
+    out.append('const Exit MAP%d_EXIT[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d,%d}' % e for e in m.get('exits', [])) or '{0}'))
+    hdr.append('{%d,%d,MAP%d_CELLS,%d,MAP%d_NPC,%d,MAP%d_SIGN,%d,MAP%d_ITEM,%d,MAP%d_TRIG,%d,MAP%d_WILD,%d,MAP%d_EXIT,%d,%d,%d,%d,%d}' % (
+        W, H, i, len(m['npcs']), i, len(m['signs']), i, len(m['items']), i, len(m['triggers']), i, len(m['wild']), i, len(m.get('exits', [])), i, m['rate'], *m['start'], names.index('grass')))
 out.append('const MapDef MAPS[] = {%s};' % ','.join(hdr))
 open(SRC + '/field_data.c', 'w').write('\n'.join(out) + '\n')
 open(SRC + '/field.h', 'w').write('''#include <stdint.h>
@@ -241,8 +308,9 @@ typedef struct { uint8_t x, y, kind, dir, arg, arg2, flag; const char *text, *te
 typedef struct { uint8_t x, y; const char *text; } Sign;
 typedef struct { uint8_t x, y, kind, flag; } Item;
 typedef struct { uint8_t x, y, w, h, step, wmap, wx, wy; } Trig;   // wmap != 255 이면 사건 뒤 그 지도로
+typedef struct { uint8_t x, y, map, tx, ty, need; } Exit;   // 밟으면 다른 지도로 (need 단계부터)
 typedef struct { uint8_t w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
-                 uint8_t nt; const Trig *trig; uint8_t nw; const uint8_t *wild; uint8_t rate, sx, sy, sdir, grass; } MapDef;
+                 uint8_t nt; const Trig *trig; uint8_t nw; const uint8_t *wild; uint8_t ne; const Exit *exit; uint8_t rate, sx, sy, sdir, grass; } MapDef;
 extern const uint8_t FT_TILES[], FT_N, MTDEF[][5], PLAYER_SPR[], NPC_SPR[];
 extern const MapDef MAPS[];
 ''' % (FIELD_BANK, len(MAPS), names.index('tree0'), max(t[4] for m in MAPS for t in m['triggers']) + 1))

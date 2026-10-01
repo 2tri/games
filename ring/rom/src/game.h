@@ -14,6 +14,7 @@ typedef struct {
     uint16_t money;
 } State;
 extern State S;
+extern uint8_t wild_lv;
 uint16_t statOf(uint8_t id, uint8_t lv, uint8_t k) BANKED;
 uint16_t stat(uint8_t k) BANKED;
 void swapTo(uint8_t id) BANKED;

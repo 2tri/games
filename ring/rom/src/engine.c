@@ -22,7 +22,9 @@ static uint8_t pad_read(void) {
     P1_REG = 0x30;
     return (uint8_t)(((~b & 0x0F) << 4) | (~a & 0x0F));
 }
-static void vbl_isr(void) { uint8_t j = pad_read(); latch |= j & ~cur; cur = j; rs += DIV_REG; }
+uint8_t win_wx_top = 7;   // 창 레이어 윗부분 x (고르기 상자), 96번째 줄부터는 7(대사창)
+static void vbl_isr(void) { uint8_t j = pad_read(); latch |= j & ~cur; cur = j; rs += DIV_REG; WX_REG = win_wx_top; }
+static void lcd_isr(void) { WX_REG = 7; }
 static const uint8_t KBIT[8] = { J_A, J_B, J_UP, J_DOWN, J_LEFT, J_RIGHT, J_START, J_SELECT };
 uint8_t key_poll(void) {
     uint8_t i, n;
@@ -44,10 +46,22 @@ static void fb_map(void) {
 // 걷는 화면(필드) 모드에서는 fb 아래 6줄(240~359)만 글상자(창 레이어, VRAM 1번 칸 0~119)로 보냄
 uint8_t field_mode;
 uint8_t key_held(void) { return cur; }
+// 걷는 화면의 창 레이어 배치: rows = 대사창 위 고르기 상자 줄 수(0이면 대사창만), bx = 상자 시작 칸
+void win_layout(uint8_t rows, uint8_t bx) {
+    uint8_t r, c, fr, sc, row[20]; uint16_t ft;
+    for (r = 0; r < rows + 6; r++) {
+        fr = r < rows ? 12 - rows + r : 12 + (r - rows); sc = r < rows ? bx : 0;
+        for (c = 0; c < 20; c++) { ft = (uint16_t)fr * 20 + sc + c; row[c] = sc + c < 20 ? (uint8_t)(ft - 140) : 0; }
+        VBK_REG = 0; set_win_tiles(0, r, 20, 1, row);
+        for (c = 0; c < 20; c++) row[c] = 8;
+        VBK_REG = 1; set_win_tiles(0, r, 20, 1, row); VBK_REG = 0;
+    }
+    WY_REG = 96 - rows * 8; win_wx_top = rows ? bx * 8 + 7 : 7;
+}
 void mode_fb(void) {
     if (!field_mode) return;
     DISPLAY_OFF; field_mode = 0;
-    HIDE_WIN; HIDE_SPRITES; move_bkg(0, 0);
+    HIDE_WIN; HIDE_SPRITES; move_bkg(0, 0); win_wx_top = 7;
     fb_map(); memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty); flush();
     DISPLAY_ON;
 }
@@ -66,16 +80,18 @@ void eng_init(void) {
     memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty);
     flush();
     add_VBL(vbl_isr);
+    CRITICAL { STAT_REG |= STATF_LYC; LYC_REG = 96; add_LCD(lcd_isr); }
+    set_interrupts(VBL_IFLAG | LCD_IFLAG);
     SHOW_BKG; DISPLAY_ON;
 }
 void flush(void) {
     uint16_t t = 0, s, lim;
     if (field_mode) {
-        memset(dirty, 0, 240); t = 240;
+        memset(dirty, 0, 140); t = 140;    // 걷는 화면: fb 7~17줄만 창 레이어 그림(VRAM 1번 칸 0~219)으로
         while (t < 360) {
             if (!dirty[t]) { t++; continue; }
             s = t; while (t < 360 && dirty[t]) { dirty[t] = 0; t++; }
-            VBK_REG = 1; set_bkg_data((uint8_t)(s - 240), (uint8_t)(t - s), fb + (s << 4)); VBK_REG = 0;
+            VBK_REG = 1; set_bkg_data((uint8_t)(s - 140), (uint8_t)(t - s), fb + (s << 4)); VBK_REG = 0;
         }
         return;
     }
@@ -261,10 +277,16 @@ void say(const char *s0) {
     SWITCH_ROM(sv);
 }
 uint8_t choose(const char *q, const char * const *opts, uint8_t n, uint8_t cancel) {
-    uint8_t w = 0, h, x, y, i = 0, k, tw, sv;
+    uint8_t w = 0, h, x, y, i = 0, k, tw, sv, fw;
     for (k = 0; k < n; k++) { tw = text_w(opts[k]); if (tw > w) w = tw; }
-    if (field_mode) { mode_fb(); set_scene(0); }
     w += 22; h = n * 14 + 10; x = 160 - w; y = 96 - h;
+    fw = 0;
+    if (field_mode) {
+        if (n <= 2) {   // 지도 위에 작은 상자 (창 레이어 윗부분)
+            fw = 1; h = (h + 7) & 0xF8; y = 96 - h; x &= 0xF8; w = 160 - x;
+            win_layout(h >> 3, x >> 3); SHOW_WIN;
+        } else { mode_fb(); set_scene(0); }
+    }
     box(0, 96, 160, 48);
     if (q) { strcpy(SAYBUF, q); sv = CURRENT_BANK; SWITCH_ROM(FONT_BANK); wrap(SAYBUF, 144); type_line(SAYBUF, LS[0], LE[0], 105, 1); if (NL > 1) type_line(SAYBUF, LS[1], LE[1], 121, 1); SWITCH_ROM(sv); }
     box(x, y, w, h);
@@ -276,6 +298,6 @@ uint8_t choose(const char *q, const char * const *opts, uint8_t n, uint8_t cance
         else if (k == K_A || k == K_START) break;
         else if (k == K_B && cancel != NOCANCEL) { i = cancel; break; }
     }
-    redraw();
+    if (fw) { HIDE_WIN; win_layout(0, 0); } else redraw();
     return i;
 }
