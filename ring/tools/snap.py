@@ -22,38 +22,44 @@ def est_cell(g, lo=3, hi=24):
                 if best is None or v < best[0]: best = (v, c, ox, oy)
     return best[1:]
 
-def snap(img, cell=None, size=56, tol=14):
-    rgb = np.asarray(img.convert('RGB')).astype(float); g = rgb @ [0.299, 0.587, 0.114]
-    bg = flood_bg(g.astype(np.uint8), True, tol)
-    if bg.mean() < 0.05: bg = flood_bg(g.astype(np.uint8), False, tol)
-    ys, xs = np.where(~bg); g = g[ys.min():ys.max() + 1, xs.min():xs.max() + 1]; bg = bg[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
-    if cell is None: cell, ox, oy = est_cell(g)
-    else: ox = oy = 0
-    H, W = (g.shape[0] - oy) // cell, (g.shape[1] - ox) // cell
-    G = g[oy:oy + H * cell, ox:ox + W * cell].reshape(H, cell, W, cell)
-    B = bg[oy:oy + H * cell, ox:ox + W * cell].reshape(H, cell, W, cell)
-    m = 1 - B.mean(axis=(1, 3)) > 0.5
-    v = np.median(G.reshape(H, cell, W, cell).transpose(0, 2, 1, 3).reshape(H, W, -1), axis=2)
-    # 4단계 k-평균 (밝기)
-    vals = v[m]; c = np.percentile(vals, [5, 35, 65, 95])
+def grid(g):
+    """도트 칸 크기(소수 허용)와 시작 위치: 밝기 경계의 반복 주기(FFT)로 찾음"""
+    res = []
+    for axis in (1, 0):
+        d = np.abs(np.diff(g, axis=axis)).sum(axis=1 - axis); d = d - d.mean(); n = len(d)
+        F = np.abs(np.fft.rfft(d)); fr = np.fft.rfftfreq(n); m = (fr > 1 / 40) & (fr < 1 / 3)
+        p = 1 / fr[np.argmax(F * m)]
+        dd = np.abs(np.diff(g, axis=axis)).sum(axis=1 - axis)
+        o = max(np.arange(0, p, 0.25), key=lambda o: sum(dd[int(round(o + k * p))] for k in range(int((n - o) / p)) if int(round(o + k * p)) < n))
+        res.append((p, o))
+    return res  # [(칸폭, x시작), (칸높이, y시작)]
+
+def snap(img, size=None, tol=20):
+    g = np.asarray(img.convert('L')).astype(float)
+    (pw, ox), (ph, oy) = grid(g)
+    nx, ny = int((g.shape[1] - ox) / pw), int((g.shape[0] - oy) / ph)
+    cells = np.zeros((ny, nx))
+    for j in range(ny):
+        for i in range(nx):
+            x0, x1 = int(ox + i * pw + pw * .3), int(ox + (i + 1) * pw - pw * .3)
+            y0, y1 = int(oy + j * ph + ph * .3), int(oy + (j + 1) * ph - ph * .3)
+            cells[j, i] = np.median(g[y0:y1 + 1, x0:x1 + 1])
+    bg = flood_bg(cells.astype(np.uint8), True, tol)
+    v = cells[~bg]; c = np.percentile(v, [5, 35, 65, 95])
     for _ in range(20):
-        lab = np.argmin(np.abs(vals[:, None] - c[None]), 1)
-        c = np.array([vals[lab == k].mean() if (lab == k).any() else c[k] for k in range(4)])
-    order = np.argsort(-c)   # 밝은 것 → 톤 0
-    tone_of = {int(k): i for i, k in enumerate(order)}
-    lab_all = np.argmin(np.abs(v[..., None] - c[None, None]), 2)
-    t = np.vectorize(lambda k: tone_of[int(k)])(lab_all); t = np.where(m, t, -1)
-    if max(t.shape) > size:  # 너무 크면 최근접 축소
-        k = size / max(t.shape); idx_y = (np.arange(int(t.shape[0] * k)) / k).astype(int); idx_x = (np.arange(int(t.shape[1] * k)) / k).astype(int)
-        t = t[idx_y][:, idx_x]
-    out = -np.ones((size, size), int); oy2 = size - t.shape[0]; ox2 = (size - t.shape[1]) // 2
-    out[oy2:, ox2:ox2 + t.shape[1]] = t
-    return out, cell
+        lab = np.argmin(np.abs(v[:, None] - c[None]), 1)
+        c = np.array([v[lab == k].mean() if (lab == k).any() else c[k] for k in range(4)])
+    c = np.sort(c)[::-1]
+    t = np.argmin(np.abs(cells[..., None] - c[None, None]), 2); t = np.where(bg, -1, t)
+    ys, xs = np.where(t >= 0); t = t[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    return t, (pw, ph)
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('dst')
-    ap.add_argument('--cell', type=int); ap.add_argument('--size', type=int, default=56); ap.add_argument('--scale', type=int, default=6)
+    ap.add_argument('--scale', type=int, default=6); ap.add_argument('--crop', type=int, help='아래를 잘라 이 높이로')
     a = ap.parse_args()
-    t, c = snap(Image.open(a.src), a.cell, a.size)
+    t, c = snap(Image.open(a.src))
+    if a.crop and t.shape[0] > a.crop:
+        t = t[:a.crop].copy(); t[-1] = np.where(t[-1] >= 0, 3, -1)
     to_image(t, a.scale, bg=(248, 248, 240)).save(a.dst); np.save(a.dst.rsplit('.', 1)[0] + '.npy', t)
-    print('칸 크기', c, '→', a.dst)
+    print('칸 크기', c, '도트', t.shape, '→', a.dst)
