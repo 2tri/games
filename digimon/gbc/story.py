@@ -145,6 +145,8 @@ KID_LINE = {
     'hikari': '여름인데 눈이 오다니… 무슨 일이 생기려나.',
 }
 KID_NAME = {'taichi': '신태일', 'yamato': '매튜', 'takeru': '리키', 'hikari': '신나리'}
+KID_CREST = {'taichi': '용기', 'yamato': '우정', 'takeru': '희망', 'hikari': '빛'}
+KID_DESC = {'taichi': '용감한 축구 소년', 'yamato': '하모니카 부는 소년', 'takeru': '꿈 많은 막내', 'hikari': '상냥한 소녀'}
 CAMP_SPOTS = {'taichi': (7, 9, 'right'), 'yamato': (10, 9, 'left'), 'takeru': (9, 11, 'up'), 'hikari': (9, 8, 'down')}
 
 AURORA = [

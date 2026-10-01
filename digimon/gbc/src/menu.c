@@ -49,34 +49,55 @@ uint8_t title_screen(void) BANKED {
 }
 
 // ───────── 아이 고르기 ─────────
-static void kid_show(uint8_t k) {
-    uint8_t i;
-    far_sprite(1, 0, 8, MISC_BANK, kid_spr + (uint16_t)k * 768);      // 앞모습 한 장 (16×32)
-    for (i = 0; i < 4; i++) obpal[i] = KID_PAL[k * 4 + i];
+// ───────── 주인공 고르기: 4명이 나란히 서 있고, 고른 아이는 제자리 걸음 · 아래에 파트너 그림·문장·소개 ─────────
+#define KP_X(i) (20 + (i) * 36)          // 화면 x (아이 왼쪽)
+#define KP_Y 40                         // 머리 위 (16×32)
+static void kp_sprite(uint8_t i, uint8_t fr) {
+    uint8_t q, t0 = i * 16 + fr * 8;
+    for (q = 0; q < 4; q++) {           // 0·1 아래 반, 2·3 위 반
+        set_sprite_tile(i * 4 + q, t0 + ((q & 2) ? 0 : 4) + ((q & 1) ? 2 : 0));
+        set_sprite_prop(i * 4 + q, 0x08 | i);
+        move_sprite(i * 4 + q, KP_X(i) + 8 + (q & 1) * 8, KP_Y + 16 + ((q & 2) ? 0 : 16));
+    }
+}
+static void kp_info(uint8_t k, uint8_t m) {
+    pool_release(m);
+    fill_tiles(TGT_BG, 0, 11, 20, 7, T_BLANK, 0);
+    pic_load(SPECIES[KID_PARTNER[k]].front, 1, 128, 4); pic_place(0, 11, 7, 7, 128, 4 | 0x08);
+    draw_frame(TGT_BG, 7, 11, 13, 7, 1);
+    var_sp[0] = KID_PARTNER[k]; print_at(TGT_BG, 9, 12, S_NAME_S0);
+    print_at(TGT_BG, 9, 14, KID_CRESTS[k]);
+    print_at(TGT_BG, 9, 16, KID_DESC[k]);
     pal_apply();
-    for (i = 0; i < 4; i++) { set_sprite_tile(i, ((i & 2) ? 0 : 4) + ((i & 1) ? 2 : 0)); set_sprite_prop(i, 0x08); move_sprite(i, 136 + (i & 1) * 8, (i & 2) ? 40 : 56); }
 }
 uint8_t kid_pick(void) BANKED {
-    uint8_t sel = G.kid, i, m;
+    uint8_t sel = G.kid, i, m, n, fr = 0;
     for (;;) {
         DISPLAY_OFF;
         screen_clear(); scene = SCENE_OTHER; pool_reset(1);
-        draw_frame(TGT_BG, 0, 0, 10, N_KIDS * 2 + 2, 0);
-        for (i = 0; i < N_KIDS; i++) print_at(TGT_BG, 2, 1 + i * 2, KID_NAME[i]);
-        print_at(TGT_BG, 11, 1, S_KP_TITLE);
-        print_at(TGT_BG, 11, 9, S_KP_PARTNER);
-        DISPLAY_ON; pal_apply();
+        draw_frame(TGT_BG, 0, 0, 20, 4, 0);
+        print_at(TGT_BG, 2, 1, S_KP_Q);
+        for (i = 0; i < N_KIDS; i++) {          // 아이 그림 (앞모습 두 장씩) · 팔레트 · 이름
+            far_sprite(1, i * 16, 16, MISC_BANK, kid_spr + (uint16_t)i * 768);
+            for (n = 0; n < 4; n++) obpal[i * 4 + n] = KID_PAL[i * 4 + n];
+            kp_sprite(i, 0);
+            print_at(TGT_BG, (KP_X(i) + 8) / 8 - 1, 9, KID_NAME[i]);
+        }
+        DISPLAY_ON;
         m = pool_mark();
+        kp_info(sel, m);
         for (;;) {
-            for (i = 0; i < N_KIDS; i++) draw_cursor(TGT_BG, 1, 1 + i * 2, i == sel);
-            kid_show(sel);
-            pool_release(m);
-            fill_tiles(TGT_BG, 11, 11, 9, 2, T_BLANK, 0);
-            var_sp[0] = KID_PARTNER[sel]; print_at(TGT_BG, 12, 11, S_NAME_S0);
-            for (;;) { frame(); if (joy_new & (J_UP | J_DOWN | J_A)) break; }
-            if (joy_new & J_UP) sel = sel ? sel - 1 : N_KIDS - 1;
-            else if (joy_new & J_DOWN) sel = (sel + 1 == N_KIDS) ? 0 : sel + 1;
-            else break;
+            for (i = 0; i < N_KIDS; i++) draw_cursor(TGT_BG, (KP_X(i) + 8) / 8 - 2, 9, i == sel);
+            for (;;) {
+                frame();
+                if ((frames & 15) == 0) { fr ^= 1; kp_sprite(sel, fr); }
+                if (joy_new & (J_LEFT | J_RIGHT | J_A)) break;
+            }
+            if (joy_new & J_A) break;
+            kp_sprite(sel, 0);
+            if (joy_new & J_LEFT) sel = sel ? sel - 1 : N_KIDS - 1;
+            else sel = (sel + 1 == N_KIDS) ? 0 : sel + 1;
+            kp_info(sel, m);
         }
         G.kid = sel;
         if (ask(S_KP_OK)) { tb_close(); hide_sprites(); return sel; }

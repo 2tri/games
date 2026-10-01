@@ -7,7 +7,7 @@ e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 e.tick(90); e.shot('00_title'); e.press('start', 4, 30)
 for i in range(60):                      # 아이 고르기 화면이 뜰 때까지
-    if oam(e, 0) == (56, 136): break
+    if oam(e, 0) == (72, 28): break
     e.press('a', 3, 10)
 e.shot('01_kidpick'); e.press('a', 4, 30); e.shot('02_confirm'); e.press('a', 4, 30)
 settle(e); log('house2f', gstate(e)); e.shot('03_room')

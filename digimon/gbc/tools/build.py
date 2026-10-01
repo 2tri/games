@@ -81,7 +81,7 @@ ES = {
     'st_moves': '기술', 'k_basic': '기본기', 'k_sig': '필살기', 'st_pow': '위력', 'st_chg': '변화', 'st_pp': 'PP',
     'save_q': '지금까지의 모험을 기록할까?', 'saved': '{kid}{은/는} 모험을 기록했다!',
     't_cont': '이어서 하기', 't_new': '새로 시작', 't_over': '새로 시작하면 지금의 기록은 덮어쓰게 된다. 괜찮을까?', 'cont': '이어서 한다.',
-    'kp_title': '선택받은 아이', 'kp_partner': '파트너', 'kp_ok': '{kid}{이/가} 맞느냐?',
+    'kp_title': '선택받은 아이',  'kp_q': '누구와 함께 모험을 떠날까?', 'kp_partner': '파트너', 'kp_ok': '{kid}{이/가} 맞느냐?',
     'bag': '가방', 'bag_quit': '그만두다', 'bag_none': '가방이 비어 있다.',
     'dex': '디지몬 도감', 'dex_seen': '만남', 'dex_own': '함께', 'dex_none': '아직 만난 디지몬이 없다', 'dex_q': '?????',
     'card_title': '선택받은 아이', 'card_crest': '문장', 'card_time': '모험 시간',
@@ -104,6 +104,8 @@ MV_NAME = [sid(m[0]) for m in MOVES]
 IT_NAME = [sid(it[0]) for it in story.ITEMS]
 IT_DESC = [sid(it[2]) for it in story.ITEMS]
 KID_NAME = [sid(W['kids'][k]['name']) for k in KIDS]
+KID_CRESTS = [sid(story.KID_CREST[k] + '의 문장') for k in KIDS]
+KID_DESC = [sid(story.KID_DESC[k]) for k in KIDS]
 CREST_NAME = [sid(c) for c in story.CRESTS]
 
 # ───────── 스크립트 ─────────
@@ -807,7 +809,7 @@ for tr in TIERS:
     l = [MOVEI[n] for n in TIER_BASIC[tr]] + [0xFF]; tb += l[:2]
 t += arr('TIER_BASIC', tb, static=False)
 t += arr('ATTR_NAME', ATTR_NAME, 'uint16_t', static=False)
-t += arr('KID_NAME', KID_NAME, 'uint16_t', static=False)
+t += arr('KID_NAME', KID_NAME, 'uint16_t', static=False) + arr('KID_CRESTS', KID_CRESTS, 'uint16_t', static=False) + arr('KID_DESC', KID_DESC, 'uint16_t', static=False)
 t += arr('KID_PARTNER', [SPI[story.PARTNER[k]] for k in KIDS], static=False)
 t += arr('KID_BABY', [SPI[story.BABY[k]] for k in KIDS], static=False)
 t += arr('KID_PAL', sum(KIDPAL, []), 'uint16_t', static=False)
