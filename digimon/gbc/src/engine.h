@@ -151,6 +151,7 @@ void music_play(uint8_t s) BANKED;          // 같은 곡이면 그대로
 void music_stop(void) BANKED;
 extern uint8_t music_done, cur_song;
 uint8_t title_screen(void) BANKED;
-void shop_screen(void) BANKED;            // 0 새로 1 이어서
+void shop_screen(void) BANKED;
+void box_screen(void) BANKED;            // 0 새로 1 이어서
 uint8_t kid_pick(void) BANKED;
 #endif

@@ -92,6 +92,9 @@ ES = {
     'cap_strong': '{s0}의 데이터가 너무 강해서 튕겨 나갔다!', 'cap_ok': '해냈다!\n{s0}의 데이터를 받아들였다!', 'cap_ng': '앗! 데이터가 흩어져 버렸다…',
     'got_bits': '{n0} 비트를 얻었다!', 'shop_title': '상점', 'shop_ask': '{i0}{을/를} {n0} 비트에 살까?', 'shop_poor': '비트가 모자란다!',
     'shop_thx': '고맙습니다!\n{i0}{을/를} 샀다!', 'shop_full': '더 이상 가질 수 없다!', 'shop_bits': '가진 비트', 'shop_quit': '그만두다', 'card_bits': '비트',
+    'box_title': '디지몬 보관함', 'box_dep': '맡기기', 'box_wd': '데려오기', 'box_q': '무엇을 할까?', 'box_empty': '보관함이 비어 있다.',
+    'box_full': '보관함이 가득 찼다!', 'box_one': '함께하는 디지몬이 하나뿐이라 맡길 수 없다!', 'party_full': '더 이상 데려갈 수 없다!\n(함께하는 디지몬은 6마리까지)',
+    'box_did': '{s0}{을/를} 보관함에 맡겼다.', 'box_got': '{s0}{을/를} 데려왔다!', 'box_did_e': '디지타마를 보관함에 맡겼다.', 'box_got_e': '디지타마를 데려왔다!', 'box_pick': '누구를 맡길까?', 'box_n': '마리',
 }
 ESID = {k: sid(v) for k, v in ES.items()}
 

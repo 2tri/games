@@ -127,7 +127,7 @@ static void status_screen(uint8_t slot);
 uint8_t party_screen(uint8_t mode) BANKED {
     static const uint16_t sub[3] = { S_P_MENU1, S_P_MENU2, S_P_MENU3 };
     uint8_t sel = 0, i, r;
-    uint16_t prompt = mode == 1 ? S_P_SEND : mode == 2 ? S_P_USE : S_P_PICK;
+    uint16_t prompt = mode == 1 ? S_P_SEND : mode == 2 ? S_P_USE : mode == 3 ? S_BOX_PICK : S_P_PICK;
     if (!G.nparty) { say(S_NO_MON); tb_close(); return 0xFF; }
     party_bg();
     for (;;) {
@@ -284,6 +284,80 @@ void shop_screen(void) BANKED {
             else { G.bits -= IT_PRICE[t]; G.bag[t]++; var_item = t; say(S_SHOP_THX); }
         }
         tb_close();
+    }
+}
+
+// ───────── 디지몬 보관함 (회복 센터 PC) ─────────
+static void box_list(uint8_t top) {
+    uint8_t i, n;
+    fill_tiles(TGT_BG, 1, 2, 18, 14, T_BLANK, 0);
+    for (i = 0; i < 7 && top + i < G.nbox; i++) {
+        mon_t *mm = &G.box[top + i];
+        n = top + i;
+        if (mm->egg) print_at(TGT_BG, 3, 2 + i * 2, S_EGG);
+        else { var_sp[0] = mm->sp; print_at(TGT_BG, 3, 2 + i * 2, S_NAME_S0); print_lv(TGT_BG, 14, 2 + i * 2, mm->lv); }
+        (void)n;
+    }
+    if (top + 7 >= G.nbox) print_at(TGT_BG, 3, 2 + (G.nbox - top) * 2, S_SHOP_QUIT);
+}
+static uint8_t box_pick(void) {       // 보관함에서 하나 고르기 → 번호, FF 그만
+    uint8_t sel = 0, top = 0, i, m;
+    DISPLAY_OFF;
+    screen_clear(); scene = SCENE_OTHER; pool_reset(1);
+    draw_frame(TGT_BG, 0, 0, 20, 18, 0);
+    print_at(TGT_BG, 2, 0, S_BOX_TITLE);
+    print_num(TGT_BG, 14, 1, G.nbox, 2); print_at(TGT_BG, 16, 0, S_BOX_N);
+    m = pool_mark();
+    box_list(0);
+    DISPLAY_ON; pal_apply();
+    for (;;) {
+        for (i = 0; i < 7; i++) draw_cursor(TGT_BG, 2, 2 + i * 2, top + i == sel);
+        frame();
+        if (joy_new & J_B) return 0xFF;
+        if (joy_new & J_A) return sel < G.nbox ? sel : 0xFF;
+        if ((joy_new & J_UP) && sel) sel--;
+        else if ((joy_new & J_DOWN) && sel < G.nbox) sel++;
+        else continue;
+        if (sel < top || sel >= top + 7) {
+            top = sel < top ? sel : sel - 6;
+            pool_release(m); box_list(top);
+        }
+    }
+}
+void box_screen(void) BANKED {
+    static const uint16_t items[3] = { S_BOX_DEP, S_BOX_WD, S_SHOP_QUIT };
+    uint8_t r, s, i;
+    for (;;) {
+        say_nowait(S_BOX_Q);
+        ui_open(10);
+        r = choose(TGT_WIN, 11, 10, 9, items, 3, 0, 2);
+        ui_close();
+        tb_close();
+        if (r == 0) {                              // 맡기기
+            if (G.nbox >= MAX_BOX) { say(S_BOX_FULL); tb_close(); continue; }
+            if (G.nparty <= 1) { say(S_BOX_ONE); tb_close(); continue; }
+            s = party_screen(3);
+            if (s != 0xFF) {
+                mon_t tmp = G.party[s];
+                if (!tmp.egg && alive_count() <= 1 && tmp.hp) { field_restore(); say(S_BOX_ONE); tb_close(); continue; }
+                G.box[G.nbox++] = tmp;
+                for (i = s; i + 1 < G.nparty; i++) G.party[i] = G.party[i + 1];
+                G.nparty--;
+                field_restore(); var_sp[0] = tmp.sp; say(tmp.egg ? S_BOX_DID_E : S_BOX_DID); tb_close();
+            } else field_restore();
+        } else if (r == 1) {                       // 데려오기
+            if (!G.nbox) { say(S_BOX_EMPTY); tb_close(); continue; }
+            if (G.nparty >= 6) { say(S_PARTY_FULL); tb_close(); continue; }
+            s = box_pick();
+            field_restore();
+            if (s != 0xFF) {
+                mon_t tmp = G.box[s];
+                for (i = s; i + 1 < G.nbox; i++) G.box[i] = G.box[i + 1];
+                G.nbox--;
+                G.party[G.nparty++] = tmp;
+                var_sp[0] = tmp.sp; say(tmp.egg ? S_BOX_GOT_E : S_BOX_GOT); tb_close();
+            }
+        } else return;
     }
 }
 

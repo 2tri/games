@@ -312,7 +312,7 @@ MAPS['village'] = Map('행복의 마을', [
 MAPS['center'] = Map('회복 센터', room(10, 8), KEYH, 'h_void',
     objs=[('h_table', 3, 2), ('h_table', 5, 2), ('h_plant2', 0, 1), ('h_plant2', 9, 1), ('h_tv2', 7, 1), ('h_stool', 1, 5), ('h_stool', 8, 5), ('h_mat', 4, 7)],
     npcs=[NPC(4, 1, 'elecmon', 'down', ELECMON, fixed=True)],
-    signs=[Sign(x, 3, ELECMON) for x in (3, 4, 5, 6)] + [Sign(x, 2, [Say('화면에 디지몬 보관함이 떠 있다.\f(보관함은 아직 준비 중)')]) for x in (7, 8, 9)],
+    signs=[Sign(x, 3, ELECMON) for x in (3, 4, 5, 6)] + [Sign(x, 2, [Say('{kid}{은/는} PC를 켰다.\f디지몬 보관함에 접속했다!'), Box()]) for x in (7, 8, 9)],
     warps=mat_warps(4, 7, 'village', 7, 6))
 
 # ── 행복의 마을 상점 ──
