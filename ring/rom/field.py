@@ -278,7 +278,9 @@ out.append('const uint8_t NPC_SPR[] = {%s};' % ','.join(map(str, npc_spr)))
 out.append('const uint8_t EXCL_SPR[] = {%s};' % ','.join(map(str, excl_spr)))
 hdr = []
 tcount = [0]
+mapfiles = {}; mbank, mused = 13, 0
 for i, m in enumerate(MAPS):
+    start_len = len(out)
     g = grid_names(m); H, W = len(g), len(g[0])
     out.append('const uint8_t MAP%d_CELLS[] = {%s};' % (i, ','.join(str(names.index(n)) for r in g for n in r)))
     nl = []
@@ -292,9 +294,20 @@ for i, m in enumerate(MAPS):
     out.append('const Trig MAP%d_TRIG[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d,%d,%d,%d}' % (tuple(t) + (255, 0, 0))[:8] for t in m['triggers']) or '{0}'))
     out.append('const uint8_t MAP%d_WILD[] = {%s};' % (i, ','.join('%d,%d,%d' % (fids.index(f), lo, hi) for f, lo, hi in m['wild'])))
     out.append('const Exit MAP%d_EXIT[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d,%d}' % e for e in m.get('exits', [])) or '{0}'))
-    hdr.append('{%d,%d,MAP%d_CELLS,%d,MAP%d_NPC,%d,MAP%d_SIGN,%d,MAP%d_ITEM,%d,MAP%d_TRIG,%d,MAP%d_WILD,%d,MAP%d_EXIT,%d,%d,%d,%d,%d}' % (
-        W, H, i, len(m['npcs']), i, len(m['signs']), i, len(m['items']), i, len(m['triggers']), i, len(m['wild']), i, len(m.get('exits', [])), i, m['rate'], *m['start'], names.index('grass')))
+    chunk = out[start_len:]; del out[start_len:]
+    size = sum(len(c.encode()) for c in chunk) // 3          # C 소스 → 대략 바이트
+    if mused + size > 14000: mbank += 1; mused = 0
+    mused += size; mapfiles.setdefault(mbank, []).extend(chunk)
+    hdr.append('{%d,%d,%d,MAP%d_CELLS,%d,MAP%d_NPC,%d,MAP%d_SIGN,%d,MAP%d_ITEM,%d,MAP%d_TRIG,%d,MAP%d_WILD,%d,MAP%d_EXIT,%d,%d,%d,%d,%d}' % (
+        mbank, W, H, i, len(m['npcs']), i, len(m['signs']), i, len(m['items']), i, len(m['triggers']), i, len(m['wild']), i, len(m.get('exits', [])), i, m['rate'], *m['start'], names.index('grass')))
+for bk, chunk in mapfiles.items():
+    open(SRC + '/maps_%d.c' % bk, 'w').write('#pragma bank %d\n#include <stdint.h>\n#include "field.h"\n' % bk + '\n'.join(chunk) + '\n')
+    for c in chunk: out.insert(3, 'extern ' + c.split('=')[0].strip() + ';')
+assert mbank <= 14, '지도 은행이 모자람'
 out.append('const MapDef MAPS[] = {%s};' % ','.join(hdr))
+import glob as _g
+for f in _g.glob(SRC + '/maps_*.c'):
+    if int(f.split('_')[-1][:-2]) not in mapfiles: os.remove(f)
 open(SRC + '/field_data.c', 'w').write('\n'.join(out) + '\n')
 open(SRC + '/field.h', 'w').write('''#include <stdint.h>
 #define FIELD_BANK %d
@@ -309,7 +322,7 @@ typedef struct { uint8_t x, y; const char *text; } Sign;
 typedef struct { uint8_t x, y, kind, flag; } Item;
 typedef struct { uint8_t x, y, w, h, step, wmap, wx, wy; } Trig;   // wmap != 255 이면 사건 뒤 그 지도로
 typedef struct { uint8_t x, y, map, tx, ty, need; } Exit;   // 밟으면 다른 지도로 (need 단계부터)
-typedef struct { uint8_t w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
+typedef struct { uint8_t bank, w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
                  uint8_t nt; const Trig *trig; uint8_t nw; const uint8_t *wild; uint8_t ne; const Exit *exit; uint8_t rate, sx, sy, sdir, grass; } MapDef;
 extern const uint8_t FT_TILES[], FT_N, MTDEF[][5], PLAYER_SPR[], NPC_SPR[];
 extern const MapDef MAPS[];

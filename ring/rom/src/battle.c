@@ -265,10 +265,10 @@ void frodo_cap_hp(void) BANKED { uint8_t i = memi(HE_FRODOSAM); int16_t m;
 void frodo_full_hp(void) BANKED { uint8_t i = memi(HE_FRODOSAM);
     if (S.hero == HE_FRODOSAM) S.hp = stat(ST_HP); else if (has(HE_FRODOSAM)) S.mhp[i] = statOf(HE_FRODOSAM, S.mlv[i], ST_HP); }
 // 사우론의 입 막간: 일행을 잠시 맡겨 두고 아라곤 혼자
-static State keep;
-void keep_party(void) BANKED { keep = S; }
+#define KEEP_ADDR ((State *)0xA200)    // 카트리지 램 (저장 자리 0xA000 과 겹치지 않게)
+void keep_party(void) BANKED { ENABLE_RAM; SWITCH_RAM(0); memcpy(KEEP_ADDR, &S, sizeof S); DISABLE_RAM; }
 void solo_party(uint8_t id) BANKED { S.np = 1; S.party[0] = id; S.mlv[0] = S.lv; S.mxp[0] = 0; S.mhp[0] = 0; }
-void restore_party(void) BANKED { uint8_t st = S.step; S = keep; S.step = st; }
+void restore_party(void) BANKED { uint8_t st = S.step; ENABLE_RAM; SWITCH_RAM(0); memcpy(&S, KEEP_ADDR, sizeof S); DISABLE_RAM; S.step = st; }
 
 // ── 걷는 화면 메뉴용 (자료가 이 은행에 있어서 여기서 글을 만들어 SB 로) ──
 uint8_t foe_lv(uint8_t id) BANKED { return FOES[id].lv; }

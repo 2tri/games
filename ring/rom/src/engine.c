@@ -6,7 +6,10 @@
 
 // 화면 160×144 = 타일 20×18 = 360장. 타일 n 은 화면의 n 번째 칸 (0~255: VRAM 0번 칸, 256~359: 1번 칸)
 static uint8_t fb[360 * 16];
-static uint8_t dirty[360];
+static uint8_t dirtyb[45];          // 바뀐 타일 표시 (360칸을 비트로 — RAM 절약)
+#define DSET(t) (dirtyb[(t) >> 3] |= (uint8_t)(1 << ((t) & 7)))
+#define DGET(t) (dirtyb[(t) >> 3] & (uint8_t)(1 << ((t) & 7)))
+#define DCLR(t) (dirtyb[(t) >> 3] &= (uint8_t)~(1 << ((t) & 7)))
 static uint8_t *ROWB[18];          // 타일 줄마다 fb 시작 (곱셈 없이)
 static uint16_t DROW[18];          // 타일 줄마다 dirty 시작
 const palette_color_t PAL[4] = { RGB(30, 30, 29), RGB(21, 21, 20), RGB(11, 11, 11), RGB(2, 2, 2) };
@@ -62,7 +65,7 @@ void mode_fb(void) {
     if (!field_mode) return;
     DISPLAY_OFF; field_mode = 0;
     HIDE_WIN; HIDE_SPRITES; move_bkg(0, 0); win_wx_top = 7;
-    fb_map(); memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty); flush();
+    fb_map(); memset(fb, 0, sizeof fb); memset(dirtyb, 0xFF, sizeof dirtyb); flush();
     DISPLAY_ON;
 }
 void eng_init(void) {
@@ -77,7 +80,7 @@ void eng_init(void) {
         for (j = 0; j < 20; j++) row[j] = (uint8_t)(i * 20 + j);
         VBK_REG = 0; set_bkg_tiles(0, i, 20, 1, row);
     }
-    memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty);
+    memset(fb, 0, sizeof fb); memset(dirtyb, 0xFF, sizeof dirtyb);
     flush();
     add_VBL(vbl_isr);
     CRITICAL { STAT_REG |= STATF_LYC; LYC_REG = 96; add_LCD(lcd_isr); }
@@ -87,18 +90,20 @@ void eng_init(void) {
 void flush(void) {
     uint16_t t = 0, s, lim;
     if (field_mode) {
-        memset(dirty, 0, 140); t = 140;    // 걷는 화면: fb 7~17줄만 창 레이어 그림(VRAM 1번 칸 0~219)으로
+        memset(dirtyb, 0, 17); for (t = 136; t < 140; t++) DCLR(t);
+        t = 140;    // 걷는 화면: fb 7~17줄만 창 레이어 그림(VRAM 1번 칸 0~219)으로
         while (t < 360) {
-            if (!dirty[t]) { t++; continue; }
-            s = t; while (t < 360 && dirty[t]) { dirty[t] = 0; t++; }
+            if (!DGET(t)) { t++; continue; }
+            s = t; while (t < 360 && DGET(t)) { DCLR(t); t++; }
             VBK_REG = 1; set_bkg_data((uint8_t)(s - 140), (uint8_t)(t - s), fb + (s << 4)); VBK_REG = 0;
         }
         return;
     }
     while (t < 360) {
-        if (!dirty[t]) { t++; continue; }
+        if (!dirtyb[t >> 3]) { t = (t | 7) + 1; continue; }
+        if (!DGET(t)) { t++; continue; }
         s = t; lim = s < 256 ? 256 : 360; if (lim > s + 255) lim = s + 255;
-        while (t < lim && dirty[t]) { dirty[t] = 0; t++; }
+        while (t < lim && DGET(t)) { DCLR(t); t++; }
         if (s < 256) { VBK_REG = 0; set_bkg_data((uint8_t)s, (uint8_t)(t - s), fb + (s << 4)); }
         else { VBK_REG = 1; set_bkg_data((uint8_t)(s - 256), (uint8_t)(t - s), fb + (s << 4)); VBK_REG = 0; }
     }
@@ -123,7 +128,7 @@ void rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t tone) {
         m = (uint8_t)(0xFF >> o) & (uint8_t)(0xFF << (8 - o - n)); nm = ~m; col = xx >> 3;
         for (yy = y; yy < y2; yy += r) {
             ty = yy >> 3; r = 8 - (yy & 7); if (yy + r > y2) r = y2 - yy;
-            dirty[DROW[ty] + col] = 1;
+            { uint16_t _t = DROW[ty] + col; DSET(_t); }
             p = ROWB[ty] + ((uint16_t)col << 4) + ((yy & 7) << 1);
             if (m == 0xFF) { uint8_t k = r; while (k--) { p[0] = lo; p[1] = hi; p += 2; } }
             else { uint8_t k = r, ml = m & lo, mh = m & hi; while (k--) { p[0] = (p[0] & nm) | ml; p[1] = (p[1] & nm) | mh; p += 2; } }
@@ -147,7 +152,7 @@ void blit(uint8_t id, uint8_t x, uint8_t y, uint8_t white) {
         for (tx = 0; tx < w; tx++, d += 24) {
             col = (x >> 3) + tx;
             if (col >= 20 || row >= 18 || row >= (blit_ymax >> 3)) continue;
-            dirty[DROW[row] + col] = 1;
+            { uint16_t _t = DROW[row] + col; DSET(_t); }
             p = ROWB[row] + ((uint16_t)col << 4);
             for (r = 0; r < 8; r++, p += 2) {
                 m = d[16 + r]; if (!m) continue;
@@ -158,6 +163,10 @@ void blit(uint8_t id, uint8_t x, uint8_t y, uint8_t white) {
     }
     SWITCH_ROM(sv);
 }
+// ── 다른 은행 자료 읽기 (0번 은행에서 잠깐 바꿔 읽고 되돌림) ──
+uint8_t fget(uint8_t bank, const uint8_t *p) { uint8_t sv = CURRENT_BANK, v; SWITCH_ROM(bank); v = *p; SWITCH_ROM(sv); return v; }
+void fcopy(void *d, uint8_t bank, const void *src, uint16_t n) { uint8_t sv = CURRENT_BANK; SWITCH_ROM(bank); memcpy(d, src, n); SWITCH_ROM(sv); }
+void say_far(uint8_t bank, const char *t) { uint8_t sv = CURRENT_BANK; SWITCH_ROM(bank); strncpy(SB, t, 199); SB[199] = 0; SWITCH_ROM(sv); say(SB); }
 // ── 글자 (갈무리9, 롬에 쓰인 글자만) ──
 static uint16_t utf8(const char **ps) {
     const uint8_t *s = (const uint8_t *)*ps; uint16_t c = s[0];
@@ -187,23 +196,23 @@ static uint8_t draw_char(uint16_t cp, uint8_t x, uint8_t y, uint8_t tone) {
         ty = yy >> 3;
         c0 = b0 >> o; c1 = (uint8_t)(o ? (b0 << (8 - o)) : 0) | (b1 >> o); c2 = o ? (uint8_t)(b1 << (8 - o)) : 0;
         p = ROWB[ty] + ((uint16_t)col << 4) + ((yy & 7) << 1);
-        if (c0) { APPLY(p, c0, ~c0, tone); dirty[DROW[ty] + col] = 1; }
-        if (c1 && col < 19) { APPLY(p + 16, c1, ~c1, tone); dirty[DROW[ty] + col + 1] = 1; }
-        if (c2 && col < 18) { APPLY(p + 32, c2, ~c2, tone); dirty[DROW[ty] + col + 2] = 1; }
+        if (c0) { APPLY(p, c0, ~c0, tone); { uint16_t _t = DROW[ty] + col; DSET(_t); } }
+        if (c1 && col < 19) { APPLY(p + 16, c1, ~c1, tone); { uint16_t _t = DROW[ty] + col + 1; DSET(_t); } }
+        if (c2 && col < 18) { APPLY(p + 32, c2, ~c2, tone); { uint16_t _t = DROW[ty] + col + 2; DSET(_t); } }
     }
     return w;
 }
 // 글은 어느 은행에 있든 먼저 RAM 으로 옮긴 뒤 글꼴 은행으로 바꿔 그림 (끝나면 원래 은행으로)
-static char TB[128];
+static char TB[96];
 uint8_t text(const char *s0, uint8_t x, uint8_t y, uint8_t tone) {
     uint8_t sv = CURRENT_BANK; const char *s = TB;
-    strncpy(TB, s0, 127); TB[127] = 0; SWITCH_ROM(FONT_BANK);
+    strncpy(TB, s0, 95); TB[95] = 0; SWITCH_ROM(FONT_BANK);
     while (*s) x += draw_char(utf8(&s), x, y, tone);
     SWITCH_ROM(sv); return x;
 }
 uint8_t text_w(const char *s0) {
     uint8_t sv = CURRENT_BANK, w = 0; const char *s = TB;
-    strncpy(TB, s0, 127); TB[127] = 0; SWITCH_ROM(FONT_BANK);
+    strncpy(TB, s0, 95); TB[95] = 0; SWITCH_ROM(FONT_BANK);
     while (*s) w += cw(utf8(&s));
     SWITCH_ROM(sv); return w;
 }

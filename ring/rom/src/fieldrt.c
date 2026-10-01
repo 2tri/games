@@ -13,6 +13,8 @@
 #include "music.h"
 
 static MapDef MD;
+// 지금 지도의 작은 표들은 RAM 으로 (지도 자료는 13번 은행부터)
+static Npc NPCS[8]; static Sign SIGNS[5]; static Item ITEMS[8]; static Trig TRIGS[6]; static Exit EXITS[8]; static uint8_t WILDS[24];
 static int16_t camx, camy;
 static uint8_t npx[10], npy[10];          // 사람 지금 자리 (길 막는 적은 걸어옴)
 static const int8_t DX[4] = { 0, 0, -1, 1 }, DY[4] = { 1, -1, 0, 0 };   // 아래·위·왼쪽·오른쪽
@@ -27,7 +29,7 @@ static void flag_set(uint8_t f) { S.flags[f >> 3] |= 1 << (f & 7); }
 
 static uint8_t raw_at(int8_t x, int8_t y) {
     if (x < 0 || y < 0 || x >= (int8_t)MD.w || y >= (int8_t)MD.h) return MT_TREE0 + (x & 1) + 2 * (y & 1);
-    return MD.cells[(uint16_t)y * MD.w + x];
+    return fget(MD.bank, MD.cells + (uint16_t)y * MD.w + x);
 }
 static uint8_t item_idx(int8_t x, int8_t y) { uint8_t i; for (i = 0; i < MD.ni; i++) if (MD.item[i].x == (uint8_t)x && MD.item[i].y == (uint8_t)y) return i; return 255; }
 static uint8_t cell_at(int8_t x, int8_t y) {
@@ -80,6 +82,13 @@ void field_enter(void) BANKED {
     DISPLAY_OFF;
     field_mode = 1;
     memcpy(&MD, &MAPS[S.map], sizeof MD);
+    if (MD.nn > 8) MD.nn = 8; if (MD.ns > 5) MD.ns = 5; if (MD.ni > 8) MD.ni = 8; if (MD.nt > 6) MD.nt = 6; if (MD.ne > 8) MD.ne = 8; if (MD.nw > 8) MD.nw = 8;
+    fcopy(NPCS, MD.bank, MD.npc, MD.nn * sizeof(Npc)); MD.npc = NPCS;
+    fcopy(SIGNS, MD.bank, MD.sign, MD.ns * sizeof(Sign)); MD.sign = SIGNS;
+    fcopy(ITEMS, MD.bank, MD.item, MD.ni * sizeof(Item)); MD.item = ITEMS;
+    fcopy(TRIGS, MD.bank, MD.trig, MD.nt * sizeof(Trig)); MD.trig = TRIGS;
+    fcopy(EXITS, MD.bank, MD.exit, MD.ne * sizeof(Exit)); MD.exit = EXITS;
+    fcopy(WILDS, MD.bank, MD.wild, MD.nw * 3); MD.wild = WILDS;
     for (r = 0; r < MD.nn; r++) { npx[r] = MD.npc[r].x; npy[r] = MD.npc[r].y; }
     nofs_i = -1;
     VBK_REG = 0; set_bkg_data(0, FT_N, FT_TILES);
@@ -98,10 +107,12 @@ static void hide_below(uint8_t top) {   // 글상자·고르기 상자에 겹치
     uint8_t i;
     for (i = 2; i < 18; i += 2) if (shadow_OAM[i].y >= top + 16 - 8) { shadow_OAM[i].y = 0; shadow_OAM[i + 1].y = 0; }
 }
+static void ftalk(const char *t);
 static void talk(const char *t) {
     hide_below(96);
     SHOW_WIN; say(t); HIDE_WIN; draw_npcs();
 }
+static void ftalk(const char *t) { hide_below(96); SHOW_WIN; say_far(MD.bank, t); HIDE_WIN; draw_npcs(); }
 static void beep(uint8_t hi) { NR52_REG = 0x80; NR10_REG = 0; NR11_REG = 0x80; NR12_REG = 0xA2; NR13_REG = hi; NR14_REG = 0x87; }
 static void encounter_fx(void) {   // 띠리링: 화면 세 번 번쩍 + 소리
     uint8_t i;
@@ -137,7 +148,7 @@ static uint8_t fight(uint8_t foe, uint8_t noRun) {
 static const char * const YESNO[] = { "쉬어 간다", "그냥 간다" };
 static void inn(const char *t) {
     uint8_t c;
-    talk(t);
+    ftalk(t);
     hide_below(48); move_sprite(0, 0, 0); move_sprite(1, 0, 0); SHOW_WIN; c = choose(0, YESNO, 2, 1); draw_npcs(); draw_player(0);
     if (c == 0) { healAll(); save(); beep(0xE0); talk("푹 쉬었다! 일행 모두 기운을 되찾았다. (기록했다)"); }
 }
@@ -145,7 +156,7 @@ static void inn(const char *t) {
 static const char * const SHOP[] = { "렘바스 40은화", "약초 20은화" };
 static void shop(const char *t) {
     uint8_t c;
-    talk(t);
+    ftalk(t);
     for (;;) {
         sb_clear(); sb_add("가진 은화 "); sb_num(S.money, 0); sb_add(". 무엇을 살까? B는 그만");
         hide_below(48); move_sprite(0, 0, 0); move_sprite(1, 0, 0); SHOW_WIN; c = choose(SB, SHOP, 2, 2); draw_npcs(); draw_player(0);
@@ -179,11 +190,11 @@ static uint8_t trainer_check(void) {
             npx[i] += DX[d]; npy[i] += DY[d]; nofs_i = -1; draw_npcs();
         }
         S.dir = d ^ 1; draw_player(0);           // 주인공이 그쪽을 봄
-        talk(n->text);
+        ftalk(n->text);
         if (fight(n->arg, 1) == R_WIN) {
             flag_set(n->flag); S.money += n->arg2;
             sb_clear(); sb_add("은화를 "); sb_num(n->arg2, 0); sb_add(" 받았다!"); talk(SB);
-            if (n->text2) talk(n->text2);
+            if (n->text2) ftalk(n->text2);
         }
         return 1;
     }
@@ -230,11 +241,11 @@ static void interact(void) {
         const Npc *n = &MD.npc[i];
         if (n->kind == NK_INN) inn(n->text);
         else if (n->kind == NK_SHOP) shop(n->text);
-        else if (n->kind == NK_TRAINER) talk(flag_get(n->flag) && n->text2 ? n->text2 : n->text);
-        else talk(n->text);
+        else if (n->kind == NK_TRAINER) ftalk(flag_get(n->flag) && n->text2 ? n->text2 : n->text);
+        else ftalk(n->text);
         return;
     }
-    if (MTDEF[cell_at(fx, fy)][4] == MK_SIGN) for (i = 0; i < MD.ns; i++) if (MD.sign[i].x == (uint8_t)fx && MD.sign[i].y == (uint8_t)fy) { talk(MD.sign[i].text); return; }
+    if (MTDEF[cell_at(fx, fy)][4] == MK_SIGN) for (i = 0; i < MD.ns; i++) if (MD.sign[i].x == (uint8_t)fx && MD.sign[i].y == (uint8_t)fy) { ftalk(MD.sign[i].text); return; }
 }
 uint8_t field_loop(void) BANKED {
     uint8_t k, h, d, ev;
@@ -256,7 +267,7 @@ void field_start_pos(void) BANKED { S.x = MAPS[S.map].sx; S.y = MAPS[S.map].sy; 
 
 // ── START 메뉴 (그림 화면): 동료 · 가방 · 기록 ──
 static const char * const MENU[] = { "동료", "가방", "기록", "닫기" };
-static char lines[5][32];
+static char lines[5][28];
 static uint8_t nl;
 static void menuScene(void) {
     uint8_t i;
@@ -265,7 +276,7 @@ static void menuScene(void) {
     for (i = 0; i < nl; i++) text(lines[i], 10, 20 + i * 14, 3);
     box(0, 96, 160, 48);
 }
-static void load_lines(void) { uint8_t i; nl = S.np; for (i = 0; i < nl; i++) { party_line(i); strncpy(lines[i], SB, 31); lines[i][31] = 0; } }
+static void load_lines(void) { uint8_t i; nl = S.np; for (i = 0; i < nl; i++) { party_line(i); strncpy(lines[i], SB, 27); lines[i][27] = 0; } }
 void menu_open(void) BANKED {
     uint8_t c, i, k; const char *opts[6];
     for (;;) {

@@ -11,7 +11,7 @@ typedef struct { uint8_t x, y; const char *text; } Sign;
 typedef struct { uint8_t x, y, kind, flag; } Item;
 typedef struct { uint8_t x, y, w, h, step, wmap, wx, wy; } Trig;   // wmap != 255 이면 사건 뒤 그 지도로
 typedef struct { uint8_t x, y, map, tx, ty, need; } Exit;   // 밟으면 다른 지도로 (need 단계부터)
-typedef struct { uint8_t w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
+typedef struct { uint8_t bank, w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
                  uint8_t nt; const Trig *trig; uint8_t nw; const uint8_t *wild; uint8_t ne; const Exit *exit; uint8_t rate, sx, sy, sdir, grass; } MapDef;
 extern const uint8_t FT_TILES[], FT_N, MTDEF[][5], PLAYER_SPR[], NPC_SPR[];
 extern const MapDef MAPS[];
