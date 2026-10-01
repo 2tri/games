@@ -806,9 +806,9 @@
         }
         draw(q) {
           q.fillStyle = PAPER; q.fillRect(0, 0, 160, 144);
-          U.text(q, '선택받은 아이', 8, 0);
-          U.frame(q, 0, 12, 80, 132);
-          names.forEach((n, j) => U.text(q, n, 18, 17 + j * 15)); if (!this.locked || (frameNo >> 3) % 2) U.cursor(q, 9, 19 + this.i * 15);
+          U.text(q, '선택받은 아이', 8, 2);
+          U.frame(q, 0, 16, 80, 128);
+          names.forEach((n, j) => U.text(q, n, 18, 21 + j * 15)); if (!this.locked || (frameNo >> 3) % 2) U.cursor(q, 9, 23 + this.i * 15);
           const k = order[this.i];
           if (k === 'taichi') q.drawImage(sprite_people('taichi'), 104, 20);
           else { q.imageSmoothingEnabled = false; q.drawImage(cvs(FLD.WALKS[k].down[0]), 96, 28, 48, 48); }
