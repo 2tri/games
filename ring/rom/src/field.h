@@ -1,9 +1,9 @@
 #include <stdint.h>
 #define FIELD_BANK 11
-#define N_MAPS 4
-#define MT_TREE0 16
-#define FIELD_END 10
-extern const uint8_t EXCL_SPR[];
+#define N_MAPS 7
+#define MT_TREE0 21
+#define FIELD_END 19
+extern const uint8_t EXCL_SPR[], SAM_SPR[];
 enum { MK_WALK, MK_SOLID, MK_GRASS, MK_WATER, MK_SIGN, MK_ITEM };
 enum { NK_TALK, NK_INN, NK_SHOP, NK_TRAINER };
 typedef struct { uint8_t x, y, kind, dir, arg, arg2, flag; const char *text, *text2; } Npc;

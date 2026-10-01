@@ -34,6 +34,19 @@ BAG = draw([   # 땅에 떨어진 물건 (작은 보따리)
     '    #------#    ', '   #--------#   ', '   #---++---#   ', '   #--------#   ', '   #--------#   ', '    #------#    ',
     '     ######     ', '                ', '                ', '                '])
 
+SNOW = draw([
+    '                ', '                ', '    -           ', '                ', '           -    ', '                ', '                ', '  -             ',
+    '                ', '         -      ', '                ', '                ', '     -          ', '              - ', '                ', '                '])
+CAVEF = draw([   # 동굴 바닥 (어두운 돌)
+    '++++++++++++++++', '++++#+++++++++++', '+++++++++++++#++', '++++++++++++++++', '+#++++++++++++++', '++++++++#+++++++', '++++++++++++++++', '+++++++++++++++#',
+    '++++#+++++++++++', '++++++++++++++++', '++++++++++#+++++', '+#++++++++++++++', '++++++++++++++++', '++++++#+++++++++', '+++++++++++++#++', '++++++++++++++++'])
+CAVEW = draw([   # 동굴 벽 (검은 돌벽)
+    '################', '#--#####--######', '################', '####--#####--###', '################', '#--#####--######', '################', '####--#####--###',
+    '################', '#--#####--######', '################', '####--#####--###', '################', '#--#####--######', '################', '####--#####--###'])
+PILLAR = draw([  # 드워프 기둥
+    '##############++', '#------------#++', '#-##########-#++', '#-#--------#-#++', '#-#-++++++-#-#++', '#-#-++++++-#-#++', '#-#-++++++-#-#++', '#-#-++++++-#-#++',
+    '#-#-++++++-#-#++', '#-#-++++++-#-#++', '#-#-++++++-#-#++', '#-#--------#-#++', '#-##########-#++', '#------------#++', '##############++', '++++++++++++++++'])
+CHASM = draw(['################'] * 16)
 # 종류: 0 걷기, 1 막힘, 2 풀숲(야생 만남), 3 물(막힘), 4 표지판(막힘, A로 읽기), 5 물건(밟으면 줍기)
 MT = {}   # 이름 → (16×16 그림, 종류)
 def mt(name, img, kind): MT[name] = (np.array(img), kind)
@@ -42,11 +55,13 @@ mt('tall', cell(0, 5), 2); mt('bush', cell(0, 2), 1); mt('crop', cell(4, 2), 1)
 mt('fence', cell(2, 2), 1); mt('post', cell(1, 3), 1); mt('sign', cell(4, 4), 4); mt('cat', cell(0, 4), 1)
 mt('barrel', cell(4, 3), 1); mt('pot', cell(4, 8), 1)
 mt('path', PATH, 0); mt('water', WATER, 3); mt('dock', DOCK, 0); mt('bag', BAG, 5)
+mt('snow', SNOW, 0); mt('cavef', CAVEF, 0); mt('cavew', CAVEW, 1); mt('pillar', PILLAR, 1); mt('chasm', CHASM, 3)
 for i, (cx, cy) in enumerate([(3, 0), (4, 0), (3, 1), (4, 1)]): mt('tree%d' % i, cell(cx, cy), 1)
 for i, (cx, cy) in enumerate([(0, 0), (1, 0), (0, 1), (1, 1)]): mt('house%d' % i, cell(cx, cy), 1)
 OBJ = {'tree': ['tree0', 'tree1', 'tree2', 'tree3'], 'house': ['house0', 'house1', 'house2', 'house3']}
 KEY = {'.': 'grass', 'g': 'dots', '*': 'flower', ',': 'tall', 'b': 'bush', 'c': 'crop', '-': 'fence', '|': 'post',
-       ':': 'path', '~': 'water', '=': 'dock', 'S': 'sign', 'k': 'cat', 'o': 'barrel', 'p': 'pot'}
+       ':': 'path', '~': 'water', '=': 'dock', 'S': 'sign', 'k': 'cat', 'o': 'barrel', 'p': 'pot',
+       's': 'snow', 'f': 'cavef', '#': 'cavew', 'P': 'pillar', 'X': 'chasm'}
 
 # ── 샤이어 지도: 큰 칸(2×2) 밑그림으로 숲·물·밭을 잡고(나무가 반쪽으로 잘리지 않게), 길·집·울타리를 덧그림 ──
 COARSE = [            # T 숲  . 빈터  , 풀숲  F 밭  W 물
@@ -68,7 +83,7 @@ def build(coarse, paints):
     g = [['.'] * W for _ in range(H)]
     for cy, r in enumerate(coarse):
         for cx, ch in enumerate(r):
-            v = {'T': 'T', '.': '.', ',': ',', 'F': 'c', 'W': '~'}[ch]
+            v = {'T': 'T', '.': '.', ',': ',', 'F': 'c', 'W': '~', 's': 's', 'f': 'f', '#': '#', 'P': 'P', 'X': 'X', 'b': 'b'}[ch]
             for dy in range(2):
                 for dx in range(2): g[cy * 2 + dy][cx * 2 + dx] = v
     for ch, cells in paints:
@@ -195,8 +210,98 @@ MAPS.append(dict(
     npcs=[(9, 13, '순찰자의 흔적이 있다. 「바람마루 꼭대기에서 기다리시오. — 간달프」라고 적힌 쪽지가 박혀 있다.')],
     signs=[(5, 11, '서쪽 → 브리 · 동쪽 → 바람마루')],
     items=[(3, 5, 'herb'), (14, 20, 'lembas'), (27, 3, 'herb')],
-    triggers=[(6, 9, 1, 2, 6), (17, 4, 1, 1, 7), (17, 15, 1, 2, 8), (29, 20, 1, 2, 9)],
+    triggers=[(6, 9, 1, 2, 6), (17, 4, 1, 1, 7), (17, 15, 1, 2, 8), (29, 20, 1, 2, 9, 4, 3, 20)],   # 여울 → 깊은골
     exits=[(0, 12, 2, 30, 12, 6)],
+))
+# ── 깊은골 (10~12단계: 간달프 · 빌보 · 엘론드의 회의). 야생 없음 ──
+RIVENDELL = build([
+    'TTTTTTTTTTTTTTTT',
+    'T......WW......T',
+    'T......WW......T',
+    'T..............T',
+    'T......WW......T',
+    'T......WW......T',
+    'T......WW......T',
+    'T......WW......T',
+    'T......WW......T',
+    'T......WW......T',
+    'TT..........TTTT',
+    'TTTTTTTTTTTTTTTT',
+], [
+    (':', hline(20, 2, 26) + vline(3, 6, 20) + hline(6, 3, 12) + vline(12, 3, 6) + hline(6, 17, 27) + vline(20, 3, 6) + vline(26, 6, 21) + hline(13, 3, 12) + hline(13, 17, 26)),
+    ('=', [(14, 6), (15, 6), (14, 13), (15, 13)]),                      # 강 위 다리
+    ('*', [(5, 3), (9, 9), (22, 9), (28, 3), (6, 16), (24, 16)]), ('g', [(10, 17), (19, 2)]),
+])
+MAPS.append(dict(
+    name='깊은골', rows=RIVENDELL, start=(3, 20, 1),
+    objs=[('house', 11, 1), ('house', 19, 1), ('house', 5, 10), ('house', 22, 10), ('house', 27, 1)],
+    wild=[('crowW', 1, 1)], rate=0,
+    npcs=[
+        ('inn', 8, 7, '요정: 깊은골에 오신 것을 환영합니다. 편히 쉬어 가세요.'),
+        ('shop', 24, 14, '요정 상인: 먼 길을 떠나는 이들을 위한 물건이 있답니다.'),
+        (9, 14, '요정: 엘론드 님의 집은 강 건너 북쪽이에요. 회의가 곧 열린대요.'),
+        (18, 17, '샘: 나리, 여기 있으면 아무 걱정이 없을 것 같아요. 요정들 노래 들으셨어요?'),
+    ],
+    signs=[(4, 19, '깊은골 — 이므라드리스. 마지막 아늑한 집.')],
+    items=[(28, 20, 'lembas')],
+    triggers=[(3, 18, 1, 1, 10), (12, 4, 1, 1, 11), (20, 4, 1, 1, 12)],    # 들어서면 간달프 → 빌보의 집 → 엘론드의 회의
+    exits=[(26, 21, 5, 2, 2, 13)],                                        # 남쪽 길 → 홀린 (회의 뒤)
+))
+# ── 홀린 · 카라드라스 (13~14단계) ──
+HOLLIN = build([
+    'TTTTTTTTTTTTTTTT',
+    'T....,,,...TTsss',
+    'T.TT.,,,.T.TTsss',
+    'T.TT...,,,.Tsss#',
+    'T....b.,,,..sss#',
+    'TT.....b...ssss#',
+    'T,,,..T...sssss#',
+    'T,,,..TT..ssssss',
+    'T.....,,,.sssss#',
+    'TTT...,,,ssss###',
+    'TTT......sss####',
+    'TTTTTTTTT#######',
+], [
+    (':', hline(2, 2, 12) + vline(12, 2, 9) + hline(9, 12, 20) + vline(20, 9, 16) + hline(16, 20, 28) + vline(28, 4, 16)),
+    ('b', [(14, 5), (22, 12), (25, 6)]), (':', [(2, 1)]),
+])
+MAPS.append(dict(
+    name='홀린·카라드라스', rows=HOLLIN, start=(2, 2, 0),
+    objs=[('tree', 6, 18)],
+    wild=[('crebain', 11, 13), ('crebain', 11, 13), ('wolfW', 11, 13)], rate=14,     # 홀린: 사루만의 크레바인, 산 아래 늑대
+    npcs=[(4, 6, '아라곤: 너무 조용하군. 새 소리 하나 들리지 않아. 남쪽에서 무언가 오고 있소.')],
+    signs=[(3, 3, '홀린의 옛 요정 땅. 동쪽 눈 덮인 산이 카라드라스.')],
+    items=[(8, 14, 'herb'), (29, 6, 'lembas')],
+    triggers=[(12, 8, 1, 1, 13), (28, 5, 1, 1, 14, 6, 3, 21)],            # 크레바인 → 카라드라스 꼭대기 → 모리아 서문으로
+    exits=[(2, 1, 4, 26, 20, 13)],
+))
+# ── 모리아 (15~18단계: 서문·고블린·마자르불의 방·크하자드둠 다리) ──
+MORIA = build([
+    '################',
+    '#ffffff##ffffff#',
+    '#fPffPf##fPffPf#',
+    '#ffffffffffffff#',
+    '#fPffPf##fPffPf#',
+    '#ffffff##ffffff#',
+    '###ff#######ff##',
+    '#ffffff#XXXXffff',
+    '#fPffPf#XXXXff##',
+    '#ffffff#XXXXff##',
+    '#ffff###########',
+    '################',
+], [
+    ('=', hline(16, 14, 23)),                                            # 크하자드둠 다리
+    ('f', [(3, 21), (4, 21)]), ('~', hline(22, 0, 9) + hline(23, 0, 9)),
+])
+MAPS.append(dict(
+    name='모리아', rows=MORIA, start=(3, 21, 1),
+    objs=[],
+    wild=[('goblinW', 13, 15), ('goblinW', 13, 15), ('goblinW', 14, 15), ('trollW', 14, 15)], rate=12,   # 모리아: 고블린, 가끔 동굴 트롤
+    npcs=[('trainer', 24, 6, 'left', 'goblinW', 80, '고블린 대장: 난쟁이 냄새가 난다! 잡아라!', '고블린 대장: 끼익… 물러서라!')],
+    signs=[(5, 20, '두린의 문. 「친구라 말하고 들어오라.」')],
+    items=[(13, 2, 'herb'), (29, 3, 'lembas'), (2, 15, 'herb')],
+    triggers=[(3, 20, 1, 1, 15), (6, 12, 4, 1, 16), (27, 10, 1, 1, 17), (19, 16, 1, 1, 18)],
+    exits=[],
 ))
 D = json.loads(__import__('subprocess').check_output(['node', HERE + '/extract.js']))
 fids = list(D['FOES'])
@@ -263,6 +368,8 @@ def obj_tiles(img):   # 8×16 순서: 왼쪽 위·아래, 오른쪽 위·아래
     return enc(img[0:8, 0:8]) + enc(img[8:16, 0:8]) + enc(img[0:8, 8:16]) + enc(img[8:16, 8:16])
 import sys as _s; _s.path.insert(0, HERE + '/art'); import frodo_walk
 pspr = sum((obj_tiles(np.array(frodo_walk.tones(f))) for f in frodo_walk.FRAMES), [])   # 프로도 (임시 손그림)
+import sam_walk
+sspr = sum((obj_tiles(np.array(sam_walk.tones(f))) for f in sam_walk.FRAMES), [])      # 샘 (뒤따라 걷기)
 npc_spr = obj_tiles(sprite16(TS[0:16, 32:48]))   # 마을 사람 (타일 묶음의 사람 칸)
 EXCL = draw(['                ', '      ####      ', '     #----#     ', '     #----#     ', '     #----#     ', '     #----#     ', '      #--#      ', '      #--#      ',
              '      #--#      ', '       ##       ', '      ####      ', '      #--#      ', '      ####      ', '                ', '                ', '                '])
@@ -274,6 +381,7 @@ out.append('const uint8_t FT_TILES[] = {%s};' % ','.join(map(str, sum((enc(t) fo
 out.append('const uint8_t FT_N = %d;' % len(tiles))
 out.append('const uint8_t MTDEF[][5] = {%s};' % ','.join('{%s}' % ','.join(map(str, r)) for r in mt_rows))
 out.append('const uint8_t PLAYER_SPR[] = {%s};' % ','.join(map(str, pspr)))
+out.append('const uint8_t SAM_SPR[] = {%s};' % ','.join(map(str, sspr)))
 out.append('const uint8_t NPC_SPR[] = {%s};' % ','.join(map(str, npc_spr)))
 out.append('const uint8_t EXCL_SPR[] = {%s};' % ','.join(map(str, excl_spr)))
 hdr = []
@@ -314,7 +422,7 @@ open(SRC + '/field.h', 'w').write('''#include <stdint.h>
 #define N_MAPS %d
 #define MT_TREE0 %d
 #define FIELD_END %d
-extern const uint8_t EXCL_SPR[];
+extern const uint8_t EXCL_SPR[], SAM_SPR[];
 enum { MK_WALK, MK_SOLID, MK_GRASS, MK_WATER, MK_SIGN, MK_ITEM };
 enum { NK_TALK, NK_INN, NK_SHOP, NK_TRAINER };
 typedef struct { uint8_t x, y, kind, dir, arg, arg2, flag; const char *text, *text2; } Npc;

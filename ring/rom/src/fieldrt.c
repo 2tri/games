@@ -54,6 +54,7 @@ static void render_all(void) { int8_t y; for (y = (int8_t)S.y - 5; y <= (int8_t)
 #define PLAYER_TILE 220   // VRAM 1번 칸 220~251 (0~219 는 창 레이어 글상자)
 #define NPC_TILE 200      // VRAM 0번 칸 200~ (필드 타일은 0~)
 #define EXCL_TILE 204
+#define SAM_TILE 208       // VRAM 0번 칸 208~239: 뒤따라 걷는 샘
 // ── 그림(OBJ): 8×16 두 장이 16×16 한 명. 주인공 0·1번, 사람 2번부터, 느낌표 38·39번 ──
 static void spr16(uint8_t k, uint8_t tile, int16_t sx, int16_t sy) {
     uint8_t prop = tile >= PLAYER_TILE ? 0x08 : 0x00;               // 주인공은 VRAM 1번 칸, 사람·느낌표는 0번 칸
@@ -65,6 +66,12 @@ static void spr16(uint8_t k, uint8_t tile, int16_t sx, int16_t sy) {
 
 static int8_t nofs_i = -1, nofs_x, nofs_y;   // 걸어오는 사람의 칸 사이 위치
 static void draw_player(uint8_t step) { spr16(0, PLAYER_TILE + (S.dir * 2 + step) * 4, 64, 60); }
+// 샘: 프로도가 있던 칸을 따라 걷는다 (포켓몬 금은 리메이크의 따라오는 포켓몬처럼)
+static int8_t fx, fy; static uint8_t fdir;
+static void draw_sam(uint8_t step, int8_t ox, int8_t oy) {
+    if (fx == (int8_t)S.x && fy == (int8_t)S.y) { move_sprite(36, 0, 0); move_sprite(37, 0, 0); return; }
+    spr16(36, SAM_TILE + (fdir * 2 + step) * 4, (int16_t)fx * 16 - camx + ox, (int16_t)fy * 16 - camy - 4 + oy);
+}
 static void draw_npcs(void) {
     uint8_t i; int16_t ox, oy;
     for (i = 0; i < MD.nn && i < 8; i++) {
@@ -92,27 +99,33 @@ void field_enter(void) BANKED {
     for (r = 0; r < MD.nn; r++) { npx[r] = MD.npc[r].x; npy[r] = MD.npc[r].y; }
     nofs_i = -1;
     VBK_REG = 0; set_bkg_data(0, FT_N, FT_TILES);
-    VBK_REG = 1; set_sprite_data(PLAYER_TILE, 32, PLAYER_SPR); VBK_REG = 0; set_sprite_data(NPC_TILE, 4, NPC_SPR); set_sprite_data(EXCL_TILE, 4, EXCL_SPR);
+    VBK_REG = 1; set_sprite_data(PLAYER_TILE, 32, PLAYER_SPR); VBK_REG = 0; set_sprite_data(NPC_TILE, 4, NPC_SPR); set_sprite_data(EXCL_TILE, 4, EXCL_SPR); set_sprite_data(SAM_TILE, 32, SAM_SPR);
     if (_cpu == CGB_TYPE) { set_bkg_palette(0, 1, BGPAL); set_sprite_palette(0, 1, OBJPAL); }
     OBP0_REG = 0xE4;
     win_layout(0, 0);
     HIDE_WIN;
     SPRITES_8x16; SHOW_SPRITES;
     for (r = 0; r < 40; r++) move_sprite(r, 0, 0);
-    render_all(); set_cam(0, 0); draw_npcs(); draw_player(0);
+    fx = (int8_t)S.x - DX[S.dir]; fy = (int8_t)S.y - DY[S.dir]; fdir = S.dir;
+    if (!open_at(fx, fy) || npc_at(fx, fy) != 255) { fx = S.x; fy = S.y; }
+    render_all(); set_cam(0, 0); draw_npcs(); draw_sam(0, 0, 0); draw_player(0);
     DISPLAY_ON;
-    music_play(S.map == 0 ? MUS_SHIRE : S.map == 2 ? MUS_TITLE : MUS_STORY1);
+    {   // 지역 곡: 샤이어 · 묵은숲 · 브리 · 황야 · 깊은골 · 홀린 · 모리아
+        static const uint8_t MAPMUS[] = { MUS_SHIRE, MUS_STORY1, MUS_TITLE, MUS_STORY1, MUS_END, MUS_STORY2, MUS_BOSS };
+        music_play(S.map < sizeof MAPMUS ? MAPMUS[S.map] : MUS_STORY1);
+    }
 }
 static void hide_below(uint8_t top) {   // 글상자·고르기 상자에 겹치는 사람 그림은 잠시 숨김
     uint8_t i;
     for (i = 2; i < 18; i += 2) if (shadow_OAM[i].y >= top + 16 - 8) { shadow_OAM[i].y = 0; shadow_OAM[i + 1].y = 0; }
+    if (shadow_OAM[36].y >= top + 16 - 8) { shadow_OAM[36].y = 0; shadow_OAM[37].y = 0; }
 }
 static void ftalk(const char *t);
 static void talk(const char *t) {
     hide_below(96);
-    SHOW_WIN; say(t); HIDE_WIN; draw_npcs();
+    SHOW_WIN; say(t); HIDE_WIN; draw_npcs(); draw_sam(0, 0, 0);
 }
-static void ftalk(const char *t) { hide_below(96); SHOW_WIN; say_far(MD.bank, t); HIDE_WIN; draw_npcs(); }
+static void ftalk(const char *t) { hide_below(96); SHOW_WIN; say_far(MD.bank, t); HIDE_WIN; draw_npcs(); draw_sam(0, 0, 0); }
 static void beep(uint8_t hi) { NR52_REG = 0x80; NR10_REG = 0; NR11_REG = 0x80; NR12_REG = 0xA2; NR13_REG = hi; NR14_REG = 0x87; }
 static void encounter_fx(void) {   // 띠리링: 화면 세 번 번쩍 + 소리
     uint8_t i;
@@ -128,12 +141,19 @@ static void walk(uint8_t d) {
     uint8_t i;
     int8_t nx = (int8_t)S.x + DX[d], ny = (int8_t)S.y + DY[d];
     if (d == 0) draw_row(ny + 5); else if (d == 1) draw_row(ny - 5); else if (d == 2) draw_col(nx - 5); else draw_col(nx + 6);
-    for (i = 1; i <= 8; i++) {
-        set_cam(DX[d] * i * 2, DY[d] * i * 2);
-        draw_npcs(); draw_player(i >= 2 && i <= 6);
-        wait_vbl_done();
+    {   // 샘은 프로도가 있던 칸으로
+        int8_t dx = (int8_t)S.x - fx, dy = (int8_t)S.y - fy;
+        uint8_t moving = (dx || dy);
+        if (moving) fdir = dy > 0 ? 0 : dy < 0 ? 1 : dx < 0 ? 2 : 3;
+        for (i = 1; i <= 8; i++) {
+            set_cam(DX[d] * i * 2, DY[d] * i * 2);
+            draw_npcs(); draw_player(i >= 2 && i <= 6);
+            if (moving) draw_sam(i >= 2 && i <= 6, DX[fdir] * i * 2, DY[fdir] * i * 2); else draw_sam(0, 0, 0);
+            wait_vbl_done();
+        }
     }
-    S.x = nx; S.y = ny; set_cam(0, 0); draw_npcs(); draw_player(0);
+    fx = S.x; fy = S.y;
+    S.x = nx; S.y = ny; set_cam(0, 0); draw_npcs(); draw_sam(0, 0, 0); draw_player(0);
 }
 
 // ── 전투 (야생·길 막는 적) 뒤 처리: 지면 마지막 쉼터 → 지도 처음 자리 ──
@@ -234,9 +254,19 @@ static uint8_t after_step(void) {
     }
     return EV_NONE;
 }
+static const char * const SAMLINE[] = {
+    "샘: 한 발짝만 더 가면 제가 가 본 가장 먼 곳이에요, 나리.",
+    "샘: 이 숲은 기분이 나빠요. 나무들이 우릴 쳐다보는 것 같아요.",
+    "샘: 여관 맥주가 꽤 괜찮대요. 한잔만 하고 가요, 나리.",
+    "샘: 저 기사들… 우릴 쫓아오는 걸까요? 제가 꼭 붙어 있을게요.",
+    "샘: 요정들을 실컷 봤어요! 이제 죽어도 여한이 없어요. 아, 아니 죽으면 안 되죠.",
+    "샘: 눈이 이렇게 많이 오다니. 샤이어에선 상상도 못 했어요.",
+    "샘: 여긴 너무 어두워요… 나리 곁에서 떨어지지 않을게요.",
+};
 static void interact(void) {
-    int8_t fx = (int8_t)S.x + DX[S.dir], fy = (int8_t)S.y + DY[S.dir];
-    uint8_t i = npc_at(fx, fy);
+    int8_t fx2 = (int8_t)S.x + DX[S.dir], fy2 = (int8_t)S.y + DY[S.dir];
+    uint8_t i = npc_at(fx2, fy2);
+    if (fx2 == fx && fy2 == fy) { talk(SAMLINE[S.map < 7 ? S.map : 6]); return; }
     if (i != 255) {
         const Npc *n = &MD.npc[i];
         if (n->kind == NK_INN) inn(n->text);
@@ -245,7 +275,7 @@ static void interact(void) {
         else ftalk(n->text);
         return;
     }
-    if (MTDEF[cell_at(fx, fy)][4] == MK_SIGN) for (i = 0; i < MD.ns; i++) if (MD.sign[i].x == (uint8_t)fx && MD.sign[i].y == (uint8_t)fy) { ftalk(MD.sign[i].text); return; }
+    if (MTDEF[cell_at(fx2, fy2)][4] == MK_SIGN) for (i = 0; i < MD.ns; i++) if (MD.sign[i].x == (uint8_t)fx2 && MD.sign[i].y == (uint8_t)fy2) { ftalk(MD.sign[i].text); return; }
 }
 uint8_t field_loop(void) BANKED {
     uint8_t k, h, d, ev;
@@ -256,7 +286,10 @@ uint8_t field_loop(void) BANKED {
         if (k == K_START) { menu_open(); field_enter(); continue; }
         d = (h & J_DOWN) ? 0 : (h & J_UP) ? 1 : (h & J_LEFT) ? 2 : (h & J_RIGHT) ? 3 : 255;
         if (d == 255) continue;
-        if (S.dir != d) { S.dir = d; draw_player(0); }
+        if (S.dir != d) {
+            S.dir = d; draw_player(0);
+            if ((int8_t)S.x + DX[d] == fx && (int8_t)S.y + DY[d] == fy) { wait_frames(6); continue; }   // 샘 쪽은 먼저 돌아보기만
+        }
         if (!passable((int8_t)S.x + DX[d], (int8_t)S.y + DY[d])) continue;
         walk(d);
         ev = after_step();
