@@ -321,21 +321,21 @@ def build(base, out_rom, out_ips):
         if sw and all(1 <= l <= 100 for l, _ in sw) and [l for l, _ in sw] == sorted(l for l, _ in sw):
             fixed[no] = sw; P.evos(no, ev, sw)
     P.log.append('기술 목록 뒤집힘 고침: %s' % ', '.join(r.name(n) for n in fixed if n != HA))
-    # 성숙기 → 완전체: 자기 문장이면 Lv30 (희망은 원래대로 25), 아니면 문장 하나 이상 + 원래 레벨
-    # 완전체 → 궁극체: 자기 문장 + Lv45 (애니에서 워프 진화는 마지막 무렵)
+    # 성숙기 → 완전체: 자기 문장이면 원작 레벨보다 3~7 빠르게, 다른 문장만 있으면 원작 레벨 — 디지몬마다 진화 시점이 다르게 (원작 36·36·36·40·32·25)
+    # 완전체 → 궁극체: 자기 문장 + Lv45·46 (애니에서 워프 진화는 마지막 무렵)
     def learn(no, *more):                      # 앞 단계 기술 + 다음 단계의 높은 레벨 기술, 레벨 순
         mv = list(fixed.get(no) or r.evos_attacks(no)[1])
         for m in more: mv += [x for x in (fixed.get(m) or r.evos_attacks(m)[1]) if x[0] > 30]
         return sorted(set(mv))
-    P.evos(S('그레이몬'), [(CREST, 30, MGR), (ANYCREST, 36, MGR)])
+    P.evos(S('그레이몬'), [(CREST, 32, MGR), (ANYCREST, 36, MGR)])
     P.evos(MGR, [(CREST, 45, S('워그레이몬'))], learn(S('그레이몬'), S('워그레이몬')))
-    P.evos(S('가루몬'), [(CREST, 30, WGR), (ANYCREST, 36, WGR)])
-    P.evos(WGR, [(CREST, 45, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
-    P.evos(S('버드라몬'), [(CREST, 30, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
-    P.evos(S('캅테리몬'), [(CREST, 30, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
-    P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
-    P.evos(S('원뿔몬'), [(CREST, 30, S('쥬드몬')), (ANYCREST, 36, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
-    P.evos(S('엔젤몬'), [(CREST, 25, S('홀리엔젤몬')), (ANYCREST, 32, S('홀리엔젤몬'))])
+    P.evos(S('가루몬'), [(CREST, 33, WGR), (ANYCREST, 36, WGR)])
+    P.evos(WGR, [(CREST, 46, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
+    P.evos(S('버드라몬'), [(CREST, 31, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
+    P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
+    P.evos(S('니드몬'), [(CREST, 29, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
+    P.evos(S('원뿔몬'), [(CREST, 34, S('쥬드몬')), (ANYCREST, 38, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
+    P.evos(S('엔젤몬'), [(CREST, 25, S('홀리엔젤몬')), (ANYCREST, 30, S('홀리엔젤몬'))])
     # 성장기 → 성숙기: 유대
     P.evos(S('파피몬'), [(BOND_HI, 16, S('가루몬')), (LV, 16, S('우가몬'))])               # 유대 높음 가루몬, 아니면 우가몬
     P.evos(S('플롯트몬'), [(BOND_HI, 16, S('가트몬')), (LV, 16, S('위자몬'))])             # 유대 높음 가트몬, 아니면 위자몬
