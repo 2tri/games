@@ -50,7 +50,7 @@ button.copy.ok { background: var(--done); }
   <section class="how">
     <div><b>방 3개로 나눠 만드세요.</b> 같은 방 안에서 만들어야 그림체가 맞습니다. 각 그림 카드에 어느 방인지 적혀 있습니다.</div>
     <div class="rooms"><span class="room">① 배경·타일</span><span class="room">② 걷기 그림</span><span class="room">③ 전투·아이콘·일러스트</span></div>
-    <div>「복사」를 눌러 제미나이에 붙여넣기 → 그림을 받으면 체크. 크기·칸이 조금 틀려도 괜찮습니다. 칸 맞춤과 4색 정리는 이쪽에서 합니다.</div>
+    <div>전투 그림(③ 방)은 <b>앞모습·뒷모습을 한 장에</b> 같이 그려 달라고 되어 있습니다. 「복사」를 눌러 제미나이에 붙여넣기 → 그림을 받으면 체크. 크기·칸이 조금 틀려도 괜찮습니다. 칸 맞춤과 4색 정리는 이쪽에서 합니다.</div>
     <div class="progress" id="progress"></div>
   </section>
 
@@ -72,7 +72,7 @@ const TAIL = {
   tile: ', Pokemon Gold and Silver (Game Boy Color) overworld tileset sheet, top-down view, each object drawn separately on a strict 16x16 pixel grid with clear gaps between them, plain white background, only 4 shades of gray (white, light gray, dark gray, black), crisp pixel art, no text, no people',
   room: ', Pokemon Gold and Silver (Game Boy Color) indoor tileset sheet, top-down view, each piece of furniture drawn separately on a strict 16x16 pixel grid with clear gaps, plain white background, only 4 shades of gray, crisp pixel art, no text, no people',
   walk: ', Pokemon Gold and Silver overworld walking sprite sheet, chibi proportions (big head, small body), three rows (walking down, walking up, walking left) with two frames each, each frame exactly 16x16 pixels on a strict grid, Game Boy, only 4 shades of gray, black outline, plain white background, no text',
-  mon: ', Pokemon Gold and Silver Game Boy battle sprite style, pixel art, 56x56 pixels, only 4 shades of gray (white, light gray, dark gray, black), 1 pixel black outline, 3/4 view facing left, dynamic pose, plain white background, single creature, no text',
+  mon: ', Pokemon Gold and Silver Game Boy battle sprite sheet with TWO views of the same character side by side on one image: LEFT = front view (3/4 view facing left, dynamic pose, like the opponent sprite), RIGHT = back view seen from behind (we see its back and the back of its head, facing away toward the upper right, like the player\'s own Pokemon back sprite), each view 56x56 pixels, same size and same design, only 4 shades of gray (white, light gray, dark gray, black), 1 pixel black outline, plain white background, no text',
   icon: ', Pokemon Gold and Silver Game Boy item icons, each icon exactly 16x16 pixels on a strict grid with gaps, only 4 shades of gray, black outline, plain white background, no text',
   art: ', Pokemon Gold and Silver Game Boy Color pixel art, exactly 160x144 pixels, only 4 shades of gray (white, light gray, dark gray, black), crisp pixels, no text, no letters',
 };
