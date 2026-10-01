@@ -170,6 +170,10 @@ const MOVES = {
   club: { name: '몽둥이 내리치기', pow: 20, acc: 75 }, stomp: { name: '짓밟기', pow: 14, acc: 90 }, roarT: { name: '포효', kind: 'debuff', stat: 'def', line: '동굴이 쩌렁쩌렁 울린다!' },
   whip: { name: '불채찍', pow: 22, acc: 90, bind: 30 }, flame: { name: '불칼', pow: 28, acc: 80 }, wings: { name: '그림자 날개', kind: 'debuff', stat: 'atk', line: '어둠과 불길이 날개처럼 펼쳐졌다!' },
   cleave: { name: '언월도', pow: 18, acc: 85 }, bash: { name: '방패 밀치기', pow: 12, acc: 95 },
+  mace: { name: '가시 철퇴', pow: 24, acc: 85 }, wraithfire: { name: '망령의 불칼', pow: 20, acc: 90, weaken: 40 }, dread: { name: '공포', kind: 'debuff', stat: 'def', line: '숨이 막히는 공포가 덮쳐 온다!' },
+  voice: { name: '사루만의 목소리', kind: 'sleep', acc: 50, line: '달콤하고 그럴듯한 목소리가 마음을 흐린다...' }, bolt: { name: '번개 주문', pow: 18, acc: 90 }, staffS: { name: '지팡이 내리치기', pow: 12, acc: 95 },
+  sting: { name: '독침', pow: 16, acc: 85, bind: 45 }, web: { name: '거미줄', kind: 'debuff', stat: 'def', line: '끈적한 거미줄이 온몸을 휘감는다!' }, fang: { name: '송곳니', pow: 20, acc: 80 },
+  peck: { name: '쪼아대기', pow: 6, acc: 95, hits: 3 }, spy: { name: '정찰', kind: 'debuff', stat: 'def', line: '까마귀들이 빙빙 돌며 빈틈을 살핀다!' },
 };
 const FOES = {
   dog: { name: '송곳니', spr: 'dog', lv: 3, hp: 22, atk: 8, def: 6, spd: 10, type: '짐승', moves: ['bite', 'bite', 'growl'] },
@@ -183,6 +187,10 @@ const FOES = {
   balrog: { name: '발로그', spr: 'balrog', lv: 30, hp: 240, atk: 28, def: 22, spd: 12, type: '어둠', boss: true, moves: ['whip', 'flame', 'wings'] },
   riders5: { name: '검은 기사 다섯', spr: 'rider', lv: 12, hp: 120, atk: 16, def: 13, spd: 10, type: '어둠', boss: true, moves: ['morgul', 'shriek', 'morgul'] },
   warg: { name: '와르그', spr: 'warg', lv: 13, hp: 60, atk: 16, def: 10, spd: 14, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  crebain: { name: '크레바인 떼', spr: 'crebain', lv: 11, hp: 40, atk: 12, def: 8, spd: 18, type: '짐승', moves: ['peck', 'peck', 'spy'] },
+  saruman: { name: '사루만', spr: 'saruman', lv: 26, hp: 160, atk: 22, def: 18, spd: 12, type: '마법사', boss: true, moves: ['bolt', 'voice', 'staffS'] },
+  shelob: { name: '쉴로브', spr: 'shelob', lv: 28, hp: 190, atk: 24, def: 20, spd: 10, type: '짐승', boss: true, moves: ['sting', 'fang', 'web'] },
+  witchking: { name: '마술사왕', spr: 'witchking', lv: 34, hp: 260, atk: 30, def: 24, spd: 13, type: '어둠', boss: true, moves: ['mace', 'wraithfire', 'dread'] },
   uruk: { name: '우루크하이', spr: 'uruk', lv: 18, hp: 95, atk: 20, def: 16, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
 };
 const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 } };   // 나즈굴은 불을 두려워한다
