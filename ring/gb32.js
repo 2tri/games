@@ -171,7 +171,7 @@
     fill(s, (x, y) => y >= 21 && Math.abs(x - 16) <= 4.5, 1, { cx: 16, cy: 25, rx: 4, ry: 6, shade: 2 }); // 가죽 웃옷
     fill(s, R(11, 27, 22, 29), 3, {});                                                                  // 칼띠
     stamp(s, 15, 27, ['00']);
-    const hid = fill(s, OR(E(16, 10.5, 9, 8.6), AND(R(7, 10, 25, 19), (x, y) => (Math.abs(x - 16) > 5 || y < 12) && y < 18.5 - (Math.floor(x) % 2))), 2, { cx: 16, cy: 10, rx: 9, ry: 9, shade: 3, at: 0.2 });
+    const hid = fill(s, OR(E(16, 10.5, 9, 8.6), AND(R(6, 10, 26, 23), (x, y) => (Math.abs(x - 16) > 5.5 || y < 12) && y < 22.5 - (Math.floor(x) % 2) - (Math.abs(x - 16) > 8.5 ? 2 : 0))), 2, { cx: 16, cy: 10, rx: 9, ry: 9, shade: 3, at: 0.2 });
     fill(s, (x, y) => E(16, 13, 6.4, 7.4)(x, y) && y > 7.6 + (x < 16 ? 1.4 : 0.4) + Math.abs(x - 16) * 0.2, 0, { cx: 16, cy: 13, rx: 6.4, ry: 7.4, shade: 1, at: 0.6 });
     stamp(s, 12, 13, EYE); stamp(s, 19, 13, EYE);
     stamp(s, 11, 11, ['333']); stamp(s, 18, 11, ['333']);                                              // 굵은 눈썹
@@ -185,7 +185,7 @@
     const s = mk();
     fill(s, body(16, 19, 11, 13), 2, { cx: 16, cy: 22, rx: 12, ry: 10, shade: 3 });
     fill(s, (x, y) => y >= 19 && y < 28 && Math.abs(x - 16) <= 8 - (y - 19) * 0.8, 1, { cx: 16, cy: 21, rx: 8, ry: 5, shade: 2 }); // 두건
-    fill(s, OR(E(16, 11, 9, 9), AND(R(7, 11, 25, 21), (x, y) => Math.abs(x - 16) <= 9 - (y - 11) * 0.12 && y < 20.5 - (Math.floor(x) % 2))), 2, { cx: 16, cy: 11, rx: 9, ry: 9, shade: 3, at: 0.2 });
+    fill(s, OR(E(16, 11, 9, 9), AND(R(6, 11, 26, 24), (x, y) => Math.abs(x - 16) <= 9.5 - (y - 11) * 0.1 && y < 23.5 - (Math.floor(x) % 2))), 2, { cx: 16, cy: 11, rx: 9, ry: 9, shade: 3, at: 0.2 });
     stamp(s, 25, 12, ['0', '0']);
     swordDiag(s, 22, 33, 31, 3);                                                                        // 앞으로 치켜든 장검
     fill(s, E(24.5, 26.5, 2.6, 2.2), 0, { cx: 24.5, cy: 26, rx: 2.6, ry: 2.2, shade: 1, at: 0.6 });
@@ -204,6 +204,7 @@
     stamp(s, 4, 9, ['0...', '.0..', '.00.', '..00', '..00']); stamp(s, 24, 9, flip(['0...', '.0..', '.00.', '..00', '..00']));
     stamp(s, 12, 13, EYE); stamp(s, 19, 13, EYE);
     stamp(s, 15, 17, ['22']);
+    for (const x of [9, 22]) for (let y = 9; y < 20; y++) px(s, x, y, y % 2 ? 2 : 0);                      // 관자놀이 땋은 머리
     // 왼손(화면 오른쪽)에 든 큰 활
     bow(s, 25, 1, 0, 31);
     fill(s, E(28.5, 16, 2.4, 2.4), 0, { cx: 28.5, cy: 16, rx: 2.4, ry: 2.4, shade: 1, at: 0.6 });
@@ -217,7 +218,8 @@
     fill(s, (x, y) => { const u = (x - 23) * 0.6 + (y - 12) * 0.8, v = (x - 23) * 0.8 - (y - 12) * 0.6; return u > 0 && u < 22 && Math.abs(v) < 2.2; }, 3, {});
     stamp(s, 21, 6, ['.0.0', '0000', '.00.']);
     fill(s, OR(E(16, 10.5, 8.8, 8.6), (x, y) => y > 10 && y < 27 - Math.abs(x - 16) * 0.8 && Math.abs(x - 16) < 7.5), 1, { cx: 16, cy: 12, rx: 9, ry: 12, shade: 2, at: 0.7, hi: 0, hiAt: -0.8 });
-    for (let y = 14; y < 25; y++) px(s, 16, y, y % 2 ? 2 : 1);                                         // 땋은 가닥
+    for (const x of [13, 19]) for (let y = 8; y < 15; y++) px(s, x + (y > 11 ? (x < 16 ? 1 : -1) : 0), y, y % 2 ? 2 : 0); // 관자놀이에서 뒤로 넘긴 땋은 머리
+    for (let y = 14; y < 25; y++) px(s, 16, y, y % 2 ? 2 : 0);
     stamp(s, 4, 8, ['0...', '.0..', '.00.', '..00']); stamp(s, 24, 8, flip(['0...', '.0..', '.00.', '..00']));
     // 왼손(화면 왼쪽)에 든 큰 활
     bow(s, 6, -1, 0, 31);
@@ -240,8 +242,9 @@
     fill(s, body(15, 19, 11, 13), 1, { cx: 15, cy: 22, rx: 12, ry: 10, shade: 2 });                // 사슬갑옷
     for (let y = 22; y < 32; y += 2) for (let x = 3 + (y % 4 ? 0 : 1); x < 29; x += 2) if (s.p[y * 32 + x] >= 0) px(s, x, y, 2);
     fill(s, E(16, 12, 7.4, 6.2), 0, { cx: 16, cy: 12, rx: 7.4, ry: 6.2, shade: 1, at: 0.6 });
-    fill(s, (x, y) => y > 14.5 + Math.max(0, 3 - Math.abs(x - 16)) * 0.4 && y < 28 - Math.abs(x - 16) * 0.6 && Math.abs(x - 16) < 7.5 - Math.max(0, y - 21) * 0.5, 2, { cx: 16, cy: 21, rx: 8, ry: 7, shade: 3, at: 0.9, hi: 1, hiAt: -0.5 });
+    fill(s, (x, y) => y > 14.5 + Math.max(0, 3 - Math.abs(x - 16)) * 0.4 && (y < 23 ? Math.abs(x - 16) < 7.5 : (y < 30 && Math.abs(Math.abs(x - 16) - 3.2) < 2.2 - Math.max(0, y - 27) * 0.4)), 2, { cx: 16, cy: 21, rx: 8, ry: 7, shade: 3, at: 0.9, hi: 1, hiAt: -0.5 });
     stamp(s, 11, 15, ['2222222222']);                                                                  // 콧수염
+    stamp(s, 12, 26, ['000']); stamp(s, 17, 26, ['000']);                                              // 땋은 수염 고리
     stamp(s, 15, 13, ['01', '11']);                                                                   // 큰 코
     stamp(s, 12, 11, EYE); stamp(s, 19, 11, EYE);
     stamp(s, 11, 10, ['333']); stamp(s, 18, 10, ['333']);
@@ -266,31 +269,31 @@
   // ───────── 간달프 ─────────
   function gandalfF() {
     const s = mk();
-    fill(s, body(16, 19, 10.5, 12), 1, { cx: 16, cy: 22, rx: 12, ry: 10, shade: 2 });               // 회색 망토
-    fill(s, E(16, 19.5, 8, 2), 0, { cx: 16, cy: 19.5, rx: 8, ry: 2, shade: 1 });                      // 은빛 목도리
-    fill(s, OR(R(8, 10, 11, 20), R(21, 10, 24, 20)), 0, { cx: 16, cy: 14, rx: 8, ry: 6, shade: 1 }); // 옆 흰머리
+    fill(s, body(16, 19, 10.5, 12), 2, { cx: 16, cy: 22, rx: 12, ry: 10, shade: 3 });               // 회색 망토
+        fill(s, OR(R(8, 10, 11, 20), R(21, 10, 24, 20)), 0, { cx: 16, cy: 14, rx: 8, ry: 6, shade: 1 }); // 옆 흰머리
     fill(s, E(16, 13.5, 6, 5.6), 0, { cx: 16, cy: 13, rx: 6, ry: 5.6, shade: 1, at: 0.55 });
     // 긴 수염
     fill(s, (x, y) => y > 15 && y < 31 && Math.abs(x - 16) < 6.5 - Math.max(0, y - 21) * 0.55, 0, { cx: 16, cy: 22, rx: 7, ry: 9, shade: 1, at: 0.45 });
     stamp(s, 12, 16, ['00000000']); stamp(s, 15, 17, ['22']);
+    for (const [x, y0] of [[14, 20], [18, 21], [16, 24]]) for (let y = y0; y < y0 + 4; y++) px(s, x, y, 1); // 수염 결
     stamp(s, 12, 13, EYE.slice(0, 1)); stamp(s, 19, 13, EYE.slice(0, 1));
     stamp(s, 10, 11, ['0000']); stamp(s, 18, 11, ['0000']);                                          // 덥수룩한 눈썹
     // 뾰족 모자 (끝이 살짝 꺾임)
-    fill(s, (x, y) => y < 10.5 && y > 0 && Math.abs(x - (16 + (10 - y) * (10 - y) * 0.05)) < y * 0.6 + 0.3, 2, { cx: 17, cy: 5, rx: 4, ry: 6, shade: 3, at: 0.3 });
-    fill(s, E(16, 10, 12, 1.9), 2, { cx: 16, cy: 10, rx: 12, ry: 2, shade: 3, at: 0.5 });
+    fill(s, (x, y) => y < 10.5 && y > 0 && Math.abs(x - (16 + (10 - y) * (10 - y) * 0.06)) < y * 0.6 + 0.3, 1, { cx: 17, cy: 5, rx: 4, ry: 6, shade: 2, at: 0.3 });
+    fill(s, E(16, 10, 12.5, 1.9), 1, { cx: 16, cy: 10, rx: 12, ry: 2, shade: 2, at: 0.5 });
     // 지팡이 + 손
-    fill(s, R(2, 4, 4, 32), 2, { cx: 3, cy: 18, rx: 2, ry: 14, shade: 3 }); stamp(s, 1, 1, ['.33.', '3223', '3223', '.33.']);
+    fill(s, R(2, 5, 4, 32), 2, { cx: 3, cy: 18, rx: 2, ry: 14, shade: 3 }); stamp(s, 0, 0, ['.3333.', '322223', '32..23', '322.3.', '.32...']); // 끝이 말린 옹이 지팡이
     fill(s, E(4, 23, 2.2, 2), 0);
     return finish(s);
   }
   function gandalfB() {
     const s = mk();
-    fill(s, body(16, 19, 10.5, 12), 1, { cx: 16, cy: 22, rx: 12, ry: 10, shade: 2 });
-    fill(s, R(28, 4, 30, 32), 2, { cx: 29, cy: 18, rx: 2, ry: 14, shade: 3 }); stamp(s, 27, 1, ['.33.', '3223', '3223', '.33.']);
+    fill(s, body(16, 19, 10.5, 12), 2, { cx: 16, cy: 22, rx: 12, ry: 10, shade: 3 });
+    fill(s, R(28, 5, 30, 32), 2, { cx: 29, cy: 18, rx: 2, ry: 14, shade: 3 }); stamp(s, 26, 0, flip(['.3333.', '322223', '32..23', '322.3.', '.32...']).map(r => r));
     fill(s, E(27.5, 23, 2.2, 2), 0);
     fill(s, (x, y) => y > 9 && y < 26 - Math.abs(x - 16) * 0.5 && Math.abs(x - 16) < 7.5, 0, { cx: 16, cy: 15, rx: 8, ry: 9, shade: 1, at: 0.5 });
-    fill(s, (x, y) => y < 10.5 && y > 0 && Math.abs(x - (16 + (10 - y) * (10 - y) * 0.05)) < y * 0.6 + 0.3, 2, { cx: 17, cy: 5, rx: 4, ry: 6, shade: 3, at: 0.3 });
-    fill(s, E(16, 10, 12, 1.9), 2, { cx: 16, cy: 10, rx: 12, ry: 2, shade: 3, at: 0.5 });
+    fill(s, (x, y) => y < 10.5 && y > 0 && Math.abs(x - (16 + (10 - y) * (10 - y) * 0.06)) < y * 0.6 + 0.3, 1, { cx: 17, cy: 5, rx: 4, ry: 6, shade: 2, at: 0.3 });
+    fill(s, E(16, 10, 12.5, 1.9), 1, { cx: 16, cy: 10, rx: 12, ry: 2, shade: 2, at: 0.5 });
     return finish(s);
   }
 
