@@ -214,5 +214,123 @@
   })();
   function U2(f) { return f; }
 
-  root.DigiField = { KIDS, WALK, TILE, SKIN: S };
+  // ── 해변·바다·풀숲 (파일섬) ──
+  const S1 = '#f8e8b0', S2 = '#e0c880', B1 = '#68a8f0', B2 = '#3870c8';
+  TILE.sand = art([
+    '________________', '________________', '___s____________', '________________', '__________s_____', '________________',
+    '______s_________', '________________', '________________', '_____________s__', '________________', '__s_____________',
+    '________________', '_________s______', '________________', '________________'], { _: S1, s: S2 });
+  TILE.shore = art([   // 위는 모래, 아래로 하얀 파도
+    '________________', '___s________s___', '________________', '________________', '________________', 'w_____ww_____ww_',
+    'wwwwwwwwwwwwwwww', 'BwwwBBwwwwBBwwwB', 'BBBBBBBBBBBBBBBB', 'BBBBBBBBbbBBBBBB', 'BBbbBBBBBBBBBBBB', 'BBBBBBBBBBBBBbbB',
+    'BBBBBBbbBBBBBBBB', 'BBBBBBBBBBBBBBBB', 'BbbBBBBBBBBbbBBB', 'BBBBBBBBBBBBBBBB'], { _: S1, s: S2, w: W, B: B1, b: B2 });
+  TILE.sea = art([
+    'BBBBBBBBBBBBBBBB', 'BBBbbbBBBBBBBBBB', 'BBBBBBbBBBBBBBBB', 'BBBBBBBBBBBBBBBB', 'BBBBBBBBBBBbbbBB', 'BBBBBBBBBBBBBBbB',
+    'BBBBBBBBBBBBBBBB', 'BBBBBBBBBBBBBBBB', 'BbbbBBBBBBBBBBBB', 'BBBBbBBBBBBBBBBB', 'BBBBBBBBBBBBBBBB', 'BBBBBBBBbbbBBBBB',
+    'BBBBBBBBBBBbBBBB', 'BBBBBBBBBBBBBBBB', 'BBBBBBBBBBBBBBBB', 'BBBBBBBBBBBBBBBB'], { B: B1, b: B2 });
+  TILE.tall = art([   // 풀숲 (야생 디지몬이 나오는 곳)
+    '_g___g___g___g__', 'gGg_gGg_gGg_gGg_', 'GGGgGGGgGGGgGGGg', 'kGGkkGGkkGGkkGGk', '_kk__kk__kk__kk_', '________________',
+    '_g___g___g___g__', 'gGg_gGg_gGg_gGg_', 'GGGgGGGgGGGgGGGg', 'kGGkkGGkkGGkkGGk', '_kk__kk__kk__kk_', '________________',
+    '__g___g___g___g_', '_gGg_gGg_gGg_gGg', 'gGGGgGGGgGGGgGGG', 'GkkGGkkGGkkGGkkG'], { _: G1, g: G2, G: '#60a850', k: G3 });
+  TILE.dtree = art([  // 짙은 숲 나무
+    '____kkkkkkkk____', '__kkLLLLLLLLkk__', '_kLLLLLLLLLLLDk_', '_kLLLLLLLLLLDDk_', 'kLLLLLLLLLLLDDDk', 'kLLLLLLLLLLDDDDk',
+    'kLLLLLLLLLDDDDDk', 'kDLLLLLLLDDDDDDk', '_kDDLLLDDDDDDDk_', '_kDDDDDDDDDDDDk_', '__kkDDDDDDDDkk__', '____kkkTTkkk____',
+    '______kTTk______', '______kTTk______', '_____kkkkkk_____', '________________'], { _: '#88c070', L: '#4a9848', D: '#286830', T: '#6a4020' });
+  TILE.dgrass = art([
+    '________________', '__g_____________', '_g_g_______g____', '__________g_g___', '________________', '______g_________',
+    '_____g_g________', '________________', '___________g____', '__________g_g___', '________________', '__g_____________',
+    '_g_g______g_____', '_________g_g____', '________________', '________________'], { _: '#88c070', g: '#4a9848' });
+  // 표지판
+  TILE.sign = (function () {
+    const s = pic(16, 16); for (let i = 0; i < 256; i++) s.p[i] = TILE.grass.p[i];
+    part(s, R(7, 9, 2, 6), '#8a5a30');
+    part(s, R(2, 2, 12, 8), '#c89050');
+    fill(s, R(4, 4, 8, 1), '#8a5a30'); fill(s, R(4, 6, 6, 1), '#8a5a30');
+    return s;
+  })();
+  // 야자수 (16×32 = 칸 1×2, 모래 위)
+  TILE.palm = (function () {
+    const s = pic(16, 32);
+    fill(s, R(0, 0, 16, 32), S1);
+    for (const [x, y] of [[3, 20], [11, 26], [6, 30]]) px(s, x, y, S2);
+    part(s, L(8, 30, 9, 12, 1.6, 1.3), '#a87038');
+    for (let y = 15; y < 30; y += 3) { px(s, 8, y, '#704820'); px(s, 9, y, '#704820'); }
+    for (const [x0, y0, x1, y1] of [[9, 10, 1, 14], [9, 10, 15, 14], [9, 10, 3, 4], [9, 10, 14, 5], [9, 10, 9, 2]]) part(s, L(x0, y0, x1, y1, 2.2, 1), G2);
+    part(s, E(9, 11, 2, 1.6), '#704820');
+    return s;
+  })();
+  // 해변의 전화박스 (16×32 = 칸 1×2)
+  TILE.booth = (function () {
+    const s = pic(16, 32), F = '#f0f0e8', GL = '#a8d8f0', PH = '#48a048';
+    fill(s, R(0, 0, 16, 32), S1);
+    part(s, R(2, 2, 12, 28), F);
+    fill(s, R(3, 1, 10, 3), '#e85040'); for (let x = 2; x < 14; x++) px(s, x, 0, K);
+    fill(s, R(4, 6, 8, 18), GL);
+    fill(s, R(4, 6, 8, 1), K); fill(s, R(4, 24, 8, 1), K); fill(s, R(3, 6, 1, 19), K); fill(s, R(12, 6, 1, 19), K);
+    fill(s, R(5, 10, 4, 6), PH); fill(s, R(5, 10, 4, 1), K); fill(s, R(5, 16, 4, 1), K); fill(s, R(9, 10, 1, 7), K);
+    px(s, 6, 8, W); px(s, 7, 8, W); px(s, 10, 18, W); px(s, 10, 19, W);
+    return s;
+  })();
+  // 캠프 텐트 (32×32 = 칸 2×2)
+  TILE.tent = (function () {
+    const s = pic(32, 32); for (let j = 0; j < 32; j++) for (let i = 0; i < 32; i++) s.p[j * 32 + i] = TILE.grass.p[(j % 16) * 16 + (i % 16)];
+    part(s, P([[16, 2], [31, 29], [1, 29]]), '#e8783c');
+    part(s, P([[16, 2], [31, 29], [22, 29]]), '#b84c20');
+    part(s, P([[16, 12], [21, 29], [11, 29]]), '#382818');
+    fill(s, R(0, 30, 32, 1), G3);
+    return s;
+  })();
+  // 모닥불 (16×16)
+  TILE.fire = (function () {
+    const s = pic(16, 16); for (let i = 0; i < 256; i++) s.p[i] = TILE.grass.p[i];
+    part(s, U2(L(3, 13, 13, 11, 1.2)), '#8a5a30'); part(s, L(3, 11, 13, 13, 1.2), '#8a5a30');
+    part(s, P([[8, 2], [12, 11], [4, 11]]), '#f87830'); fill(s, P([[8, 6], [10, 11], [6, 11]]), '#f8d848');
+    return s;
+  })();
+
+  // ── 걷는 그림: 아이마다 아래·위·왼쪽·오른쪽 × 2동작 ──
+  function rowsOf(k) { const d = KIDS[k]; return d.rows.concat(body(null, null, d.legs)); }
+  function mapOf(k) { return Object.assign({ S, k: K }, KIDS[k].map); }
+  const legsStep = (rows, side) => {               // 한쪽 다리를 든 동작
+    const r = rows.slice();
+    r[14] = side < 0 ? '....kk...kSSk...' : '...kSSk...kk....';
+    r[15] = side < 0 ? '.........kkkk...' : '...kkkk.........';
+    return r;
+  };
+  function backRows(k) {                          // 뒷모습: 얼굴 자리를 머리(또는 모자)로 덮음
+    const d = KIDS[k], hc = d.map.H ? 'H' : 'T', r = d.rows.slice();
+    for (let y = 4; y < 9; y++) {
+      const row = r[y].split(''), a = row.indexOf('k'), b = row.lastIndexOf('k');
+      for (let x = a + 1; x < b; x++) if (row[x] === 'S' || row[x] === 'k') row[x] = hc;
+      r[y] = row.join('');
+    }
+    return r.concat(body(null, null, d.legs));
+  }
+  function sideRows(k) {                          // 옆모습(왼쪽): 오른쪽 눈을 지우고 얼굴을 한쪽으로
+    const r = rowsOf(k).slice();
+    for (let y = 5; y < 8; y++) { const row = r[y].split(''); for (let x = 8; x < 13; x++) if (row[x] === 'k' && row[x - 1] === 'S' && row[x + 1] === 'S') row[x] = 'S'; r[y] = row.join(''); }
+    return r;
+  }
+  const mirror = (rows) => rows.map(r => r.split('').reverse().join(''));
+  const WALKS = {};
+  for (const k in KIDS) {
+    const m = mapOf(k), dn = rowsOf(k), up = backRows(k), lf = sideRows(k), rt = mirror(lf);
+    WALKS[k] = {
+      down: [art(dn, m), art(legsStep(dn, -1), m), art(dn, m), art(legsStep(dn, 1), m)],
+      up: [art(up, m), art(legsStep(up, -1), m), art(up, m), art(legsStep(up, 1), m)],
+      left: [art(lf, m), art(legsStep(lf, -1), m), art(lf, m), art(legsStep(lf, 1), m)],
+      right: [art(rt, m), art(legsStep(rt, 1), m), art(rt, m), art(legsStep(rt, -1), m)]
+    };
+  }
+  if (WALKS.hikari) for (const f of WALKS.hikari.down) px(f, 7, 10, '#f8d048');
+
+  // 필드의 디지몬 임시 그림 (그림이 들어오기 전까지): 색 덩어리 + 눈
+  function blob(col, dark) {
+    return art([
+      '................', '................', '.....kkkkkk.....', '...kkCCCCCCkk...', '..kCCwCCCCCCCk..', '..kCwCCCCCCCCk..',
+      '.kCCCkCCCCkCCCk.', '.kCCCkCCCCkCCCk.', '.kCCCCCCCCCCCDk.', '.kCCCCCkkCCCCDk.', '.kDCCCCCCCCCDDk.', '..kDDCCCCCCDDk..',
+      '..kDDDDDDDDDDk..', '...kkDDDDDDkk...', '.....kkkkkk.....', '................'], { C: col, D: dark });
+  }
+
+  root.DigiField = { KIDS, WALK, WALKS, TILE, SKIN: S, blob };
 })(typeof window !== 'undefined' ? window : globalThis);

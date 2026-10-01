@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f4f1e8">
+<canvas id="c" width="1500" height="560"></canvas>
+<script src="pix.js"></script><script src="field.js"></script>
+<script>
+// 걷는 그림 모아 보기 (4배): 아이마다 아래·위·왼쪽·오른쪽 × 동작 4칸
+const {WALKS,TILE}=DigiField,{toCanvas}=DigiPix,g=document.getElementById('c').getContext('2d');g.imageSmoothingEnabled=false;
+let y=4;for(const k in WALKS){let x=4;for(const d of ['down','up','left','right'])for(const f of WALKS[k][d]){g.drawImage(toCanvas(f,3),x,y);x+=52;}y+=52;if(y>420)break;}
+let x=900;y=4;for(const t of ['sand','shore','sea','tall','dtree','dgrass','sign','fire','palm','booth','tent']){const s=TILE[t];g.drawImage(toCanvas(s,3),x,y);x+=s.w*3+6;if(x>1400){x=900;y+=100;}}
+</script>
