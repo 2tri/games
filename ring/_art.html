@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#dde;font:16px Galmuri9,sans-serif}.row{display:flex;gap:20px;padding:16px;align-items:flex-start}
+canvas{image-rendering:pixelated}</style>
+<div class="row"><canvas id="big" width="600" height="300"></canvas><canvas id="bt" width="160" height="144" style="width:480px;height:432px"></canvas></div>
+<script src="pix.js"></script><script src="art48.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('10px Galmuri9');
+  const A=RingArt, K='#181018';
+  const fb=A.frodoBack(), dog=A.maggotDog();
+  const big=document.getElementById('big').getContext('2d');
+  big.drawImage(A.toCanvas(fb,6),0,0); big.drawImage(A.toCanvas(dog,6),300,0);
+  function text(g,str,x,y,col){const c=document.createElement('canvas');c.width=160;c.height=14;const t=c.getContext('2d');t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=col||K;t.fillText(str,0,1);const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);g.drawImage(c,x,y);}
+  function box(g,x,y,w,h){g.fillStyle=K;g.fillRect(x,y,w,h);g.fillStyle='#f8f8f0';g.fillRect(x+1,y+1,w-2,h-2);g.fillStyle=K;g.fillRect(x+3,y+3,w-6,1);g.fillRect(x+3,y+h-4,w-6,1);g.fillRect(x+3,y+3,1,h-6);g.fillRect(x+w-4,y+3,1,h-6);}
+  const c=document.getElementById('bt').getContext('2d');
+  c.fillStyle='#f8f8f0';c.fillRect(0,0,160,144);
+  c.fillStyle='#dfe9c4';for(let y=0;y<9;y++){const w=Math.round(32*Math.sqrt(1-((y-4)/4.5)**2));c.fillRect(120-w,44+y,w*2,1);}
+  for(let y=0;y<9;y++){const w=Math.round(38*Math.sqrt(1-((y-4)/4.5)**2));c.fillRect(32-w,90+y,w*2,1);}
+  c.drawImage(A.toCanvas(dog,1),96,6);
+  c.drawImage(A.toCanvas(fb,1),8,48);
+  text(c,'송곳니',8,4); text(c,'Lv3',62,4);
+  c.fillStyle=K;c.fillRect(8,22,72,1);c.fillRect(79,14,1,9);
+  text(c,'HP',10,12,'#d89020'); c.fillStyle=K;c.fillRect(26,16,52,4); c.fillStyle='#58c048'; c.fillRect(27,17,50,2);
+  text(c,'프로도',88,56); text(c,'Lv5',136,56);
+  c.fillStyle=K;c.fillRect(82,92,74,1);c.fillRect(82,64,1,29);
+  text(c,'HP',88,64,'#d89020'); c.fillStyle=K;c.fillRect(102,68,52,4); c.fillStyle='#58c048'; c.fillRect(103,69,50,2);
+  text(c,'22/ 22',112,76);
+  box(c,0,96,160,48); text(c,'농부 매곳네 개 송곳니가',8,106); text(c,'으르렁거리며 달려들었다!',8,122);
+})();
+</script>
