@@ -338,7 +338,10 @@
   const pairF = () => compose(44, 32, [{ s: samF(), dx: 13 }, { s: frodoF({ staff: false }), dx: -4 }]);
   const pairB = () => compose(44, 32, [{ s: samB(), dx: -3 }, { s: frodoB(), dx: 13 }]);
 
+  const P = pts => (x, y) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
   root.RingGB32 = {
+    lib: { mk, inb, fill, E, OR, AND, R, P, ell, px, stamp, flip, finish, body, swordDiag, compose, EYE },
     GB, toCanvas, dog,
     heroes: [
       { name: '프로도와 샘', front: pairF, back: pairB },
