@@ -10,6 +10,7 @@ typedef struct {
     uint8_t lembas, herb, shadow, sting, dagger, mithril, cloak, phial, wound;
     int8_t buffAtk, buffDef;
     uint8_t step, gollum, done;
+    uint8_t map, x, y, dir, flags[16];
 } State;
 extern State S;
 uint16_t statOf(uint8_t id, uint8_t lv, uint8_t k) BANKED;

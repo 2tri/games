@@ -10,6 +10,9 @@
 #define K_SELECT 8
 #define NOCANCEL 255
 void eng_init(void);
+extern uint8_t field_mode;
+void mode_fb(void);
+uint8_t key_held(void);
 void flush(void);
 void frame(void);                 // 바뀐 타일 보내고 한 프레임 기다림
 void wait_frames(uint8_t n);

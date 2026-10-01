@@ -31,6 +31,26 @@ uint8_t key_poll(void) {
     enable_interrupts(); return 0;
 }
 
+// 그림 화면(fb) 모드: 화면 360칸이 각각 고유 타일
+static void fb_map(void) {
+    uint8_t i, j, row[20];
+    for (i = 0; i < 18; i++) {
+        for (j = 0; j < 20; j++) row[j] = i * 20 + j >= 256 ? 8 : 0;
+        VBK_REG = 1; set_bkg_tiles(0, i, 20, 1, row);
+        for (j = 0; j < 20; j++) row[j] = (uint8_t)(i * 20 + j);
+        VBK_REG = 0; set_bkg_tiles(0, i, 20, 1, row);
+    }
+}
+// 걷는 화면(필드) 모드에서는 fb 아래 6줄(240~359)만 글상자(창 레이어, VRAM 1번 칸 0~119)로 보냄
+uint8_t field_mode;
+uint8_t key_held(void) { return cur; }
+void mode_fb(void) {
+    if (!field_mode) return;
+    DISPLAY_OFF; field_mode = 0;
+    HIDE_WIN; HIDE_SPRITES; move_bkg(0, 0);
+    fb_map(); memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty); flush();
+    DISPLAY_ON;
+}
 void eng_init(void) {
     uint8_t i, j, row[20];
     DISPLAY_OFF;
@@ -50,6 +70,15 @@ void eng_init(void) {
 }
 void flush(void) {
     uint16_t t = 0, s, lim;
+    if (field_mode) {
+        memset(dirty, 0, 240); t = 240;
+        while (t < 360) {
+            if (!dirty[t]) { t++; continue; }
+            s = t; while (t < 360 && dirty[t]) { dirty[t] = 0; t++; }
+            VBK_REG = 1; set_bkg_data((uint8_t)(s - 240), (uint8_t)(t - s), fb + (s << 4)); VBK_REG = 0;
+        }
+        return;
+    }
     while (t < 360) {
         if (!dirty[t]) { t++; continue; }
         s = t; lim = s < 256 ? 256 : 360; if (lim > s + 255) lim = s + 255;
@@ -184,7 +213,7 @@ void sb_josa(const char *a, const char *b) {
 // ── 대사창: 두 줄씩, 한 글자씩 ──
 // 다시 그리기 함수는 그 함수가 있는 은행과 함께 기억 (전투 화면은 2번 은행에 있음)
 void (*scene)(void); static uint8_t scene_bank;
-void set_scene(void (*f)(void)) { scene = f; scene_bank = CURRENT_BANK; }
+void set_scene(void (*f)(void)) { mode_fb(); scene = f; scene_bank = CURRENT_BANK; }
 void redraw(void) { uint8_t sv = CURRENT_BANK; if (!scene) return; SWITCH_ROM(scene_bank); scene(); SWITCH_ROM(sv); }
 static uint8_t LS[10], LE[10], NL;
 static void push_line(uint8_t s, uint8_t e) { if (NL < 10) { LS[NL] = s; LE[NL] = e; NL++; } }
@@ -234,6 +263,7 @@ void say(const char *s0) {
 uint8_t choose(const char *q, const char * const *opts, uint8_t n, uint8_t cancel) {
     uint8_t w = 0, h, x, y, i = 0, k, tw, sv;
     for (k = 0; k < n; k++) { tw = text_w(opts[k]); if (tw > w) w = tw; }
+    if (field_mode) { mode_fb(); set_scene(0); }
     w += 22; h = n * 14 + 10; x = 160 - w; y = 96 - h;
     box(0, 96, 160, 48);
     if (q) { strcpy(SAYBUF, q); sv = CURRENT_BANK; SWITCH_ROM(FONT_BANK); wrap(SAYBUF, 144); type_line(SAYBUF, LS[0], LE[0], 105, 1); if (NL > 1) type_line(SAYBUF, LS[1], LE[1], 121, 1); SWITCH_ROM(sv); }
