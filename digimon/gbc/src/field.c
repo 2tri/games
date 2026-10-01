@@ -197,6 +197,7 @@ static void arrive(void) {
     MAPB();
     w = warp_at(px, py);
     if (w != 0xFF) {
+        if (px < M.w && py < M.h) sfx_play(SFX_DOOR);
         t = M.warps + w * 6;
         do_warp(t[2], t[3], t[4], t[5]); return;
     }
@@ -268,7 +269,7 @@ void field_loop(void) {
                 if (nd != 0) { player_draw(0); continue; }
                 hop = 1;
             }
-            if (!walkable(tx, ty)) { player_draw(0); continue; }
+            if (!walkable(tx, ty)) { if (!(frames & 15)) sfx_play(SFX_BUMP); player_draw(0); continue; }
             if (nd == 0) draw_row((int8_t)py + 6);
             else if (nd == 1) draw_row((int8_t)py - 6);
             else if (nd == 2) draw_col((int8_t)px - 6);

@@ -139,6 +139,7 @@ static void use_move(uint8_t who, uint8_t slot) {
     dmg = dmg * (217 + rnd8(39)) / 255; if (!dmg) dmg = 1;
     tb_close();
     blink_pic(!who);
+    sfx_play(mult == 2 ? SFX_HIT2 : SFX_HIT);
     if (dmg >= def->hp) def->hp = 0; else def->hp -= (uint16_t)dmg;
     anim_hp();
     if (crit) say(S_CRIT);
@@ -162,7 +163,7 @@ static void give_exp(void) {
             uint16_t old = mon_maxhp(m);
             m->lv++; m->hp += mon_maxhp(m) - old; lvup |= 1 << i;
             if (i == me) { dme = m->hp; show_me(); }
-            var_sp[0] = m->sp; var_num[0] = m->lv; say(S_LVUP);
+            var_sp[0] = m->sp; var_num[0] = m->lv; jingle(SONG_LEVELUP); say(S_LVUP);
         }
         if (i == me) exp_bar();
     }
@@ -182,7 +183,7 @@ static uint8_t battle_menu(void) {
         frame();
         if (joy_new & (J_UP | J_DOWN)) sel ^= 2;
         if (joy_new & (J_LEFT | J_RIGHT)) sel ^= 1;
-        if (joy_new & J_A) break;
+        if (joy_new & J_A) { sfx_play(SFX_SELECT); break; }
     }
     pool_release(m); ui_close();
     return sel;
@@ -264,10 +265,11 @@ static uint8_t capture(uint8_t it) {      // 4 = 잡음(전투 끝), 0 = 계속
     if (tier >= 3 || (tier == 2 && k != 3)) { flash(1); say(S_CAP_STRONG); return turn(0xFF); }   // 유년기(0·1)만, 성장기(2)는 성장기 그물
     lost = (uint8_t)((uint32_t)(mx - foe.hp) * 100 / mx);
     ch = k == 1 ? 6 + lost / 3 : k == 2 ? 45 + lost / 2 : (tier == 2 ? 25 + lost / 2 : 70 + lost / 4);
+    sfx_play(SFX_THROW);
     for (i = 0; i < 3; i++) { flash(1); blink_pic(1); }
     if (rnd8(100) < ch) {
         uint8_t r;
-        tb_close(); say(S_CAP_OK);
+        tb_close(); jingle(SONG_CAPTURE); say(S_CAP_OK);
         for (i = 0; i < 4; i++) if (foe.mv[i] != 0xFF) foe.pp[i] = MOVES[foe.mv[i]].pp;
         r = add_mon(&foe); set_own(foe.sp);
         say(r == 0 ? S_JOINED : S_JOINED_BOX);
@@ -318,7 +320,7 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
             runs++;
             {
                 uint16_t ch = stat_of(&G.party[me], 3, 0) * 32 / stat_of(&foe, 3, 0) + 30 * runs;
-                if (rnd8(255) < ch) { say(S_RUN_OK); res = 3; }
+                if (rnd8(255) < ch) { sfx_play(SFX_RUN); say(S_RUN_OK); res = 3; }
                 else { say(S_RUN_NG); res = turn(0xFF); }
             }
         }

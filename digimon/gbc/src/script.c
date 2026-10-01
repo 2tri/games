@@ -50,7 +50,7 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
             mon_make(&m, a, b); add_mon(&m);
             break;
         }
-        case OP_GIVEITEM: a = RB(); b = RB(); G.bag[a] += b; break;
+        case OP_GIVEITEM: a = RB(); b = RB(); G.bag[a] += b; tb_close(); jingle(SONG_ITEM); break;
         case OP_GIVEEGG: {
             mon_t m;
             memset(&m, 0, sizeof(m)); m.egg = 1; m.sp = EGGS[rnd8(N_EGGS)]; m.steps = 200; m.lv = 1;

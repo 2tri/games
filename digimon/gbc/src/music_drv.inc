@@ -8,6 +8,7 @@
 // 곡 머리: 속도(2, 한 프레임에 나아가는 칸 × 256) · 한 번만(1) · 채널 4개 시작 위치(2씩, 곡 머리 기준)
 #include <gb/gb.h>
 #include <gb/hardware.h>
+void frame(void);
 
 typedef struct { const uint8_t *p, *start; uint8_t left, len, ins, note, rel, age; uint16_t fq; } mch_t;
 static mch_t MC[4];
@@ -43,6 +44,18 @@ static const uint8_t WAVES[2][16] = {
 // 드럼: 엔벨로프(NR42), 잡음 높이(NR43) — 1 킥 2 스네어 3 하이햇 4 열린 하이햇 5 심벌 6 탐
 static const uint8_t DRUMS[7][2] = { { 0, 0 }, { 0xA1, 0x71 }, { 0xB2, 0x52 }, { 0x61, 0x10 }, { 0x63, 0x11 }, { 0x95, 0x22 }, { 0x92, 0x5C } };
 
+// ── 효과음: 반주 채널 하나(네모파2 또는 잡음)를 잠깐 빌림 ──
+// 한 칸 = 프레임 수, 값1, 값2 (네모파: 음 번호·엔벨로프 / 잡음: NR43·NR42), 0 = 끝
+static const uint8_t SFX0[] = { 3, 61, 0xA1, 3, 68, 0x91, 0 };                       // 선택
+static const uint8_t SFX1[] = { 6, 0x6E, 0xA1, 0 };                                   // 부딪힘
+static const uint8_t SFX2[] = { 3, 57, 0x92, 3, 52, 0x82, 3, 49, 0x72, 4, 45, 0x61, 0 };   // 문·계단
+static const uint8_t SFX3[] = { 2, 0x41, 0xC2, 6, 0x55, 0xA3, 0 };                   // 타격
+static const uint8_t SFX4[] = { 2, 0x31, 0xF2, 10, 0x46, 0xD4, 0 };                  // 큰 타격
+static const uint8_t SFX5[] = { 2, 37, 0x91, 2, 41, 0x91, 2, 44, 0x91, 2, 49, 0x91, 2, 53, 0x91, 3, 56, 0x91, 0 };   // 그물·디지바이스
+static const uint8_t SFX6[] = { 4, 0x22, 0x92, 4, 0x24, 0x72, 6, 0x26, 0x52, 0 };    // 도망
+static const uint8_t * const SFXT[] = { SFX0, SFX1, SFX2, SFX3, SFX4, SFX5, SFX6 };
+static const uint8_t SFXCH[] = { 1, 3, 1, 3, 3, 1, 3 };                               // 1 네모파2, 3 잡음
+static const uint8_t *sfx_p; static uint8_t sfx_c, sfx_left;
 static void m_wave(uint8_t w) {
     uint8_t i; NR30_REG = 0;
     for (i = 0; i < 16; i++) AUD3WAVE[i] = WAVES[w][i];
@@ -52,6 +65,7 @@ static void m_silence(void) { NR12_REG = 0; NR22_REG = 0; NR30_REG = 0; NR42_REG
 static void m_note(uint8_t c, uint8_t b) {
     mch_t *m = &MC[c]; uint16_t x; uint8_t i;
     m->age = 0;
+    if (sfx_p && c == sfx_c) { m->note = b; return; }      // 효과음이 쓰는 중
     if (c == 3) { if (b && b < 7) { NR42_REG = DRUMS[b][0]; NR43_REG = DRUMS[b][1]; NR44_REG = 0x80; } return; }
     m->note = b;
     if (!b) { if (c == 0) NR12_REG = 0; else if (c == 1) NR22_REG = 0; else NR32_REG = 0; return; }
@@ -71,7 +85,7 @@ static void m_tick(uint8_t c) {
     mch_t *m = &MC[c]; uint8_t b;
     if (m->left) {
         m->left--;
-        if (m->left == 1 && m->rel && c != 3 && m->note) {      // 다음 음 직전에 살짝 끊기 (또렷하게)
+        if (m->left == 1 && m->rel && c != 3 && m->note && !(sfx_p && c == sfx_c)) {      // 다음 음 직전에 살짝 끊기 (또렷하게)
             if (c == 0) NR12_REG = 0; else if (c == 1) NR22_REG = 0; else NR32_REG = 0;
         }
         if (m->left) return;
@@ -91,8 +105,24 @@ static void m_tick(uint8_t c) {
     m_note(c, b);
 }
 
+static void sfx_step(void) {
+    uint16_t x; uint8_t a, b;
+    if (sfx_left) { sfx_left--; return; }
+    if (!*sfx_p) {                                   // 끝: 채널 돌려줌
+        if (sfx_c == 1) NR22_REG = 0; else NR42_REG = 0;
+        sfx_p = 0; return;
+    }
+    sfx_left = sfx_p[0] - 1; a = sfx_p[1]; b = sfx_p[2]; sfx_p += 3;
+    if (sfx_c == 1) { x = FQ[a - 1]; NR21_REG = 0x80; NR22_REG = b; NR23_REG = (uint8_t)x; NR24_REG = 0x80 | (uint8_t)(x >> 8); }
+    else { NR42_REG = b; NR43_REG = a; NR44_REG = 0x80; }
+}
+void sfx_play(uint8_t id) BANKED {
+    NR52_REG = 0x80; NR50_REG = 0x77; NR51_REG = 0xFF;
+    sfx_c = SFXCH[id]; sfx_p = SFXT[id]; sfx_left = 0;
+}
 void music_update(void) BANKED {
     uint8_t c; mch_t *m;
+    if (sfx_p) sfx_step();
     if (!mon) return;
     macc += mspeed;
     while (macc >= 256) {
@@ -124,4 +154,12 @@ void music_play(uint8_t s) BANKED {
         MC[c].left = 0; MC[c].len = 1; MC[c].ins = 0; MC[c].note = 0; MC[c].age = 0;
     }
     music_done = 0; mon = 1;
+}
+
+// 짧은 곡(징글)을 한 번 연주하고 원래 곡으로
+void jingle(uint8_t s) BANKED {
+    uint8_t ps = cur_song, w = 0;
+    music_play(s);
+    while (!music_done && ++w < 240) frame();
+    cur_song = 0xFE; music_play(ps);
 }

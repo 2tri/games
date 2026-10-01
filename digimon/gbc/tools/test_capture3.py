@@ -8,7 +8,7 @@ noi = open(os.path.join(S, '..', 'digimon.noi')).read(); FOE = int(re.search(r'D
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/vil.state'); e.tick(5)
-walk(e, 'right', 1); walk(e, 'down', 7); settle(e)
+walk(e, 'down', 8); settle(e)      # 회복 센터 문 앞(7,6) → 1번 길(4,0)
 walk(e, 'down', 2); walk(e, 'left', 1)
 for b in range(25):
     for i in range(80):

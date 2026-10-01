@@ -49,7 +49,7 @@ uint8_t choose(uint8_t tgt, uint8_t x, uint8_t y, uint8_t w, const uint16_t *ite
         frame();
         if (joy_new & J_UP) sel = sel ? sel - 1 : n - 1;
         if (joy_new & J_DOWN) sel = (sel + 1 == n) ? 0 : sel + 1;
-        if (joy_new & J_A) break;
+        if (joy_new & J_A) { sfx_play(SFX_SELECT); break; }
         if ((joy_new & J_B) && cancel) { sel = 0xFF; break; }
     }
     pool_release(m);

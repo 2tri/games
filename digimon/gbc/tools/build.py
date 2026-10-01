@@ -449,10 +449,11 @@ def blob_frames(sp):
     return obj_frame(a), [gfx.WHITE, hexrgb(c1), hexrgb(c2), gfx.BLACK]
 
 # ───────── 음악 (music/*.json ← tools/midi2gb.py) ─────────
-SONG_NAMES = ['title', 'town', 'field', 'village', 'battle', 'boss', 'evolve', 'heal']
+SONG_NAMES = ['title', 'town', 'field', 'village', 'battle', 'boss', 'evolve', 'heal', 'item', 'levelup', 'capture']
 SONGI = {n: i for i, n in enumerate(SONG_NAMES)}
 SONG_INS = {'title': (0, 2, 1), 'town': (4, 3, 0), 'field': (1, 2, 1), 'village': (4, 3, 0),
-            'battle': (6, 2, 3), 'boss': (0, 2, 3), 'evolve': (0, 2, 3), 'heal': (7, 2, 0)}   # 멜로디·화음 네모파 악기, 파형 악기
+            'battle': (6, 2, 3), 'boss': (0, 2, 3), 'evolve': (0, 2, 3), 'heal': (7, 2, 0),
+            'item': (7, 2, 0), 'levelup': (7, 2, 0), 'capture': (7, 2, 0)}   # 멜로디·화음 네모파 악기, 파형 악기
 def enc_channel(ev, ch, ins):
     out = [0xD0 | ins]; cur = None
     for p, n in ev:

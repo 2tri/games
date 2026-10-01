@@ -149,6 +149,15 @@ uint8_t party_screen(uint8_t mode) BANKED;   // 0 보기 1 고르기(싸움) 2 �
 void music_update(void) BANKED;
 void music_play(uint8_t s) BANKED;          // 같은 곡이면 그대로
 void music_stop(void) BANKED;
+void sfx_play(uint8_t id) BANKED;          // SFX_*
+void jingle(uint8_t s) BANKED;             // 짧은 곡 한 번 → 원래 곡
+#define SFX_SELECT 0
+#define SFX_BUMP 1
+#define SFX_DOOR 2
+#define SFX_HIT 3
+#define SFX_HIT2 4
+#define SFX_THROW 5
+#define SFX_RUN 6
 extern uint8_t music_done, cur_song;
 uint8_t title_screen(void) BANKED;
 void shop_screen(void) BANKED;

@@ -49,6 +49,19 @@ HEAL = dict(bpm=120, grid=12, once=True, ch=[
     [[0, 36]]])
 
 
+# 짧은 징글 (직접 작곡): 물건 얻음 · 레벨업 · 포획 성공
+JINGLES = {
+    'item': dict(bpm=150, grid=12, once=True, ch=[
+        [[79, 3], [79, 3], [79, 3], [84, 12], [0, 6]], [[76, 3], [76, 3], [76, 3], [79, 12], [0, 6]],
+        [[48, 9], [55, 12], [0, 6]], [[3, 3], [3, 3], [3, 3], [5, 12], [0, 6]]]),
+    'levelup': dict(bpm=150, grid=12, once=True, ch=[
+        [[72, 3], [76, 3], [79, 3], [84, 6], [0, 3], [83, 3], [84, 12], [0, 3]], [[64, 3], [67, 3], [72, 3], [76, 6], [0, 3], [74, 3], [76, 12], [0, 3]],
+        [[48, 12], [43, 6], [48, 18]], [[0, 36]]]),
+    'capture': dict(bpm=140, grid=12, once=True, ch=[
+        [[67, 3], [72, 3], [76, 3], [79, 6], [76, 3], [79, 18], [0, 3]], [[64, 3], [67, 3], [72, 3], [76, 6], [72, 3], [76, 18], [0, 3]],
+        [[48, 12], [55, 6], [48, 18], [0, 3]], [[1, 6], [3, 6], [2, 6], [5, 18], [0, 3]]]),
+}
+
 def load(path):
     m = mido.MidiFile(path); tpb = m.ticks_per_beat
     notes = []; bpm = None
@@ -162,3 +175,6 @@ if __name__ == '__main__':
         print('%-8s %s bpm %.0f %d칸 이벤트 %s' % (name, sp['mid'], d['bpm'], d['units'], [len(c) for c in d['ch']]))
     h = dict(HEAL); h['units'] = sum(n for _, n in h['ch'][0])
     json.dump(h, open(os.path.join(MUS, 'heal.json'), 'w'), separators=(',', ':'))
+    for jn, j in JINGLES.items():
+        j = dict(j); j['units'] = sum(n for _, n in j['ch'][0])
+        json.dump(j, open(os.path.join(MUS, jn + '.json'), 'w'), separators=(',', ':'))

@@ -6,7 +6,7 @@ S = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'build')
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/vil.state'); e.tick(5)
-walk(e, 'right', 1); walk(e, 'down', 7); settle(e); log('route1?', gstate(e))
+walk(e, 'down', 8); settle(e); log('route1?', gstate(e))      # 회복 센터 문 앞(7,6) → 1번 길(4,0)
 walk(e, 'down', 2); walk(e, 'left', 1); log('grass', gstate(e))
 G = SYM['_G']
 for b in range(6):
