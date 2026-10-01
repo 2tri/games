@@ -396,12 +396,24 @@ def spr3(pic):
 def obj_frame(a):
     """16×16 → 8×16 두 장 (왼쪽 위·아래, 오른쪽 위·아래) 타일 4개"""
     return [a[0:8, 0:8], a[8:16, 0:8], a[0:8, 8:16], a[8:16, 8:16]]
-def kid_frames(k, full=True):
+import people as _people
+def tall_frame(a):
+    """16×32 → 8×16 네 장: 위 왼쪽·위 오른쪽·아래 왼쪽·아래 오른쪽 (타일 8개)"""
+    return obj_frame(a[0:16]) + obj_frame(a[16:32])
+def kid_frames(k, full=True, nfr=3):
+    """사람 걷기 그림 16×32. 이미지 AI 그림이 있으면 그것, 없으면 웹판 16×16 을 아래쪽에 붙임
+    full: 앞0 앞1 뒤0 뒤1 옆0 옆1 / 아니면 nfr 장 (3: 앞·뒤·옆, 2: 앞·옆, 1: 앞)"""
+    pick = [0, 1, 2, 3, 4, 5] if full else {3: [0, 2, 4], 2: [0, 4], 1: [0]}[nfr]
+    ai = _people.frames(k)
+    if ai:
+        frs, pal = ai
+        return sum((tall_frame(frs[i]) for i in pick), []), pal
     wk = W['walks'][k]
-    fr = [wk['down'][0], wk['down'][1], wk['up'][0], wk['up'][1], wk['left'][0], wk['left'][1]] if full else [wk['down'][0], wk['up'][0], wk['left'][0]]
+    src = [wk['down'][0], wk['down'][1], wk['up'][0], wk['up'][1], wk['left'][0], wk['left'][1]]
     tiles = []; mains = {}
-    for f in fr:
-        a, m = spr3(f); mains[m] = mains.get(m, 0) + 1; tiles += obj_frame(a)
+    for i in pick:
+        a, m = spr3(src[i]); mains[m] = mains.get(m, 0) + 1
+        t = np.zeros((32, 16), np.uint8); t[16:] = a; tiles += tall_frame(t)
     main = max(mains, key=mains.get)
     return tiles, [gfx.WHITE, SKIN, main, gfx.BLACK]
 def single_frame(pic, pal_override=None):
@@ -468,13 +480,15 @@ for mname, M in story.MAPS.items():
         v = [rgb15(c) for c in pal]
         if v not in objpals: objpals.append(v)
         return objpals.index(v) + 1
+    nkid = len({k for n in M.npcs for k in ((story.COMP if n.spr == 'COMP' else (n.spr,)))if k in KIDS})
+    kid_nfr = 3 if nkid * 24 <= 64 else 2 if nkid * 16 <= 64 else 1      # OBJ 칸(48~111)에 맞춤
     def sprset(key):
         for i, (k2, *_r) in enumerate(sprsets):
             if k2 == key: return i
-        if key in KIDS: tiles, pal = kid_frames(key, full=False); nfr = 3
+        if key in KIDS: tiles, pal = kid_frames(key, full=False, nfr=kid_nfr); nfr = kid_nfr
         elif key.startswith('blob:'): tiles, pal = blob_frames(key[5:]); nfr = 1
         else: tiles, pal = single_frame(W['walk1'][key], (hexrgb('#f8f8f8'), hexrgb('#e04838'))) if key == 'elecmon' else single_frame(W['walk1'][key]); nfr = 1
-        base = 24 + len(sprtiles); sprtiles.extend(tiles)
+        base = 48 + len(sprtiles); sprtiles.extend(tiles)
         sprsets.append((key, base, nfr, objpal(pal))); return len(sprsets) - 1
     npcs = []
     scripts = []
@@ -486,7 +500,8 @@ for mname, M in story.MAPS.items():
         cond = 0xFFFF; ctype = 0
         if n.show_if: cond = dsl.flag(n.show_if); ctype = 1
         if n.hide_if: cond = dsl.flag(n.hide_if); ctype = 2
-        npcs.append((n.x, n.y, a_, b_, altkid, DIRS[n.dir], (1 if n.fixed else 0) | (ctype << 1), cond,
+        tall = 8 if (n.spr == 'COMP' or n.spr in KIDS) else 0
+        npcs.append((n.x, n.y, a_, b_, altkid, DIRS[n.dir], (1 if n.fixed else 0) | (ctype << 1) | tall, cond,
                      KIDI[n.hide_kid] if n.hide_kid else 0xFF, scr(n.script)))
     signs = [(s_.x, s_.y, scr(s_.script)) for s_ in M.signs]
     trigs = [(t.x, t.y, t.w, t.h, dsl.flag(t.once) if t.once else 0xFFFF, dsl.flag(t.need) if t.need else 0xFFFF,
@@ -494,7 +509,7 @@ for mname, M in story.MAPS.items():
     on_enter = scr(M.on_enter) if M.on_enter else None
     blob, starts = dsl.assemble(scripts, CTX)
     assert len(objpals) <= 7, (mname, len(objpals))
-    assert 24 + len(sprtiles) <= 100, (mname, len(sprtiles))
+    assert 48 + len(sprtiles) <= 112, (mname, len(sprtiles))
     # 8×8 타일 + 팔레트
     subs = []; wts = []
     use = {}
@@ -504,7 +519,7 @@ for mname, M in story.MAPS.items():
     for i_, n in enumerate(mts):
         px = mt_pixels(n)
         for (y, x) in [(0, 0), (0, 8), (8, 0), (8, 8)]: subs.append(px[y:y + 8, x:x + 8]); wts.append(use.get(i_, 1))
-    t1_base = max(64, 24 + len(sprtiles))      # 1번 VRAM: 0~ OBJ(주인공·NPC), t1_base~191 지도 타일
+    t1_base = max(64, 48 + len(sprtiles))      # 1번 VRAM: 0~47 주인공, 48~ NPC, t1_base~191 지도 타일
     NT0, NT1 = 104, 192 - t1_base
     ai = any(mt_split(n)[0] in AS for n in mts)
     if ai:      # 이미지 AI 조각: 색을 k-평균으로 줄이고, 비슷한 타일을 합쳐 칸 수에 맞춤
@@ -704,7 +719,7 @@ TD = TT.data()
 misc += arr('title_tiles', TD[:176 * 16], static=False) + arr('title_tiles1', TD[176 * 16:] or [0], static=False) + arr('title_map', TMAP, static=False) + arr('title_attr', TATTR, static=False) + arr('title_alt', TALT or [0], static=False)
 misc += arr('kid_spr', sum(KIDSPR, []), static=False)
 misc += arr('opening', OPEN_BLOB, static=False)
-emit('misc.c', misc, len(UIT) * 16 + len(TT.list) * 16 + 720 + 8 * 384 + len(OPEN_BLOB))
+emit('misc.c', misc, len(UIT) * 16 + len(TT.list) * 16 + 720 + len(sum(KIDSPR, [])) + len(OPEN_BLOB) + 3 * (len(STRLOC) + len(PICLOC)) + 64)   # 문자열·그림 목록표는 뱅크가 정해진 뒤 덧붙임
 # 지도
 for mname, d in MAPC.items():
     b = ''
@@ -746,6 +761,12 @@ for f in sorted(BANKS, key=lambda x: -x[2]):
 BANKOF = {}
 for i, bk in enumerate(banks):
     for f in bk[1]: BANKOF[f[0]] = FIRST_DATA_BANK + i
+B = BANKOF
+for bk in BANKS:
+    if bk[0] == 'misc.c':      # 0번 뱅크를 비우려고 목록표를 MISC 뱅크로
+        bk[1] += 'const farptr_t STRTAB[] = {' + ','.join('{%d,strs%d+%d}' % (B['str%d.c' % b_], b_, o) for (b_, o) in STRLOC) + '};\n'
+        bk[1] += 'const farptr_t PICTAB[] = {' + ','.join('{%d,pics%d+%d}' % (B['pics%d.c' % b_], b_, o) for (b_, o) in PICLOC) + '};\n'
+        bk[1] = ''.join('extern const uint8_t strs%d[];\n' % i for i in range(len(STRB))) + ''.join('extern const uint8_t pics%d[];\n' % i for i in range(len(PICB))) + bk[1]
 for fname, body, size in BANKS:
     with open(os.path.join(GEN, fname), 'w') as fh:
         fh.write('#pragma bank %d\n#include <gbdk/platform.h>\n#include <stdint.h>\n#include "../../src/data.h"\n' % BANKOF[fname] + body)
@@ -761,8 +782,6 @@ for i in range(len(PICB)): t += 'extern const uint8_t pics%d[];\n' % i
 t += 'extern const uint8_t ui_tiles[], title_tiles[], title_tiles1[], title_map[], title_attr[], title_alt[], kid_spr[], opening[];\n'
 for m in MAPNAMES: t += 'extern const map_t map_%s;\n' % m
 t += 'const farptr_t FONTS[] = {' + ','.join('{%d,font%d}' % (B['font%d.c' % i], i) for i in range(NFONT)) + '};\n'
-t += 'const farptr_t STRTAB[] = {' + ','.join('{%d,strs%d+%d}' % (B['str%d.c' % b_], b_, o) for (b_, o) in STRLOC) + '};\n'
-t += 'const farptr_t PICTAB[] = {' + ','.join('{%d,pics%d+%d}' % (B['pics%d.c' % b_], b_, o) for (b_, o) in PICLOC) + '};\n'
 t += 'const farmap_t MAPTAB[] = {' + ','.join('{%d,&map_%s}' % (B['map_%s.c' % m], m) for m in MAPNAMES) + '};\n'
 t += 'const uint8_t MISC_BANK = %d;\n' % B['misc.c']
 t += arr('CHARFLAG', CHARFLAG, static=False)

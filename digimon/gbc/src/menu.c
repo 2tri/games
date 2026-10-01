@@ -51,11 +51,10 @@ uint8_t title_screen(void) BANKED {
 // ───────── 아이 고르기 ─────────
 static void kid_show(uint8_t k) {
     uint8_t i;
-    far_sprite(1, 0, 24, MISC_BANK, kid_spr + (uint16_t)k * 384);
+    far_sprite(1, 0, 8, MISC_BANK, kid_spr + (uint16_t)k * 768);      // 앞모습 한 장 (16×32)
     for (i = 0; i < 4; i++) obpal[i] = KID_PAL[k * 4 + i];
     pal_apply();
-    set_sprite_tile(0, 0); set_sprite_tile(1, 2); set_sprite_prop(0, 0x08); set_sprite_prop(1, 0x08);
-    move_sprite(0, 136, 56); move_sprite(1, 144, 56);
+    for (i = 0; i < 4; i++) { set_sprite_tile(i, ((i & 2) ? 0 : 4) + ((i & 1) ? 2 : 0)); set_sprite_prop(i, 0x08); move_sprite(i, 136 + (i & 1) * 8, (i & 2) ? 40 : 56); }
 }
 uint8_t kid_pick(void) BANKED {
     uint8_t sel = G.kid, i, m;

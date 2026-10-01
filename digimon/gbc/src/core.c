@@ -149,9 +149,10 @@ static void emit(uint16_t c) { if (tlen < 159) { tbuf[tlen++] = c; } if (c < 0xF
 static void expand_bytes(const uint8_t *p, uint8_t depth);
 static void expand_sid(uint16_t sid, uint8_t depth) {
     static uint8_t buf2[40];
-    const farptr_t *f = &STRTAB[sid];
-    if (depth == 0) { far_copy(sbuf, f->bank, f->ptr, 200); expand_bytes(sbuf, 0); }
-    else { far_copy(buf2, f->bank, f->ptr, 40); expand_bytes(buf2, 1); }
+    farptr_t f;
+    far_copy(&f, MISC_BANK, &STRTAB[sid], sizeof(farptr_t));      // 목록표는 MISC 뱅크에
+    if (depth == 0) { far_copy(sbuf, f.bank, f.ptr, 200); expand_bytes(sbuf, 0); }
+    else { far_copy(buf2, f.bank, f.ptr, 40); expand_bytes(buf2, 1); }
 }
 static void emit_num(uint16_t v) {
     uint8_t d[5], n = 0;
@@ -322,8 +323,9 @@ void load_ui(void) {
     ui_pals();
 }
 uint8_t pic_load(uint8_t pic, uint8_t vbank, uint8_t tile0, uint8_t palno) {
-    const farptr_t *f = &PICTAB[pic];
+    farptr_t fp; const farptr_t *f = &fp;
     uint8_t s = CURRENT_BANK, w, h, i;
+    far_copy(&fp, MISC_BANK, &PICTAB[pic], sizeof(farptr_t));
     SWITCH_ROM(f->bank);
     w = f->ptr[0]; h = f->ptr[1];
     for (i = 0; i < 4; i++) bgpal[palno * 4 + i] = f->ptr[2 + i * 2] | (f->ptr[3 + i * 2] << 8);

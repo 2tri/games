@@ -49,16 +49,16 @@ static void map_load(uint8_t m) {
     if (M.n_t1) { VBK_REG = 1; set_bkg_data(M.t1_base, M.n_t1, M.t1); VBK_REG = 0; }
     memcpy(&bgpal[4], M.pal, 56);
     music_play(M.song);
-    if (M.n_spr) { VBK_REG = 1; set_sprite_data(24, M.n_spr, M.spr); VBK_REG = 0; }
+    if (M.n_spr) { VBK_REG = 1; set_sprite_data(48, M.n_spr, M.spr); VBK_REG = 0; }
     for (i = 0; i < M.n_objpal * 4; i++) obpal[4 + i] = M.objpal[i];
-    { uint8_t s = CURRENT_BANK; SWITCH_ROM(MISC_BANK); VBK_REG = 1; set_sprite_data(0, 24, kid_spr + (uint16_t)G.kid * 384); VBK_REG = 0; SWITCH_ROM(s); }
+    { uint8_t s = CURRENT_BANK; SWITCH_ROM(MISC_BANK); VBK_REG = 1; set_sprite_data(0, 48, kid_spr + (uint16_t)G.kid * 768); VBK_REG = 0; SWITCH_ROM(s); }
     for (i = 0; i < 4; i++) obpal[i] = KID_PAL[G.kid * 4 + i];
 }
 
 static void npc_refresh(void) {
     uint8_t i; const uint8_t *d; uint16_t cond; uint8_t ct, vis;
     MAPB(); nn = 0;
-    for (i = 0; i < M.n_npc && nn < 10; i++) {
+    for (i = 0; i < M.n_npc && nn < 9; i++) {
         d = M.npcs + i * NPC_SIZE;
         cond = d[NPC_COND] | (d[NPC_COND + 1] << 8); ct = (d[NPC_FLAGS] >> 1) & 3; vis = 1;
         if (ct == 1 && !flag_get(cond)) vis = 0;
@@ -80,23 +80,29 @@ static void spr_pair(uint8_t k, uint8_t tl, uint8_t prop, int16_t sx, int16_t sy
     set_sprite_prop(k, prop); set_sprite_prop(k + 1, prop);
     move_sprite(k, (uint8_t)(sx + 8), (uint8_t)(sy + 16)); move_sprite(k + 1, (uint8_t)(sx + 16), (uint8_t)(sy + 16));
 }
+// 사람(키 큰 그림 16×32, flags 8)은 OBJ 4장: k·k+1 아래 반, k+2·k+3 위 반. 그림 한 장 = 타일 8개(위 4·아래 4)
+static void person(uint8_t k, uint8_t tl, uint8_t prop, int16_t sx, int16_t sy, uint8_t tall) {
+    if (tall) { spr_pair(k, tl + 4, prop, sx, sy); spr_pair(k + 2, tl, prop, sx, sy - 16); }
+    else { spr_pair(k, tl, prop, sx, sy); move_sprite(k + 2, 0, 0); move_sprite(k + 3, 0, 0); }
+}
 static void npcs_draw(void) {
-    uint8_t i, fr, flip;
+    uint8_t i, fr, flip, tall;
     for (i = 0; i < nn; i++) {
         npcrt_t *n = &NP[i];
-        fr = 0; flip = 0;
+        fr = 0; flip = 0; tall = n->flags & 8;
         if (n->nfr == 3) { fr = n->dir == 0 ? 0 : n->dir == 1 ? 1 : 2; flip = n->dir == 3; }
-        spr_pair(2 + i * 2, n->base + fr * 4, 0x08 | n->pal | (flip ? 0x20 : 0),
-                 (int16_t)n->x * 16 - camx, (int16_t)n->y * 16 - camy - 4);
+        else if (n->nfr == 2 && n->dir >= 2) { fr = 1; flip = n->dir == 3; }
+        person(4 + i * 4, n->base + fr * (tall ? 8 : 4), 0x08 | n->pal | (flip ? 0x20 : 0),
+               (int16_t)n->x * 16 - camx, (int16_t)n->y * 16 - camy - 4, tall);
     }
-    for (i = 2 + nn * 2; i < 40; i++) move_sprite(i, 0, 0);
+    for (i = 4 + nn * 4; i < 40; i++) move_sprite(i, 0, 0);
 }
 static uint8_t step_foot;
 static void player_draw(uint8_t walking) {
     uint8_t d = G.dir, fr, flip = 0;
     if (d == 0) fr = 0; else if (d == 1) fr = 2; else { fr = 4; flip = d == 3; }
     if (walking) { fr++; if (d < 2 && step_foot) flip = 1; }
-    spr_pair(0, fr * 4, 0x08 | (flip ? 0x20 : 0), 64, 60);
+    person(0, fr * 8, 0x08 | (flip ? 0x20 : 0), 64, 60, 1);
 }
 static void set_cam(int16_t ox, int16_t oy) {
     camx = (int16_t)px * 16 - 64 + ox; camy = (int16_t)py * 16 - 64 + oy;

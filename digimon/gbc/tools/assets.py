@@ -235,6 +235,37 @@ def build_all():
     put('h_stairs', Hn[80:96, 172:188].copy(), False)
     put('h_void', np.zeros((16, 16, 3), np.uint8))
     put('h_mat', stamp(Hn, (111, 213, 137, 227), 2, 1, floor, colors_of(floor)), solid=False)
+    # ── 길·숲·해변 타일 (A6: tiles_ai.png, 흰 바탕) ──
+    R = load_native('tiles')
+    white = colors_of(R[62:66, 52:95], R[165:169, 100:190], R[62:66, 160:199])
+    rg = R[4:20, 4:20].copy(); rg2 = R[4:20, 54:70].copy()
+    put('r_grass', rg, False); put('r_grass2', rg2, False)
+    put('r_tall', R[12:28, 104:120].copy(), False, extra={'grass': True})
+    put('r_tall2', R[14:30, 156:172].copy(), False, extra={'grass': True})
+    put('r_path', R[107:123, 12:28].copy(), False)
+    put('r_sand', R[143:159, 4:20].copy(), False)
+    put('r_sand2', R[143:159, 32:48].copy(), False)
+    put('r_shore', R[143:159, 80:96].copy())
+    put('r_sea', R[143:159, 104:120].copy())
+    put('r_deep', R[143:159, 134:150].copy())
+    put('r_wave', R[142:158, 164:180].copy())
+    # 나무·야자수는 2×2 칸 (풀 바탕)
+    for name, box in [('r_tree', (0, 68, 25, 99)), ('r_tree2', (25, 68, 50, 99)), ('r_bush', (50, 68, 78, 99)), ('r_bush2', (78, 68, 101, 99)),
+                      ('r_jungle', (100, 68, 124, 99)), ('r_palm', (124, 68, 150, 99)), ('r_palm2', (150, 68, 175, 99))]:
+        put(name, stamp(R, box, 2, 2, rg, white, 30))
+    put('r_cliff', stamp(R, (108, 101, 140, 133), 2, 2, rg, white, 30))
+    put('r_rock', stamp(R, (98, 171, 132, 205), 2, 2, rg, white, 30))
+    put('r_stone', stamp(R, (99, 39, 120, 59), 1, 1, rg, white, 30) if False else stamp(R, (101, 40, 117, 56), 1, 1, rg, white, 30))
+    put('r_rocks', stamp(R, (150, 40, 169, 59), 1, 1, rg, white, 30))
+    put('r_sign', stamp(R, (178, 42, 196, 59), 1, 1, rg, white, 30))
+    def unwhite(arr):       # 갇힌 흰 바탕(울타리 사이 등)도 풀로
+        m = near_any(arr, white, 30); arr[m] = np.tile(rg, (arr.shape[0] // 16, arr.shape[1] // 16, 1))[m]; return arr
+    put('r_fence', unwhite(stamp(R, (12, 38, 28, 54), 1, 1, rg, white, 30)))
+    put('r_flowers', unwhite(stamp(R, (6, 176, 22, 192), 1, 1, rg, white, 30)), False)
+    put('r_flowers2', stamp(R, (30, 178, 46, 194), 1, 1, rg, white, 30))
+    put('r_booth', stamp(R, (62, 172, 78, 205), 1, 2, R[143:159, 4:20].copy(), white, 30))
+    # 숲 테두리: 정글 나무 우듬지 (이어 붙임)
+    put('r_canopy', R[72:88, 4:20].copy())
     return A
 
 
@@ -243,7 +274,7 @@ def load_all():
     import pickle
     os.makedirs(CACHE, exist_ok=True)
     p = os.path.join(CACHE, 'all.pkl')
-    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house')]
+    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house', 'tiles')]
     if os.path.exists(p) and os.path.getmtime(p) > max(os.path.getmtime(f) for f in srcs):
         return pickle.load(open(p, 'rb'))
     A = build_all(); pickle.dump(A, open(p, 'wb')); return A
