@@ -6,6 +6,6 @@
 (function (root) {
   'use strict';
   root.DigiArt = {
-    agumon: { front: 'art/agumon-f.png' }
+    agumon: { front: 'art/agumon-f.png', back: 'art/agumon-b.png' }
   };
 })(typeof window !== 'undefined' ? window : globalThis);

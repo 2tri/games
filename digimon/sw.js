@@ -1,9 +1,9 @@
 // 인터넷이 없어도 열리게 하는 캐시.
 // 인터넷이 있으면 새 파일을 먼저 받아오고(3초 안에), 없으면 저장해 둔 것을 씁니다.
 // 파일을 고친 뒤에는 VERSION 을 바꿔야 옛 캐시가 지워집니다.
-const VERSION = 'digimon-2026-10-01c';
+const VERSION = 'digimon-2026-10-01d';
 const FILES = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png',
-  './art/agumon-f.png',
+  './art/agumon-f.png', './art/agumon-b.png',
   './font.js', './pix.js', './mons.js', './field.js', './ui.js', './species.js', './art.js', './story.js', './game.js'];
 
 self.addEventListener('install', (e) => {

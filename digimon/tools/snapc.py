@@ -145,12 +145,13 @@ def to_image(t, pal, scale=1, bg=None):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('name')
-    ap.add_argument('--max', type=int, default=56); ap.add_argument('--line', type=float, default=0.42); ap.add_argument('--mode', type=int, default=2, help='줄이기 1=반지 원정식 2=테두리 다시 그리기'); ap.add_argument('--k', type=int, default=6, help='처음 나눌 색 무리 수 (그중 큰 2개를 씀)')
+    ap.add_argument('--max', type=int, default=56); ap.add_argument('--line', type=float, default=0.42); ap.add_argument('--flip', action='store_true', help='좌우 뒤집기 (내 쪽 그림이 상대를 보게)'); ap.add_argument('--mode', type=int, default=2, help='줄이기 1=반지 원정식 2=테두리 다시 그리기'); ap.add_argument('--k', type=int, default=6, help='처음 나눌 색 무리 수 (그중 큰 2개를 씀)')
     a = ap.parse_args()
     t, pal, cell = snap(Image.open(a.src), k=a.k)
     t = drop_small(t, 8)
     t = shrink2(t, a.max, a.max, a.line) if a.mode == 2 else shrink(t, a.max, a.max, a.line)
     t = drop_small(t, 3)
+    if a.flip: t = t[:, ::-1]
     here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'art')
     to_image(t, pal).save(os.path.join(here, a.name + '.png'))
     to_image(t, pal, 6, (248, 248, 248)).save(os.path.join(here, '_' + a.name + '_x6.png'))
