@@ -120,6 +120,29 @@ class Rom:
         while d[a]: mv.append((d[a], d[a + 1])); a += 2
         return ev, mv
 
+    # ── 트레이너 ──
+    def trainers(self, ngroups=66):
+        """트레이너 무리 표(ReadTrainerParty 코드 모양으로 찾음) → [{group, name, kind, mons:[(레벨, 종, 종 바이트 주소)]}]"""
+        d = bytes(self.d); EXTRA = {0: 0, 1: 4, 2: 1, 3: 5}
+        for m in re.finditer(rb'\x3d\x4f\x06\x00\x21(..)\x09\x09\x2a\x66\x6f', d, re.S):
+            bank = m.start() // 0x4000; tab = addr(bank, int.from_bytes(m.group(1), 'little'))
+            a = addr(bank, d[tab] | d[tab + 1] << 8); j = d.find(0x50, a, a + 12)
+            if j > a and d[j + 1] in EXTRA and '{' not in krtext.decode(d, a, j): break
+        ptrs = [addr(bank, d[tab + 2 * i] | d[tab + 2 * i + 1] << 8) for i in range(ngroups)]
+        ends = sorted(set(ptrs)); out = []
+        for gi, a in enumerate(ptrs):
+            end = next((e for e in ends if e > a), a + 0x400)
+            while a < end:
+                j = d.index(0x50, a); name = krtext.decode(d, a, j); a = j + 1
+                kind = d[a]; a += 1
+                if kind not in EXTRA: break
+                mons = []
+                while d[a] != 0xff:
+                    mons.append((d[a], d[a + 1], a + 1)); a += 2 + EXTRA[kind]
+                a += 1
+                out.append({'group': gi, 'name': name, 'kind': kind, 'mons': mons})
+        return out
+
     def free_runs(self, minlen=0x200):
         """뱅크 끝의 빈 곳 (FF 또는 00 연속) 목록"""
         out = []

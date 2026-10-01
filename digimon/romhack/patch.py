@@ -156,6 +156,47 @@ class Patch:
         assert len(e) <= room, '도감 글이 원래 자리보다 김: %d > %d' % (len(e), room)
         self.put(ent(no), e + bytes(room - len(e)))
         self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room))
+    # 글 한 덩이 바꾸기: a = 글자 시작(text 명령 0x00 다음). <DONE>/<PROMPT> 앞까지를 새 글로, 남는 자리는 빈칸(0x7f)
+    def text_at(self, a, new):
+        d = self.d; end = a
+        while d[end] not in (0x5e, 0x5f):
+            end += 2 if 1 <= d[end] <= 0x0b else 1          # 한글은 2바이트 (둘째 바이트가 0x5e 일 수 있음)
+        e = krtext.encode_text(new)
+        assert len(e) <= end - a, '글이 원래보다 김 (%d > %d): %s' % (len(e), end - a, new)
+        self.put(a, e + b'\x7f' * (end - a - len(e)))
+    # 스타팅: 공박사 연구소의 세 볼 스크립트 (pokepic X / cry X / … getmonname X / … givepoke X, 5) 종 바꾸기 → {새 종: 묻는 글 주소}
+    def starters(self, mapping):
+        d = bytes(self.d); texts = {}
+        for old, new in mapping.items():
+            a = re.search(bytes([0x56, old, 0x84, old, 0x00]), d).start(); seg = d[a:a + 80]
+            for k in (1, 3, seg.index(bytes([0x40, old])) + 1, seg.index(bytes([0x2d, old, 5])) + 1):
+                self.put(a + k, bytes([new]))
+            k = seg.index(0x4d, 5)                                    # 첫 writetext = '…로 하겠니?' 글
+            texts[new] = addr(a // 0x4000, seg[k + 1] | seg[k + 2] << 8) + 1
+        return texts
+    # 트레이너가 데리고 있는 종 바꾸기 {옛 종: 새 종}
+    def trainer_species(self, mapping):
+        n = 0
+        for t in self.r.trainers():
+            for lv, sp, a in t['mons']:
+                if sp in mapping: self.put(a, bytes([mapping[sp]])); n += 1
+        return n
+    # 새 디지몬 한 칸: 능력치는 앞뒤 단계의 평균, 나머지(속성·성장·기술머신)는 앞 단계 복사
+    def new_mon(self, no, name, prev, nxt, art, kind, dex_lines, height, weight):
+        a, p, q = self.r.bs + 0x20 * (no - 1), self.r.bs + 0x20 * (prev - 1), self.r.bs + 0x20 * (nxt - 1)
+        self.put(a + 1, self.d[p + 1:p + 0x20])
+        for k in range(1, 7): self.d[a + k] = (self.d[p + k] + self.d[q + k] + 1) // 2
+        self.d[a + 10] = (self.d[p + 10] + self.d[q + 10]) // 2                # 경험치 수율
+        self.name(no, name)
+        f = os.path.join(WEB, 'art', art + '-f.png'); b = os.path.join(WEB, 'art', art + '-b.png')
+        if not os.path.exists(f):
+            f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
+            self.log.append('%s 그림 없음 → 임시 그림(물음표 알)' % name)
+        self.pic(no, f, b)
+        d = bytes(self.d); m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', d, re.S)
+        self.icon(no, d[addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + prev - 1])
+        idx, pitch, length = self.cry_of(prev); self.cry(no, idx, max(0, pitch - 32), length + 32)
+        self.dex(no, kind, height, weight, dex_lines)
     def evos(self, no, evos, moves=None):
         """진화·기술 목록을 새로 써서 뱅크 0x10 빈 곳에 두고 포인터를 바꿈. moves=None 이면 원래 기술 목록 유지"""
         old_ev, old_mv = self.r.evos_attacks(no)
@@ -253,11 +294,43 @@ def build(base, out_rom, out_ips):
     def S(nm):
         assert nm in N, '롬에 %s 없음' % nm
         return N[nm]
-    crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛'}
+    # 6 어드벤처 완전체 빈칸: 그레이몬 → 메탈그레이몬 → 워그레이몬, 가루몬 → 워가루몬 → 메탈가루몬
+    #   야생·트레이너·이벤트 어디에도 안 쓰이는 포켓몬 칸에 넣음. 그림이 아직 없으면 임시 그림(물음표 알)
+    #   도감: 공식 도감(digimon.net) 프로필을 3줄로 줄임. 키·몸무게는 공식 값이 없어 임시
+    MGR = N.get('메탈그레몬') or S('핫삼'); WGR = N.get('워가루몬') or S('링곰')
+    P.new_mon(MGR, '메탈그레몬', S('그레이몬'), S('워그레이몬'), 'metalgreymon', '사이보그형', ['몸의 절반 이상을 기계화한', '디지몬. 공격력은 핵탄두', '한 발에 맞먹는다고 한다'], 42, 2800)
+    P.new_mon(WGR, '워가루몬', S('가루몬'), S('메탈가루몬'), 'weregarurumon', '수인형', ['가루몬이 진화해 두 발로', '걷게 된 디지몬. 발차기와', '점프력이 강하다'], 21, 1100)
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛',
+             '메탈그레몬': '용기', '워가루몬': '우정'}
     P.evo_engine({S(nm): 1 << CREST_BIT[c] for nm, c in crest.items()})
+    # 8 디지몬스터 버그: 기술 목록이 (기술, 레벨) 순서로 뒤집혀 들어간 종 (워그레이몬 등) → 바로잡음
+    #   금은 (레벨, 기술) 로 읽으므로 '레벨 108에 막치기' 같은 엉뚱한 값이 됨. 뒤집어 읽어 레벨이 1~100 오름차순이면 뒤집힌 것으로 봄
+    fixed = {}
+    # 홀리엔젤몬: 진화 목록이 두 번 들어가 둘째 목록이 기술로 읽힘 → 둘째 목록을 건너뜀
+    HA = S('홀리엔젤몬'); ev, mv = r.evos_attacks(HA)
+    if any(l > 100 for l, _ in mv):
+        fixed[HA] = P.raw_moves_after(HA, 8); P.evos(HA, ev, fixed[HA]); P.log.append('홀리엔젤몬 진화 목록 겹침 고침')
+    for no in range(1, dmrom.NUM + 1):
+        ev, mv = r.evos_attacks(no)
+        if no in fixed or all(1 <= l <= 100 for l, _ in mv): continue
+        nev = sum(4 if e[0] == STAT else 3 for e in ev) + 1
+        bank = r.evos // 0x4000; p = r.d[r.evos + 2 * (no - 1)] | r.d[r.evos + 2 * (no - 1) + 1] << 8
+        a = addr(bank, p) + nev; sw = []
+        while r.d[a] and r.d[a + 1]: sw.append((r.d[a + 1], r.d[a])); a += 2
+        if sw and all(1 <= l <= 100 for l, _ in sw) and [l for l, _ in sw] == sorted(l for l, _ in sw):
+            fixed[no] = sw; P.evos(no, ev, sw)
+    P.log.append('기술 목록 뒤집힘 고침: %s' % ', '.join(r.name(n) for n in fixed if n != HA))
     # 성숙기 → 완전체: 자기 문장이면 Lv30 (희망은 원래대로 25), 아니면 문장 하나 이상 + 원래 레벨
-    P.evos(S('그레이몬'), [(CREST, 30, S('워그레이몬')), (ANYCREST, 36, S('워그레이몬'))])      # 메탈그레이몬 그림 오면 그쪽으로
-    P.evos(S('가루몬'), [(CREST, 30, S('메탈가루몬')), (ANYCREST, 36, S('메탈가루몬'))])
+    # 완전체 → 궁극체: 자기 문장 + Lv45 (애니에서 워프 진화는 마지막 무렵)
+    def learn(no, *more):                      # 앞 단계 기술 + 다음 단계의 높은 레벨 기술, 레벨 순
+        mv = list(fixed.get(no) or r.evos_attacks(no)[1])
+        for m in more: mv += [x for x in (fixed.get(m) or r.evos_attacks(m)[1]) if x[0] > 30]
+        return sorted(set(mv))
+    P.evos(S('그레이몬'), [(CREST, 30, MGR), (ANYCREST, 36, MGR)])
+    P.evos(MGR, [(CREST, 45, S('워그레이몬'))], learn(S('그레이몬'), S('워그레이몬')))
+    P.evos(S('가루몬'), [(CREST, 30, WGR), (ANYCREST, 36, WGR)])
+    P.evos(WGR, [(CREST, 45, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
     P.evos(S('버드라몬'), [(CREST, 30, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
     P.evos(S('캅테리몬'), [(CREST, 30, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
     P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
@@ -282,6 +355,17 @@ def build(base, out_rom, out_ips):
         idx, _, _ = P.cry_of(S('아구몬')); P.cry(KORO, idx, 160, 150)          # 아구몬 울음을 높고 짧게
         # 공식 도감(digimon.net): 유년기Ⅱ, 렛서형, 필살기 거품. 키·몸무게는 공식 값이 없어 임시
         P.dex(KORO, '렛서형', 3, 30, ['솜털이 빠지고 몸이 커진', '소형 디지몬. 아직 싸울 수', '없지만 거품으로 위협한다'])
+    # 7 스타팅을 어드벤처 파트너로: 불꽃 볼 → 아구몬, 물 볼 → 파피몬, 풀 볼 → 팔몬 (원래 길몬·레나몬·테리어몬)
+    #   라이벌은 금처럼 내 것에 강한 쪽을 가져가므로, 트레이너 표의 세 줄을 그대로 어드벤처 세 줄로 바꿈 (3단계는 완전체)
+    if True:
+        TAM = {S('길몬'): S('아구몬'), S('그라우몬'): S('그레이몬'), S('듀크몬'): MGR,
+               S('레나몬'): S('파피몬'), S('구미호몬'): S('가루몬'), S('샤크라몬'): WGR,
+               S('테리어몬'): S('팔몬'), S('가르고몬'): S('니드몬'), S('래피드몬'): S('릴리몬')}
+        T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('파피몬'), S('테리어몬'): S('팔몬')})
+        P.text_at(T[S('아구몬')], '공박사『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
+        P.text_at(T[S('파피몬')], '공박사『물디지몬<LINE>파피몬이 마음에 드느냐!?')
+        P.text_at(T[S('팔몬')], '공박사『풀디지몬<LINE>팔몬이 마음에 들었느냐!?')
+        P.log.append('스타팅 → 아구몬·파피몬·팔몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))
@@ -299,6 +383,8 @@ def build(base, out_rom, out_ips):
         ok = (g in CATCHABLE) if g else (no not in targets)
         if not ok:
             P.stats(no, catch=0); blocked.append(no)
+    for no in (MGR, WGR):
+        P.stats(no, catch=0); blocked.append(no)
     P.log.append('포획 불가 %d종 (성숙기 이상)' % len(blocked))
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))

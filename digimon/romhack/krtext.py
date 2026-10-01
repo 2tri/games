@@ -26,3 +26,14 @@ def encode(s):
         if ch not in ENC: raise KeyError('부호 없는 글자: %r' % ch)
         out += ENC[ch]
     return bytes(out)
+
+_TAGS = {k: bytes.fromhex(v) for k, v in _M['single'].items() if k.startswith('<')}
+def encode_text(s):
+    """<LINE> <PARA> <CONT> <DONE> 같은 제어 부호를 섞어 쓴 문장 → 바이트"""
+    out = bytearray(); i = 0
+    while i < len(s):
+        if s[i] == '<' and '>' in s[i:]:
+            j = s.index('>', i) + 1
+            if s[i:j] in _TAGS: out += _TAGS[s[i:j]]; i = j; continue
+        out += encode(s[i]); i += 1
+    return bytes(out)

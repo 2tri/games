@@ -1,0 +1,1580 @@
+{
+"Agumon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 77
+},
+"Aidramon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 50",
+"n": 1
+},
+"Airdramon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 39",
+"n": 12
+},
+"Andiramon": {
+"lv": [
+"p"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Andromon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 05",
+"n": 12
+},
+"Angemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 13",
+"n": 39
+},
+"Angewomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 37",
+"n": 27
+},
+"Ankylomon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 24",
+"n": 15
+},
+"Anomalocarimon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 41",
+"n": 2
+},
+"Apocalymon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 53",
+"n": 2
+},
+"Aquilamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 25",
+"n": 19
+},
+"Arachnemon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 33",
+"n": 1
+},
+"Archnemon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 24",
+"n": 23
+},
+"Armadimon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 02",
+"n": 47
+},
+"Armagemon": {
+"lv": [
+"u"
+],
+"first": "DA 02: Diablomon Strikes Back",
+"n": 1
+},
+"Atlur Kabuterimon (Red)": {
+"lv": [
+"p",
+"u"
+],
+"first": "DA - Episode 24",
+"n": 29
+},
+"Bakemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 11",
+"n": 21
+},
+"Bakumon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 36",
+"n": 3
+},
+"Belial Vamdemon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 47",
+"n": 4
+},
+"Betamon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 23",
+"n": 6
+},
+"Big Mamemon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 41",
+"n": 1
+},
+"Birdramon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 04",
+"n": 40
+},
+"Black War Greymon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 30",
+"n": 10
+},
+"Blossomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 43",
+"n": 2
+},
+"Botamon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 12",
+"n": 10
+},
+"Bubbmon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 24",
+"n": 3
+},
+"Centalmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 10",
+"n": 11
+},
+"Cherubimon (Vice)": {
+"lv": [
+"u"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Cherubimon (Virtue)": {
+"lv": [
+"u"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Chibi Kiwimon": {
+"lv": [
+"misc"
+],
+"first": "DA - Episode 43",
+"n": 2
+},
+"Chibimon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 02",
+"n": 33
+},
+"Chicomon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 27",
+"n": 6
+},
+"Chimairamon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 18",
+"n": 6
+},
+"Chocomon": {
+"lv": [
+"b"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Cockatrimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 17",
+"n": 2
+},
+"Coelamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 41",
+"n": 1
+},
+"Dagomon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 13",
+"n": 1
+},
+"Dark Tyranomon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 35",
+"n": 9
+},
+"Death Meramon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 27",
+"n": 5
+},
+"Deltamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 08",
+"n": 2
+},
+"Delumon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 43",
+"n": 7
+},
+"Demon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 43",
+"n": 3
+},
+"Devidramon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 26",
+"n": 7
+},
+"Devimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 08",
+"n": 13
+},
+"Diablomon": {
+"lv": [
+"u"
+],
+"first": "DA: Our War Game!",
+"n": 2
+},
+"Digitama": {
+"lv": [
+"misc"
+],
+"first": "DA - Episode 12",
+"n": 17
+},
+"Digitamamon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 23",
+"n": 10
+},
+"Digmon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 02",
+"n": 28
+},
+"Dokugumon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 28",
+"n": 5
+},
+"Drimogemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 14",
+"n": 9
+},
+"Ebidramon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 05",
+"n": 4
+},
+"Elecmon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 12",
+"n": 17
+},
+"Etemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 15",
+"n": 10
+},
+"Etemon Chaos": {
+"lv": [
+"misc"
+],
+"first": "DA - Episode 20",
+"n": 4
+},
+"Evilmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 52",
+"n": 3
+},
+"Fantomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 26",
+"n": 7
+},
+"Fladramon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 01",
+"n": 17
+},
+"Flare Lizarmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 40",
+"n": 1
+},
+"Floramon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 43",
+"n": 11
+},
+"Flymon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 26",
+"n": 7
+},
+"Fujitsumon": {
+"lv": [
+"misc"
+],
+"first": "DA 02 - Episode 40",
+"n": 1
+},
+"Gabumon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 64
+},
+"Galgomon": {
+"lv": [
+"a"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Ganimon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 41",
+"n": 3
+},
+"Garudamon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 26",
+"n": 22
+},
+"Garurumon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 03",
+"n": 36
+},
+"Gazimon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 15",
+"n": 22
+},
+"Gekomon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 25",
+"n": 9
+},
+"Gerbemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 44",
+"n": 1
+},
+"Gesomon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 27",
+"n": 5
+},
+"Gigadramon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 48",
+"n": 1
+},
+"Giromon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 41",
+"n": 1
+},
+"Gizamon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 35",
+"n": 7
+},
+"Gokimon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 06",
+"n": 3
+},
+"Golemon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 25",
+"n": 2
+},
+"Gomamon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 64
+},
+"Gorimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 39",
+"n": 5
+},
+"Gottsumon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 29",
+"n": 15
+},
+"Greymon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 03",
+"n": 52
+},
+"Guardromon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 45",
+"n": 3
+},
+"Gummymon": {
+"lv": [
+"b"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Hagurumon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 48",
+"n": 2
+},
+"Hangyomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 42",
+"n": 5
+},
+"Hanumon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 33",
+"n": 3
+},
+"Hawkmon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 02",
+"n": 45
+},
+"Holsmon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 02",
+"n": 17
+},
+"Holy Angemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 52",
+"n": 19
+},
+"Holydramon": {
+"lv": [
+"u"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Igamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 15",
+"n": 1
+},
+"Ikkakumon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 07",
+"n": 36
+},
+"Imperialdramon: Dragon Mode": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 39",
+"n": 7
+},
+"Imperialdramon: Figher Mode": {
+"lv": [
+"u"
+],
+"first": "DA 02: Diablomon Strikes Back",
+"n": 1
+},
+"Imperialdramon: Fighter Mode": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 43",
+"n": 4
+},
+"Imperialdramon: Paladin Mode": {
+"lv": [
+"u"
+],
+"first": "DA 02: Diablomon Strikes Back",
+"n": 1
+},
+"Infermon": {
+"lv": [
+"p"
+],
+"first": "DA: Our War Game!",
+"n": 1
+},
+"Jyureimon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 44",
+"n": 3
+},
+"Kabuterimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 05",
+"n": 42
+},
+"Keramon": {
+"lv": [
+"c"
+],
+"first": "DA: Our War Game!",
+"n": 1
+},
+"Kiwimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 43",
+"n": 6
+},
+"Knightmon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 32",
+"n": 2
+},
+"Kodokugumon Baby": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 28",
+"n": 1
+},
+"Koromon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 29
+},
+"Kunemon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 28",
+"n": 1
+},
+"Kuramon": {
+"lv": [
+"b"
+],
+"first": "DA: Our War Game!",
+"n": 2
+},
+"Kuwagamon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 01",
+"n": 15
+},
+"Lady Devimon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 50",
+"n": 3
+},
+"Leafmon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 23",
+"n": 8
+},
+"Leomon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 08",
+"n": 9
+},
+"Lighdramon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 11",
+"n": 13
+},
+"Lilimon": {
+"lv": [
+"p",
+"u"
+],
+"first": "DA - Episode 35",
+"n": 17
+},
+"Lopmon": {
+"lv": [
+"c"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Magnamon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 20",
+"n": 3
+},
+"Mamemon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 41",
+"n": 1
+},
+"Mammon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 27",
+"n": 6
+},
+"Marin Devimon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 43",
+"n": 2
+},
+"Mechanorimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 45",
+"n": 10
+},
+"Mega Seadramon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 36",
+"n": 3
+},
+"Megadramon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 48",
+"n": 2
+},
+"Meramon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 04",
+"n": 9
+},
+"Metal Etemon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 46",
+"n": 2
+},
+"Metal Garurumon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 38",
+"n": 19
+},
+"Metal Greymon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 20",
+"n": 38
+},
+"Metal Greymon (Virus)": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 10",
+"n": 2
+},
+"Metal Mamemon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 41",
+"n": 2
+},
+"Metal Seadramon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 40",
+"n": 4
+},
+"Millenniumon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 43",
+"n": 1
+},
+"Minomon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 24",
+"n": 5
+},
+"Minotaurmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 26",
+"n": 3
+},
+"Mochimon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 16
+},
+"Mojyamon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 09",
+"n": 9
+},
+"Monochromon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 03",
+"n": 13
+},
+"Monzaemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 06",
+"n": 9
+},
+"Mugendramon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 40",
+"n": 6
+},
+"Mummymon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 29",
+"n": 19
+},
+"Mushamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 33",
+"n": 1
+},
+"Mushmon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 43",
+"n": 7
+},
+"Nanimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 27",
+"n": 1
+},
+"Nanomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 19",
+"n": 2
+},
+"Nefertimon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 03",
+"n": 24
+},
+"Numemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 06",
+"n": 11
+},
+"Nyaromon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 34",
+"n": 2
+},
+"Nyokimon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 45",
+"n": 3
+},
+"Octmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 40",
+"n": 1
+},
+"Okuwamon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 26",
+"n": 6
+},
+"Omegamon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 27",
+"n": 3
+},
+"Orgemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 08",
+"n": 18
+},
+"Otamamon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 25",
+"n": 7
+},
+"Pagumon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 15",
+"n": 5
+},
+"Paildramon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 26",
+"n": 18
+},
+"Palmon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 58
+},
+"Parrotmon": {
+"lv": [
+"p",
+"u"
+],
+"first": "DA - Episode 29",
+"n": 6
+},
+"Patamon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 90
+},
+"Pegasmon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 03",
+"n": 25
+},
+"Piccolomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 18",
+"n": 3
+},
+"Pico Devimon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 22",
+"n": 17
+},
+"Piemon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 40",
+"n": 10
+},
+"Pinochimon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 40",
+"n": 9
+},
+"Pipimon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 50",
+"n": 1
+},
+"Pitchmon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 45",
+"n": 2
+},
+"Piyomon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 65
+},
+"Plotmon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 34",
+"n": 10
+},
+"Poromon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 02",
+"n": 31
+},
+"Poyomon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 12",
+"n": 9
+},
+"Pukamon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 10
+},
+"Pumpmon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 27",
+"n": 5
+},
+"Punimon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 12",
+"n": 9
+},
+"Pururumon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 31",
+"n": 4
+},
+"Pyocomon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 21
+},
+"Qinglongmon": {
+"lv": [
+"u"
+],
+"first": "DA 02 - Episode 34",
+"n": 4
+},
+"Raremon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 31",
+"n": 5
+},
+"Red Vegimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 47",
+"n": 5
+},
+"Revolmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 12",
+"n": 1
+},
+"Rukamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 35",
+"n": 1
+},
+"Saber Leomon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 46",
+"n": 2
+},
+"Scumon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 10",
+"n": 7
+},
+"Seadramon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 03",
+"n": 8
+},
+"Seraphimon": {
+"lv": [
+"u"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Shakkoumon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 36",
+"n": 7
+},
+"Shakomon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 40",
+"n": 2
+},
+"Shellmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 03",
+"n": 7
+},
+"Shurimon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 14",
+"n": 8
+},
+"Silphymon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 31",
+"n": 11
+},
+"Skull Greymon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 16",
+"n": 5
+},
+"Skull Satamon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 43",
+"n": 1
+},
+"Snimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 36",
+"n": 13
+},
+"Starmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 12",
+"n": 2
+},
+"Stingmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 24",
+"n": 24
+},
+"Submarimon": {
+"lv": [
+"ar"
+],
+"first": "DA 02 - Episode 16",
+"n": 7
+},
+"Tailmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 27",
+"n": 76
+},
+"Tanemon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 10
+},
+"Tankmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 48",
+"n": 1
+},
+"Tentomon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 01",
+"n": 75
+},
+"Terriermon": {
+"lv": [
+"c"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Thunderballmon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 24",
+"n": 3
+},
+"Togemon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 06",
+"n": 27
+},
+"Tokomon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 19
+},
+"Tonosama Gekomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 25",
+"n": 8
+},
+"Tortamon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 22",
+"n": 3
+},
+"Triceramon": {
+"lv": [
+"p"
+],
+"first": "DA 02 - Episode 39",
+"n": 1
+},
+"Tsubumon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 37",
+"n": 2
+},
+"Tsumemon": {
+"lv": [
+"b"
+],
+"first": "DA: Our War Game!",
+"n": 1
+},
+"Tunomon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 01",
+"n": 19
+},
+"Tuskmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 36",
+"n": 9
+},
+"Tyranomon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 18",
+"n": 10
+},
+"Tyumon": {
+"lv": [
+"c"
+],
+"first": "DA - Episode 10",
+"n": 6
+},
+"Unimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 07",
+"n": 10
+},
+"Upamon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 02",
+"n": 31
+},
+"V-mon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 01",
+"n": 46
+},
+"Vademon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 24",
+"n": 3
+},
+"Vamdemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 22",
+"n": 19
+},
+"Vegimon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 23",
+"n": 8
+},
+"Venom Vamdemon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 38",
+"n": 3
+},
+"War Greymon": {
+"lv": [
+"u"
+],
+"first": "DA - Episode 38",
+"n": 31
+},
+"Waru Monzaemon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 49",
+"n": 2
+},
+"Wendimon": {
+"lv": [
+"a"
+],
+"first": "DA 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"n": 1
+},
+"Were Garurumon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 23",
+"n": 20
+},
+"Whamon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 14",
+"n": 7
+},
+"Wizarmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 27",
+"n": 9
+},
+"Woodmon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 46",
+"n": 7
+},
+"Wormmon": {
+"lv": [
+"c"
+],
+"first": "DA 02 - Episode 01",
+"n": 41
+},
+"XV-mon": {
+"lv": [
+"a"
+],
+"first": "DA 02 - Episode 22",
+"n": 23
+},
+"Yukidarumon": {
+"lv": [
+"a"
+],
+"first": "DA - Episode 09",
+"n": 12
+},
+"Yukimi Botamon": {
+"lv": [
+"b"
+],
+"first": "DA 02 - Episode 25",
+"n": 3
+},
+"Yuramon": {
+"lv": [
+"b"
+],
+"first": "DA - Episode 12",
+"n": 7
+},
+"Zudomon": {
+"lv": [
+"p"
+],
+"first": "DA - Episode 36",
+"n": 17
+}
+}

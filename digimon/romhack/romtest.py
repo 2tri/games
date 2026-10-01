@@ -81,21 +81,26 @@ def candy(slot, mons, names, badges=0, presses=16):
 
 
 def test_evo(names):
-    PARTY = [(7, 15, 120), (7, 15, 70), (5, 29, 70), (161, 10, 70)]
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    PARTY = [(N['파피몬'], 15, 120), (N['파피몬'], 15, 70), (N['그레이몬'], 29, 70), (N['코로몬'], 10, 70),
+             (N['메탈그레몬'], 44, 70), (N['가루몬'], 29, 70)]
     cases = [  # 이름, slot, 배지, 레벨 덮어쓰기, 기대 종
-        ('파피몬 유대↑ → 가루몬', 0, 0, None, 8),
-        ('파피몬 유대↓ → 우가몬', 1, 0, None, 105),
-        ('그레이몬 + 용기 배지 Lv30 → 워그레이몬', 2, 1 << 5, None, 6),
-        ('그레이몬 배지 없음 Lv30 → 그대로', 2, 0, None, 5),
-        ('그레이몬 다른 배지 Lv30 → 그대로', 2, 1, None, 5),
-        ('그레이몬 다른 배지 Lv36 → 워그레이몬', 2, 1, 35, 6),
-        ('코로몬 Lv11 → 아구몬', 3, 0, None, 4),
+        ('파피몬 유대↑ → 가루몬', 0, 0, None, N['가루몬']),
+        ('파피몬 유대↓ → 우가몬', 1, 0, None, N['우가몬']),
+        ('그레이몬 + 용기 배지 Lv30 → 메탈그레이몬', 2, 1 << 5, None, N['메탈그레몬']),
+        ('그레이몬 배지 없음 Lv30 → 그대로', 2, 0, None, N['그레이몬']),
+        ('그레이몬 다른 배지 Lv30 → 그대로', 2, 1, None, N['그레이몬']),
+        ('그레이몬 다른 배지 Lv36 → 메탈그레이몬', 2, 1, 35, N['메탈그레몬'], 30),
+        ('메탈그레이몬 + 용기 Lv45 → 워그레이몬', 4, 1 << 5, None, N['워그레이몬'], 30),
+        ('메탈그레이몬 다른 배지 Lv45 → 그대로', 4, 1, None, N['메탈그레몬']),
+        ('가루몬 + 우정 배지 Lv30 → 워가루몬', 5, 1 << 4, None, N['워가루몬']),
+        ('코로몬 Lv11 → 아구몬', 3, 0, None, N['아구몬']),
     ]
     bad = 0
-    for name, slot, badge, lv, want in cases:
+    for name, slot, badge, lv, want, *more in cases:
         mons = [list(x) for x in PARTY]
         if lv: mons[slot][1] = lv
-        sp, got_lv = candy(slot, [tuple(x) for x in mons], names, badge)
+        sp, got_lv = candy(slot, [tuple(x) for x in mons], names, badge, *(more or [16]))   # 새 기술 배우기 창이 뜨는 경우는 더 누름
         ok = sp == want; bad += not ok
         print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % want))
     return bad

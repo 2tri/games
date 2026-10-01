@@ -1,0 +1,1946 @@
+{
+"1": {
+"name": "팔몬",
+"dex": "팔몬",
+"dir": "palmon",
+"page": "Palmon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"2": {
+"name": "니드몬",
+"dex": "니드몬",
+"dir": "togemon",
+"page": "Togemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"3": {
+"name": "릴리몬",
+"dex": "릴리몬",
+"dir": "lilimon",
+"page": "Lilimon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"4": {
+"name": "아구몬",
+"dex": "아구몬",
+"dir": "agumon",
+"page": "Agumon",
+"anime": [
+"Digimon Adventure (Movie)",
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Adventure -Beyond-",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Tamers=",
+"=Digimon Frontier=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Universe Appli Monsters=",
+"=Digimon Adventure:="
+],
+"series": "어드벤처"
+},
+"5": {
+"name": "그레이몬",
+"dex": "그레이몬",
+"dir": "Greymon",
+"page": "Greymon",
+"anime": [
+"Digimon Adventure (Movie)",
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure tri.",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"6": {
+"name": "워그레이몬",
+"dex": "워그레이몬",
+"dir": "wargreymon",
+"page": "War Greymon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Universe Appli Monsters=",
+"=Digimon Adventure:="
+],
+"series": "어드벤처"
+},
+"7": {
+"name": "파피몬",
+"dex": "파피몬",
+"dir": "gabumon",
+"page": "Gabumon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"8": {
+"name": "가루몬",
+"dex": "가루몬",
+"dir": "garurumon",
+"page": "Garurumon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"9": {
+"name": "메탈가루몬",
+"dex": "메탈가루몬",
+"dir": "metalgarurumon",
+"page": "Metal Garurumon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"10": {
+"name": "쿠네몬",
+"dex": "쿠네몬",
+"dir": "kunemon",
+"page": "Kunemon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"11": {
+"name": "플라이몬",
+"dex": "플라이몬",
+"dir": "flymon",
+"page": "Flymon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Beatbreak",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Frontier=",
+"=Digimon Savers=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Adventure:=",
+"=Digimon Ghost Game=",
+"=Digimon Beatbreak="
+],
+"series": "어드벤처"
+},
+"12": {
+"name": "오쿠와몬",
+"dex": null,
+"dir": "Okuwamon",
+"page": "Okuwamon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Adventure:",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"13": {
+"name": "도쿠네몬",
+"dex": "도쿠네몬",
+"dir": "dokunemon",
+"page": "Dokunemon",
+"anime": [
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "그 밖"
+},
+"14": {
+"name": "스나이몬",
+"dex": "스나이몬",
+"dir": "snimon",
+"page": "Snimon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"15": {
+"name": "아라크네몬",
+"dex": "아라크네몬",
+"dir": "archnemon",
+"page": "Archnemon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Ghost Game",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"16": {
+"name": "피요몬",
+"dex": "피요몬",
+"dir": "piyomon",
+"page": "Piyomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"17": {
+"name": "버드라몬",
+"dex": "버드라몬",
+"dir": "birdramon",
+"page": "Birdramon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"18": {
+"name": "가루다몬",
+"dex": "가루다몬",
+"dir": "garudamon",
+"page": "Garudamon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"19": {
+"name": "러브리몬",
+"dex": null,
+"dir": null,
+"page": null,
+"anime": [],
+"series": "모름"
+},
+"20": {
+"name": "시사몬",
+"dex": "시사몬",
+"dir": "siesamon",
+"page": "Siesamon",
+"anime": [
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Beatbreak"
+],
+"series": "테이머즈"
+},
+"21": {
+"name": "호크몬",
+"dex": "호크몬",
+"dir": "hawkmon",
+"page": "Hawkmon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Ghost Game",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처"
+},
+"22": {
+"name": "실피드몬",
+"dex": "실피드몬",
+"dir": "silphymon",
+"page": "Silphymon",
+"anime": [
+"Digimon Adventure 02",
+"Digital Monster X-evolution",
+"Digimon Xros Wars",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처"
+},
+"23": {
+"name": "백사몬",
+"dex": "백사몬",
+"dir": "quetzalmon",
+"page": "Coatlmon",
+"anime": [
+"Digimon Ghost Game"
+],
+"series": "그 밖"
+},
+"24": {
+"name": "산티라몬",
+"dex": "산티라몬",
+"dir": "sandiramon",
+"page": "Sandiramon",
+"anime": [
+"Digimon Tamers"
+],
+"series": "테이머즈"
+},
+"25": {
+"name": "콩알몬",
+"dex": "콩알몬",
+"dir": "mamemon",
+"page": "Mamemon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"26": {
+"name": "프린콩알몬",
+"dex": null,
+"dir": "Prince Mamemon",
+"page": "Prince Mamemon",
+"anime": [],
+"series": "애니 없음"
+},
+"27": {
+"name": "두리몬",
+"dex": "두리몬",
+"dir": "drimogemon",
+"page": "Drimogemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"28": {
+"name": "디그몬",
+"dex": "디그몬",
+"dir": "digmon",
+"page": "Digmon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Frontier",
+"Digimon Savers"
+],
+"series": "어드벤처"
+},
+"29": {
+"name": "돌몬돌",
+"dex": null,
+"dir": "Dorumon",
+"page": "DORUmon",
+"anime": [
+"Digital Monster X-evolution",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "그 밖"
+},
+"30": {
+"name": "돌가몬",
+"dex": null,
+"dir": "Dorugamon",
+"page": "DORUgamon",
+"anime": [
+"Digital Monster X-evolution"
+],
+"series": "그 밖"
+},
+"31": {
+"name": "돌고라몬",
+"dex": null,
+"dir": "Doruguremon",
+"page": "DORUguremon",
+"anime": [
+"Digital Monster X-evolution"
+],
+"series": "그 밖"
+},
+"32": {
+"name": "돌몬알",
+"dex": null,
+"dir": "Dorimon",
+"page": "Dorimon",
+"anime": [],
+"series": "애니 없음"
+},
+"33": {
+"name": "라프드라몬",
+"dex": null,
+"dir": "Raptordramon",
+"page": "Raptordramon",
+"anime": [],
+"series": "애니 없음"
+},
+"34": {
+"name": "알파몬",
+"dex": "알파몬",
+"dir": "alphamon",
+"page": "Alphamon",
+"anime": [
+"Digital Monster X-evolution",
+"Digimon Savers",
+"Digimon Adventure tri.",
+"Individual Appearances",
+"=Digimon Adventure tri.=",
+"=Other="
+],
+"series": "그 밖"
+},
+"35": {
+"name": "가트몬",
+"dex": "가트몬",
+"dir": "tailmon",
+"page": "Tailmon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"36": {
+"name": "오파니몬",
+"dex": "오파니몬",
+"dir": "ofanimon",
+"page": "Ofanimon",
+"anime": [
+"Digimon Frontier",
+"Digimon Adventure:"
+],
+"series": "그 밖"
+},
+"37": {
+"name": "쿠다몬",
+"dex": "쿠다몬",
+"dir": "kudamon",
+"page": "Kudamon",
+"anime": [],
+"series": "애니 없음"
+},
+"38": {
+"name": "슬레이프몬",
+"dex": "슬레이프몬",
+"dir": "sleipmon",
+"page": "Sleipmon",
+"anime": [
+"Digimon Savers"
+],
+"series": "그 밖"
+},
+"39": {
+"name": "홀리엔젤몬",
+"dex": "홀리엔젤몬",
+"dir": "holyangemon",
+"page": "Holy Angemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Story: Time Stranger Prelude"
+],
+"series": "어드벤처"
+},
+"40": {
+"name": "마그나드몬",
+"dex": null,
+"dir": "Holydramon",
+"page": "Holydramon",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처 극장판"
+},
+"41": {
+"name": "피코데블몬",
+"dex": "피코데블몬",
+"dir": "picodevimon",
+"page": "Pico Devimon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"42": {
+"name": "피에몬",
+"dex": "피에몬",
+"dir": "piemon",
+"page": "Piemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure tri.",
+"Digimon Universe Appli Monsters",
+"Digimon Ghost Game",
+"Digimon Story: Time Stranger Prelude"
+],
+"series": "어드벤처"
+},
+"43": {
+"name": "텐타몬",
+"dex": "텐타몬",
+"dir": "tentomon",
+"page": "Tentomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"44": {
+"name": "캅테리몬",
+"dex": "캅테리몬",
+"dir": "kabuterimon",
+"page": "Kabuterimon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"45": {
+"name": "아트캅테몬",
+"dex": null,
+"dir": "Atlur Kabuterimon (Red)",
+"page": "Atlur Kabuterimon (Red)",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"52": {
+"name": "위자몬",
+"dex": "위자몬",
+"dir": "wizarmon",
+"page": "Wizarmon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digital Monster X-evolution",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"53": {
+"name": "레파몬",
+"dex": "레파몬",
+"dir": "reppamon",
+"page": "Reppamon",
+"anime": [
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Ghost Game"
+],
+"series": "그 밖"
+},
+"56": {
+"name": "에테몬",
+"dex": "에테몬",
+"dir": "etemon",
+"page": "Etemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"57": {
+"name": "메탈에테몬",
+"dex": "메탈에테몬",
+"dir": "metaletemon",
+"page": "Metal Etemon",
+"anime": [
+"Digimon Adventure"
+],
+"series": "어드벤처"
+},
+"58": {
+"name": "캔들몬",
+"dex": "캔들몬",
+"dir": "candmon",
+"page": "Candmon",
+"anime": [
+"Digimon Frontier",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Ghost Game",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "그 밖"
+},
+"59": {
+"name": "듀나스몬",
+"dex": "듀나스몬",
+"dir": "dynasmon",
+"page": "Dynasmon",
+"anime": [
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars"
+],
+"series": "그 밖"
+},
+"60": {
+"name": "에렉몬",
+"dex": "에렉몬",
+"dir": "elecmon",
+"page": "Elecmon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Adventure 02: The Beginning",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"61": {
+"name": "레오몬",
+"dex": "레오몬",
+"dir": "leomon",
+"page": "Leomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digital Monster X-evolution",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Story: Time Stranger Prelude"
+],
+"series": "어드벤처"
+},
+"62": {
+"name": "샤벨레오몬",
+"dex": "샤벨레오몬",
+"dir": "saberleomon",
+"page": "Saber Leomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Savers"
+],
+"series": "어드벤처"
+},
+"63": {
+"name": "로프몬",
+"dex": "로프몬",
+"dir": "lopmon",
+"page": "Lopmon",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처 극장판"
+},
+"64": {
+"name": "안티라몬",
+"dex": "안티라몬",
+"dir": "andiramon_2",
+"page": "Andiramon",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Ghost Game"
+],
+"series": "어드벤처 극장판"
+},
+"65": {
+"name": "켈비몬",
+"dex": null,
+"dir": "Kerpymon (Good)",
+"page": null,
+"anime": [],
+"series": "모름"
+},
+"66": {
+"name": "모노드라몬",
+"dex": "모노드라몬",
+"dir": "monodramon",
+"page": "Monodramon",
+"anime": [
+"Digimon Tamers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "테이머즈"
+},
+"67": {
+"name": "사이버드몬",
+"dex": null,
+"dir": "Cyberdramon",
+"page": "Cyberdramon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express"
+],
+"series": "테이머즈"
+},
+"68": {
+"name": "저스티몬",
+"dex": null,
+"dir": "Justimon",
+"page": "Justimon",
+"anime": [],
+"series": "애니 없음"
+},
+"69": {
+"name": "추추몬",
+"dex": "추추몬",
+"dir": "wormmon",
+"page": "Wormmon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 02: The Beginning",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"70": {
+"name": "스팅몬",
+"dex": "스팅몬",
+"dir": "stingmon",
+"page": "Stingmon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처"
+},
+"71": {
+"name": "주엘비몬",
+"dex": "주엘비몬",
+"dir": "jewelbeemon",
+"page": "Jewelbeemon",
+"anime": [],
+"series": "애니 없음"
+},
+"74": {
+"name": "울퉁몬",
+"dex": "울퉁몬",
+"dir": "gottsumon",
+"page": "Gottsumon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"75": {
+"name": "아이스몬",
+"dex": "아이스몬",
+"dir": "icemon",
+"page": "Icemon",
+"anime": [
+"Digimon Xros Wars",
+"Digimon Ghost Game"
+],
+"series": "그 밖"
+},
+"76": {
+"name": "운석몬",
+"dex": "운석몬",
+"dir": "insekimon",
+"page": "Insekimon",
+"anime": [
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Adventure:"
+],
+"series": "그 밖"
+},
+"92": {
+"name": "임프몬",
+"dex": "임프몬",
+"dir": "impmon",
+"page": "Impmon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "테이머즈"
+},
+"93": {
+"name": "데블몬",
+"dex": "데블몬",
+"dir": "devimon",
+"page": "Devimon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"94": {
+"name": "베르제브몬",
+"dex": "베르제브몬",
+"dir": "beelzebumon",
+"page": "Beelzebumon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Savers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "테이머즈"
+},
+"102": {
+"name": "디지타마몬",
+"dex": null,
+"dir": "Digitamamon",
+"page": "Digitamamon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"103": {
+"name": "데블타몬",
+"dex": "데블타몬",
+"dir": "devitamamon",
+"page": "Devitamamon",
+"anime": [],
+"series": "애니 없음"
+},
+"104": {
+"name": "고부리몬",
+"dex": "고부리몬",
+"dir": "goburimon",
+"page": "Goburimon",
+"anime": [
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Savers The Movie: Ultimate Power! Activate Burst Mode!!",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Story: Time Stranger Prelude",
+"Digimon Beatbreak"
+],
+"series": "테이머즈"
+},
+"105": {
+"name": "우가몬",
+"dex": "우가몬",
+"dir": "orgemon",
+"page": "Orgemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Savers: Ultimate Power! Activate Burst Mode!!",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"111": {
+"name": "에이프몬",
+"dex": "에이프몬",
+"dir": "hanumon",
+"page": "Hanumon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digital Monster X-evolution",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"112": {
+"name": "맘몬",
+"dex": "맘몬",
+"dir": "mammon",
+"page": "Mammon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"116": {
+"name": "쉬라몬",
+"dex": "쉬라몬",
+"dir": "gomamon",
+"page": "Gomamon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"117": {
+"name": "원뿔몬",
+"dex": "원뿔몬",
+"dir": "ikkakumon",
+"page": "Ikkakumon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"126": {
+"name": "메라몬",
+"dex": "메라몬",
+"dir": "meramon",
+"page": "Meramon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처"
+},
+"129": {
+"name": "베타몬",
+"dex": "베타몬",
+"dir": "betamon",
+"page": "Betamon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Ponkotsu Quest x Digimon Story: Cyber Sleuth - Hacker's Memory",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"130": {
+"name": "메가시라몬",
+"dex": null,
+"dir": "Mega Seadramon",
+"page": "Mega Seadramon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure:",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Adventure:="
+],
+"series": "어드벤처"
+},
+"131": {
+"name": "돌핀몬",
+"dex": null,
+"dir": "Dolphmon",
+"page": "Rukamon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"133": {
+"name": "브이몬",
+"dex": "브이몬",
+"dir": "v-mon",
+"page": "V-mon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grand Prix",
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure 02: The Beginning",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"134": {
+"name": "매그너몬",
+"dex": "매그너몬",
+"dir": "magnamon",
+"page": "Magnamon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digital Monster X-evolution",
+"Digimon Savers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "어드벤처"
+},
+"135": {
+"name": "번개드라몬",
+"dex": "번개드라몬",
+"dir": "lighdramon",
+"page": "Lighdramon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"136": {
+"name": "화염드라몬",
+"dex": "화염드라몬",
+"dir": "fladramon",
+"page": "Fladramon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms"
+],
+"series": "어드벤처"
+},
+"140": {
+"name": "안드로몬",
+"dex": "안드로몬",
+"dir": "andromon",
+"page": "Andromon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digital Monster X-evolution",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"141": {
+"name": "하이안드몬",
+"dex": null,
+"dir": "Hi Andromon",
+"page": "Hi Andromon",
+"anime": [],
+"series": "애니 없음"
+},
+"145": {
+"name": "오메가몬",
+"dex": "오메가몬",
+"dir": "omegamon",
+"page": "Omegamon",
+"anime": [
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digital Monster X-evolution",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Tamers=",
+"=Digimon Savers=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Adventure:=",
+"=Other="
+],
+"series": "어드벤처"
+},
+"147": {
+"name": "가터아구몬",
+"dex": null,
+"dir": "Agumon",
+"page": "Agumon",
+"anime": [
+"Digimon Adventure (Movie)",
+"Digimon Adventure",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Adventure -Beyond-",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Tamers=",
+"=Digimon Frontier=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Universe Appli Monsters=",
+"=Digimon Adventure:="
+],
+"series": "그 밖",
+"note": "세이버즈판 아구몬(지오그레몬 줄). 4번 아구몬과 같은 종"
+},
+"148": {
+"name": "지오그레몬",
+"dex": null,
+"dir": "Geo Greymon",
+"page": "Geo Greymon",
+"anime": [
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!"
+],
+"series": "그 밖"
+},
+"149": {
+"name": "샤인그레몬",
+"dex": null,
+"dir": "Shine Greymon",
+"page": "Shine Greymon",
+"anime": [
+"Digimon Savers",
+"Digimon Savers The Movie: Ultimate Power! Activate Burst Mode!!",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "그 밖"
+},
+"150": {
+"name": "베블래스터",
+"dex": null,
+"dir": "Beelzebumon: Blast Mode",
+"page": "Beelzebumon: Blast Mode",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express"
+],
+"series": "테이머즈"
+},
+"151": {
+"name": "동글몬",
+"dex": "동글몬",
+"dir": "culumon",
+"page": "Culumon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars"
+],
+"series": "테이머즈"
+},
+"152": {
+"name": "테리어몬",
+"dex": "테리어몬",
+"dir": "terriermon",
+"page": "Terriermon",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Frontier",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 02: The Beginning",
+"Individual Appearances",
+"=Digimon Adventure 02=",
+"=Digimon Tamers=",
+"=Digimon Frontier=",
+"=Digimon Xros Wars=",
+"=Other="
+],
+"series": "어드벤처 극장판"
+},
+"153": {
+"name": "가르고몬",
+"dex": "가르고몬",
+"dir": "galgomon",
+"page": "Galgomon",
+"anime": [
+"Digimon Adventure 02: Digimon Hurricane Touchdown!! Supreme Evolution!! The Golden Digimentals",
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms"
+],
+"series": "어드벤처 극장판"
+},
+"154": {
+"name": "래피드몬",
+"dex": "래피드몬",
+"dir": "rapidmon_gold",
+"page": "Rapidmon Armor",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals"
+],
+"series": "어드벤처 극장판"
+},
+"155": {
+"name": "길몬",
+"dex": "길몬",
+"dir": "guilmon",
+"page": "Guilmon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Individual Appearances",
+"=Digimon Tamers=",
+"=Digimon Xros Wars="
+],
+"series": "테이머즈"
+},
+"156": {
+"name": "그라우몬",
+"dex": "그라우몬",
+"dir": "growmon",
+"page": "Growmon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Tamers: The Runaway Digimon Express"
+],
+"series": "테이머즈"
+},
+"157": {
+"name": "듀크몬",
+"dex": "듀크몬",
+"dir": "dukemon",
+"page": "Dukemon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Frontier",
+"Digital Monster X-evolution",
+"Digimon Savers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "테이머즈"
+},
+"158": {
+"name": "레나몬",
+"dex": "레나몬",
+"dir": "renamon",
+"page": "Renamon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Individual Appearances",
+"=Digimon Tamers=",
+"=Digimon Xros Wars="
+],
+"series": "테이머즈"
+},
+"159": {
+"name": "구미호몬",
+"dex": "구미호몬",
+"dir": "kyubimon",
+"page": "Kyubimon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Adventurers' Battle"
+],
+"series": "테이머즈"
+},
+"160": {
+"name": "샤크라몬",
+"dex": "샤크라몬",
+"dir": "sakuyamon",
+"page": "Sakuyamon",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "테이머즈"
+},
+"163": {
+"name": "팔코몬",
+"dex": "팔코몬",
+"dir": "falcomon",
+"page": "Falcomon",
+"anime": [],
+"series": "애니 없음"
+},
+"164": {
+"name": "레이브몬",
+"dex": "레이브몬",
+"dir": "ravmon",
+"page": "Ravmon",
+"anime": [
+"Digimon Savers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "그 밖"
+},
+"167": {
+"name": "인펠몬",
+"dex": "인펠몬",
+"dir": "infermon",
+"page": "Infermon",
+"anime": [
+"Digimon Adventure: Our War Game!",
+"Digimon Tamers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "어드벤처 극장판"
+},
+"168": {
+"name": "디아블로몬",
+"dex": "디아블로몬",
+"dir": "diablomon",
+"page": "Diablomon",
+"anime": [
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Tamers",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Universe Appli Monsters",
+"Digimon Adventure tri.",
+"Individual Appearances",
+"=Digimon Adventure=",
+"=Digimon Adventure 02=",
+"=Digimon Tamers=",
+"=Digimon Xros Wars=",
+"=Digimon Adventure tri.=",
+"=Digimon Universe Appli Monsters="
+],
+"series": "어드벤처"
+},
+"172": {
+"name": "번개콩알몬",
+"dex": "번개콩알몬",
+"dir": "thunderballmon",
+"page": "Thunderballmon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Savers",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"173": {
+"name": "플롯트몬",
+"dex": "플롯트몬",
+"dir": "plotmon",
+"page": "Plotmon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Frontier",
+"Digimon Adventure tri."
+],
+"series": "어드벤처"
+},
+"174": {
+"name": "엔젤몬",
+"dex": "엔젤몬",
+"dir": "angemon",
+"page": "Angemon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning",
+"Digimon Story: Time Stranger Prelude"
+],
+"series": "어드벤처"
+},
+"175": {
+"name": "파닥몬",
+"dex": "파닥몬",
+"dir": "patamon",
+"page": "Patamon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Adventure: Our War Game!",
+"Digimon Adventure 3D: Digimon Grandprix!",
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure 20th Anniversary Memorial Story Project",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure:",
+"Digimon Adventure 02: The Beginning",
+"Digimon Adventure -Beyond-",
+"Digimon Beatbreak"
+],
+"series": "어드벤처"
+},
+"176": {
+"name": "세라피몬",
+"dex": "세라피몬",
+"dir": "seraphimon",
+"page": "Seraphimon",
+"anime": [
+"Digimon Adventure 02: Vol. 1: Digimon Hurricane Landing!!/Vol. 2: Transcendent Evolution!! The Golden Digimentals",
+"Digimon Frontier",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처 극장판"
+},
+"177": {
+"name": "브이드라몬",
+"dex": "브이드라몬",
+"dir": "v-dramon",
+"page": "V-dramon",
+"anime": [],
+"series": "애니 없음"
+},
+"178": {
+"name": "에어로브몬",
+"dex": null,
+"dir": "Aero V-dramon",
+"page": "Aero V-dramon",
+"anime": [],
+"series": "애니 없음"
+},
+"182": {
+"name": "로제몬",
+"dex": "로제몬",
+"dir": "rosemon",
+"page": "Rosemon",
+"anime": [
+"Digimon Savers",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "그 밖"
+},
+"185": {
+"name": "도그몬",
+"dex": "도그몬",
+"dir": "dogmon",
+"page": "Dogmon",
+"anime": [
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:"
+],
+"series": "테이머즈"
+},
+"186": {
+"name": "개굴몬",
+"dex": "개굴몬",
+"dir": "gekomon",
+"page": "Gekomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Tamers",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:",
+"Digimon Ghost Game"
+],
+"series": "어드벤처"
+},
+"191": {
+"name": "라라몬",
+"dex": "라라몬",
+"dir": "lalamon",
+"page": "Lalamon",
+"anime": [
+"Digimon Savers",
+"Digimon Savers The Movie: Ultimate Power! Activate Burst Mode!!",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure:"
+],
+"series": "그 밖"
+},
+"192": {
+"name": "해바라기몬",
+"dex": "해바라기몬",
+"dir": "sunflowmon",
+"page": "Sunflowmon",
+"anime": [
+"Digimon Savers",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Evil Death Generals and the Seven Kingdoms",
+"Digimon Adventure:",
+"Digimon Ghost Game",
+"Digimon Beatbreak"
+],
+"series": "그 밖"
+},
+"194": {
+"name": "엑스브이몬",
+"dex": "엑스브이몬",
+"dir": "XV-mon",
+"page": "XV-mon",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Frontier",
+"Digimon Adventure: Last Evolution Kizuna",
+"Digimon Adventure 02: The Beginning"
+],
+"series": "어드벤처"
+},
+"195": {
+"name": "황제드라몬",
+"dex": null,
+"dir": "Imperialdramon: Dragon Mode",
+"page": "Imperialdramon: Dragon Mode",
+"anime": [
+"Digimon Adventure 02",
+"Digimon Adventure 02: Diablomon Strikes Back",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time",
+"Digimon Adventure tri.",
+"Digimon Adventure 02: The Beginning",
+"Digimon Adventure -Beyond-"
+],
+"series": "어드벤처"
+},
+"196": {
+"name": "알포스브몬",
+"dex": null,
+"dir": "Ulforce V-dramon",
+"page": "Ulforce V-dramon",
+"anime": [
+"Digimon Savers"
+],
+"series": "그 밖"
+},
+"197": {
+"name": "황제팔라딘",
+"dex": null,
+"dir": "Imperialdramon: Paladin Mode",
+"page": "Imperialdramon: Paladin Mode",
+"anime": [
+"Digimon Adventure 02: Diablomon Strikes Back"
+],
+"series": "어드벤처 극장판"
+},
+"225": {
+"name": "펙몬",
+"dex": null,
+"dir": "Peckmon",
+"page": "Peckmon",
+"anime": [
+"Digimon Savers",
+"Digimon Adventure:"
+],
+"series": "그 밖"
+},
+"230": {
+"name": "쥬드몬",
+"dex": "쥬드몬",
+"dir": "zudomon",
+"page": "Zudomon",
+"anime": [
+"Digimon Adventure",
+"Digimon Adventure 02",
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Adventure tri.",
+"Digimon Adventure:"
+],
+"series": "어드벤처"
+},
+"240": {
+"name": "페티메라몬",
+"dex": null,
+"dir": "Petitmeramon",
+"page": "Peti Meramon",
+"anime": [
+"Digimon Frontier",
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Adventure tri.",
+"Digimon Ghost Game"
+],
+"series": "그 밖"
+},
+"246": {
+"name": "가오몬",
+"dex": "가오몬",
+"dir": "gaomon",
+"page": "Gaomon",
+"anime": [
+"Digimon Savers",
+"Digimon Savers The Movie: Ultimate Power! Activate Burst Mode!!",
+"Digimon Savers 3D: The Digital World in Imminent Danger!",
+"Digimon Xros Wars",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "그 밖"
+},
+"247": {
+"name": "가오가몬",
+"dex": "가오가몬",
+"dir": "gaogamon",
+"page": "Gaogamon",
+"anime": [
+"Digimon Savers",
+"Digimon Savers 3D: The Digital World in Imminent Danger!"
+],
+"series": "그 밖"
+},
+"248": {
+"name": "미라쥬가몬",
+"dex": null,
+"dir": "Mirage Gaogamon",
+"page": "Mirage Gaogamon",
+"anime": [
+"Digimon Savers"
+],
+"series": "그 밖"
+},
+"250": {
+"name": "듀크림존",
+"dex": null,
+"dir": "Dukemon: Crimson Mode",
+"page": "Dukemon: Crimson Mode",
+"anime": [
+"Digimon Tamers",
+"Digimon Tamers: The Runaway Digimon Express",
+"Digimon Xros Wars: The Young Hunters Who Leapt Through Time"
+],
+"series": "테이머즈"
+}
+}
