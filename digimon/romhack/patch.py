@@ -12,10 +12,10 @@
     (진화 장면에서 B로 멈추는 것은 금 그대로)
  2. 문장 = 배지 8개: 사랑0(비상) 지식1(호일) 순수2(꼭두) 빛3(유빈) 우정4(규리) 용기5(사도) 성실6(류옹) 희망7(이향)
  3. 포획: 성숙기 이상 디지몬은 몬스터볼로 못 잡음 (디지몬 RPG처럼 유년기·성장기만)
- 4. 롬에 없던 코로몬 추가 (꼬리선 자리, 1번 길 부근 야생) → Lv11 아구몬
+ 4. 롬에 없던 코로몬 추가 (꼬리선 자리, 29번 도로 야생) → Lv11 아구몬, 아이콘·울음소리·도감
  5. 디지몬스터 버그: 메탈가루몬 진화 목록 끝 표시 없음 → 고침 (Lv39에 팔몬이 되던 문제)
 """
-import os, sys, json, struct
+import os, re, sys, json, struct
 import numpy as np
 from PIL import Image
 import dmrom, gblz, krtext
@@ -24,6 +24,8 @@ from dmrom import addr, bankptr
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 HIGH_BOND, LOW_BOND = 100, 40
 CREST_BIT = {'사랑': 0, '지식': 1, '순수': 2, '빛': 3, '우정': 4, '용기': 5, '성실': 6, '희망': 7}
+NUM_SP = dmrom.NUM
+ICON_JIGGLYPUFF = 2                      # 둥근 분홍 아이콘 (constants/icon_constants.asm)
 LV, ITEM, TRADE, HAPPY, STAT, BOND_HI, BOND_LO, CREST, DARK, ANYCREST = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 
 # ── 빈 곳 나눠 쓰기 ──
@@ -131,6 +133,29 @@ class Patch:
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11)
         self.palette(no, *pal)
+    # 메뉴 아이콘 (ReadMonMenuIcon: cp EGG / jr z / dec a / ld hl, MonMenuIcons …)
+    def icon(self, no, icon_id):
+        d = bytes(self.d); m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', d, re.S)
+        self.put(addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + no - 1, bytes([icon_id]))
+    # 울음소리 (LoadCry: ld a, BANK(PokemonCries) / rst Bankswitch / ld hl, PokemonCries / add hl,bc ×6) — 종류, 음높이, 길이
+    def cry(self, no, idx, pitch, length):
+        d = bytes(self.d); m = re.search(rb'\x3e(.)\xd7\x21(..)\x09\x09\x09\x09\x09\x09\x5e\x23\x56\x23\x2a', d, re.S)
+        self.put(addr(m.group(1)[0], int.from_bytes(m.group(2), 'little')) + 6 * (no - 1), struct.pack('<3H', idx, pitch, length))
+    def cry_of(self, no):
+        d = bytes(self.d); m = re.search(rb'\x3e(.)\xd7\x21(..)\x09\x09\x09\x09\x09\x09\x5e\x23\x56\x23\x2a', d, re.S)
+        a = addr(m.group(1)[0], int.from_bytes(m.group(2), 'little')) + 6 * (no - 1); return struct.unpack('<3H', d[a:a + 6])
+    # 도감: 분류(형) · 키(0.1m) · 몸무게(0.1kg) · 3줄. 원래 자리 크기 안에서만 씀 (도감 글은 종 번호로 뱅크가 정해져 옮기기 어려움)
+    def dex(self, no, kind, height, weight, lines):
+        d = bytes(self.d)
+        m = re.search(rb'\x21(..)\x78\x3d\x06\x00\x4f\x09\x09\x07\xe6\x01\xc6(.)\x47\x2a\x66\x6f\xc9', d, re.S)
+        tab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')); b0 = m.group(2)[0]
+        ent = lambda sp: addr(b0 + ((sp - 1) >> 7), d[tab + 2 * (sp - 1)] | d[tab + 2 * (sp - 1) + 1] << 8)
+        assert len(lines) == 3 and all(len(l) <= 16 for l in lines), '도감 글은 3줄, 줄마다 16자까지'
+        e = krtext.encode(kind) + b'\x50' + bytes([height]) + struct.pack('<H', weight) + b'\x59'.join(krtext.encode(l) for l in lines) + b'\x50'
+        room = min((ent(s) - ent(no) for s in range(1, NUM_SP + 1) if ent(s) > ent(no) and ent(s) // 0x4000 == ent(no) // 0x4000), default=0)
+        assert len(e) <= room, '도감 글이 원래 자리보다 김: %d > %d' % (len(e), room)
+        self.put(ent(no), e + bytes(room - len(e)))
+        self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room))
     def evos(self, no, evos, moves=None):
         """진화·기술 목록을 새로 써서 뱅크 0x10 빈 곳에 두고 포인터를 바꿈. moves=None 이면 원래 기술 목록 유지"""
         old_ev, old_mv = self.r.evos_attacks(no)
@@ -253,6 +278,10 @@ def build(base, out_rom, out_ips):
         P.stats(KORO, hp=44, atk=40, **{'def': 35}, spd=38, sat=35, sdf=35, type1=0, type2=0, catch=255, exp=50, growth=0)
         P.pic(KORO, os.path.join(WEB, 'art', 'koromon-f.png'), os.path.join(WEB, 'art', 'koromon-b.png'))
         P.evos(KORO, [(LV, 11, S('아구몬'))], [(1, 33), (1, 45), (5, 145), (9, 44)])
+        P.icon(KORO, ICON_JIGGLYPUFF)
+        idx, _, _ = P.cry_of(S('아구몬')); P.cry(KORO, idx, 160, 150)          # 아구몬 울음을 높고 짧게
+        # 공식 도감(digimon.net): 유년기Ⅱ, 렛서형, 필살기 거품. 키·몸무게는 공식 값이 없어 임시
+        P.dex(KORO, '렛서형', 3, 30, ['솜털이 빠지고 몸이 커진', '소형 디지몬. 아직 싸울 수', '없지만 거품으로 위협한다'])
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))
