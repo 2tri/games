@@ -13,6 +13,7 @@ uint8_t title_screen(void) BANKED {
     uint16_t i; uint8_t sel, blink = 0;
     DISPLAY_OFF;
     screen_clear(); scene = SCENE_OTHER; pool_reset(0);
+    music_play(SONG_TITLE);
     far_vram(0, 80, N_TITLE0, MISC_BANK, title_tiles);
     if (N_TITLE1) far_vram(1, 0, N_TITLE1, MISC_BANK, title_tiles1);
     far_copy(tm, MISC_BANK, title_map, 360); far_copy(ta, MISC_BANK, title_attr, 360);

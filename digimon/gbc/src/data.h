@@ -25,6 +25,7 @@ typedef struct {
     uint8_t n_spr; const uint8_t *spr;      // OBJ 타일 (1번 칸 24~)
     uint16_t name;
     uint8_t t1_base;                        // 1번 VRAM 지도 타일 시작 (그 앞은 OBJ)
+    uint8_t song;                           // 배경 음악 (SONG_*)
 } map_t;
 
 typedef struct { uint8_t bank; const map_t *map; } farmap_t;

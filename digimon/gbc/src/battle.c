@@ -273,7 +273,7 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
     kind = k; runs = 0; sme = sfoe = 0; lvup = 0;
     mon_make(&foe, sp, lv); set_seen(sp);
     me = first_alive(); used = 1 << me;
-    tb_close(); flash(2);
+    tb_close(); music_play(kind ? SONG_BOSS : SONG_BATTLE); flash(2);
     dfoe = foe.hp;
     screen_full(0);
     var_sp[0] = sp; say(kind ? S_BOSS_APPEAR : S_WILD_APPEAR);
@@ -341,7 +341,8 @@ static void sil(uint8_t palno, uint8_t on, uint8_t pic) {
 void evolve_scene(uint8_t slot, uint8_t to) BANKED {
     mon_t *m = &G.party[slot];
     uint8_t from = m->sp, i, per, t, got[3], n, cur = 0;
-    uint16_t old;
+    uint16_t old; uint8_t ps = cur_song;
+    music_play(SONG_EVOLVE);
     DISPLAY_OFF; screen_clear(); scene = SCENE_OTHER;
     pic_load(SPECIES[from].front, 1, 128, 4); pic_load(SPECIES[to].front, 1, 192, 5);
     pic_place(6, 2, 7, 7, 128, 4 | 0x08);
@@ -363,6 +364,7 @@ void evolve_scene(uint8_t slot, uint8_t to) BANKED {
     n = learn_sig(m, to, got);
     for (i = 0; i < n; i++) { var_sp[0] = to; var_mv = got[i]; say(S_LEARN); }
     tb_close();
+    music_play(ps);
 }
 
 void hatch_scene(uint8_t slot) BANKED {

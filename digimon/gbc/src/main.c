@@ -4,6 +4,8 @@
 #include <string.h>
 #include "engine.h"
 
+static void mus_vbl(void) { music_update(); }
+
 static void new_game(void) {
     memset(&G, 0, sizeof(G));
     G.map = START_MAP; G.x = START_X; G.y = START_Y; G.dir = START_DIR;
@@ -17,6 +19,7 @@ void main(void) {
     load_ui();
     fade_lv = 0; pal_apply();
     hide_sprites(); move_win(7, 144);
+    add_VBL(mus_vbl);
     DISPLAY_ON;
     for (;;) {
         cur_map = 0xFF; scene = SCENE_NONE;

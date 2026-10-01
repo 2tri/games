@@ -144,6 +144,11 @@ void hatch_scene(uint8_t slot) BANKED;
 void evolve_check(void) BANKED;
 void start_menu(void) BANKED;
 uint8_t party_screen(uint8_t mode) BANKED;   // 0 보기 1 고르기(싸움) 2 도구 쓰기 대상 → 칸 번호, FF 취소
+// 음악 (music_drv.inc, 음악 뱅크)
+void music_update(void) BANKED;
+void music_play(uint8_t s) BANKED;          // 같은 곡이면 그대로
+void music_stop(void) BANKED;
+extern uint8_t music_done, cur_song;
 uint8_t title_screen(void) BANKED;            // 0 새로 1 이어서
 uint8_t kid_pick(void) BANKED;
 #endif

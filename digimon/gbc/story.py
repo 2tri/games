@@ -15,6 +15,9 @@ ITEMS = [('회복 디스크', 20, '디지몬의 체력을 20 회복한다'), ('�
 START = ('house2f', 3, 3, 'down')
 
 MAPS = {}
+# 지도마다 배경 음악 (tools/midi2gb.py 곡 이름)
+MAP_SONG = {'house2f': 'town', 'house1f': 'town', 'town': 'town', 'camp': 'town', 'forest': 'field', 'route1': 'field',
+            'village': 'village', 'beach': 'field'}
 
 # ── 오프닝 (흰수염 도사) ──
 OPENING = [

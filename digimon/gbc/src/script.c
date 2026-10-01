@@ -57,7 +57,13 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
             add_mon(&m);
             break;
         }
-        case OP_HEAL: heal_all(); break;
+        case OP_HEAL: {
+            uint8_t ps = cur_song, w = 0;
+            heal_all(); music_play(SONG_HEAL);
+            while (!music_done && ++w < 240) frame();
+            music_play(ps);
+            break;
+        }
         case OP_SETHEAL: G.heal_map = RB(); G.heal_x = RB(); G.heal_y = RB(); G.heal_dir = RB(); break;
         case OP_PIC: a = RB(); tb_close(); if (a != 0xF0) { a = sp_resolve(a); set_seen(a); } pic_screen(a); break;
         case OP_PICOFF: tb_close(); if (cur_map != 0xFF) field_restore(); break;

@@ -20,6 +20,11 @@
 - 집·동네·캠프장·마을 지도: 이미지 AI 배경(`../art/src/bg/*_ai.png`)을 `tools/assets.py` 가 16×16 칸 조각(집·나무·텐트…)으로 잘라내고, `story.py` 에서 조각을 배치해 지도를 짠다. 색은 `tools/palfit.py fit2`(타일 묶기: 팔레트 7개 × 4색), 미리보기는 `build/maps/<지도>.png`.
 - 숲·1번 길·해변 칸과 인물 걷기 그림은 아직 웹판 시험 그림을 자동 변환한 임시 그림 (A6·B 그림 오면 교체).
 
+## 음악
+- 소리 엔진 `src/music_drv.inc`: 포켓몬 금처럼 네모파1 멜로디 · 네모파2 화음 · 파형 베이스 · 잡음 드럼. 곡 자료와 함께 음악 뱅크 하나에 들어가고, 0번 뱅크는 VBL 마다 `music_update()` 만 부름.
+- 곡: 제목 Butterfly · 집/동네/캠프장 「내일은 나의 바람이 분다」 · 디지털 월드 길 Target · 행복의 마을 Butterfly(피아노판) · 야생 전투 'digimon' 록 편곡 · 보스 Brave Heart · 진화 Brave Heart 전주 · 회복 징글(직접 작곡).
+- MIDI(`music/src/*.mid`, 저장소에 안 올림) → `python3 tools/midi2gb.py` → `music/<곡>.json`(4채널 편곡) → 롬. 원곡 저작권은 권리자에게 있음 (팬 게임).
+
 ## 만들기
 ```
 cd digimon/gbc

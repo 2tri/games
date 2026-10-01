@@ -416,6 +416,30 @@ def blob_frames(sp):
         a[i // 16, i % 16] = 3 if L < 60 else 1 if L > 230 else (1 if L > 150 else 2)
     return obj_frame(a), [gfx.WHITE, hexrgb(c1), hexrgb(c2), gfx.BLACK]
 
+# ───────── 음악 (music/*.json ← tools/midi2gb.py) ─────────
+SONG_NAMES = ['title', 'town', 'field', 'village', 'battle', 'boss', 'evolve', 'heal']
+SONGI = {n: i for i, n in enumerate(SONG_NAMES)}
+SONG_INS = {'title': (0, 2, 1), 'town': (4, 3, 0), 'field': (1, 2, 1), 'village': (4, 3, 0),
+            'battle': (6, 2, 3), 'boss': (0, 2, 3), 'evolve': (0, 2, 3), 'heal': (7, 2, 0)}   # 멜로디·화음 네모파 악기, 파형 악기
+def enc_channel(ev, ch, ins):
+    out = [0xD0 | ins]; cur = None
+    for p, n in ev:
+        if n != cur:
+            out += [0x80 | (n - 1)] if n <= 64 else [0xC0, n]; cur = n
+        out.append(p if ch == 3 else (0 if p == 0 else max(1, min(0x5F, p - 23))))
+    return out + [0xFF]
+SONGDATA = []
+for n in SONG_NAMES:
+    d = json.load(open(os.path.join(ROOT, 'music', n + '.json')))
+    ins = SONG_INS[n]
+    chans = [enc_channel(d['ch'][c], c, (ins[c] if c < 3 else 0)) for c in range(4)]
+    speed = round(d['bpm'] * d['grid'] / 3600 * 256)
+    head = [speed & 255, speed >> 8, 1 if d.get('once') else 0]
+    off = 3 + 8; offs = []
+    for c in chans: offs += [off & 255, off >> 8]; off += len(c)
+    SONGDATA.append(head + offs + sum(chans, []))
+print('음악', ' '.join('%s %dB' % (n, len(b)) for n, b in zip(SONG_NAMES, SONGDATA)), '합', sum(len(b) for b in SONGDATA))
+
 # ───────── 지도 조립 ─────────
 def u16(v): return [v & 255, (v >> 8) & 255]
 def s8(v): return v & 255
@@ -531,7 +555,7 @@ for mname, M in story.MAPS.items():
                        trigs=[(a[0], a[1], a[2], a[3], a[4], a[5], a[6], starts[a[7]]) for a in trigs],
                        enc=M.enc, script=blob, on_enter=starts[on_enter] if on_enter is not None else 0xFFFF,
                        objpal=sum(objpals, []), nobjpal=len(objpals), spr=sum((enc2bpp(t) for t in sprtiles), []), nspr=len(sprtiles),
-                       name=sid(M.name))
+                       name=sid(M.name), song=SONGI[story.MAP_SONG[mname]])
     print('지도 %-8s %2d×%2d 칸종류 %2d 타일 %3d 팔레트 %d NPC %d 스크립트 %dB%s' % (mname, Wd, H, len(mts), len(tlist), len(pals), len(npcs), len(blob), ' (AI 합침 %d)' % thr if ai else ''))
 OPEN_BLOB, OPEN_STARTS = dsl.assemble([story.OPENING], CTX)
 
@@ -697,12 +721,20 @@ for mname, d in MAPC.items():
     encb = [] if not enc else sum(([SPI[e[0]], e[1], e[2], e[3]] for e in enc[1]), [])
     b += arr('enc', encb or [0])
     b += arr('script', d['script'] or [0])
-    b += ('const map_t map_%s = { %d, %d, %d, %d, %d, %d, opens, cells, %d, mt, %d, t0, %d, t1, pal, %d, npcs, %d, signs, %d, warps, %d, trigs, %d, %d, enc, script, %d, %d, objpal, %d, spr, %d, %d };\n'
+    b += ('const map_t map_%s = { %d, %d, %d, %d, %d, %d, opens, cells, %d, mt, %d, t0, %d, t1, pal, %d, npcs, %d, signs, %d, warps, %d, trigs, %d, %d, enc, script, %d, %d, objpal, %d, spr, %d, %d, %d };\n'
           % (mname, d['W'], d['H'], d['border'], d['split'], d['border2'], len(d['opens']), d['nmt'], d['n0'], d['n1'],
              len(d['npcs']), len(d['signs']), len(d['warps']), len(d['trigs']), enc[0] if enc else 0, len(enc[1]) if enc else 0,
-             d['on_enter'], d['nobjpal'], d['nspr'], d['name'], d['t1_base']))
+             d['on_enter'], d['nobjpal'], d['nspr'], d['name'], d['t1_base'], d['song']))
     size = len(d['cells']) + len(d['mt']) + len(d['tiles0']) + len(d['tiles1']) + 56 + len(d['objpal']) * 2 + len(d['spr']) + len(d['script']) + 600
     emit('map_%s.c' % mname, b, size)
+
+# 음악: 소리 엔진 + 곡 자료를 한 뱅크에
+mb = ''
+for i, b in enumerate(SONGDATA): mb += arr('song%d' % i, b)
+mb += 'static const uint8_t * const SONGTAB[] = {' + ','.join('song%d' % i for i in range(len(SONGDATA))) + '};\n'
+mb += '#include "../../src/music_drv.inc"\n'
+assert sum(len(b) for b in SONGDATA) + 1500 < 16000, '음악이 한 뱅크를 넘음'
+emit('music.c', mb, 16000)
 
 # 묶음을 뱅크에 담기 (코드 뱅크 1·2 다음부터)
 FIRST_DATA_BANK = 3
@@ -781,6 +813,7 @@ h += '#define START_MAP %d\n#define START_X %d\n#define START_Y %d\n#define STAR
 h += '#define N_FLAGS %d\n' % len(dsl.FLAGS)
 h += '#define CH_SPACE %d\n' % S.charidx[' ']
 h += '#define COMP_KID %d\n#define COMP_ALT %d\n' % (KIDI[story.COMP[0]], KIDI[story.COMP[1]])
+for k, v in SONGI.items(): h += '#define SONG_%s %d\n' % (k.upper(), v)
 h += '#endif\n'
 open(os.path.join(GEN, 'gen.h'), 'w').write(h)
 print('깃발', len(dsl.FLAGS), '문자열', len(S.items), '기술', len(MOVES))
