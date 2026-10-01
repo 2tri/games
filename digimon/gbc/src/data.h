@@ -74,7 +74,7 @@ extern const move_t MOVES[];
 extern const uint8_t TIER_BASIC[];
 extern const uint16_t KID_CRESTS[], KID_DESC[];
 extern const uint16_t ATTR_NAME[], KID_NAME[], KID_PAL[], IT_NAME[], IT_DESC[], CREST_NAME[], TITLE_PAL[], DIGCH[], JOSACH[];
-extern const uint8_t KID_PARTNER[], KID_BABY[], EGGS[], IT_HEAL[], IT_KIND[], BMAP[];
+extern const uint8_t KID_PARTNER[], KID_BABY[], EGGS[], IT_HEAL[], IT_KIND[], BMAP[], KID_PORT[];
 extern const uint16_t IT_PRICE[];
 extern const uint8_t ui_tiles[], title_tiles[], title_tiles1[], title_map[], title_attr[], title_alt[], kid_spr[], opening[];
 #endif

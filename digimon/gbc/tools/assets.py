@@ -291,6 +291,67 @@ def build_all():
             ice = np.stack([lum * 0.5 + 110, lum * 0.5 + 140, lum * 0.4 + 170], -1)
             out[blue] = ice[blue]
         return np.clip(out, 0, 255).astype(np.uint8)
+    # ── A11 지형 타일 (terrain_ai.png): 칸 격자가 줄마다 어긋나 있어 물체마다 상자를 지정해 16칸으로 줄임 ──
+    TT = np.asarray(Image.open(os.path.join(WEB, 'art', 'src', 'bg', 'terrain_ai.png')).convert('RGB')).astype(np.int16)
+    def tcrop(box, tw, th, frac=0.4):
+        x0, y0, x1, y1 = box; Wd, Hd = 16 * tw, 16 * th; pw, ph = (x1 - x0) / Wd, (y1 - y0) / Hd
+        rx, ry = max(1, int(pw * frac / 2)), max(1, int(ph * frac / 2))
+        out = np.zeros((Hd, Wd, 3), np.uint8)
+        for j in range(Hd):
+            for i in range(Wd):
+                cx, cy = int(x0 + (i + .5) * pw), int(y0 + (j + .5) * ph)
+                out[j, i] = np.median(TT[cy - ry:cy + ry + 1, cx - rx:cx + rx + 1].reshape(-1, 3), 0)
+        return out
+    def regrass(arr, base):          # 풀색 화소를 길 풀 무늬(A6)로 → 옆 칸과 이어짐
+        m = ground_hsv(arr, ('green',)); out = arr.copy(); out[m] = np.tile(base, (arr.shape[0] // 16, arr.shape[1] // 16, 1))[m]; return out
+    def over(arr, ground, tol=40):   # 흰 바탕(가장자리와 이어진 것)을 바닥 무늬로
+        h, w = arr.shape[:2]; return stamp(arr, (0, 0, w, h), w // 16, h // 16, ground, np.array([[255, 255, 255], [235, 235, 235]]), tol)
+    cliff = tcrop((362, 384, 620, 492), 3, 1)[:, 16:32].copy()
+    rock = tcrop((362, 255, 538, 384), 2, 2)
+    put('r_ledge', regrass(tcrop((2, 314, 86, 416), 1, 1), rg), False, extra={'ledge': True})
+    put('t_cliff', cliff)
+    put('k_wall', rock[16:32, 0:16].copy())
+    put('k_cave', over(tcrop((950, 312, 1114, 492), 2, 2), cliff), extra={'door': (0, 1), 'walk': [(1, 1)]})
+    boulder = tcrop((538, 522, 620, 604), 1, 1)
+    put('k_rocks', over(boulder, cf)); put('p_rocks', over(boulder, R[107:123, 12:28].copy()))
+    put('vp_rocks', over(boulder, A['v_path']['img'])); put('r_rocks', over(boulder, rg))
+    put('k_crack', over(tcrop((620, 522, 703, 604), 1, 1), cf))          # 부술 수 있는 바위 (나중에)
+    put('obj_ball', tcrop((462, 682, 524, 744), 1, 1), False)              # 길에 떨어진 데이터 캡슐 (OBJ 그림 재료)
+    # ── A7 회복 센터 안 · A8 상점 안: 도트 격자가 딱 맞음 (바둑판 한 칸 8도트) → 방 전체(12×12칸)를 한 덩어리 그림으로 ──
+    #    걷는 칸의 바닥은 깨끗한 바둑판으로 다시 칠해 타일이 겹치게 (AI 얼룩 제거)
+    def room_obj(img, grid, c_dark, c_light):
+        a = img[0:192, 0:192].copy()
+        yy, xx = np.mgrid[0:16, 0:16]; pat = ((yy // 8 + xx // 8) % 2).astype(bool)
+        # 바둑판 위상: 걷는 칸들의 화소 다수결
+        votes = [0, 0]
+        for j, row in enumerate(grid):
+            for i, ch in enumerate(row):
+                if ch != '.': continue
+                blk = a[j * 16:j * 16 + 16, i * 16:i * 16 + 16].astype(int)
+                dark = np.abs(blk - np.array(c_dark)).sum(2) < np.abs(blk - np.array(c_light)).sum(2)
+                votes[0] += (dark == pat).sum(); votes[1] += (dark == ~pat).sum()
+        dk = pat if votes[0] >= votes[1] else ~pat
+        tile = np.where(dk[..., None], np.array(c_dark, np.uint8), np.array(c_light, np.uint8))
+        walk = []
+        for j, row in enumerate(grid):
+            for i, ch in enumerate(row):
+                if ch in '.m':
+                    walk.append((i, j))
+                    if ch == '.': a[j * 16:j * 16 + 16, i * 16:i * 16 + 16] = tile
+        return a, walk, tile
+    CEN = load_native('center')
+    cgrid = ['############', '############', '###.######.m', 'm...######.m', 'm...######.m', 'm..........m',
+             'm..........m', 'm..........m', 'm..........m', 'm..........#', 'm.......####', '#####mm#####']   # m = 걷되 다시 칠하지 않음 (벽 띠)
+    ca, cwalk, cfl = room_obj(CEN, cgrid, (200, 56, 56), (236, 232, 228))
+    put('c_room', ca, extra={'walk': cwalk}); put('c_floor', cfl, False)
+    SHO = load_native('shop').copy()
+    red = (SHO[..., 0].astype(int) > 160) & (SHO[..., 1] < 110) & (SHO[..., 2] < 110)
+    red[:, :] &= np.zeros_like(red); red[16:128, 16:192] = ((SHO[16:128, 16:192, 0].astype(int) > 160) & (SHO[16:128, 16:192, 1] < 110) & (SHO[16:128, 16:192, 2] < 110))
+    SHO[red] = (232, 144, 40)          # 진열장의 빨강·하양 공 → 주황 (몬스터볼처럼 안 보이게)
+    sgrid = ['############', '############', '############', '#..........m', '####.......m', '####.......m',
+             '####.......m', '####.......m', '#......#####', '#......#####', '#..........m', '#####mm#####']
+    sa, swalk, sfl = room_obj(SHO, sgrid, (72, 112, 200), (216, 228, 244))
+    put('s_room', sa, extra={'walk': swalk}); put('s_floor', sfl, False)
     sg = snowify(rg)
     put('s_snow', sg, False)
     put('s_tall', snowify(R[12:28, 104:120].copy()), False, extra={'grass': True})
@@ -298,7 +359,7 @@ def build_all():
     put('s_ice', snowify(R[143:159, 104:120].copy(), True))
     put('s_canopy', snowify(R[72:88, 4:20].copy()))
     put('s_tree', snowify(stamp(R, (0, 68, 25, 99), 2, 2, rg, white, 30)))
-    put('s_rocks', stamp(R, (150, 40, 169, 59), 1, 1, sg, white, 30))
+    put('s_rocks', over(boulder, sg))
     return A
 
 
@@ -307,7 +368,7 @@ def load_all():
     import pickle
     os.makedirs(CACHE, exist_ok=True)
     p = os.path.join(CACHE, 'all.pkl')
-    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house', 'tiles')]
+    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house', 'tiles', 'terrain', 'center', 'shop')]
     if os.path.exists(p) and os.path.getmtime(p) > max(os.path.getmtime(f) for f in srcs):
         return pickle.load(open(p, 'rb'))
     A = build_all(); pickle.dump(A, open(p, 'wb')); return A

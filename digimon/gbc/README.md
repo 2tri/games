@@ -22,6 +22,10 @@
 - 이미지 AI 원본 → `../tools/snapc.py` 로 4색 도트 → `../art/` → 롬 다시 만들기.
 - 집·동네·캠프장·마을 지도: 이미지 AI 배경(`../art/src/bg/*_ai.png`)을 `tools/assets.py` 가 16×16 칸 조각(집·나무·텐트…)으로 잘라내고, `story.py` 에서 조각을 배치해 지도를 짠다. 색은 `tools/palfit.py fit2`(타일 묶기: 팔레트 7개 × 4색), 미리보기는 `build/maps/<지도>.png`.
 - 숲·1번 길·해변 칸과 인물 걷기 그림은 아직 웹판 시험 그림을 자동 변환한 임시 그림 (A6·B 그림 오면 교체).
+- 지형 타일(A11 `terrain_ai.png`): 칸 격자가 줄마다 어긋나 있어 물체마다 상자를 지정해 16칸으로 줄인다 (`assets.py` 의 `tcrop`). 한쪽 턱·절벽·동굴 입구·동굴 벽·바위·빛나는 데이터 캡슐에 씀.
+- 회복 센터·상점 안(A7·A8): 도트 격자가 딱 맞아 방 전체를 12×12칸 한 덩어리 그림(`c_room`·`s_room`)으로 쓰고, 걷는 칸만 지정. 걷는 칸 바닥은 깨끗한 바둑판으로 다시 칠함. 상점 진열장의 빨강·하양 공은 주황으로 바꿈.
+- 주인공 초상(B10): `art/src/people/<아이>_portrait_ai.png` → 56×72 4색, 주인공 정보 화면 오른쪽 위.
+- 그림 주문 프롬프트는 공식 도감 그림을 보고 쓴다: `python3 ../tools/ref_fetch.py` → `../art/ref/`(저장소에 안 올림)
 
 ## 음악
 - 소리 엔진 `src/music_drv.inc`: 포켓몬 금처럼 네모파1 멜로디 · 네모파2 화음 · 파형 베이스 · 잡음 드럼. 곡 자료와 함께 음악 뱅크 하나에 들어가고, 0번 뱅크는 VBL 마다 `music_update()` 만 부름.
@@ -39,6 +43,7 @@ python3 tools/test_route4.py    # 장난감 마을 → 4번 길 → 무한산 �
 python3 tools/test_branch.py    # 진화 갈래 9가지 (본래·다른·실패·B 멈춤·억지 암흑·문장·완전체) (test_route2 다음)
 python3 tools/test_items.py     # 가방 넘김·검은 톱니·고기·회복 센터 정화 (test_route2 다음)
 python3 tools/test_evo.py       # 그래도 진화시킬까? → 스컬그레이몬 (test_route2 다음)
+python3 tools/test_rooms.py     # 회복 센터·PC·상점 안, 주인공 정보 초상 (test_play 다음)
 python3 tools/test_snow.py      # 3번 길 북쪽 얼음 설원 · 프리지몬 · 얼음 속 검은 톱니 (test_route3 다음)
 python3 tools/test_learn.py     # 기술 잊기: 2개 바꾸고 1개 포기 (test_branch 다음)
 python3 tools/test_slide.py     # 전투 시작 미끄러지기 화면 (test_branch 다음)

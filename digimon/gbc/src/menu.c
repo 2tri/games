@@ -487,13 +487,14 @@ static void card_screen(void) {
     draw_frame(TGT_BG, 0, 0, 20, 18, 0);
     print_at(TGT_BG, 2, 1, S_CARD_TITLE);
     print_at(TGT_BG, 2, 3, KID_NAME[G.kid]);
+    if (KID_PORT[G.kid] != 0xFF) { pic_load(KID_PORT[G.kid], 1, 128, 4); pic_place(12, 1, 7, 9, 128, 4 | 0x08); }   // 트레이너 카드처럼 오른쪽 위 초상
     for (i = 0; i < N_SPECIES; i++) if (own(i)) n++;
     print_at(TGT_BG, 2, 5, S_M_DEX); print_num(TGT_BG, 7, 6, n, 3);
-    print_at(TGT_BG, 11, 5, S_CARD_BITS); print_num(TGT_BG, 14, 6, G.bits, 5);
+    print_at(TGT_BG, 2, 7, S_CARD_BITS); print_num(TGT_BG, 5, 8, G.bits, 5);
     mins = (uint16_t)(G.time / 3600);
-    print_at(TGT_BG, 2, 7, S_CARD_TIME); print_num(TGT_BG, 11, 8, mins / 60, 3); print_num(TGT_BG, 15, 8, mins % 60, 2);
-    print_at(TGT_BG, 2, 10, S_CARD_CREST);
-    for (i = 0; i < N_CRESTS; i++) if ((G.crests >> i) & 1) print_at(TGT_BG, 2 + (i & 3) * 4, 12 + (i >> 2) * 2, CREST_NAME[i]);
+    print_at(TGT_BG, 2, 9, S_CARD_TIME); print_num(TGT_BG, 8, 10, mins / 60, 3); put_tile(TGT_BG, 11, 10, T_SLASH, 0x80); print_num(TGT_BG, 12, 10, mins % 60, 2);
+    print_at(TGT_BG, 2, 11, S_CARD_CREST);
+    for (i = 0; i < N_CRESTS; i++) if ((G.crests >> i) & 1) print_at(TGT_BG, 2 + (i & 3) * 4, 13 + (i >> 2) * 2, CREST_NAME[i]);
     DISPLAY_ON; pal_apply();
     wait_press();
 }

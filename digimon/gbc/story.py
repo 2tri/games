@@ -70,21 +70,23 @@ HEAL = [Ask('에렉몬: 디지몬 회복 센터에 어서 와!\f디지몬들을 
         Label('no'), Say('에렉몬: 조심해서 다녀!')]
 
 def center_map(name, town, dx, dy, script=None):
-    """회복 센터 안 (마을마다 같은 모양, 포켓몬 센터처럼). dx, dy = 바깥 문"""
+    """회복 센터 안 (A7 그림 한 덩어리, 포켓몬 센터처럼). 카운터 앞(줄 5)에서 위를 보고 말 걸기, 왼쪽 위 PC. dx, dy = 바깥 문"""
     sc = script or [SetHeal(town, dx, dy + 1, 'down')] + HEAL
-    return Map('회복 센터', room(10, 8), KEYH, 'h_void',
-        objs=[('h_table', 3, 2), ('h_table', 5, 2), ('h_plant2', 0, 1), ('h_tv2', 7, 1), ('h_stool', 1, 5), ('h_stool', 8, 5), ('h_mat', 4, 7)],
-        npcs=[NPC(4, 1, 'elecmon', 'down', sc, fixed=True)],
-        signs=[Sign(x, 3, sc) for x in (3, 4, 5, 6)] + [Sign(x, 2, [Say('{kid}{은/는} PC를 켰다.\f디지몬 보관함에 접속했다!'), Box()]) for x in (7, 8, 9)],
-        warps=mat_warps(4, 7, town, dx, dy + 1))
+    return Map('회복 센터', ['.' * 12] * 12, {'.': 'c_floor'}, 'h_void',
+        objs=[('c_room', 0, 0)],
+        npcs=[NPC(6, 3, 'elecmon', 'down', sc, fixed=True)],
+        signs=[Sign(x, 4, sc) for x in range(4, 10)] + [Sign(x, 2, [Say('{kid}{은/는} PC를 켰다.\f디지몬 보관함에 접속했다!'), Box()]) for x in (1, 2)],
+        warps=mat_warps(5, 11, town, dx, dy + 1))
 
 SHOPKEEP = [Say('워매몬: 어서 오세요!\n필요한 거 있으면 골라 봐.'), Shop(), Say('워매몬: 또 오세요~')]
 def shop_map(town, dx, dy):
-    return Map('디지몬 상점', room(8, 7), KEYH, 'h_void',
-        objs=[('h_table', 2, 2), ('h_table', 4, 2), ('h_shelf', 0, 2), ('h_shelf', 7, 2), ('h_kitchen', 6, 2), ('h_plant2', 1, 5), ('h_mat', 3, 6)],
-        npcs=[NPC(3, 1, 'blob:numemon', 'down', SHOPKEEP, fixed=True)],
-        signs=[Sign(x, 3, SHOPKEEP) for x in (2, 3, 4, 5)] + [Sign(0, y, [Say('그물과 디스크가 가지런히 놓여 있다.\f고기도 있다! 디지몬이 좋아할 것 같다.')]) for y in (2, 3, 4)],
-        warps=mat_warps(3, 6, town, dx, dy + 1))
+    """상점 안 (A8 그림 한 덩어리, 프렌들리숍처럼). 계산대 앞(줄 10)에서 위를 보고 말 걸기"""
+    return Map('디지몬 상점', ['.' * 12] * 12, {'.': 's_floor'}, 'h_void',
+        objs=[('s_room', 0, 0)],
+        npcs=[NPC(9, 7, 'blob:numemon', 'down', SHOPKEEP, fixed=True)],
+        signs=[Sign(x, 9, SHOPKEEP) for x in (8, 9, 10, 11)] + [Sign(x, 7, [Say('그물과 디스크가 가지런히 놓여 있다.\f고기도 있다! 디지몬이 좋아할 것 같다.')]) for x in (1, 2, 3)]
+              + [Sign(x, 2, [Say('알록달록한 물건이 진열돼 있다.')]) for x in (1, 2, 3, 6, 7, 8, 9, 10, 11)] + [Sign(5, 2, [Say('시원한 음료가 가득한 냉장고다.')])],
+        warps=mat_warps(5, 11, town, dx, dy + 1))
 
 def mat_warps(x, y, to, tx, ty):
     """출입구 깔개(2칸) → 바깥 문 아래"""
@@ -335,7 +337,7 @@ MAPS['village'] = Map('행복의 마을', [
     objs=[('v_center', 5, 1), ('v_shop', 11, 2), ('v_egg1', 1, 2), ('v_tree', 3, 4), ('v_block2', 3, 8), ('v_egg2', 9, 10),
           ('v_pond', 12, 9), ('v_tree', 10, 7)],
     warps=edge([7, 8], 14, 'route1', 4, 0) + edgeV(16, [6, 7, 8], 'beach', 0, 6) +
-          [Warp_(7, 5, 'center', 4, 7, 'up'), Warp_(12, 4, 'dshop', 3, 6, 'up')],
+          [Warp_(7, 5, 'center', 5, 10, 'up'), Warp_(12, 4, 'dshop', 5, 10, 'up')],
     npcs=[NPC(2, 6, 'blob:botamon', 'down', [Say('깜몬: 뽀글… 뽀글…')]),
           NPC(11, 11, 'blob:punimon', 'down', [Say('푸니몬: 푸니~ 같이 싸우고 이기면\n디지몬이랑 유대가 깊어져!'),
                                                 Say('푸니몬: 유대가 깊으면 본래 모습으로,\n얕으면 다른 모습으로 진화한대.\f자꾸 쓰러지게 하면… 워매몬이 된다나?'),
@@ -406,7 +408,7 @@ MAPS['savanna'] = Map('기어 사바나', [
     'JJJJJJJ::JJJJJJJ'], {'J': 'r_canopy', '.': 'r_grass2', ':': 'r_path', ',': 'r_tall'}, 'r_canopy',
     objs=[('c_shrine', 6, 1), ('v_center', 1, 6), ('v_shop', 11, 7), ('r_tree', 1, 1), ('r_tree', 13, 1), ('r_palm', 13, 11), ('r_rock', 3, 1)],
     open=[(7, 14, 8, 29, 'r_path'), (16, 6, 29, 6, 'r_path')],
-    warps=edge([7, 8], 14, 'route2', 4, 0) + edgeV(16, [6], 'route3', 0, 6) + [Warp_(7, 2, 'temple1', 4, 8, 'up'), Warp_(3, 10, 'center2', 4, 7, 'up'), Warp_(12, 9, 'shop2', 3, 6, 'up')],
+    warps=edge([7, 8], 14, 'route2', 4, 0) + edgeV(16, [6], 'route3', 0, 6) + [Warp_(7, 2, 'temple1', 4, 8, 'up'), Warp_(3, 10, 'center2', 5, 10, 'up'), Warp_(12, 9, 'shop2', 5, 10, 'up')],
     npcs=[NPC(9, 4, 'blob:koromon', 'down', [Say('코로몬: 레오몬님이 이상해!\f신전 안에서 검은 톱니가 반짝였어…')]),
           NPC(4, 12, 'blob:tsunomon', 'down', [Say('뿔몬: 회복 센터는 마을마다 있어.\n쓰러지면 마지막에 들른 곳으로 돌아가!')]),
           NPC(15, 6, 'blob:koromon', 'left', [Say('코로몬: 이쪽은 장난감 마을로 가는 길이야.\f레오몬님이 이상해진 뒤로 위험해서 막고 있어…\n(신전의 레오몬을 먼저 도와주자)')], hide_if='leomon', fixed=True)],
@@ -481,7 +483,7 @@ MAPS['toytown'] = Map('장난감 마을', [
     'W..............W',
     'WWWWWWWWWWWWWWWW'], {'W': 'r_canopy', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}, 'r_canopy', open=[(-9, 6, -1, 6, 'v_path'), (16, 6, 29, 6, 'v_path')],
     objs=[('c_shrine', 6, 1), ('v_center', 1, 7), ('v_shop', 11, 8), ('v_block4', 1, 1), ('v_block6', 11, 1), ('v_block7', 10, 4)],
-    warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 4, 7, 'up'), Warp_(12, 10, 'shop3', 3, 6, 'up')],
+    warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 5, 10, 'up'), Warp_(12, 10, 'shop3', 5, 10, 'up')],
     npcs=[NPC(9, 9, 'blob:numemon', 'down', [Say('워매몬: 퍼펫몬님이 이상해…\f예전엔 다 같이 놀았는데,\n지금은 장난감들을 마구 부숴!')]),
           NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')]),
           NPC(13, 12, 'blob:nyaromon', 'left', [Say('야옹몬: 완전체가 되려면 문장의 힘이 필요해.\f자기 문장이 없는데 억지로 진화하면\n어둠에 물든 모습이 된대…'),
@@ -516,7 +518,7 @@ MAPS['temple2'] = Map('순수의 신전', [
 
 # ── 4번 길 (무한산 기슭, Lv16~20) ──
 MAPS['route4'] = Map('4번 길', [
-    'JJJJJJJJ::JJJJJJ',
+    'JCCCCCCC::CCCCCJ',
     'J.......::.,,,.J',
     'J.,,,...::.,,,.J',
     'J.,,,...::.....J',
@@ -527,9 +529,9 @@ MAPS['route4'] = Map('4번 길', [
     'J...,,,,..,,,..J',
     'J.*.......,,,..J',
     'J..........*...J',
-    'JJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path'), (8, -9, 9, -1, 'r_path')],
-    objs=[('r_rock', 12, 9), ('r_cliff', 1, 9), ('r_tree', 5, 1)],
-    warps=edgeV(-1, [6], 'toytown', 15, 6) + edge([8, 9], -1, 'cave1', 6, 13),
+    'JJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge', 'C': 't_cliff'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path')],
+    objs=[('r_rock', 12, 9), ('r_cliff', 1, 9), ('r_tree', 5, 1), ('k_cave', 8, 0)],
+    warps=edgeV(-1, [6], 'toytown', 15, 6) + [Warp_(8, 1, 'cave1', 6, 13, 'up'), Warp_(9, 1, 'cave1', 7, 13, 'up')],
     npcs=[Challenger(12, 3, 'ogremon', '우가몬', 18, 'left', 'r4c1', '우가몬: 크하하! 데블몬님의 산에 오다니!\f여기서 끝이다!'),
           Challenger(3, 10, 'meramon', '메라몬', 19, 'up', 'r4c2', '야생 메라몬이 활활 타오르고 있다!'),
           ItemBall(14, 1, '고급 회복 디스크', 2, 'r4i1'), ItemBall(1, 1, '성장기 그물', 2, 'r4i2')],
@@ -554,7 +556,7 @@ MAPS['cave1'] = Map('무한산 동굴', [
     '#.......o....#',
     '#............#',
     '######..######'], KEYK, 'k_wall', open=[(6, 14, 7, 29, 'k_floor')],
-    warps=edge([6, 7], 14, 'route4', 8, 0) + [Warp_(1, 1, 'summit', 5, 10, 'up')],
+    warps=edge([6, 7], 14, 'route4', 8, 2) + [Warp_(1, 1, 'summit', 5, 10, 'up')],
     npcs=[ItemBall(12, 1, '성장기 그물', 1, 'k1i1'), ItemBall(2, 8, '회복 디스크', 3, 'k1i2'),
           Challenger(4, 8, 'drimogemon', '두리몬', 21, 'right', 'k1c1', '땅이 흔들리더니 두리몬이 튀어나왔다!')],
     enc=(32, [('picodevimon', 20, 22, 25), ('drimogemon', 20, 23, 25), ('monochromon', 21, 23, 20), ('meramon', 21, 24, 15), ('tsunomon', 18, 20, 15)]),

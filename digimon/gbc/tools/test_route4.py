@@ -13,7 +13,7 @@ for i in range(4): m[G + 29 + i] = 30                                  # PP ì±„ì
 def go(d, n, big=900):
     for i in range(n): walk(e, d, 1); settle(e, big, 'sig')
 go('down', 7); go('down', 3); go('right', 9); log('route4?', gstate(e), MP['route4'])
-go('right', 10); go('up', 5); go('left', 1); go('up', 2); log('cave?', gstate(e), MP['cave1']); e.shot('r4_cave')
+go('right', 10); go('up', 5); go('left', 1); log('cave?', gstate(e), MP['cave1']); e.shot('r4_cave')
 go('up', 1); go('up', 4); go('right', 4); go('up', 7); go('left', 2); go('down', 4); go('left', 8); go('up', 4)
 log('summit?', gstate(e), MP['summit']); e.shot('r4_summit')
 go('up', 9); log('castle?', gstate(e), MP['temple3'])

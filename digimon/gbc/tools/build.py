@@ -305,6 +305,33 @@ egg[edge_] = 3; egg[inside] = 0
 for (x, y) in [(10, 14), (19, 20), (12, 27), (21, 30), (16, 9), (8, 22)]: egg[y:y + 3, x:x + 3] = np.where(inside[y:y + 3, x:x + 3], 1, egg[y:y + 3, x:x + 3])
 egg[inside & (xx > 22) & (yy > 18)] = np.where(egg[inside & (xx > 22) & (yy > 18)] == 0, 2, egg[inside & (xx > 22) & (yy > 18)])
 PIC_EGG = add_pic('egg', place(egg, 56, 56), [gfx.WHITE, hexrgb('#f89830'), hexrgb('#e0d8c0'), gfx.BLACK])
+# 주인공 초상 (B10: art/src/people/<아이>_portrait_ai.png) → 56×72 (7×9칸) 4색: 흰 바탕 · 피부 · 옷 주색 · 어두운색(머리·외곽선)
+PORT_PAL = {'taichi': [(248, 208, 168), (48, 88, 208), (64, 40, 24)], 'yamato': [(248, 216, 136), (40, 136, 104), (24, 24, 32)],
+            'takeru': [(248, 216, 150), (64, 152, 64), (24, 32, 24)], 'hikari': [(248, 208, 168), (216, 120, 136), (56, 32, 24)]}
+def portrait(kid):
+    f = os.path.join(WEB, 'art', 'src', 'people', kid + '_portrait_ai.png')
+    if not os.path.exists(f): return 0xFF
+    sys.path.insert(0, os.path.join(WEB, 'tools')); import scene
+    img, _ = scene.native(f); a = img.astype(int)
+    fg = ~((a.min(2) > 225))                                   # 흰 바탕이 아닌 곳
+    ys, xs = np.nonzero(fg); a = a[ys.min():ys.max() + 1, xs.min():xs.max() + 1]; fg = fg[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    h, w = a.shape[:2]
+    if h > 72 or w > 56:                                       # 크면 줄임 (가장 가까운 화소)
+        k = min(72 / h, 56 / w); nh, nw = int(h * k), int(w * k)
+        yy = (np.arange(nh) / k).astype(int); xx = (np.arange(nw) / k).astype(int)
+        a = a[yy][:, xx]; fg = fg[yy][:, xx]; h, w = nh, nw
+    pal = [gfx.WHITE] + PORT_PAL.get(kid, PORT_PAL['taichi'])
+    P = np.array(pal[1:], float); lum = a @ np.array([.3, .59, .11])
+    d = (((a[..., None, :] - P[None, None]) ** 2) * np.array([3, 4, 2])).sum(-1)
+    idx = d.argmin(-1) + 1
+    idx[(lum > 215) & fg] = 0                                  # 흰 장갑·고글 → 흰색
+    idx[lum < 70] = 3                                          # 외곽선
+    idx[~fg] = 0
+    out = np.zeros((72, 56), np.uint8); oy, ox = 72 - h, (56 - w) // 2
+    out[oy:oy + h, ox:ox + w] = idx
+    return add_pic(kid + '_port', out, pal)
+KID_PORT = [portrait(k) for k in KIDS]
+print('초상', [k for k, v in zip(KIDS, KID_PORT) if v != 0xFF])
 print('전투 그림', len(PICS))
 
 # ───────── 필드: 지도 칸(16×16) → 8×8 타일 + 팔레트 맞추기 ─────────
@@ -442,7 +469,20 @@ def single_frame(pic, pal_override=None):
     a, m = spr3(pic)
     return obj_frame(a), [gfx.WHITE, SKIN if pal_override is None else pal_override[0], m if pal_override is None else pal_override[1], gfx.BLACK]
 def item_frames():
-    """길에 떨어진 데이터 캡슐 (몬스터볼 자리): 위 파랑·아래 흰색·검은 띠"""
+    """길에 떨어진 데이터 캡슐: A11 빛나는 공 그림 (바깥 흰 바탕 → 투명, 공 흰색, 빛 노랑, 테두리)"""
+    if 'obj_ball' in AS:
+        img = AS['obj_ball']['img'].astype(int); h, w = img.shape[:2]
+        white = img.min(2) > 232
+        bg = np.zeros((h, w), bool); st = [(y, x) for y in range(h) for x in (0, w - 1)] + [(y, x) for x in range(w) for y in (0, h - 1)]
+        while st:
+            y, x = st.pop()
+            if not (0 <= y < h and 0 <= x < w) or bg[y, x] or not white[y, x]: continue
+            bg[y, x] = True; st += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+        a = np.full((h, w), 3, np.uint8)
+        a[img.min(2) > 205] = 1
+        a[(img[..., 2] < img[..., 0] - 25) & (img[..., 0] > 200)] = 2
+        a[bg] = 0
+        return obj_frame(a), [gfx.WHITE, (252, 252, 244), (248, 232, 120), (112, 104, 80)]
     a = np.zeros((16, 16), np.uint8)
     yy, xx = np.mgrid[0:16, 0:16]; r = np.sqrt((yy - 9.5) ** 2 + (xx - 7.5) ** 2)
     a[r <= 5.6] = 1; a[(r <= 5.6) & (yy < 9)] = 2; a[(r > 4.8) & (r <= 5.6)] = 3; a[(yy == 9) & (r <= 5.6)] = 3
@@ -854,6 +894,7 @@ t += arr('TIER_BASIC', tb, static=False)
 t += arr('ATTR_NAME', ATTR_NAME, 'uint16_t', static=False)
 t += arr('KID_NAME', KID_NAME, 'uint16_t', static=False) + arr('KID_CRESTS', KID_CRESTS, 'uint16_t', static=False) + arr('KID_DESC', KID_DESC, 'uint16_t', static=False)
 t += arr('KID_PARTNER', [SPI[story.PARTNER[k]] for k in KIDS], static=False)
+t += arr('KID_PORT', KID_PORT, static=False)
 t += arr('KID_BABY', [SPI[story.BABY[k]] for k in KIDS], static=False)
 t += arr('KID_PAL', sum(KIDPAL, []), 'uint16_t', static=False)
 t += arr('EGGS', [SPI[e] for e in story.EGGS], static=False)
