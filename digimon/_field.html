@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f4f1e8;font:bold 15px sans-serif">
+<canvas id="c" width="1400" height="420"></canvas>
+<script src="pix.js"></script><script src="field.js"></script>
+<script>
+// 필드 그림 모아 보기 (6배)
+const {WALK,TILE,KIDS}=DigiField,{toCanvas}=DigiPix,g=document.getElementById('c').getContext('2d');
+g.imageSmoothingEnabled=false; g.textAlign='center'; let x=10;
+for(const k in WALK){ g.drawImage(toCanvas(WALK[k],6),x,10); g.fillStyle='#222'; g.fillText(KIDS[k]?KIDS[k].name:k,x+48,120); x+=110; }
+x=10; for(const k in TILE){ const s=TILE[k]; g.drawImage(toCanvas(s,5),x,150); g.fillText(k,x+s.w*2.5,150+s.h*5+18); x+=s.w*5+16; }
+</script>

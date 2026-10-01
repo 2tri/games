@@ -1,0 +1,141 @@
+<!doctype html><meta charset="utf-8">
+<style>
+@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;font-family:Galmuri9,sans-serif;color:#dde}
+.row{display:grid;grid-template-columns:repeat(3,480px);gap:22px;padding:20px}
+.cell{display:flex;flex-direction:column;gap:8px;font-size:18px}
+canvas{image-rendering:pixelated;width:480px;height:432px;border-radius:6px}
+</style>
+<div class="row">
+  <div class="cell"><span>1. 타이틀</span><canvas id="s1" width="160" height="144"></canvas></div>
+  <div class="cell"><span>2. 오프닝 — 흰수염 도사</span><canvas id="s2" width="160" height="144"></canvas></div>
+  <div class="cell"><span>3. 주인공 고르기 (애니 인물)</span><canvas id="s3" width="160" height="144"></canvas></div>
+  <div class="cell"><span>4. 필드 — 파일섬 행복의 마을</span><canvas id="s4" width="160" height="144"></canvas></div>
+  <div class="cell"><span>5. 전투</span><canvas id="s5" width="160" height="144"></canvas></div>
+  <div class="cell"><span>6. 동료 합류 (이긴 야생 디지몬)</span><canvas id="s6" width="160" height="144"></canvas></div>
+  <div class="cell"><span>7. 알 부화 (디지타마)</span><canvas id="s7" width="160" height="144"></canvas></div>
+  <div class="cell"><span>8. 진화</span><canvas id="s8" width="160" height="144"></canvas></div>
+  <div class="cell"><span>9. 상태 — 공식 속성</span><canvas id="s9" width="160" height="144"></canvas></div>
+</div>
+<script src="pix.js"></script>
+<script src="mons.js"></script>
+<script src="field.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('10px Galmuri9');
+  const {toCanvas,K,W,silhouette}=DigiPix, {MON}=DigiMons, {PEOPLE}=DigiPeople, {WALK,TILE,KIDS}=DigiField;
+  const PAPER='#f8f8f8', $=id=>document.getElementById(id).getContext('2d');
+  // 글자를 또렷한 점으로 (반투명 가장자리 제거)
+  function glyphs(str,col){
+    const c=document.createElement('canvas');c.width=160;c.height=14;const t=c.getContext('2d');
+    t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=col;t.fillText(str,0,1);
+    const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);
+    return c;
+  }
+  const text=(g,str,x,y,col)=>g.drawImage(glyphs(str,col||K),x,y);
+  function bigText(g,str,x,y,col,edge){
+    const a=glyphs(str,edge||K), b=glyphs(str,col); g.imageSmoothingEnabled=false;
+    for(const [dx,dy] of [[-2,0],[2,0],[0,-2],[0,2],[-2,-2],[2,2],[-2,2],[2,-2],[0,4],[2,4],[-2,4]]) g.drawImage(a,x+dx,y+dy,320,28);
+    g.drawImage(b,x,y,320,28);
+  }
+  // 금판 글상자: 검은 테두리 + 안쪽 한 줄
+  function box(g,x,y,w,h){g.fillStyle=K;g.fillRect(x,y,w,h);g.fillStyle=PAPER;g.fillRect(x+1,y+1,w-2,h-2);g.fillStyle=K;g.fillRect(x+3,y+3,w-6,1);g.fillRect(x+3,y+h-4,w-6,1);g.fillRect(x+3,y+3,1,h-6);g.fillRect(x+w-4,y+3,1,h-6);}
+  const say=(g,a,b)=>{box(g,0,96,160,48);text(g,a,9,105);if(b)text(g,b,9,121);arrowD(g,148,136);};
+  const put=(g,s,x,y)=>g.drawImage(toCanvas(s,1),x,y);
+  const arrowR=(g,x,y)=>{g.fillStyle=K;g.fillRect(x,y,1,7);g.fillRect(x+1,y+1,1,5);g.fillRect(x+2,y+2,1,3);g.fillRect(x+3,y+3,1,1);};
+  const arrowD=(g,x,y)=>{g.fillStyle=K;g.fillRect(x,y,5,1);g.fillRect(x+1,y+1,3,1);g.fillRect(x+2,y+2,1,1);};
+  function hpBar(g,x,y,w,ratio){
+    g.fillStyle=K;g.fillRect(x,y,w,4);g.fillStyle=PAPER;g.fillRect(x+1,y+1,w-2,2);
+    g.fillStyle=ratio>.5?'#48c048':ratio>.2?'#f8c830':'#e83828';g.fillRect(x+1,y+1,Math.round((w-2)*ratio),2);
+  }
+  const white=g=>{g.fillStyle=PAPER;g.fillRect(0,0,160,144);};
+  const sparkle=(g,pts,c)=>{g.fillStyle=c||'#f8c830';for(const [x,y] of pts){g.fillRect(x,y-2,1,5);g.fillRect(x-2,y,5,1);}};
+
+  // 1. 타이틀 — 금판처럼 하늘 + 구름
+  let g=$('s1');
+  for(let y=0;y<144;y++){g.fillStyle=y<40?'#5878e0':y<70?'#78a0f0':'#a0c8f8';g.fillRect(0,y,160,1);}
+  g.fillStyle='#f8f8f8';for(let x=0;x<160;x+=16){g.beginPath();g.arc(x+8,112,11,0,7);g.fill();}g.fillRect(0,112,160,32);
+  g.fillStyle='#d8e8f8';for(let x=8;x<160;x+=16)g.fillRect(x,118,6,1);
+  bigText(g,'디지몬',40,6,'#f89830');
+  text(g,'디지털 월드 대모험',36,36,'#fff8d0');
+  text(g,'(가제)',62,48,'#e0e8ff');
+  put(g,MON.agumon(),60,66);
+  text(g,'START를 누르세요',38,116,'#384880');
+  text(g,'비공식 팬 게임',48,130,'#6878a8');
+
+  // 2. 오프닝
+  g=$('s2'); white(g); put(g,PEOPLE.gennai(),60,26);
+  say(g,'흰수염 도사: 디지털 월드에','잘 왔단다!');
+
+  // 3. 주인공 고르기 (8명 + 2쪽에 파워 디지몬 아이들)
+  g=$('s3'); white(g);
+  text(g,'선택받은 아이를 고르세요',14,3);
+  const order=['taichi','yamato','sora','koushiro','mimi','jou','takeru','hikari'];
+  order.forEach((k,i)=>{const cx=2+(i%4)*39,cy=17+Math.floor(i/4)*40;
+    g.fillStyle=i===0?K:'#c8c8c0';g.fillRect(cx,cy,38,38);g.fillStyle=i===0?'#fff8d8':PAPER;g.fillRect(cx+1,cy+1,36,36);
+    g.fillStyle='#d8e8b8';g.fillRect(cx+9,cy+18,20,2);
+    put(g,WALK[k],cx+11,cy+3);
+    const n=KIDS[k].name.length===3?KIDS[k].name.slice(1):KIDS[k].name; text(g,n,cx+19-n.length*5,cy+23);});
+  text(g,'◀ 1/2 ▶',58,97,'#787878');
+  box(g,0,108,160,36); text(g,'신태일 · 파트너 아구몬',8,115); text(g,'2쪽: 파워 디지몬 아이들',8,128,'#787878');
+
+  // 4. 필드 — 행복의 마을
+  g=$('s4');
+  const map=['TTTTpTTTTT','gggggggggg','ggegpggegg','gcgcpppfgc','ggggpgggge','fggcpgcggg'];
+  const key={T:'tree',g:'grass',p:'path',e:'egg',c:'crib',f:'flower'};
+  map.forEach((r,y)=>[...r].forEach((ch,x)=>put(g,TILE[key[ch]],x*16,y*16)));
+  put(g,TILE.blockHouse,0,16); put(g,TILE.blockHouse,112,16); put(g,TILE.blockY,96,48);
+  put(g,WALK.elecmon,96,64); put(g,WALK.agumon,48,64); put(g,WALK.taichi,64,64);
+  say(g,'에렉몬: 여기는 행복의 마을.','디지타마가 깨어나는 곳이야!');
+
+  // 5. 전투 — 디지몬스터처럼 금판 배치
+  g=$('s5'); white(g);
+  put(g,MON.kuwagamon(),100,0); put(g,MON.agumonBack(),8,48);
+  text(g,'쿠가몬',6,1); text(g,'Lv12',62,13);
+  text(g,'HP',8,21,'#e09820'); hpBar(g,22,24,56,.8);
+  g.fillStyle=K;g.fillRect(4,31,80,1);g.fillRect(4,22,1,10);g.fillRect(84,29,1,3);
+  text(g,'아구몬',84,56); text(g,'Lv5',134,56);
+  text(g,'HP',86,67,'#e09820'); hpBar(g,100,70,54,1); text(g,'20/ 20',114,77);
+  g.fillStyle='#3060d0';g.fillRect(100,90,30,2);g.fillStyle=K;g.fillRect(100,89,54,1);g.fillRect(100,92,54,1);
+  g.fillStyle=K;g.fillRect(156,66,1,28);g.fillRect(80,94,77,1);
+  box(g,0,96,68,48); text(g,'아구몬은',6,105); text(g,'무엇을 할까?',5,121);
+  box(g,66,96,94,48); text(g,'싸우다',77,105); text(g,'가방',115,105); text(g,'디지몬',77,121); text(g,'도망치다',115,121);
+  arrowR(g,72,107);
+
+  // 6. 동료 합류
+  g=$('s6'); white(g); put(g,MON.kuwagamon(),52,12);
+  sparkle(g,[[38,20],[120,26],[44,58]],'#f06878');
+  box(g,0,96,160,48); text(g,'쿠가몬이 동료가 되고 싶은 듯',9,105); text(g,'바라본다! 데려갈까?',9,121);
+  box(g,108,64,52,34); text(g,'예',124,71); text(g,'아니오',124,84); arrowR(g,116,73);
+
+  // 7. 알 부화
+  g=$('s7'); white(g);
+  put(g,MON.koromon(),64,44);
+  // 깨진 알 껍데기 조각
+  g.fillStyle=K;for(const [x,y] of [[50,62],[106,58],[56,72],[100,70]]){g.fillRect(x,y,6,1);g.fillRect(x,y,1,4);}
+  g.fillStyle='#f8f0d0';for(const [x,y] of [[51,63],[107,59],[57,73],[101,71]])g.fillRect(x,y,4,3);
+  sparkle(g,[[44,40],[118,36],[80,24]]);
+  say(g,'디지타마에서','코로몬이 태어났다!');
+
+  // 8. 진화
+  g=$('s8'); white(g);
+  g.fillStyle='#d8ecf8';for(let i=0;i<12;i++){const a=i*Math.PI/6;for(let r=34;r<90;r++){g.fillRect(Math.round(80+Math.cos(a)*r),Math.round(46+Math.sin(a)*r),2,2);}}
+  put(g,silhouette(MON.agumon(),'#c8d8e8'),14,54);
+  put(g,MON.greymon(),52,18);
+  sparkle(g,[[40,20],[120,30],[126,74],[86,10]]);
+  say(g,'아구몬은 그레이몬으로','진화했다!');
+
+  // 9. 상태 (공식 도감 자료: 등급·유형·속성·필살기)
+  g=$('s9'); g.fillStyle=PAPER;g.fillRect(0,0,160,144);
+  g.fillStyle='#f8b8d0';g.fillRect(60,0,100,144); g.fillStyle=K;g.fillRect(58,0,2,144);
+  put(g,MON.agumon(),10,14);
+  text(g,'No.001',4,2); text(g,'Lv5',8,58); text(g,'아구몬',8,74); text(g,'/아구몬',4,88);
+  text(g,'HP',66,4,'#e09820'); hpBar(g,80,7,74,1); text(g,'20/ 20',104,15);
+  const rows=[['등급','성장기'],['유형','파충류형'],['속성','백신'],['필살기','']];
+  rows.forEach(([a,b],i)=>{text(g,a+'/',66,32+i*16);text(g,b,104,32+i*16);});
+  text(g,'베이비 플레임',80,96);
+  g.fillStyle=K;g.fillRect(64,112,92,1);
+  text(g,'강함/ 바이러스',66,118,'#784060');
+  text(g,'약함/ 데이터',66,131,'#784060');
+})();
+</script>
