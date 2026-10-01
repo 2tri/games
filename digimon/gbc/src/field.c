@@ -81,9 +81,10 @@ static void spr_pair(uint8_t k, uint8_t tl, uint8_t prop, int16_t sx, int16_t sy
     move_sprite(k, (uint8_t)(sx + 8), (uint8_t)(sy + 16)); move_sprite(k + 1, (uint8_t)(sx + 16), (uint8_t)(sy + 16));
 }
 // 사람(키 큰 그림 16×32, flags 8)은 OBJ 4장: k·k+1 아래 반, k+2·k+3 위 반. 그림 한 장 = 타일 8개(위 4·아래 4)
-static void person(uint8_t k, uint8_t tl, uint8_t prop, int16_t sx, int16_t sy, uint8_t tall) {
-    if (tall) { spr_pair(k, tl + 4, prop, sx, sy); spr_pair(k + 2, tl, prop, sx, sy - 16); }
-    else { spr_pair(k, tl, prop, sx, sy); move_sprite(k + 2, 0, 0); move_sprite(k + 3, 0, 0); }
+// OBJ 순서: 주인공 아래 반 0·1 (맨 앞), NPC 2~37, 주인공 머리 38·39 (맨 뒤: 작은 NPC가 머리에 가려지지 않게)
+static void person(uint8_t k, uint8_t kt, uint8_t tl, uint8_t prop, int16_t sx, int16_t sy, uint8_t tall) {
+    if (tall) { spr_pair(k, tl + 4, prop, sx, sy); spr_pair(kt, tl, prop, sx, sy - 16); }
+    else { spr_pair(k, tl, prop, sx, sy); move_sprite(kt, 0, 0); move_sprite(kt + 1, 0, 0); }
 }
 static void npcs_draw(void) {
     uint8_t i, fr, flip, tall;
@@ -92,17 +93,17 @@ static void npcs_draw(void) {
         fr = 0; flip = 0; tall = n->flags & 8;
         if (n->nfr == 3) { fr = n->dir == 0 ? 0 : n->dir == 1 ? 1 : 2; flip = n->dir == 3; }
         else if (n->nfr == 2 && n->dir >= 2) { fr = 1; flip = n->dir == 3; }
-        person(4 + i * 4, n->base + fr * (tall ? 8 : 4), 0x08 | n->pal | (flip ? 0x20 : 0),
+        person(2 + i * 4, 4 + i * 4, n->base + fr * (tall ? 8 : 4), 0x08 | n->pal | (flip ? 0x20 : 0),
                (int16_t)n->x * 16 - camx, (int16_t)n->y * 16 - camy - 4, tall);
     }
-    for (i = 4 + nn * 4; i < 40; i++) move_sprite(i, 0, 0);
+    for (i = 2 + nn * 4; i < 38; i++) move_sprite(i, 0, 0);
 }
-static uint8_t step_foot;
+static uint8_t step_foot, hopy, slide;
 static void player_draw(uint8_t walking) {
     uint8_t d = G.dir, fr, flip = 0;
     if (d == 0) fr = 0; else if (d == 1) fr = 2; else { fr = 4; flip = d == 3; }
     if (walking) { fr++; if (d < 2 && step_foot) flip = 1; }
-    person(0, fr * 8, 0x08 | (flip ? 0x20 : 0), 64, 60, 1);
+    person(0, 38, fr * 8, 0x08 | (flip ? 0x20 : 0), 64, 60 - hopy, 1);
 }
 static void set_cam(int16_t ox, int16_t oy) {
     camx = (int16_t)px * 16 - 64 + ox; camy = (int16_t)py * 16 - 64 + oy;
@@ -210,6 +211,17 @@ static void arrive(void) {
         run_script(map_bank, M.script, scr); post_script();
         return;
     }
+    for (i = 0; i < nn; i++) {          // 눈이 마주치면 덤비는 디지몬 (트레이너 오마주)
+        npcrt_t *n = &NP[i]; int8_t dx, dy;
+        if (!(n->flags & 16)) continue;
+        dx = (int8_t)px - (int8_t)n->x; dy = (int8_t)py - (int8_t)n->y;
+        if ((n->dir == 0 && !dx && dy > 0 && dy <= 4) || (n->dir == 1 && !dx && dy < 0 && dy >= -4) ||
+            (n->dir == 2 && !dy && dx < 0 && dx >= -4) || (n->dir == 3 && !dy && dx > 0 && dx <= 4)) {
+            G.dir = n->dir ^ 1; player_draw(0);
+            run_script(map_bank, M.script, n->script); post_script();
+            return;
+        }
+    }
     if ((M.mt[mt_at(px, py) * 9 + 8] & MT_GRASS) && M.n_enc && alive_count()) {
         if (rnd8(255) < M.enc_rate) wild();
     }
@@ -244,13 +256,18 @@ void field_loop(void) {
         }
         if (joy_new & J_A) { interact(); continue; }
         d = joy & (J_UP | J_DOWN | J_LEFT | J_RIGHT);
+        if (slide) { slide = 0; d = J_DOWN; prevd = J_DOWN; hold = 0; }      // 턱에서 계속 뛰어내림
         if (!d) { prevd = 0; hold = 0; continue; }
         nd = (d & J_DOWN) ? 0 : (d & J_UP) ? 1 : (d & J_LEFT) ? 2 : 3;
         if (!prevd && nd != G.dir) hold = 6;
         prevd = d; G.dir = nd;
         if (hold) { hold--; player_draw(0); continue; }
         {
-            uint8_t tx = px + DX[nd], ty = py + DY[nd];
+            uint8_t tx = px + DX[nd], ty = py + DY[nd], hop = 0;
+            if (tx < M.w && ty < M.h && (M.mt[mt_at(tx, ty) * 9 + 8] & MT_LEDGE)) {       // 턱: 아래로만
+                if (nd != 0) { player_draw(0); continue; }
+                hop = 1;
+            }
             if (!walkable(tx, ty)) { player_draw(0); continue; }
             if (nd == 0) draw_row((int8_t)py + 6);
             else if (nd == 1) draw_row((int8_t)py - 6);
@@ -259,11 +276,14 @@ void field_loop(void) {
             step_foot ^= 1;
             for (k = 2; k <= 16; k += 2) {
                 set_cam(DX[nd] * (int8_t)k, DY[nd] * (int8_t)k);
+                if (hop) hopy = k <= 8 ? k : 16 - k;
                 player_draw(k <= 8); npcs_draw();
                 if (k < 16) frame();
             }
-            px = tx; py = ty; set_cam(0, 0); player_draw(0); npcs_draw();
+            hopy = 0; px = tx; py = ty; set_cam(0, 0); player_draw(0); npcs_draw();
             arrive();
+            MAPB();
+            if (px < M.w && py < M.h && (M.mt[mt_at(px, py) * 9 + 8] & MT_LEDGE)) slide = 1;
         }
     }
 }

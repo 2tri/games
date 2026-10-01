@@ -54,9 +54,9 @@ def Box(): return ('BOX',)
 
 
 class NPC:
-    def __init__(self, x, y, spr, dir='down', script=None, show_if=None, hide_if=None, hide_kid=None, fixed=False):
+    def __init__(self, x, y, spr, dir='down', script=None, show_if=None, hide_if=None, hide_kid=None, fixed=False, sight=False):
         self.x, self.y, self.spr, self.dir, self.script = x, y, spr, dir, script
-        self.show_if, self.hide_if, self.hide_kid, self.fixed = show_if, hide_if, hide_kid, fixed
+        self.show_if, self.hide_if, self.hide_kid, self.fixed, self.sight = show_if, hide_if, hide_kid, fixed, sight
 
 
 class Sign:

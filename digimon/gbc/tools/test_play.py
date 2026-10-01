@@ -32,6 +32,7 @@ walk(e, 'up', 3); e.press('a', 4, 20); settle(e); log('elecmon', gstate(e)); e.s
 walk(e, 'down', 3); settle(e); log('out', gstate(e))
 save_state(e, S + '/vil.state')
 walk(e, 'right', 9); settle(e); log('beach', gstate(e)); e.shot('15_beach')
+save_state(e, S + '/beach.state')
 walk(e, 'right', 7)
 for i in range(8):                       # 쉘몬 앞(위쪽 1줄)까지
     if gstate(e)['y'] <= 1 or tb(e): break

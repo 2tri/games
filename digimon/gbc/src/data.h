@@ -45,6 +45,7 @@ typedef struct { uint16_t name; uint8_t power, acc, pp, eff, kind; } move_t;   /
 // 지도 칸 성질
 #define MT_SOLID 1
 #define MT_GRASS 2
+#define MT_LEDGE 4      // 한쪽 턱: 아래로만 뛰어내림
 
 // NPC 바이트 위치
 #define NPC_X 0

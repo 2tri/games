@@ -180,7 +180,7 @@ def build_all():
         arr, box = auto(C, pt, cgrass, cols, 0, maxr, size); put(name, arr, solid, extra); A[name]['box'] = box
     put('c_tree', T[31:63, 224:240].copy())
     put('c_forest', C[96:112, 276:292].copy())
-    put('c_shrine', stamp(C, (32, 32, 80, 112), 3, 5, cgrass, GP), extra={'walk': [(1, 2), (1, 3), (1, 4)]})
+    put('c_shrine', stamp(C, (32, 32, 80, 112), 3, 5, cgrass, GP), extra={'walk': [(1, 2), (1, 3), (1, 4)], 'door': (1, 1)})
     put('c_stairs', C[128:144, 48:64].copy(), False)
     put('c_lodge', wipe(stamp(C, (92, 62, 156, 142), 4, 5, cgrass, GP), cgrass, [(0, 0, 64, 4), (0, 0, 4, 80)]), extra={'door': (1, 4)})
     put('c_office', stamp(C, (183, 79, 247, 111), 4, 2, cgrass, GP), extra={'door': (1, 1)})
@@ -264,6 +264,10 @@ def build_all():
     put('r_flowers', unwhite(stamp(R, (6, 176, 22, 192), 1, 1, rg, white, 30)), False)
     put('r_flowers2', stamp(R, (30, 178, 46, 194), 1, 1, rg, white, 30))
     put('r_booth', stamp(R, (62, 172, 78, 205), 1, 2, R[143:159, 4:20].copy(), white, 30))
+    # 임시 한쪽 턱 (A11 받으면 교체): 풀 위에 아래로 떨어지는 턱 모서리
+    ld = rg.copy().astype(int)
+    ld[9:12] = (ld[9:12] * 0.55).astype(int); ld[12:16] = (ld[12:16] * 0.8).astype(int); ld[8] = np.minimum(ld[8] + 40, 255); ld[11] = (30, 70, 30)
+    put('r_ledge', ld.astype(np.uint8), False, extra={'ledge': True})
     # 숲 테두리: 정글 나무 우듬지 (이어 붙임)
     put('r_canopy', R[72:88, 4:20].copy())
     return A

@@ -326,14 +326,16 @@ def mt_pixels(mt):
     src = AS[n]['img'] if n in AS else tile_rgb(n)
     return src[y * 16:y * 16 + 16, x * 16:x * 16 + 16]
 
+OPEN_DOORS = set()       # 지도마다: 문 이동(warp)이 있는 문 칸만 걸어 들어갈 수 있음
 def mt_flags(mt):
     n, x, y = mt_split(mt)
     if n in AS:
         a = AS[n]
-        solid = a['solid'] and (x, y) != a.get('door') and (x, y) not in a.get('walk', [])
-        return (MT_SOLID if solid else 0) | (MT_GRASS if a.get('grass') else 0)
+        door_open = (x, y) == a.get('door') and mt in OPEN_DOORS
+        solid = a['solid'] and not door_open and (x, y) not in a.get('walk', [])
+        return (MT_SOLID if solid else 0) | (MT_GRASS if a.get('grass') else 0) | (MT_LEDGE if a.get('ledge') else 0)
     return (MT_SOLID if n in SOLID else 0) | (MT_GRASS if n in GRASS else 0)
-MT_SOLID, MT_GRASS = 1, 2
+MT_SOLID, MT_GRASS, MT_LEDGE = 1, 2, 4
 
 def reduce_colors(cols, counts, k):
     """색을 k개로: 가장 덜 쓰는 색을 가장 가까운 색에 합침"""
@@ -430,6 +432,13 @@ def kid_frames(k, full=True, nfr=3):
 def single_frame(pic, pal_override=None):
     a, m = spr3(pic)
     return obj_frame(a), [gfx.WHITE, SKIN if pal_override is None else pal_override[0], m if pal_override is None else pal_override[1], gfx.BLACK]
+def item_frames():
+    """길에 떨어진 데이터 캡슐 (몬스터볼 자리): 위 파랑·아래 흰색·검은 띠"""
+    a = np.zeros((16, 16), np.uint8)
+    yy, xx = np.mgrid[0:16, 0:16]; r = np.sqrt((yy - 9.5) ** 2 + (xx - 7.5) ** 2)
+    a[r <= 5.6] = 1; a[(r <= 5.6) & (yy < 9)] = 2; a[(r > 4.8) & (r <= 5.6)] = 3; a[(yy == 9) & (r <= 5.6)] = 3
+    a[8:11, 6:10][(np.ones((3, 4)) > 0)] = 3; a[9, 7:9] = 1
+    return obj_frame(a), [gfx.WHITE, (248, 248, 248), (64, 120, 232), gfx.BLACK]
 def blob_frames(sp):
     c1, c2 = ATTRCOL[W['species'][sp]['attr']]
     b = W['blob']; a = np.zeros((16, 16), np.uint8)
@@ -474,6 +483,11 @@ for mname, M in story.MAPS.items():
         bw, bh = big_of(o)
         for j in range(bh):
             for i in range(bw): cells[oy + j][ox + i] = o + ('@%d,%d' % (i, j) if bw * bh > 1 else '')
+    OPEN_DOORS.clear()
+    for (o, ox, oy) in M.objs:
+        if o in AS and AS[o].get('door'):
+            dx, dy = AS[o]['door']
+            if any(w.x == ox + dx and w.y == oy + dy for w in M.warps): OPEN_DOORS.add(o + '@%d,%d' % (dx, dy))
     border2 = None; split = 0xFF
     if M.border_fn:
         for x in range(-10, 40):
@@ -498,6 +512,7 @@ for mname, M in story.MAPS.items():
             if k2 == key: return i
         if key in KIDS: tiles, pal = kid_frames(key, full=False, nfr=kid_nfr); nfr = kid_nfr
         elif key.startswith('blob:'): tiles, pal = blob_frames(key[5:]); nfr = 1
+        elif key == 'item': tiles, pal = item_frames(); nfr = 1
         else: tiles, pal = single_frame(W['walk1'][key], (hexrgb('#f8f8f8'), hexrgb('#e04838'))) if key == 'elecmon' else single_frame(W['walk1'][key]); nfr = 1
         base = 48 + len(sprtiles); sprtiles.extend(tiles)
         sprsets.append((key, base, nfr, objpal(pal))); return len(sprsets) - 1
@@ -511,7 +526,7 @@ for mname, M in story.MAPS.items():
         cond = 0xFFFF; ctype = 0
         if n.show_if: cond = dsl.flag(n.show_if); ctype = 1
         if n.hide_if: cond = dsl.flag(n.hide_if); ctype = 2
-        tall = 8 if (n.spr == 'COMP' or n.spr in KIDS) else 0
+        tall = (8 if (n.spr == 'COMP' or n.spr in KIDS) else 0) | (16 if n.sight else 0)
         npcs.append((n.x, n.y, a_, b_, altkid, DIRS[n.dir], (1 if n.fixed else 0) | (ctype << 1) | tall, cond,
                      KIDI[n.hide_kid] if n.hide_kid else 0xFF, scr(n.script)))
     signs = [(s_.x, s_.y, scr(s_.script)) for s_ in M.signs]
@@ -848,6 +863,7 @@ for k, v in SONGI.items(): h += '#define SONG_%s %d\n' % (k.upper(), v)
 h += '#endif\n'
 open(os.path.join(GEN, 'gen.h'), 'w').write(h)
 print('깃발', len(dsl.FLAGS), '문자열', len(S.items), '기술', len(MOVES))
+json.dump({'flags': dsl.FLAGS, 'maps': MAPI}, open(os.path.join(ROOT, 'build', 'ids.json'), 'w'), ensure_ascii=False)
 
 # ───────── 컴파일 ─────────
 SRC = os.path.join(ROOT, 'src')
