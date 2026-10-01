@@ -60,6 +60,16 @@
     if (o.hi) { const [dx, dy, c] = o.hi; for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) if (m[y * s.w + x] && !inM(s, m, x - dx, y - dy)) s.p[y * s.w + x] = c; }
     return m;
   }
+  // 빗금 그늘: 덩어리(마스크) 안에서 (dx,dy)만큼 옮기면 밖이 되는 칸 중, 빗금 줄에 걸리는 칸을 검게
+  //   period = 줄 간격, dir = 1 이면 ／, -1 이면 ＼ 방향
+  function hatch(s, m, dx, dy, period, dir, c) {
+    const inM2 = (x, y) => x >= 0 && y >= 0 && x < s.w && y < s.h && m[y * s.w + x] === 1;
+    for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) {
+      if (!m[y * s.w + x] || inM2(x + dx, y + dy)) continue;
+      const k = ((dir === -1 ? x - y : x + y) % period + period) % period;
+      if (k === 0) s.p[y * s.w + x] = c || K;
+    }
+  }
   // 모양 안을 색 하나로 (선 없이)
   function fill(s, f, c) { for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) if (f(x, y)) s.p[y * s.w + x] = c; }
   // 이미 칠해진 칸 중 모양 안만 색을 바꿈 (무늬·줄무늬)
@@ -87,5 +97,5 @@
     return c;
   }
 
-  root.DigiPix = { K, W, pic, at, px, E, R, P, L, C, U, D, N, part, fill, paint, dots, art, flip, seat, silhouette, toCanvas };
+  root.DigiPix = { K, W, pic, at, px, E, R, P, L, C, U, D, N, part, hatch, mask, fill, paint, dots, art, flip, seat, silhouette, toCanvas };
 })(typeof window !== 'undefined' ? window : globalThis);

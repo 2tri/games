@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#444;display:flex;gap:10px;padding:10px">
+<canvas id="a" width="160" height="144" style="width:480px;height:432px;image-rendering:pixelated"></canvas>
+<img id="ref" style="width:480px;height:432px;image-rendering:pixelated">
+<script src="font.js"></script><script src="pix.js"></script><script src="mons.js"></script><script src="ui.js"></script>
+<script>
+// 디지몬스터 전투 화면(오른쪽)과 같은 자리에 그린 우리 전투 화면(왼쪽) 비교
+const U=DigiUI,{toCanvas}=DigiPix,{MON}=DigiMons,g=document.getElementById('a').getContext('2d');
+g.fillStyle=U.PAPER;g.fillRect(0,0,160,144);
+const put=(s,x,y)=>g.drawImage(toCanvas(s,1),x,y);
+put(DigiPix.seat(MON.kuwagamon(),56,56),96,0); put(MON.agumonBack(),16,48);
+// 상대: 이름 오른쪽 끝 x=56, 성별·레벨
+const fn='쿠가몬'; U.text(g,fn,56-U.textWidth(fn),4); U.sex(g,'m',57,7); U.level(g,12,64,8);
+U.hpBar(g,16,16,.8); U.bracketFoe(g,10,15);
+// 나
+const mn='아구몬'; U.text(g,mn,112-U.textWidth(mn),61); U.sex(g,'m',113,64); U.level(g,5,120,65);
+U.hpBar(g,80,73,1); U.bracketMe(g,145,73); U.num(g,'20/ 20',96,81); U.expBar(g,96,91,.3);
+U.frame2(g,0,98,64,46); U.frame2(g,66,98,94,46);
+U.cursor(g,74,111); U.text(g,'싸우다',80,109); U.text(g,'가방',120,109); U.text(g,'디지몬',80,125); U.text(g,'도망치다',120,125);
+</script>

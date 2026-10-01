@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#eee;display:flex;gap:12px;padding:10px;align-items:flex-end">
+<img id="r" style="width:400px;height:400px;object-fit:contain;background:#fff">
+<canvas id="c"></canvas><canvas id="d"></canvas>
+<script src="pix.js"></script><script src="mons.js"></script>
+<script>
+// ?m=agumon&r=참고그림경로 → 참고 그림 + 우리 그림 8배(눈금) + 실제 3배
+const q=new URLSearchParams(location.search),{toCanvas}=DigiPix,s=(DigiMons.MON[q.get('m')]||DigiPeople.PEOPLE[q.get('m')])();
+if(q.get('r'))document.getElementById('r').src=q.get('r');
+const c=document.getElementById('c'),S=8;c.width=s.w*S;c.height=s.h*S;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(toCanvas(s,S),0,0);
+g.strokeStyle='rgba(0,0,0,.08)';for(let i=0;i<=s.w;i++){g.beginPath();g.moveTo(i*S+.5,0);g.lineTo(i*S+.5,c.height);g.stroke();}for(let j=0;j<=s.h;j++){g.beginPath();g.moveTo(0,j*S+.5);g.lineTo(c.width,j*S+.5);g.stroke();}
+const d=document.getElementById('d');d.width=s.w*3;d.height=s.h*3;const h=d.getContext('2d');h.fillStyle='#fff';h.fillRect(0,0,d.width,d.height);h.drawImage(toCanvas(s,3),0,0);
+</script>
