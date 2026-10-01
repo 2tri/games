@@ -178,7 +178,7 @@ uint8_t battle(uint8_t id, uint8_t noRun, uint8_t turns) BANKED {
     foeId = id; F = &FOES[id]; fhp = fmax = fShown = F->hp; fAtkB = fDefB = 0; hShown = S.hp;
     heroSleep = heroBind = hide = foeSleep = phialUsed = 0; foeShow = heroShow = 1;
     S.buffAtk = S.buffDef = 0;
-    scene = battleScene; battleScene();
+    set_scene(battleScene); battleScene();
     sb_clear(); if (!F->boss) sb_add("야생의 "); sb_add(F->name); sb_josa("이", "가"); sb_add(F->boss ? " 앞을 가로막았다!" : " 덤벼들었다!"); say(SB);
     if (S.sting && F->type == TY_ORC) say("스팅의 칼날이 푸르게 빛난다! 오크가 가까이 있다.");
     for (;;) {

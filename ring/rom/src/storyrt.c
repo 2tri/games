@@ -16,7 +16,7 @@ static void storyScene(void) {
 void story(const char *p, uint8_t spr, const char * const *lines, uint8_t n) {
     uint8_t i;
     if (p) { strncpy(place, p, 63); place[63] = 0; } else place[0] = 0;
-    sprId = spr; scene = storyScene; storyScene();
+    sprId = spr; set_scene(storyScene); storyScene();
     for (i = 0; i < n; i++) say(lines[i]);
 }
 static char ta[48], tb[48];
@@ -26,12 +26,12 @@ static void titleCard(void) {
 }
 void chapterTitle(const char *a, const char *b) {
     strncpy(ta, a, 47); ta[47] = 0; strncpy(tb, b, 47); tb[47] = 0;
-    scene = titleCard; titleCard();
+    set_scene(titleCard); titleCard();
     wait_frames(20); key_wait();
 }
 static void darkScene(void) { rect(0, 0, 160, 144, 3); text("눈앞이 캄캄해졌다...", 30, 60, 0); }
 void lose(void) {
-    scene = darkScene; darkScene(); wait_frames(30); key_wait();
+    set_scene(darkScene); darkScene(); wait_frames(30); key_wait();
     healAll(); save();       // 마지막 쉼터에서 다시
 }
 // ── 저장: 카트리지 배터리 램(SRAM). Delta 도 .sav 로 보관 ──

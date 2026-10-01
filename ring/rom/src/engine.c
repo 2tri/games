@@ -182,8 +182,10 @@ void sb_josa(const char *a, const char *b) {
 }
 
 // ── 대사창: 두 줄씩, 한 글자씩 ──
-void (*scene)(void);
-void redraw(void) { if (scene) scene(); }
+// 다시 그리기 함수는 그 함수가 있는 은행과 함께 기억 (전투 화면은 2번 은행에 있음)
+void (*scene)(void); static uint8_t scene_bank;
+void set_scene(void (*f)(void)) { scene = f; scene_bank = CURRENT_BANK; }
+void redraw(void) { uint8_t sv = CURRENT_BANK; if (!scene) return; SWITCH_ROM(scene_bank); scene(); SWITCH_ROM(sv); }
 static uint8_t LS[10], LE[10], NL;
 static void push_line(uint8_t s, uint8_t e) { if (NL < 10) { LS[NL] = s; LE[NL] = e; NL++; } }
 static void wrap(const char *s, uint8_t maxw) {

@@ -4,7 +4,7 @@
 #define N_MOVES 54
 #define N_FOES 25
 #define N_HEROES 5
-#define N_SPR 41
+#define N_SPR 43
 #define MV_STAFF 0
 #define MV_STINGM 1
 #define MV_PAN 2
@@ -130,6 +130,8 @@
 #define SP_EOWYN_FRONT 38
 #define SP_SAMFRODO_FRONT 39
 #define SP_TOM_FRONT 40
+#define SP_RING_ITEM 41
+#define SP_EYE 42
 #define T_0 0
 #define T_1 1
 #define T_2 2

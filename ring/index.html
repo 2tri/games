@@ -974,11 +974,11 @@ const CH1 = [
     await say('프로도가 반지를 들어 올렸다. 그리고 천천히 돌아섰다.');
     const c = await choose('프로도는...', ['반지를 던진다', '반지는 내 것이다']);
     if (c === 0) await say('프로도는 팔을 뻗었다... 하지만 손가락이 펴지지 않았다. 「못 하겠어... 이건 내 거야.」');
-    await say('프로도가 반지를 꼈다. 모르도르 전체가 그를 향해 눈을 돌렸다.');
-    await say('보이지 않는 프로도에게 골룸이 달려들어 손가락을 물어뜯었다! 반지를 되찾은 골룸이 기뻐 날뛰다... 발을 헛디뎠다.');
-    await say('골룸과 반지가 함께 불 속으로 떨어졌다. 반지가 녹아내리며 마지막으로 빛났다.');
+    await story('운명의 틈', 'eye', ['프로도가 반지를 꼈다. 모르도르 전체가 그를 향해 눈을 돌렸다.']);
+    await story('운명의 틈', 'gollum', ['보이지 않는 프로도에게 골룸이 달려들어 손가락을 물어뜯었다! 반지를 되찾은 골룸이 기뻐 날뛰다... 발을 헛디뎠다.']);
+    await story('운명의 틈', 'ring_item', ['골룸과 반지가 함께 불 속으로 떨어졌다. 반지가 녹아내리며 마지막으로 빛났다.']);
+    await story('운명의 산', 'eye', ['땅이 흔들리고 바랏두르의 탑이 무너져 내렸다. 거대한 눈이 꺼졌다.']);
     await story('운명의 산', 'frodosam_front', [
-      '땅이 흔들리고 바랏두르의 탑이 무너져 내렸다. 거대한 눈이 꺼졌다.',
       '용암이 흐르는 바위 위에서 프로도와 샘은 서로 손을 잡았다.',
       '프로도: 함께 있어서 다행이야, 샘. 모든 게 끝나는 곳에서.',
     ]);
@@ -1055,7 +1055,7 @@ async function title() {
     rect(0, 0, 160, 144, 0);
     const big = '반지 원정'; g.save(); g.scale(2, 2); g.drawImage(textImg(big, 3), 40 - tw(big) / 2, 8); g.restore();
     text('— 가운데땅 팬 게임 —', 80 - tw('— 가운데땅 팬 게임 —') / 2, 40, 2);
-    const s = sprite('gandalf_front'); g.drawImage(s, 80 - s.width / 2, 116 - s.height);
+    const s = sprite('ring_item'); g.drawImage(s, 80 - s.width / 2, 108 - s.height);
     if (Math.floor(t / 500) % 2) text('START', 80 - tw('START') / 2, 126);
   };
   msg = null;

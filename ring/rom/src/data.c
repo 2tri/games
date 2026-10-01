@@ -91,7 +91,7 @@ const Hero HEROES[] = {
   { "간달프", 34, 12, 10, 10, { 17, 18, 19, 20 }, 8, 9 },
 };
 const uint8_t EFFECT[4][7] = {{1,1,1,1,1,1,1},{1,1,2,1,2,1,1},{1,1,1,2,2,1,1},{1,1,1,1,1,2,1}};
-extern const uint8_t S_frodosam_back[], S_frodosam_front[], S_aragorn_back[], S_aragorn_front[], S_legolas_back[], S_legolas_front[], S_gimli_back[], S_gimli_front[], S_gandalf_back[], S_gandalf_front[], S_dog[], S_willow[], S_wight[], S_rider[], S_gollum[], S_watcher[], S_goblin[], S_troll[], S_balrog[], S_warg[], S_crebain[], S_saruman[], S_shelob[], S_witchking[], S_fellbeast[], S_mouth[], S_orc[], S_mumak[], S_sharkey[], S_uruk[], S_bilbo_front[], S_elrond_front[], S_arwen_front[], S_boromir_front[], S_merrypippin_front[], S_galadriel_front[], S_faramir_front[], S_gandalfw_front[], S_eowyn_front[], S_samfrodo_front[], S_tom_front[];
+extern const uint8_t S_frodosam_back[], S_frodosam_front[], S_aragorn_back[], S_aragorn_front[], S_legolas_back[], S_legolas_front[], S_gimli_back[], S_gimli_front[], S_gandalf_back[], S_gandalf_front[], S_dog[], S_willow[], S_wight[], S_rider[], S_gollum[], S_watcher[], S_goblin[], S_troll[], S_balrog[], S_warg[], S_crebain[], S_saruman[], S_shelob[], S_witchking[], S_fellbeast[], S_mouth[], S_orc[], S_mumak[], S_sharkey[], S_uruk[], S_bilbo_front[], S_elrond_front[], S_arwen_front[], S_boromir_front[], S_merrypippin_front[], S_galadriel_front[], S_faramir_front[], S_gandalfw_front[], S_eowyn_front[], S_samfrodo_front[], S_tom_front[], S_ring_item[], S_eye[];
 const Spr SPRS[] = {
   { 3, 10, 8, S_frodosam_back },
   { 3, 9, 7, S_frodosam_front },
@@ -134,4 +134,6 @@ const Spr SPRS[] = {
   { 6, 7, 8, S_eowyn_front },
   { 6, 8, 8, S_samfrodo_front },
   { 6, 7, 8, S_tom_front },
+  { 7, 7, 6, S_ring_item },
+  { 7, 8, 8, S_eye },
 };

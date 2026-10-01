@@ -82,11 +82,12 @@ void step_37(void) BANKED {
   say("프로도가 반지를 들어 올렸다. 그리고 천천히 돌아섰다.");
   { static const char * const L1[] = { "반지를 던진다", "반지는 내 것이다" }; c = choose("프로도는...", L1, 2, NOCANCEL); }
   if (c == 0) say("프로도는 팔을 뻗었다... 하지만 손가락이 펴지지 않았다. 「못 하겠어... 이건 내 거야.」");
-  say("프로도가 반지를 꼈다. 모르도르 전체가 그를 향해 눈을 돌렸다.");
-  say("보이지 않는 프로도에게 골룸이 달려들어 손가락을 물어뜯었다! 반지를 되찾은 골룸이 기뻐 날뛰다... 발을 헛디뎠다.");
-  say("골룸과 반지가 함께 불 속으로 떨어졌다. 반지가 녹아내리며 마지막으로 빛났다.");
-  { static const char * const L2[] = { "땅이 흔들리고 바랏두르의 탑이 무너져 내렸다. 거대한 눈이 꺼졌다.", "용암이 흐르는 바위 위에서 프로도와 샘은 서로 손을 잡았다.", "프로도: 함께 있어서 다행이야, 샘. 모든 게 끝나는 곳에서." }; story("운명의 산", SP_FRODOSAM_FRONT, L2, 3); }
-  { static const char * const L3[] = { "그때 하늘에서 큰독수리들이 내려왔다. 그 등에는 흰 옷의 간달프가 타고 있었다." }; story("운명의 산", SP_GANDALFW_FRONT, L3, 1); }
+  { static const char * const L2[] = { "프로도가 반지를 꼈다. 모르도르 전체가 그를 향해 눈을 돌렸다." }; story("운명의 틈", SP_EYE, L2, 1); }
+  { static const char * const L3[] = { "보이지 않는 프로도에게 골룸이 달려들어 손가락을 물어뜯었다! 반지를 되찾은 골룸이 기뻐 날뛰다... 발을 헛디뎠다." }; story("운명의 틈", SP_GOLLUM, L3, 1); }
+  { static const char * const L4[] = { "골룸과 반지가 함께 불 속으로 떨어졌다. 반지가 녹아내리며 마지막으로 빛났다." }; story("운명의 틈", SP_RING_ITEM, L4, 1); }
+  { static const char * const L5[] = { "땅이 흔들리고 바랏두르의 탑이 무너져 내렸다. 거대한 눈이 꺼졌다." }; story("운명의 산", SP_EYE, L5, 1); }
+  { static const char * const L6[] = { "용암이 흐르는 바위 위에서 프로도와 샘은 서로 손을 잡았다.", "프로도: 함께 있어서 다행이야, 샘. 모든 게 끝나는 곳에서." }; story("운명의 산", SP_FRODOSAM_FRONT, L6, 2); }
+  { static const char * const L7[] = { "그때 하늘에서 큰독수리들이 내려왔다. 그 등에는 흰 옷의 간달프가 타고 있었다." }; story("운명의 산", SP_GANDALFW_FRONT, L7, 1); }
   S.step = 38;
   save();
 }
