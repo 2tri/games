@@ -41,11 +41,14 @@
   function each(s, pid, fn) { for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) if (s.id[y * s.w + x] === pid) fn(x, y); }
   function shift(s, x, y, ramp, d) { const i = y * s.w + x, k = ramp.indexOf(s.p[i]); if (k >= 0) s.p[i] = ramp[clamp(k + d)]; }
   const last = s => s.n - 1;
+  // 단순판(lite): 잔무늬·소품 생략 — window.RingHeroOpts = { lite: true }
+  const lite = () => !!(root.RingHeroOpts && root.RingHeroOpts.lite);
 
   // 곱슬 무늬: 빛 쪽으로 열린 작은 호(밝게) + 아래 그늘
   function curls(s, pid, HX, HY, R, ramp, y0, y1) {
     const tone = (x, y) => { const d = (-(x - HX) * 0.6 - (y - HY) * 0.8) / R; return d > 0.35 ? 3 : d > -0.35 ? 2 : 1; };
-    for (let row = 0, y = y0; y <= y1; y += 3, row++) for (let x = HX - R - 2 + (row % 2) * 2; x <= HX + R + 2; x += 4) {
+    const sy = lite() ? 4 : 3, sx = lite() ? 5 : 4;
+    for (let row = 0, y = y0; y <= y1; y += sy, row++) for (let x = HX - R - 2 + (row % 2) * 2; x <= HX + R + 2; x += sx) {
       const cx = Math.round(x + ((x * 7 + y * 3) % 3 === 0 ? 1 : 0)), cy = y;
       if (I(s, cx, cy) !== pid) continue;
       const t = tone(cx, cy), hi = ramp[t], lo = ramp[Math.max(0, t - 2)];
@@ -61,13 +64,14 @@
     const hsh = (x, y) => ((x * 73856093) ^ (Math.floor((y + x * 5) / 4) * 19349663)) >>> 0;
     each(s, pid, (x, y) => {
       const m = x % period, h = hsh(x, y) % 7;
+      if (lite()) { if (x % 4 === 0 && h < 3) shift(s, x, y, ramp, -1); return; }
       if (m === 0 && h < 5) shift(s, x, y, ramp, -1);
       else if (m === 1 && h < 3) shift(s, x, y, ramp, 1);
     });
   }
   // 사슬갑옷: 작은 고리 줄
   function mailTex(s, pid, ramp) {
-    each(s, pid, (x, y) => { const m = (x + (y % 2) * 2) % 4; if (m === 0) shift(s, x, y, ramp, -1); else if (m === 1 && y % 2 === 0) shift(s, x, y, ramp, 1); });
+    each(s, pid, (x, y) => { if (lite() && y % 3) return; const m = (x + (y % 2) * 2) % 4; if (m === 0) shift(s, x, y, ramp, -1); else if (m === 1 && y % 2 === 0) shift(s, x, y, ramp, 1); });
   }
   // 곱슬머리 실루엣 (둥근 머리 + 가장자리 혹)
   function curlyMask(HX, HY, R, from, to) {
@@ -111,9 +115,9 @@
     // 앞섶: 조끼 + 셔츠 깃
     poly(s, [[17, 28], [31, 28], [30, 48], [18, 48]], o.vest, { cx: 22, cy: 38, rx: 8, ry: 12 });
     poly(s, [[19, 27], [29, 27], [24, 35]], C.shirt, { flat: 0.2 });
-    for (const y of [37, 41, 45]) { px(s, 24, y, C.gold[3]); px(s, 24, y + 1, C.gold[1]); }         // 놋쇠 단추
+    if (!lite()) { for (const y of [37, 41, 45]) { px(s, 24, y, C.gold[3]); px(s, 24, y + 1, C.gold[1]); } }         // 놋쇠 단추
     if (o.straps) for (const x of [14, 33]) for (let y = 28; y < 48; y++) { px(s, x, y, C.leather[1]); px(s, x + 1, y, y % 6 === 0 ? C.leather[3] : C.leather[2]); }
-    if (o.chain) for (const [x, y] of [[21, 28], [22, 30], [23, 32], [27, 28], [26, 30], [25, 32]]) px(s, x, y, C.gold[3]); // 목에 건 사슬(반지)
+    if (!lite()) { if (o.chain) for (const [x, y] of [[21, 28], [22, 30], [23, 32], [27, 28], [26, 30], [25, 32]]) px(s, x, y, C.gold[3]); } // 목에 건 사슬(반지)
     // 목
     ell(s, 24, 26, 4, 2.6, o.skin, { flat: 0.4 });
     // 머리털 덩어리
@@ -134,7 +138,7 @@
   function hobbitBack(o) {
     const s = mk(48, 48), HX = 22, HY = 15.5, R = 9.6;
     poly(s, [[3, 48], [5, 37], [9, 31], [16, 28], [30, 28], [37, 31], [41, 37], [44, 48]], o.coat, { cx: 22, cy: 38, rx: 22, ry: 13 });
-    for (const [x, y0] of [[13, 36], [21, 33], [29, 35], [35, 39]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 7 === 6 ? 1 : 0), y, o.coat[0]);
+    if (!lite()) { for (const [x, y0] of [[13, 36], [21, 33], [29, 35], [35, 39]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 7 === 6 ? 1 : 0), y, o.coat[0]); }
     if (o.staff) {
       ell(s, 40, 35, 5, 7, o.coat);
       for (let y = 9; y < 48; y++) { px(s, 42, y, C.wood[2]); px(s, 43, y, C.wood[1]); }
@@ -147,7 +151,7 @@
       poly(s, [[10, 30], [34, 30], [33, 37], [11, 37]], C.pack, { bias: 0.1 });                    // 덮개
       for (let x = 11; x <= 33; x++) px(s, x, 37, C.pack[0]);
       for (const x of [16, 28]) for (let y = 31; y < 48; y++) { px(s, x, y, C.leather[1]); px(s, x + 1, y, C.leather[2]); }
-      px(s, 16, 40, C.gold[3]); px(s, 28, 40, C.gold[3]);
+      if (!lite()) { px(s, 16, 40, C.gold[3]); px(s, 28, 40, C.gold[3]); }
       ell(s, 22, 28.5, 15, 3.4, C.roll);
       for (const x of [13, 31]) for (let y = 25; y <= 32; y++) px(s, x, y, C.leather[0]);
       line(s, 40, 26, 40, 33, C.iron[1]); ell(s, 40.5, 38, 5, 4.6, C.iron, { bias: -0.05 });   // 프라이팬
@@ -174,9 +178,9 @@
   function aragornFront() {
     const s = mk(48, 48), HX = 24;
     poly(s, [[0, 48], [1, 36], [6, 29], [15, 25], [33, 25], [42, 29], [47, 36], [47, 48]], C.ranger, { cx: 22, cy: 36, rx: 25, ry: 13 });
-    for (const x of [7, 41]) for (let y = 34; y < 48; y++) px(s, x, y, C.ranger[0]);                  // 망토 주름
+    if (!lite()) { for (const x of [7, 41]) for (let y = 34; y < 48; y++) px(s, x, y, C.ranger[0]); }                  // 망토 주름
     poly(s, [[17, 28], [31, 28], [30, 48], [18, 48]], C.leather, { cx: 22, cy: 38, rx: 8, ry: 12 });   // 가죽 웃옷
-    for (let y = 31; y < 46; y += 3) { px(s, 23, y, C.leather[3]); px(s, 25, y, C.leather[3]); px(s, 24, y + 1, C.leather[0]); } // 끈
+    if (!lite()) { for (let y = 31; y < 46; y += 3) { px(s, 23, y, C.leather[3]); px(s, 25, y, C.leather[3]); px(s, 24, y + 1, C.leather[0]); } } // 끈
     ell(s, 24, 26.5, 12, 3.4, C.ranger, { bias: 0.05 });                                                // 목에 감긴 두건
     ell(s, 24, 24, 3.6, 3, C.skin, { flat: 0.4 });
     // 어깨까지 오는 덥수룩한 머리
@@ -190,7 +194,7 @@
     const fid = last(s);
     face(s, HX, 16, { iris: '#6a7c8a', brow: C.hairA[0], skin: C.skin, gap: 4, browW: 3, mouth: true });
     // 수염 그늘(덥수룩한 턱)
-    each(s, fid, (x, y) => { if (y >= 20 && (x + y) % 2 === 0 && !(y === 21 && Math.abs(x - 24) < 2)) s.p[y * s.w + x] = '#8a6a5a'; else if (y >= 22) s.p[y * s.w + x] = '#a07a66'; });
+    each(s, fid, (x, y) => { if (lite()) { if (y >= 22) s.p[y * s.w + x] = '#a07a66'; return; } if (y >= 20 && (x + y) % 2 === 0 && !(y === 21 && Math.abs(x - 24) < 2)) s.p[y * s.w + x] = '#8a6a5a'; else if (y >= 22) s.p[y * s.w + x] = '#a07a66'; });
     px(s, 23, 21, '#6a3a2e'); px(s, 24, 21, '#6a3a2e');
     // 앞으로 흘러내린 머리칼 몇 가닥
     for (const [x, y0, y1] of [[17, 10, 18], [30, 10, 17], [21, 9, 11]]) for (let y = y0; y <= y1; y++) px(s, x, y, C.hairA[1]);
@@ -204,7 +208,7 @@
   function aragornBack() {
     const s = mk(48, 48), HX = 23;
     poly(s, [[0, 48], [1, 36], [6, 29], [14, 25], [32, 25], [40, 29], [46, 36], [47, 48]], C.ranger, { cx: 22, cy: 36, rx: 25, ry: 13 });
-    for (const [x, y0] of [[10, 34], [18, 38], [28, 37], [37, 33]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 8 === 7 ? 1 : 0), y, C.ranger[0]);
+    if (!lite()) { for (const [x, y0] of [[10, 34], [18, 38], [28, 37], [37, 33]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 8 === 7 ? 1 : 0), y, C.ranger[0]); }
     // 등에 늘어진 두건 (주름진 고깔)
     poly(s, [[11, 27], [35, 27], [30, 37], [23, 41], [16, 37]], C.ranger, { bias: 0.08 });
     for (const [a, b] of [[[18, 29], [21, 37]], [[27, 29], [25, 37]]]) line(s, a[0], a[1], b[0], b[1], C.ranger[0]);
@@ -235,7 +239,7 @@
     poly(s, [[18, 27], [30, 27], [24, 34]], C.elfC, { flat: 0.3 });                                       // 깃
     for (let i = 0; i < 26; i++) { const x = 37 - i, y = 27 + Math.round(i * 0.85); px(s, x, y, C.leather[1]); px(s, x, y + 1, C.leather[2]); } // 화살통 끈
     for (let x = 6; x < 43; x++) { px(s, x, 44, C.leather[1]); px(s, x, 45, C.leather[2]); }                    // 허리띠
-    px(s, 24, 44, C.gold[3]); px(s, 25, 44, C.gold[2]); px(s, 24, 45, C.gold[2]);
+    if (!lite()) { px(s, 24, 44, C.gold[3]); px(s, 25, 44, C.gold[2]); px(s, 24, 45, C.gold[2]); }
     ell(s, 24, 24.5, 3.4, 2.8, C.skinE, { flat: 0.4 });
     // 긴 금발: 머리 + 어깨 앞으로 흘러내린 두 갈래
     const hairM = (x, y) => E(HX, 13.5, 9, 10)(x, y) || ((y > 13 && y < 38) && ((x > 14 && x < 18.5 - (y > 30 ? 1 : 0)) || (x > 29.5 + (y > 30 ? 1 : 0) && x < 34)));
@@ -262,7 +266,7 @@
     // 화살통 (오른 어깨에서 왼 허리로 비스듬히) + 깃털
     const q = [[33, 15], [39, 18], [19, 47], [13, 44]];
     poly(s, q, C.leather, { cx: 26, cy: 31, rx: 12, ry: 16 });
-    for (const t of [0.25, 0.75]) { const x = 36 - 20 * t, y = 16.5 + 29 * t; line(s, x - 3, y - 1.5, x + 3, y + 2, C.gold[2]); }
+    if (!lite()) { for (const t of [0.25, 0.75]) { const x = 36 - 20 * t, y = 16.5 + 29 * t; line(s, x - 3, y - 1.5, x + 3, y + 2, C.gold[2]); } }
     const fl = [[32, 9], [35, 8], [38, 10], [34, 11], [37, 12]];
     fl.forEach(([x, y], i) => { line(s, x, y + 2, x + 1, y + 7, C.wood[1]); poly(s, [[x - 1, y], [x + 1, y - 2], [x + 2, y + 3], [x, y + 3]], i % 2 ? ['#6a2a24', '#a03c30', '#c86048', '#e88a6a'] : C.shirt, { noShadow: true }); });
     // 긴 금발 (등 가운데로)
@@ -306,8 +310,8 @@
     // 쇠 투구
     part(s, (x, y) => E(HX, 13, 10, 9)(x, y) && y < 12.6, HX - 1, 9, 10, 7, C.iron, { bias: 0.05 });
     poly(s, [[13, 11], [35, 11], [35, 13.5], [13, 13.5]], C.iron, { cx: 24, cy: 9, rx: 12, ry: 6 });      // 테
-    for (const x of [16, 20, 28, 32]) px(s, x, 12, C.iron[3]);                                               // 징
-    for (let y = 4; y < 11; y++) px(s, 24, y, C.gold[2]);                                                    // 가운데 금줄
+    if (!lite()) { for (const x of [16, 20, 28, 32]) px(s, x, 12, C.iron[3]); }                                               // 징
+    if (!lite()) { for (let y = 4; y < 11; y++) px(s, 24, y, C.gold[2]); }                                                    // 가운데 금줄
     axe(s, 41, 6, 48, [[42, 6], [47, 3], [47, 17], [42, 14]]);
     ell(s, 41.5, 32, 2.8, 2.8, C.skinD);
     return outline(s);
@@ -342,7 +346,7 @@
   function gandalfFront() {
     const s = mk(48, 48), HX = 24;
     poly(s, [[1, 48], [2, 36], [7, 29], [15, 25], [33, 25], [41, 29], [46, 36], [47, 48]], C.grey, { cx: 22, cy: 36, rx: 25, ry: 13 });
-    for (const x of [11, 37]) for (let y = 33; y < 48; y++) px(s, x, y, C.grey[0]);
+    if (!lite()) { for (const x of [11, 37]) for (let y = 33; y < 48; y++) px(s, x, y, C.grey[0]); }
     ell(s, 24, 27, 13, 3.4, C.scarf, { bias: 0.05 });                                                    // 은빛 목도리
     // 어깨까지 흘러내린 흰머리
     for (const x0 of [12.5, 30.5]) part(s, (x, y) => x > x0 && x < x0 + 5 && y > 13 && y < 30 - (x0 < 20 ? x0 + 5 - x : x - x0) * 0.6, x0 + 2.5, 20, 3, 9, C.white, { bias: 0.05 });
@@ -368,7 +372,7 @@
   function gandalfBack() {
     const s = mk(48, 48), HX = 24;
     poly(s, [[1, 48], [2, 36], [7, 29], [15, 25], [33, 25], [41, 29], [46, 36], [47, 48]], C.grey, { cx: 22, cy: 36, rx: 25, ry: 13 });
-    for (const [x, y0] of [[10, 33], [19, 36], [29, 35], [38, 32]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 8 === 7 ? 1 : 0), y, C.grey[0]);
+    if (!lite()) { for (const [x, y0] of [[10, 33], [19, 36], [29, 35], [38, 32]]) for (let y = y0; y < 48; y++) px(s, x + ((y - y0) % 8 === 7 ? 1 : 0), y, C.grey[0]); }
     ell(s, 24, 27, 13, 3.4, C.scarf, { bias: 0.05 });
     // 목도리 끝자락이 등으로
     poly(s, [[27, 28], [31, 28], [33, 40], [29, 41]], C.scarf);
@@ -382,6 +386,51 @@
     ell(s, 41.5, 34, 3, 2.8, C.skinO);
     return outline(s);
   }
+
+  // 게임보이식 4단계 무채색. 실제 GB 그림처럼 재질마다 쓸 단계를 정해 둔다
+  // (밝기만으로 자르면 얼굴·머리·옷이 한 덩어리로 뭉개진다). 0=흰 1=밝은회 2=어두운회 3=검정
+  const GB = ['#f8f8f0', '#b0b0a8', '#606060', '#181818'];
+  const GBMAP = {
+    skin: [1, 0, 0, 0], skinE: [1, 0, 0, 0], skinO: [1, 1, 0, 0], skinD: [1, 1, 0, 0],
+    hairF: [3, 2, 2, 1], hairA: [3, 3, 2, 2], hairS: [2, 1, 1, 0], hairL: [2, 1, 1, 1],
+    beardG: [2, 2, 1, 1], white: [1, 0, 0, 0],
+    cloakF: [2, 1, 1, 1], vestF: [3, 2, 2, 2], shirt: [1, 0, 0, 0], jacketS: [2, 2, 1, 1], vestS: [1, 1, 0, 0],
+    pack: [2, 1, 1, 1], roll: [3, 2, 2, 2], ranger: [2, 2, 1, 1], leather: [3, 2, 2, 2],
+    elf: [2, 1, 1, 1], elfC: [1, 0, 0, 0], bow: [3, 2, 2, 2], iron: [2, 1, 1, 0], mail: [2, 1, 1, 0],
+    grey: [2, 1, 1, 1], hat: [3, 2, 2, 2], scarf: [1, 0, 0, 0], wood: [3, 2, 2, 2], gold: [1, 0, 0, 0],
+  };
+  const EXTRA = { // art48.js 쪽 색 (송곳니 등)
+    '#3a2416': 2, '#6e4a2c': 1, '#a07448': 1, '#cfa274': 0, '#24160e': 3, '#43291a': 2, '#5e3c24': 2, '#7a5232': 2,
+    '#8a6a5a': 1, '#a07a66': 1, '#ec9c80': 1,
+  };
+  // 부위와 부위 사이에 검은 안쪽 선을 긋는다 (GB 그림의 굵은 선맛). 뒤에 깔린 부위 쪽에 긋는다.
+  function innerLines(sp, black, minArea) {
+    const area = {}; for (const v of sp.id) if (v >= 0) area[v] = (area[v] || 0) + 1;
+    const o = sp.p.slice(), W = sp.w;
+    for (let y = 0; y < sp.h; y++) for (let x = 0; x < W; x++) {
+      const b = sp.id[y * W + x]; if (b < 0 || !sp.p[y * W + x] || (area[b] || 0) < minArea) continue;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= W || Y >= sp.h) continue;
+        const a = sp.id[Y * W + X];
+        if (a > b && (area[a] || 0) >= minArea && sp.p[Y * W + X]) { o[y * W + x] = black; break; }
+      }
+    }
+    sp.p = o;
+  }
+  function toGB(sp, pal, o) {
+    pal = pal || GB; o = o || {};
+    const m = new Map(Object.entries(EXTRA));
+    for (const k in GBMAP) C[k].forEach((c, i) => { if (!m.has(c)) m.set(c, GBMAP[k][i]); });
+    sp.p = sp.p.map(c => {
+      if (!c) return 0; if (c === K) return pal[3];
+      if (m.has(c)) return pal[m.get(c)];
+      const n = parseInt(c.slice(1), 16), L = 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+      return pal[L > 190 ? 0 : L > 120 ? 1 : L > 58 ? 2 : 3];
+    });
+    if (o.lines !== false) innerLines(sp, pal[3], 24);
+    return sp;
+  }
+  root.RingGB = { toGB, GB };
 
   root.RingHeroes = [
     { name: '프로도', front: frodoFront, back: frodoBack },
