@@ -223,27 +223,36 @@ class Patch:
 def build(base, out_rom, out_ips):
     P = Patch(base); r = P.r
     # 1·2 진화 확장 + 문장
-    crest = {5: '용기', 8: '우정', 17: '사랑', 44: '지식', 2: '순수', 117: '성실', 174: '희망', 35: '빛'}
-    P.evo_engine({no: 1 << CREST_BIT[c] for no, c in crest.items()})
+    # 종 번호는 판마다 다를 수 있으므로 이름으로 찾는다 (2014판·2.0판 공통)
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    def S(nm):
+        assert nm in N, '롬에 %s 없음' % nm
+        return N[nm]
+    crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛'}
+    P.evo_engine({S(nm): 1 << CREST_BIT[c] for nm, c in crest.items()})
     # 성숙기 → 완전체: 자기 문장이면 Lv30 (희망은 원래대로 25), 아니면 문장 하나 이상 + 원래 레벨
-    P.evos(5, [(CREST, 30, 6), (ANYCREST, 36, 6)])                    # 그레이몬 → 워그레이몬 (메탈그레이몬 그림 오면 그쪽으로)
-    P.evos(8, [(CREST, 30, 9), (ANYCREST, 36, 9)])                    # 가루몬 → 메탈가루몬
-    P.evos(17, [(CREST, 30, 18), (ANYCREST, 36, 18)])                 # 버드라몬 → 가루다몬
-    P.evos(44, [(CREST, 30, 45), (ANYCREST, 40, 45), (ITEM, 169, 182)])   # 캅테리몬 → 아트라캅테리몬 (로제몬 갈래는 그대로)
-    P.evos(2, [(CREST, 30, 3), (ANYCREST, 32, 3)])                    # 니드몬 → 릴리몬
-    P.evos(117, [(CREST, 30, 230), (ANYCREST, 36, 230)])              # 원뿔몬 → 쥬드몬 (원래 통신 교환 진화라 혼자서는 못 했음)
-    P.evos(174, [(CREST, 25, 39), (ANYCREST, 32, 39)])                # 엔젤몬 → 홀리엔젤몬
+    P.evos(S('그레이몬'), [(CREST, 30, S('워그레이몬')), (ANYCREST, 36, S('워그레이몬'))])      # 메탈그레이몬 그림 오면 그쪽으로
+    P.evos(S('가루몬'), [(CREST, 30, S('메탈가루몬')), (ANYCREST, 36, S('메탈가루몬'))])
+    P.evos(S('버드라몬'), [(CREST, 30, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
+    P.evos(S('캅테리몬'), [(CREST, 30, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
+    P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
+    P.evos(S('원뿔몬'), [(CREST, 30, S('쥬드몬')), (ANYCREST, 36, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
+    P.evos(S('엔젤몬'), [(CREST, 25, S('홀리엔젤몬')), (ANYCREST, 32, S('홀리엔젤몬'))])
     # 성장기 → 성숙기: 유대
-    P.evos(7, [(BOND_HI, 16, 8), (LV, 16, 105)])                      # 파피몬: 유대 높음 가루몬, 아니면 우가몬
-    P.evos(173, [(BOND_HI, 16, 35), (LV, 16, 52)])                    # 플롯트몬: 유대 높음 가트몬, 아니면 위자몬
-    # 5 디지몬스터 버그: 메탈가루몬 진화 목록 끝 표시
-    P.evos(9, [(ITEM, 23, 145)], P.raw_moves_after(9, 3))
-    # 4 코로몬 (꼬리선 161 자리)
-    KORO = 161
-    P.name(KORO, '코로몬')
-    P.stats(KORO, hp=44, atk=40, **{'def': 35}, spd=38, sat=35, sdf=35, type1=0, type2=0, catch=255, exp=50, growth=0)
-    P.pic(KORO, os.path.join(WEB, 'art', 'koromon-f.png'), os.path.join(WEB, 'art', 'koromon-b.png'))
-    P.evos(KORO, [(LV, 11, 4)], [(1, 33), (1, 45), (5, 145), (9, 44)])
+    P.evos(S('파피몬'), [(BOND_HI, 16, S('가루몬')), (LV, 16, S('우가몬'))])               # 유대 높음 가루몬, 아니면 우가몬
+    P.evos(S('플롯트몬'), [(BOND_HI, 16, S('가트몬')), (LV, 16, S('위자몬'))])             # 유대 높음 가트몬, 아니면 위자몬
+    # 5 디지몬스터 버그: 메탈가루몬 진화 목록 끝 표시 (깨져 있을 때만 — 올바른 진화 종류는 1~5)
+    MG = S('메탈가루몬'); ev = r.evos_attacks(MG)[0]
+    if any(not 1 <= e[0] <= 5 for e in ev):
+        P.evos(MG, [ev[0]], P.raw_moves_after(MG, 3)); P.log.append('메탈가루몬 진화 목록 고침')
+    # 4 코로몬: 롬에 없으면 아직 포켓몬인 꼬리선 자리(29번 도로 야생)에 넣음
+    KORO = N.get('코로몬')
+    if KORO is None:
+        KORO = S('꼬리선')
+        P.name(KORO, '코로몬')
+        P.stats(KORO, hp=44, atk=40, **{'def': 35}, spd=38, sat=35, sdf=35, type1=0, type2=0, catch=255, exp=50, growth=0)
+        P.pic(KORO, os.path.join(WEB, 'art', 'koromon-f.png'), os.path.join(WEB, 'art', 'koromon-b.png'))
+        P.evos(KORO, [(LV, 11, S('아구몬'))], [(1, 33), (1, 45), (5, 145), (9, 44)])
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))

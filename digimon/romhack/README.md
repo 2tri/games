@@ -12,7 +12,10 @@ cp <디지몬스터 롬> work/base.gbc                # 또는 DMROM=<경로>
 python3 audit.py      # 종마다 이름·능력치·진화·그림 → work/audit.json, work/sheet0~3.png
 python3 patch.py      # work/base.gbc → work/myver.gbc + work/myver.ips
 python3 romtest.py    # 고친 롬 자동 시험 (PyBoy, 약 30초)
+python3 wild.py       # 야생 출현표 → work/wild.json, 아직 포켓몬인데 야생에 나오는 칸 목록
+python3 grades.py     # 롬이 바뀌었을 때(2.0판) grades.json 다시 만들기
 ```
+`audit.py`·`wild.py`·`grades.py`·`mkcharmap.py`는 pokegold-kr 디스어셈블리(github.com/Narishma-gb/pokegold-kr)를 읽는다. 받은 곳을 `POKEGOLD_KR=<경로>`로 알려 준다.
 
 `romtest.py`는 처음 실행할 때 인트로를 지나가서 `work/intro.state`를 만든다. 롬이 바뀌면 `--intro`를 붙여 다시 만든다.
 
@@ -25,7 +28,8 @@ python3 romtest.py    # 고친 롬 자동 시험 (PyBoy, 약 30초)
 | `romtest.py` | 진화 7가지와 포획 막기를 실제 게임 화면 조작(가방 → 이상한사탕, 풀숲 → 몬스터볼)으로 시험 |
 | `gblz.py` | 금·은 그림 압축 풀기 / 압축 |
 | `krtext.py`, `charmap.json`, `mkcharmap.py` | 한글판 금 글자 부호 (pokegold-kr 디스어셈블리에서 만듦) |
-| `grades.json` | 롬의 디지몬 칸마다 공식 세대(유년기~궁극체), 포획 규칙에 씀 |
+| `grades.json`, `grades.py` | 롬의 디지몬 칸마다 공식 세대(유년기~궁극체), 포획 규칙에 씀. 이름으로 기억하므로 2.0판에서도 손으로 채운 값이 이어짐 |
+| `wild.py` | 야생 출현표(풀숲 2개·물 1개)를 모양으로 찾아 읽음, 지명은 한글 |
 | `audit.py` | 롬 조사표 |
 | `play.py` | PyBoy 실행·화면 찍기 |
 
@@ -40,6 +44,7 @@ python3 romtest.py    # 고친 롬 자동 시험 (PyBoy, 약 30초)
 | 진화·기술 포인터 | 0x423ED (뱅크 10) |
 | 진화 엔진 EVOLVE_STAT 갈래 | 0x41E8A (뱅크 10:5E8A) |
 | 포획 판정 `call Random` | 0xEA0C (뱅크 3) |
+| 야생 풀숲 (성도·관동) / 물 | 0x2AC1A ×61, 0x2B8A5 ×30 / 0x2BE28 ×24 |
 | 완전히 빈 뱅크 | 75, 76, 77, 7C, 7D |
 
 ## 내 버전 v0.1에 들어간 것
