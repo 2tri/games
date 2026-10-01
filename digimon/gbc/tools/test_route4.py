@@ -7,7 +7,7 @@ ID = json.load(open(os.path.join(S, 'ids.json'))); MP = ID['maps']
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/toytown.state'); e.tick(5)
-G = SYM['_G']; m = e.pb.memory; FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 8
+G = SYM['_G']; m = e.pb.memory; FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16
 m[G + 16] = 40; m[G + 19] = 0xF4; m[G + 20] = 1                      # 시험용 Lv40 HP500
 for i in range(4): m[G + 29 + i] = 30                                  # PP 채움
 def go(d, n, big=900):
@@ -17,5 +17,6 @@ go('right', 10); go('up', 5); go('left', 1); go('up', 2); log('cave?', gstate(e)
 go('up', 1); go('up', 4); go('right', 4); go('up', 7); go('left', 2); go('down', 4); go('left', 8); go('up', 4)
 log('summit?', gstate(e), MP['summit']); e.shot('r4_summit')
 go('up', 9); log('castle?', gstate(e), MP['temple3'])
+for i in range(4): m[G + 29 + i] = 30                                  # 성 앞에서 PP 다시 채움
 go('up', 6); e.press('a', 4, 30); settle(e, 8000)
 log('after devimon', gstate(e), 'crests', bin(m[G + FLAGS_OFF + 32])); e.shot('r4_after'); e.stop()

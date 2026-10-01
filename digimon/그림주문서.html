@@ -105,7 +105,7 @@ function add(o) { L.push(o); }
 // 디지몬 한 마리: set=true 이면 앞·뒤 세트 한 장
 function mon(r, need, id, ko, en, desc, set, why, st) {
   const base = en + " from Digimon Adventure, " + desc;
-  add({ r, need, id, name: ko, en, st: st || "need", size: set ? "한 장에 앞(왼쪽) 56×56 + 뒤(오른쪽) 48×48" : "앞 56×56",
+  add({ r, need, id, name: ko, en, desc, st: st || "need", size: set ? "한 장에 앞(왼쪽) 56×56 + 뒤(오른쪽) 48×48" : "앞 56×56",
         use: set ? "내 디지몬이 될 수 있음 → 앞·뒤 세트" : "상대 전용 → 앞모습만", why,
         prompts: [[set ? "앞·뒤 세트 복사" : "앞모습 복사", base + (set ? T.set : T.front)]] });
 }
@@ -279,6 +279,23 @@ setDone("B7"); setDone("B8"); setDone("C1", "아구몬 뒷모습"); setDone("C2"
   k.st = "redo"; k.why = "첫 보스 사건. 지난번에 이상하게 나와서 생김새를 자세히 적었다.";
   k.prompts = [["앞모습 복사", "Kuwagamon from Digimon Adventure, a giant red stag beetle monster standing upright on two legs, a huge pair of silver serrated scissor-like pincers rising from its head, a menacing face with sharp fangs, four long arms ending in sharp claws, dark red armored body, transparent insect wings on its back, aggressive attacking pose" + T.front]];
 })();
+// ── 진화 갈래 (2026-10-01): 유대에 따라 다른·실패 진화, 암흑 진화, 아이템 진화 → 내 디지몬이 되는 성숙기·완전체는 앞·뒤 세트로 ──
+function toSet(id, note) {
+  const o = L.find(x => x.id === id); if (!o) return;
+  const body = o.st === "redo" && o.prompts.length ? o.prompts[0][1].replace(T.front, "") : o.en + " from Digimon Adventure, " + o.desc;
+  o.size = "한 장에 앞(왼쪽) 56×56 + 뒤(오른쪽) 48×48"; o.use = "진화로 내 디지몬이 됨 → 앞·뒤 세트";
+  o.why = (o.why ? o.why + " · " : "") + note;
+  o.prompts = [["앞·뒤 세트 복사", body + T.set]];
+}
+[["C45", "아구몬의 다른 진화 (유대 보통)"], ["C32", "파피몬·피코데블몬의 다른 진화"], ["C40", "피요몬의 다른 진화"], ["C9", "텐타몬의 다른 진화"],
+ ["C43", "팔몬의 다른 진화"], ["C44", "쉬라몬의 다른 진화"], ["C36", "파닥몬의 다른 진화"], ["C46", "플롯트몬의 다른 진화"],
+ ["C41", "실패 진화 (유대 낮음)"], ["C42", "피코데블몬의 실패 진화"], ["C31", "에렉몬의 진화"], ["C33", "피코데블몬의 진화"],
+ ["C59", "티라노몬의 완전체"], ["C60", "우가몬의 완전체"], ["C58", "키위몬·모야몬의 완전체"], ["C61", "쿠가몬·위자몬·데블몬의 완전체"],
+ ["C57", "켄터스몬·레오몬의 완전체"], ["C55", "워매몬의 완전체"]].forEach(([id, n]) => toSet(id, n));
+mon(105, "필수", "C69", "스컬그레이몬", "SkullGreymon", "giant skeletal dinosaur made of bare white bones, a large missile mounted along its spine, glowing eyes inside the skull, hunched aggressive pose", true, "암흑 진화: 용기의 문장 없이 그레이몬을 진화시키면 · 검은 톱니");
+mon(106, "필수", "C70", "레이디데블몬", "LadyDevimon", "female fallen angel in tight black leather with pale skin, long silver hair, a red mask over her eyes, huge tattered black bat wings, long red claws", true, "암흑 진화: 빛의 문장 없이 가트몬을 진화시키면 · 검은 톱니");
+mon(107, "필수", "C71", "아트라캅테리몬", "MegaKabuterimon (AtlurKabuterimon, red)", "huge red rhinoceros beetle Digimon with one giant forked horn on its head, thick shiny red armor, four strong arms, transparent insect wings", true, "지식의 문장 진화 (캅테리몬)");
+mon(108, "권장", "C72", "메탈그레이몬(바이러스종)", "MetalGreymon (Virus species)", "the dark-evolved version seen in Digimon Adventure 02, dark blue dinosaur with a metal left arm with claws, metal chest armor, metal helmet and wings, menacing red eyes", true, "이블 스파이럴 암흑 진화 (2부)");
 L.sort((a, b) => a.r - b.r);
 const TIERS = [[1, 49, "지금 바로", "지금 만든 부분과 바로 다음 작업 (게임 뼈대 · 주인공 · 파트너 · 첫 야생)"],
                [50, 99, "파일섬 확장", "지역 2~6: 지역마다 장면 그림 + 보스·야생 (포켓몬 체육관 길 구조)"],

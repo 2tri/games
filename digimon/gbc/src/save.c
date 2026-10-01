@@ -11,7 +11,7 @@ static uint16_t sum_of(const game_t *g) {
     return s;
 }
 uint8_t save_game(void) {
-    G.magic[0] = 'D'; G.magic[1] = 'G'; G.magic[2] = 'M'; G.magic[3] = '2';
+    G.magic[0] = 'D'; G.magic[1] = 'G'; G.magic[2] = 'M'; G.magic[3] = '3';
     G.sum = sum_of(&G);
     ENABLE_RAM; SWITCH_RAM(0);
     memcpy(SRAM, &G, sizeof(game_t));
@@ -22,7 +22,7 @@ uint8_t save_exists(void) {
     ENABLE_RAM; SWITCH_RAM(0);
     memcpy(&tmp, SRAM, sizeof(game_t));
     DISABLE_RAM;
-    return tmp.magic[0] == 'D' && tmp.magic[1] == 'G' && tmp.magic[2] == 'M' && tmp.magic[3] == '2' && tmp.sum == sum_of(&tmp);
+    return tmp.magic[0] == 'D' && tmp.magic[1] == 'G' && tmp.magic[2] == 'M' && tmp.magic[3] == '3' && tmp.sum == sum_of(&tmp);
 }
 uint8_t load_game(void) {
     if (!save_exists()) return 0;

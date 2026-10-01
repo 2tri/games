@@ -47,7 +47,7 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
         case OP_GIVEMON: {
             mon_t m;
             a = sp_resolve(RB()); b = RB();
-            mon_make(&m, a, b); add_mon(&m);
+            mon_make(&m, a, b); m.bond = 50; add_mon(&m);     // 이야기로 만난 파트너
             break;
         }
         case OP_GIVEITEM: a = RB(); b = RB(); G.bag[a] += b; tb_close(); jingle(SONG_ITEM); break;
@@ -72,7 +72,7 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
             a = sp_resolve(RB()); b = RB();
             tb_close();
             m->lv = b; m->exp = exp_at(b);
-            evolve_scene(0, a);
+            evolve_scene(0, a, 0);
             m->hp = mon_maxhp(m);
             break;
         }
@@ -86,6 +86,7 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
         case OP_WAIT: wait_frames(RB()); break;
         case OP_SHOP: tb_close(); shop_screen(); break;
         case OP_BOX: tb_close(); box_screen(); break;
+        case OP_PURIFY: tb_close(); purify(); break;
         case OP_JKID: a = RB(); w = RW(); if (G.kid == a) pc = base + w; break;
         case OP_PICKKID: tb_close(); kid_pick(); break;
         case OP_SHAKE: shake(RB()); break;

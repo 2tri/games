@@ -7,7 +7,7 @@ ID = json.load(open(os.path.join(S, 'ids.json'))); MP = ID['maps']
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/savanna.state'); e.tick(5)
-G = SYM['_G']; FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 8
+G = SYM['_G']; FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16
 e.pb.memory[G + 16] = 40; e.pb.memory[G + 19] = 200; e.pb.memory[G + 20] = 0      # 시험용 Lv40·체력 가득
 walk(e, 'down', 7); settle(e); log('savanna', gstate(e))
 walk(e, 'down', 3); walk(e, 'right', 8); settle(e); log('route3', gstate(e), MP['route3'])

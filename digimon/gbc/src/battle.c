@@ -132,6 +132,7 @@ static void use_move(uint8_t who, uint8_t slot) {
         uint16_t A = mon_stat(att, 1), D = stat_of(def, 2, who ? sme : sfoe), lvf = att->lv * 2 / 5 + 2;
         dmg = ((uint32_t)lvf * M_->power * A / D) / 50 + 2;
     }
+    if (M_->kind) dmg = dmg * 3 / 2;              // 필살기: 포켓몬 자속 보정처럼 1.5배
     crit = rnd8(16) == 0; if (crit) dmg *= 2;
     aa = SPECIES[att->sp].attr; da = SPECIES[def->sp].attr;
     mult = beats(aa, da) ? 2 : beats(da, aa) ? 0 : 1;
@@ -163,6 +164,7 @@ static void give_exp(void) {
         mon_t *m = &G.party[i];
         if (!((used >> i) & 1) || !m->hp || m->egg) continue;
         var_sp[0] = m->sp; var_num[0] = gain; say(S_EXP);
+        m->bond = m->bond > 246 ? 250 : m->bond + (kind ? 4 : 2);
         m->exp += gain;
         while (m->lv < 100 && m->exp >= exp_at(m->lv + 1)) {
             uint16_t old = mon_maxhp(m);
@@ -235,6 +237,7 @@ static uint8_t check_faint(void) {
     }
     if (!G.party[me].hp) {
         var_sp[0] = G.party[me].sp; say(S_FAINT);
+        G.party[me].bond = G.party[me].bond > 10 ? G.party[me].bond - 10 : 0;     // 돌봄 실수
         clear_me();
         if (!alive_count()) return 2;
         for (;;) {
@@ -350,34 +353,62 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
 }
 
 // ───────── 진화 ─────────
+#include "evox.h"       // EVO_ALT · EVO_FAIL · EVO_SPIRAL · EVO_UNDARK (build.py)
+// 성장기→성숙기: 유대로 갈래 (본래 / 다른 / 실패)
+// 성숙기→완전체: 문장이 하나 이상 필요. 자기 문장 → 문장 진화, 없으면 암흑 진화 위험 (유대가 낮으면 억지로)
 void evolve_check(void) BANKED {
-    uint8_t i;
+    uint8_t i, to, own;
     for (i = 0; i < G.nparty; i++) {
         mon_t *m = &G.party[i]; const species_t *s;
         if (m->egg || !((lvup >> i) & 1)) continue;
         s = &SPECIES[m->sp];
         if (s->evo_to == 0xFF || m->lv < s->evo_lv) continue;
         if (s->evo_need == 0xFE) continue;
-        if (s->evo_need != 0xFF) {                  // 완전체로: 문장 진화 / 암흑 진화
+        to = s->evo_to; var_sp[0] = m->sp;
+        if (s->evo_need != 0xFF) {
             if (!G.crests) continue;                // 문장이 하나도 없으면 아직
-            var_sp[0] = m->sp;
-            if (!((G.crests >> s->evo_need) & 1) && s->dark_to != 0xFF) {   // 자기 문장이 없다 → 암흑 진화 위험
-                if (!ask(S_DARK_Q)) { tb_close(); continue; }
+            own = s->evo_need < 8 && ((G.crests >> s->evo_need) & 1);
+            if (!own && s->dark_to != 0xFF) {
+                if (m->bond < BOND_LOW) { say(S_DARK_FORCE); }
+                else if (!ask(S_DARK_Q)) { tb_close(); continue; }
                 tb_close(); flash(2); say(S_DARK_EVO); tb_close();
-                evolve_scene(i, s->dark_to);
+                evolve_scene(i, s->dark_to, 0);
                 continue;
             }
-            if ((G.crests >> s->evo_need) & 1) { flash(1); say(S_CREST_SHINE); tb_close(); }
-        }
-        evolve_scene(i, s->evo_to);
+            if (own) { flash(1); say(S_CREST_SHINE); tb_close(); }
+        } else if (EVO_FAIL[m->sp] != 0xFF && m->bond < BOND_LOW) to = EVO_FAIL[m->sp];
+        else if (EVO_ALT[m->sp] != 0xFF && m->bond < BOND_HI) to = EVO_ALT[m->sp];
+        evolve_scene(i, to, 1);
     }
     lvup = 0;
+}
+uint8_t item_evolve(uint8_t slot, uint8_t kind) BANKED {
+    mon_t *m = &G.party[slot]; uint8_t to;
+    to = kind == 5 ? SPECIES[m->sp].dark_to : EVO_SPIRAL[m->sp];
+    var_sp[0] = m->sp;
+    if (m->egg || to == 0xFF) { say(S_NOTHING); tb_close(); return 0; }
+    flash(2); say(S_DARK_EVO); tb_close();
+    evolve_scene(slot, to, 0);
+    return 1;
+}
+void purify(void) BANKED {
+    uint8_t i, to; uint16_t old;
+    for (i = 0; i < G.nparty; i++) {
+        mon_t *m = &G.party[i];
+        if (m->egg || !SPECIES[m->sp].dark || (to = EVO_UNDARK[m->sp]) == 0xFF) continue;
+        var_sp[0] = m->sp;
+        if (!ask(S_PURIFY_Q)) { tb_close(); continue; }
+        tb_close(); flash(1);
+        old = mon_maxhp(m); m->sp = to; m->hp = m->hp + mon_maxhp(m) > old ? m->hp + mon_maxhp(m) - old : 1;
+        if (m->hp > mon_maxhp(m)) m->hp = mon_maxhp(m);
+        var_sp[1] = to; say(S_PURIFIED); tb_close();
+    }
 }
 static void sil(uint8_t palno, uint8_t on, uint8_t pic) {
     if (on) { bgpal[palno * 4 + 1] = bgpal[palno * 4 + 2] = bgpal[palno * 4 + 3] = RGB(7, 7, 9); pal_apply(); }
     else { pic_load(pic, 1, palno == 4 ? 128 : 192, palno); pal_apply(); }
 }
-void evolve_scene(uint8_t slot, uint8_t to) BANKED {
+uint8_t evolve_scene(uint8_t slot, uint8_t to, uint8_t can_cancel) BANKED {
     mon_t *m = &G.party[slot];
     uint8_t from = m->sp, i, per, t, got[3], n, cur = 0;
     uint16_t old; uint8_t ps = cur_song;
@@ -392,7 +423,15 @@ void evolve_scene(uint8_t slot, uint8_t to) BANKED {
         for (t = 0; t < 2; t++) {
             cur ^= 1;
             pic_place(6, 2, 7, 7, cur ? 192 : 128, (cur ? 5 : 4) | 0x08);
-            for (i = 0; i < per; i++) frame();
+            for (i = 0; i < per; i++) {
+                frame();
+                if (can_cancel && (joy_new & J_B)) {      // 포켓몬처럼 B로 멈춤 (다음 레벨업에 다시)
+                    pic_place(6, 2, 7, 7, 128, 4 | 0x08); sil(4, 0, SPECIES[from].front);
+                    var_sp[0] = from; say(S_EVO_STOP); tb_close();
+                    music_play(ps);
+                    return 0;
+                }
+            }
         }
     }
     pic_place(6, 2, 7, 7, 192, 5 | 0x08);
@@ -404,6 +443,7 @@ void evolve_scene(uint8_t slot, uint8_t to) BANKED {
     for (i = 0; i < n; i++) { var_sp[0] = to; var_mv = got[i]; say(S_LEARN); }
     tb_close();
     music_play(ps);
+    return 1;
 }
 
 void hatch_scene(uint8_t slot) BANKED {
@@ -415,7 +455,7 @@ void hatch_scene(uint8_t slot) BANKED {
     for (i = 0; i < 8; i++) { move_bkg((i & 1) ? 2 : 254, 0); wait_frames(6); }
     move_bkg(0, 0);
     flash(2);
-    mon_make(m, sp, 3); set_own(sp);
+    mon_make(m, sp, 3); m->bond = 50; set_own(sp);
     pic_load(SPECIES[sp].front, 1, 128, 4); pal_apply();
     var_sp[0] = sp; say(S_HATCH2);
     tb_close();

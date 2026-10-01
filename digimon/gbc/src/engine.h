@@ -8,7 +8,7 @@
 
 // ── 게임 상태 (저장되는 것) ──
 typedef struct {
-    uint8_t sp, lv, egg, hpad;
+    uint8_t sp, lv, egg, bond;     // bond: 유대 (이기면↑ 쓰러지면↓ 고기↑) → 진화 갈래
     uint16_t hp;
     uint32_t exp;
     uint8_t mv[4], pp[4];
@@ -24,7 +24,7 @@ typedef struct {
     uint8_t nparty, nbox;
     mon_t party[6];
     mon_t box[MAX_BOX];
-    uint8_t bag[8];
+    uint8_t bag[16];
     uint8_t flags[N_FLAGBYTES];
     uint8_t crests;
     uint8_t seen[12], own[12];
@@ -140,7 +140,11 @@ uint8_t save_exists(void);
 
 // ── 다른 뱅크 ──
 uint8_t battle(uint8_t sp, uint8_t lv, uint8_t kind) BANKED;     // 1 이김 0 짐 2 도망
-void evolve_scene(uint8_t slot, uint8_t to) BANKED;
+uint8_t evolve_scene(uint8_t slot, uint8_t to, uint8_t can_cancel) BANKED;   // 1 진화함 · 0 B로 멈춤
+uint8_t item_evolve(uint8_t slot, uint8_t kind) BANKED;   // 검은 톱니(5)·이블 스파이럴(6) → 1 썼음
+void purify(void) BANKED;                                 // 회복 센터: 암흑 진화체를 원래대로
+#define BOND_LOW 20     // 이보다 낮으면 실패 진화 / 억지 암흑 진화
+#define BOND_HI 60      // 이 이상이면 본래 진화 (사이는 다른 진화)
 void hatch_scene(uint8_t slot) BANKED;
 void evolve_check(void) BANKED;
 void start_menu(void) BANKED;

@@ -8,7 +8,7 @@ e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/beach.state'); e.tick(5)
 G = SYM['_G']; m = e.pb.memory
-FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 8          # game_t 안 flags 위치
+FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16          # game_t 안 flags 위치
 def setflag(n): i = FL[n]; m[G + FLAGS_OFF + (i >> 3)] |= 1 << (i & 7)
 def crests(): return m[G + FLAGS_OFF + 32]
 setflag('shellmon')

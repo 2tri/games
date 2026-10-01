@@ -14,7 +14,10 @@ EGGS = ['koromon', 'tsunomon', 'pyocomon', 'mochimon', 'tanemon', 'bukamon', 'to
 # 물건: 이름, 회복량, 설명, 종류(0 회복 1 디지바이스 2 유년기 그물 3 성장기 그물), 값(비트, 0 = 안 팖)
 ITEMS = [('회복 디스크', 20, '디지몬의 체력을 20 회복한다', 0, 100), ('고급 회복 디스크', 50, '디지몬의 체력을 50 회복한다', 0, 300),
          ('디지바이스', 0, '전투 중에 쓰면 유년기 디지몬을 포획한다', 1, 0),
-         ('유년기 그물', 0, '유년기 디지몬이 잘 잡히는 포획그물', 2, 200), ('성장기 그물', 0, '성장기 디지몬까지 잡을 수 있는 그물', 3, 600)]
+         ('유년기 그물', 0, '유년기 디지몬이 잘 잡히는 포획그물', 2, 200), ('성장기 그물', 0, '성장기 디지몬까지 잡을 수 있는 그물', 3, 600),
+         ('고기', 20, '체력을 20 회복하고 유대가 깊어진다', 4, 50),
+         ('검은 톱니', 0, '데블몬의 톱니. 성숙기를 억지로 암흑 진화시킨다', 5, 0),
+         ('이블 스파이럴', 0, '어둠의 나선. 그레이몬을 암흑 진화시킨다', 6, 0)]
 START = ('house2f', 3, 3, 'down')
 
 MAPS = {}
@@ -63,7 +66,7 @@ def Challenger(x, y, sp, ko, lv, d, flag, line):
                hide_if=flag, fixed=True, sight=True)
 
 HEAL = [Ask('에렉몬: 디지몬 회복 센터에 어서 와!\f디지몬들을 쉬게 해 줄까?'), IfNo('no'),
-        Close(), FadeOut(), Heal(), Wait(20), FadeIn(), Say('에렉몬: 다들 기운을 되찾았어!\n또 와!'), End(),
+        Close(), FadeOut(), Heal(), Wait(20), FadeIn(), Say('에렉몬: 다들 기운을 되찾았어!'), Purify(), Say('에렉몬: 또 와!'), End(),
         Label('no'), Say('에렉몬: 조심해서 다녀!')]
 
 def center_map(name, town, dx, dy, script=None):
@@ -80,7 +83,7 @@ def shop_map(town, dx, dy):
     return Map('디지몬 상점', room(8, 7), KEYH, 'h_void',
         objs=[('h_table', 2, 2), ('h_table', 4, 2), ('h_shelf', 0, 2), ('h_shelf', 7, 2), ('h_kitchen', 6, 2), ('h_plant2', 1, 5), ('h_mat', 3, 6)],
         npcs=[NPC(3, 1, 'blob:numemon', 'down', SHOPKEEP, fixed=True)],
-        signs=[Sign(x, 3, SHOPKEEP) for x in (2, 3, 4, 5)] + [Sign(0, y, [Say('그물과 디스크가 가지런히 놓여 있다.')]) for y in (2, 3, 4)],
+        signs=[Sign(x, 3, SHOPKEEP) for x in (2, 3, 4, 5)] + [Sign(0, y, [Say('그물과 디스크가 가지런히 놓여 있다.\f고기도 있다! 디지몬이 좋아할 것 같다.')]) for y in (2, 3, 4)],
         warps=mat_warps(3, 6, town, dx, dy + 1))
 
 def mat_warps(x, y, to, tx, ty):
@@ -334,7 +337,9 @@ MAPS['village'] = Map('행복의 마을', [
     warps=edge([7, 8], 14, 'route1', 4, 0) + edgeV(16, [6, 7, 8], 'beach', 0, 6) +
           [Warp_(7, 5, 'center', 4, 7, 'up'), Warp_(12, 4, 'dshop', 3, 6, 'up')],
     npcs=[NPC(2, 6, 'blob:botamon', 'down', [Say('깜몬: 뽀글… 뽀글…')]),
-          NPC(11, 11, 'blob:punimon', 'down', [Say('푸니몬: 푸니~ 푸니~')]),
+          NPC(11, 11, 'blob:punimon', 'down', [Say('푸니몬: 푸니~ 같이 싸우고 이기면\n디지몬이랑 유대가 깊어져!'),
+                                                Say('푸니몬: 유대가 깊으면 본래 모습으로,\n얕으면 다른 모습으로 진화한대.\f자꾸 쓰러지게 하면… 워매몬이 된다나?'),
+                                                Say('푸니몬: 상점의 고기를 먹이면\n유대가 쑥쑥 깊어져!')]),
           NPC(6, 10, 'blob:koromon', 'down', [Say('코로몬: 이 마을에서는 디지몬이 디지타마에서 태어나!\f다시 태어날 때도 여기로 돌아온대.')])],
     on_enter=[IfFlag('village', 'e'), SetFlag('village'),
               Say('알록달록한 블록과 요람이 가득한 마을이다.\f아기 디지몬들이 잠들어 있다.'),
@@ -478,6 +483,8 @@ MAPS['toytown'] = Map('장난감 마을', [
     warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 4, 7, 'up'), Warp_(12, 10, 'shop3', 3, 6, 'up')],
     npcs=[NPC(9, 9, 'blob:numemon', 'down', [Say('워매몬: 퍼펫몬님이 이상해…\f예전엔 다 같이 놀았는데,\n지금은 장난감들을 마구 부숴!')]),
           NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')]),
+          NPC(13, 12, 'blob:nyaromon', 'left', [Say('야옹몬: 완전체가 되려면 문장의 힘이 필요해.\f자기 문장이 없는데 억지로 진화하면\n어둠에 물든 모습이 된대…'),
+                                                Say('야옹몬: 유대가 약하면 더 위험하대.\f그래도 회복 센터의 에렉몬이\n어둠을 걷어 준대!')]),
           NPC(15, 6, 'blob:tokomon', 'left', [Say('토코몬: 이쪽은 무한산으로 가는 길이야.\f검은 톱니가 날아오는 곳이라 위험해!\n(퍼펫몬을 먼저 도와주자)')], hide_if='monzaemon', fixed=True)],
     on_enter=[IfFlag('toytown', 'e'), SetFlag('toytown'),
               Say('알록달록한 장난감 블록으로 지은 마을이다.\f…그런데 아무도 웃고 있지 않다.'), Label('e')])
@@ -579,6 +586,7 @@ DEVIMON = [IfFlag('devimon', 'done'),
            Say('데블몬은 데이터가 되어 흩어졌다…'),
            Say('제단 위에서 무언가가 빛나고 있다…'), Close(), Flash(1),
            Crest('희망'), Say('희망의 문장을 손에 넣었다!'),
+           Say('데블몬이 있던 자리에 검은 톱니가 떨어져 있다…\f{kid}{은/는} 검은 톱니를 주웠다!'), GiveItem('검은 톱니', 1),
            Say('{comp}: 해냈다, {kid}!\n파일섬에 평화가 돌아왔어!'),
            Say('{comp}: …그런데 데블몬이 말한 서버 대륙은 뭘까?\f(1장 끝 — 다음 이야기는 준비 중)'), End(),
            Label('done'), Say('텅 빈 성이다.\n바다 건너편이 보인다…')]

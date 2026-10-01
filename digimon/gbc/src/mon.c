@@ -23,6 +23,7 @@ void mon_make(mon_t *m, uint8_t sp, uint8_t lv) BANKED {
         else m->mv[t] = 0xFF;
     }
     m->hp = mon_maxhp(m);
+    m->bond = 20;
 }
 uint8_t learn_sig(mon_t *m, uint8_t sp, uint8_t *got) BANKED {
     uint8_t i, j, k, n = 0, mv;

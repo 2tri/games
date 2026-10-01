@@ -3,7 +3,7 @@
 
 OPS = ['END', 'SAY', 'ASK', 'JMP', 'JF', 'JNF', 'JNO', 'SETF', 'CLRF', 'CLOSE', 'FLASH', 'FADEOUT', 'FADEIN',
        'WARP', 'GIVEMON', 'GIVEITEM', 'GIVEEGG', 'HEAL', 'SETHEAL', 'PIC', 'PICOFF', 'EVOLVE', 'BATTLE', 'CREST',
-       'WAIT', 'JKID', 'PICKKID', 'SHAKE', 'FACE', 'SFX', 'SHOP', 'BOX']
+       'WAIT', 'JKID', 'PICKKID', 'SHAKE', 'FACE', 'SFX', 'SHOP', 'BOX', 'PURIFY']
 OP = {n: i for i, n in enumerate(OPS)}
 
 # 특수 디지몬 번호
@@ -51,6 +51,7 @@ def Shake(n=6): return ('SHAKE', n)
 def End(): return ('END',)
 def Shop(): return ('SHOP',)
 def Box(): return ('BOX',)
+def Purify(): return ('PURIFY',)
 
 
 class NPC:
@@ -110,7 +111,7 @@ def assemble(scripts, ctx):
             elif op == 'BATTLE': blob += [ctx['sp'](a[0]), a[1], {'wild': 0, 'boss': 1}[a[2]]]
             elif op == 'CREST': blob.append(ctx['crest'](a[0]))
             elif op == 'JKID': blob.append(ctx['kid'](a[0])); fix.append((len(blob), si, a[1])); blob += [0, 0]
-            elif op in ('END', 'CLOSE', 'FADEIN', 'GIVEEGG', 'HEAL', 'PICOFF', 'PICKKID', 'SHOP', 'BOX'): pass
+            elif op in ('END', 'CLOSE', 'FADEIN', 'GIVEEGG', 'HEAL', 'PICOFF', 'PICKKID', 'SHOP', 'BOX', 'PURIFY'): pass
             else: raise ValueError(op)
         for (pos, s2, name) in [f for f in fix if f[1] == si]:
             if name not in labels: raise ValueError('라벨 없음: ' + name)

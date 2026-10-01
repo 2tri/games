@@ -175,6 +175,8 @@ static void status_screen(uint8_t slot) {
         print_lv(TGT_BG, 1, 10, m->lv);
         print_at(TGT_BG, 1, 12, s->grade);
         if (!page) {
+            static const uint16_t BH[6] = { S_BOND0, S_BOND1, S_BOND2, S_BOND3, S_BOND4, S_BOND5 };
+            print_at(TGT_BG, 1, 14, S_ST_BOND); print_at(TGT_BG, 1, 16, BH[m->bond >= 250 ? 5 : m->bond / 50]);
             set_hp_color(1, hp_level(m->hp, mon_maxhp(m)));
             hp_bar(TGT_BG, 10, 0, m->hp, mon_maxhp(m), 1);
             print_num(TGT_BG, 12, 1, m->hp, 3); put_tile(TGT_BG, 15, 1, T_SLASH, 0x80); print_num(TGT_BG, 16, 1, mon_maxhp(m), 3);
@@ -202,8 +204,23 @@ static void status_screen(uint8_t slot) {
 }
 
 // ───────── 가방 ─────────
+// 물건 종류 (IT_KIND): 0 회복 1 디지바이스 2·3 그물 4 고기 5 검은 톱니 6 이블 스파이럴
+#define BAG_VIS 4
+static void bag_rows(const uint8_t *list, uint8_t n, uint8_t top) {
+    uint8_t i, k;
+    fill_tiles(TGT_BG, 1, 2, 18, 9, T_BLANK, 0);
+    for (i = 0; i < BAG_VIS; i++) {
+        k = top + i;
+        if (k > n) break;
+        if (k == n) { print_at(TGT_BG, 2, 2 + i * 2, S_BAG_QUIT); break; }
+        var_item = list[k]; print_at(TGT_BG, 2, 2 + i * 2, S_NAME_I0);
+        if (IT_KIND[list[k]] != 1) print_num(TGT_BG, 16, 3 + i * 2, G.bag[list[k]], 2);   // 디지바이스는 개수 없음
+    }
+    put_tile(TGT_BG, 18, 1, top ? T_F_BMORE : T_BLANK, 0x80 | 0x40);       // 위로 더 있음 (뒤집은 ▼)
+    put_tile(TGT_BG, 18, 10, top + BAG_VIS <= n ? T_F_BMORE : T_BLANK, 0x80);
+}
 uint8_t bag_screen(uint8_t inbattle) BANKED {
-    uint8_t list[N_ITEMS + 1], n, i, sel = 0, t;
+    uint8_t list[N_ITEMS + 1], n, i, sel = 0, top = 0, t, k;
     for (;;) {
         n = 0;
         for (i = 0; i < N_ITEMS; i++) if (G.bag[i]) list[n++] = i;
@@ -211,37 +228,51 @@ uint8_t bag_screen(uint8_t inbattle) BANKED {
         screen_clear(); scene = SCENE_OTHER; pool_reset(1);
         draw_frame(TGT_BG, 0, 0, 20, 12, 0);
         print_at(TGT_BG, 2, 0, S_BAG);
-        for (i = 0; i < n; i++) {
-            var_item = list[i]; print_at(TGT_BG, 2, 2 + i * 2, S_NAME_I0);
-            if (IT_KIND[list[i]] != 1) print_num(TGT_BG, 16, 3 + i * 2, G.bag[list[i]], 2);   // 디지바이스는 개수 없음
-        }
-        print_at(TGT_BG, 2, 2 + n * 2, S_BAG_QUIT);
-        DISPLAY_ON; pal_apply();
         if (sel > n) sel = n;
+        if (sel < top) top = sel;
+        if (sel >= top + BAG_VIS) top = sel - BAG_VIS + 1;
+        bag_rows(list, n, top);
+        DISPLAY_ON; pal_apply();
         for (;;) {
-            for (i = 0; i <= n; i++) draw_cursor(TGT_BG, 1, 2 + i * 2, i == sel);
+            for (i = 0; i < BAG_VIS; i++) draw_cursor(TGT_BG, 1, 2 + i * 2, top + i == sel);
             say_nowait(sel < n ? IT_DESC[list[sel]] : S_BAG_QUIT);
             for (;;) { frame(); if (joy_new & (J_UP | J_DOWN | J_A | J_B)) break; }
             if (joy_new & J_UP) sel = sel ? sel - 1 : n;
             else if (joy_new & J_DOWN) sel = sel >= n ? 0 : sel + 1;
             else break;
+            if (sel < top || sel >= top + BAG_VIS) {
+                top = sel < top ? sel : sel - BAG_VIS + 1;
+                bag_rows(list, n, top);
+            }
         }
         tb_close();
         if ((joy_new & J_B) || sel == n) return 0;
-        t = list[sel];
-        if (IT_KIND[t]) {                       // 디지바이스·그물: 전투에서 포획 (전투 쪽에서 처리)
+        t = list[sel]; k = IT_KIND[t];
+        if (k >= 1 && k <= 3) {                 // 디지바이스·그물: 전투에서 포획 (전투 쪽에서 처리)
             if (inbattle) return 0x10 | t;
             say(S_CANTUSE); tb_close(); continue;
+        }
+        if (k >= 5) {                           // 진화 물건: 필드에서만
+            uint8_t who;
+            if (inbattle) { say(S_CANTUSE); tb_close(); continue; }
+            who = party_screen(2);
+            if (who == 0xFF) continue;
+            var_item = t;
+            if (item_evolve(who, k)) G.bag[t]--;
+            continue;
         }
         if (IT_HEAL[t]) {
             uint8_t who = party_screen(2);
             if (who == 0xFF) continue;
             {
                 mon_t *m = &G.party[who]; uint16_t mx = mon_maxhp(m), before = m->hp;
-                if (m->egg || !m->hp || m->hp >= mx) { say(S_USELESS); tb_close(); continue; }
+                if (m->egg || !m->hp || (m->hp >= mx && k != 4)) { say(S_USELESS); tb_close(); continue; }
                 m->hp += IT_HEAL[t]; if (m->hp > mx) m->hp = mx;
                 G.bag[t]--;
-                var_sp[0] = m->sp; var_num[0] = m->hp - before; say(S_HEALED); tb_close();
+                var_sp[0] = m->sp; var_num[0] = m->hp - before;
+                if (k == 4) { m->bond = m->bond > 240 ? 250 : m->bond + 10; say(S_MEAT); }       // 고기: 유대↑
+                else say(S_HEALED);
+                tb_close();
                 if (inbattle) return 1;
             }
             continue;
@@ -257,15 +288,15 @@ void shop_screen(void) BANKED {
     for (;;) {
         DISPLAY_OFF;
         screen_clear(); scene = SCENE_OTHER; pool_reset(1);
-        draw_frame(TGT_BG, 0, 0, 20, 13, 0);
+        draw_frame(TGT_BG, 0, 0, 20, 14, 0);
         print_at(TGT_BG, 2, 0, S_SHOP_TITLE);
         for (i = 0; i < n; i++) {
             var_item = list[i]; print_at(TGT_BG, 2, 2 + i * 2, S_NAME_I0);
             print_num(TGT_BG, 14, 3 + i * 2, IT_PRICE[list[i]], 4);
         }
         print_at(TGT_BG, 2, 2 + n * 2, S_SHOP_QUIT);
-        draw_frame(TGT_BG, 0, 13, 20, 5, 1);
-        print_at(TGT_BG, 2, 14, S_SHOP_BITS); print_num(TGT_BG, 13, 15, G.bits, 5);
+        draw_frame(TGT_BG, 0, 14, 20, 4, 1);
+        print_at(TGT_BG, 2, 15, S_SHOP_BITS); print_num(TGT_BG, 13, 16, G.bits, 5);
         DISPLAY_ON; pal_apply();
         if (sel > n) sel = n;
         for (;;) {

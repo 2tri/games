@@ -97,6 +97,10 @@ ES = {
     'box_title': '디지몬 보관함', 'box_dep': '맡기기', 'box_wd': '데려오기', 'box_q': '무엇을 할까?', 'box_empty': '보관함이 비어 있다.',
     'box_full': '보관함이 가득 찼다!', 'box_one': '함께하는 디지몬이 하나뿐이라 맡길 수 없다!', 'party_full': '더 이상 데려갈 수 없다!\n(함께하는 디지몬은 6마리까지)',
     'box_did': '{s0}{을/를} 보관함에 맡겼다.', 'box_got': '{s0}{을/를} 데려왔다!', 'box_did_e': '디지타마를 보관함에 맡겼다.', 'box_got_e': '디지타마를 데려왔다!', 'box_pick': '누구를 맡길까?', 'box_n': '마리',
+    'dark_force': '{s0}{은/는} 유대가 약해서\n어둠을 억누르지 못했다…!', 'nothing': '아무 일도 일어나지 않았다.',
+    'purify_q': '에렉몬: {s0}에게서 어둠의 기운이 느껴져.\f원래 모습으로 되돌려 줄까?', 'purified': '어둠이 걷혔다!\n{s0}{은/는} {s1}{으로/로} 돌아왔다!',
+    'evo_stop': '어라…? {s0}의 진화가 멈췄다!', 'meat': '{s0}{은/는} 고기를 맛있게 먹었다!\n유대가 깊어졌다!',
+    'st_bond': '유대', 'bond0': '·····', 'bond1': '♥····', 'bond2': '♥♥···', 'bond3': '♥♥♥··', 'bond4': '♥♥♥♥·', 'bond5': '♥♥♥♥♥',
 }
 ESID = {k: sid(v) for k, v in ES.items()}
 
@@ -818,6 +822,7 @@ sp_rows = []
 for i, sp in enumerate(SPECIES):
     d = W['species'][sp]; evo = (d.get('evo') or [None])[0]
     need = 0xFF if not evo or not evo.get('need') else (0xFE if evo['need'] == 'event' else CRESTI[evo['need']])
+    if evo and need == 0xFF and d['tier'] == 'champion': need = 0xFD          # 완전체로는 문장이 하나라도 있어야
     sig = [MOVEI[n] for n in d['sig']][:3] + [0xFF] * 3
     if evo and d['tier'] == 'rookie': evo = dict(evo, lv=14)          # 성장기→성숙기 Lv14 (기획서 레벨 설계)
     if evo and d['tier'] == 'champion': evo = dict(evo, lv=30)        # 성숙기→완전체 문장 + Lv30
@@ -826,6 +831,18 @@ for i, sp in enumerate(SPECIES):
         SPI[evo['to']] if evo else 0xFF, evo['lv'] if evo else 0, need, sig[0], sig[1], sig[2],
         SP_NAME[i], SP_GRADE[i], SP_TYPE[i], SP_FRONT[i], SP_BACK[i], SPI[d['darkevo']] if d.get('darkevo') else 0xFF, 1 if d.get('dark') else 0))
 t += 'const species_t SPECIES[] = {' + ','.join(sp_rows) + '};\n'
+# 진화 갈래 표 (battle.c 가 include → 뱅크 1): 다른·실패 성숙기, 이블 스파이럴, 정화로 돌아갈 모습
+undark = {}
+for sp in SPECIES:
+    d = W['species'][sp]
+    for k in ('darkevo', 'spiral'):
+        if d.get(k): undark.setdefault(d[k], sp)
+ex = '// build.py 가 만듦\n'
+ex += arr('EVO_ALT', [SPI[W['species'][sp].get('branch', {}).get('alt')] if W['species'][sp].get('branch') else 0xFF for sp in SPECIES])
+ex += arr('EVO_FAIL', [SPI[W['species'][sp].get('branch', {}).get('fail')] if W['species'][sp].get('branch') else 0xFF for sp in SPECIES])
+ex += arr('EVO_SPIRAL', [SPI[W['species'][sp]['spiral']] if W['species'][sp].get('spiral') else 0xFF for sp in SPECIES])
+ex += arr('EVO_UNDARK', [SPI[undark[sp]] if sp in undark else 0xFF for sp in SPECIES])
+open(os.path.join(GEN, 'evox.h'), 'w').write(ex)
 t += 'const move_t MOVES[] = {' + ','.join('{%d,%d,%d,%d,%d,%d}' % (MV_NAME[i], m[1], m[2], m[3], m[4], m[5]) for i, m in enumerate(MOVES)) + '};\n'
 tb = []
 for tr in TIERS:
