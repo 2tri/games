@@ -192,7 +192,8 @@ const FOES = {
   shelob: { name: '쉴로브', spr: 'shelob', lv: 28, hp: 190, atk: 24, def: 20, spd: 10, type: '짐승', boss: true, moves: ['sting', 'fang', 'web'] },
   witchking: { name: '마술사왕', spr: 'witchking', lv: 34, hp: 260, atk: 30, def: 24, spd: 13, type: '어둠', boss: true, moves: ['mace', 'wraithfire', 'dread'] },
   fellbeast: { name: '날짐승 탄 나즈굴', spr: 'fellbeast', lv: 24, hp: 140, atk: 22, def: 16, spd: 15, type: '어둠', boss: true, moves: ['shriek', 'morgul', 'peck'] },
-  uruk: { name: '우루크하이', spr: 'uruk', lv: 18, hp: 95, atk: 20, def: 16, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
+  urukS: { name: '우루크하이 척후병', spr: 'uruk', lv: 12, hp: 55, atk: 15, def: 12, spd: 11, type: '오크', moves: ['cleave', 'bash', 'bash'] },
+  uruk: { name: '우루크하이', spr: 'uruk', lv: 16, hp: 105, atk: 18, def: 15, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
 };
 const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 }, '요정': { '오크': 2 } };   // 스팅은 오크·고블린에게 강하다   // 나즈굴은 불을 두려워한다
 
@@ -203,7 +204,7 @@ function newState(hero) {
   const h = HEROES[hero]; return { hero, lead: hero, party: [hero], mem: {}, lv: 5, xp: 0, hp: h.hp, items: { lembas: 3, herb: 2 }, shadow: 0, dagger: false, wound: false, step: 0, buff: { atk: 0, def: 0 } };
 }
 function statOf(id, lv, k) { const h = HEROES[id]; const base = { hp: h.hp, atk: h.atk, def: h.def, spd: h.spd }[k]; const grow = { hp: 4, atk: 2, def: 2, spd: 1 }[k];
-  let v = base + grow * (lv - 5) + (k === 'atk' && id === 'frodosam' && S.dagger ? 3 : 0) + (k === 'def' && id === 'frodosam' && S.mithril ? 5 : 0);
+  let v = base + grow * (lv - 5) + (k === 'atk' && id === 'frodosam' && S.dagger ? 3 : 0) + (k === 'def' && id === 'frodosam' && S.mithril ? 5 : 0) + (k === 'def' && S.cloak ? 2 : 0);
   if (k === 'hp' && id === 'frodosam' && S.wound) v = Math.round(v * 0.7);     // 모르굴 칼의 상처: 최대 체력 감소
   return v; }
 function stat(k) { return statOf(S.hero, S.lv, k); }
@@ -284,11 +285,13 @@ async function battle(foeId, opt) {
         const mv = heroMoves(S.hero), opts = mv.map(m => MOVES[m].name); const k = await choose(null, opts.concat(['돌아가기']), opts.length);
         if (k < opts.length) act = { type: 'move', id: mv[k] };
       } else if (c === 1) {
-        const it = S.items, list = [`렘바스 ×${it.lembas}`, `약초 ×${it.herb}`, '돌아가기'];
-        const k = await choose(null, list, 2);
+        const it = S.items, list = [`렘바스 ×${it.lembas}`, `약초 ×${it.herb}`]; if (S.phial) list.push(B.phialUsed ? '빛의 병 (빛이 약해짐)' : '빛의 병');
+        const n = list.length; const k = await choose(null, list.concat(['돌아가기']), n);
         if (k === 0 && it.lembas > 0) act = { type: 'item', id: 'lembas' };
         else if (k === 1 && it.herb > 0) act = { type: 'item', id: 'herb' };
-        else if (k < 2) await say('가방에 남아 있지 않다.');
+        else if (k === 2 && S.phial && !B.phialUsed) act = { type: 'item', id: 'phial' };
+        else if (k === 2 && S.phial) await say('빛의 병은 한 싸움에 한 번만 밝게 빛난다.');
+        else if (k < n) await say('가방에 남아 있지 않다.');
       } else if (c === 2) {
         const others = S.party.filter(id => id !== S.hero);
         if (!others.length) { await say(S.hero === 'frodosam' ? '프로도와 샘은 서로를 바라보았다. 지금은 둘뿐이다.' : '지금은 함께할 동료가 없다.'); continue; }
@@ -321,6 +324,8 @@ async function heroTurn(act) {
   if (act.type === 'none') return;
   if (act.type === 'item') {
     if (act.id === 'lembas') { S.items.lembas--; const before = S.hp; S.hp = Math.min(stat('hp'), S.hp + 20); await say(`렘바스를 한 입 먹었다. 체력이 ${S.hp - before} 회복됐다.`); }
+    else if (act.id === 'phial') { B.phialUsed = true; const t = ['어둠', '짐승', '망령'].includes(B.foe.type) ? 2 : 1; B.st.foeSleep = t;
+      await say('빛의 병을 높이 들었다! 별빛이 쏟아진다!'); await say(josa(B.foe.name, '이', '가') + ` 눈을 가리고 물러섰다! (${t}턴 움직이지 못함)`); }
     else { S.items.herb--; st.heroSleep = 0; st.heroBind = 0; S.buff.atk = Math.max(0, S.buff.atk); await say('약초를 씹었다. 몸이 가뿐해졌다.'); }
     return;
   }
@@ -671,9 +676,92 @@ const CH1 = [
     S.step = 20; save();
   },
   async () => {
-    await chapterTitle('제4장 끝', '다음 이야기: 로스로리엔');
+    await chapterTitle('제5장', '황금 숲과 대강');
+    await story('로스로리엔 · 숲 경계', 'legolas_front', [
+      '황금빛 잎이 지지 않는 숲. 나무 위에서 요정 경비대장 할디르가 화살을 겨눈 채 내려왔다.',
+      '할디르: 난쟁이는 눈을 가리고 들어가야 하오.',
+      '김리가 버럭 화를 냈다. 결국 아라곤이 「그럼 모두 눈을 가리겠소」 하고 나서자, 레골라스도 함께 눈을 가렸다.',
+      '눈을 가린 채 손을 잡고 걷는 사이, 레골라스와 김리 사이의 날 선 기운이 조금 누그러졌다.',
+    ]);
+    await story('카라스 갈라돈', 'galadriel_front', [
+      '거대한 나무 위 도시. 빛나는 갈라드리엘이 원정대를 내려다보았다. 누구도 그녀의 눈을 오래 마주하지 못했다.',
+      '그날 밤 그녀는 프로도를 은빛 물그릇 앞으로 데려갔다. 「들여다보겠느냐?」',
+    ]);
+    let c = await choose('거울을...', ['들여다본다', '들여다보지 않는다']);
+    if (c === 0) await say('물 위에 불타는 샤이어가 비쳤다. 쓰러진 굴뚝, 끌려가는 호빗들... 그리고 불꽃에 휩싸인 거대한 눈. 프로도는 비틀거리며 물러났다.');
+    await say('프로도가 반지를 꺼냈다. 「이걸... 당신이 가져 주시겠어요?」');
+    c = await choose('반지를...', ['갈라드리엘에게 내민다', '다시 넣는다']);
+    if (c === 0) { await say('한순간 그녀가 무섭도록 크고 아름다워졌다. 그러나 곧 원래 모습으로 돌아와 고개를 저었다. 「시험을 이겨 냈구나. 나는 작아져 서쪽으로 가겠다.」'); S.shadow = Math.max(0, S.shadow - 1); await say('마음이 조금 가벼워졌다. (그림자 −1)'); }
+    else await say('갈라드리엘이 희미하게 웃었다. 「그것은 너에게 맡겨진 짐이다.」');
+    await story('로스로리엔 · 떠나는 날', 'galadriel_front', [
+      '갈라드리엘이 선물을 나눠 주었다. 모두에게 잎사귀 브로치가 달린 요정 망토(방어 +2), 넉넉한 렘바스.',
+      '프로도에게는 에아렌딜의 별빛을 담은 「빛의 병」. 「다른 모든 빛이 꺼진 어둠 속에서 너를 비춰 줄 것이다.」',
+      '김리는 머리카락 한 올을 청했다가 세 올을 받고는 감격해서 말을 잇지 못했다.',
+      '빛의 병을 얻었다! 전투 중 가방에서 쓰면 적이 눈부셔 움직이지 못한다. (한 싸움에 한 번)',
+    ]);
+    S.cloak = true; S.phial = true; S.items.lembas = Math.max(S.items.lembas, 6); S.items.herb = Math.max(S.items.herb, 3); healAll(); S.step = 21; save();
+  },
+  async () => {
+    await story('대강', 'fellbeast', [
+      '요정 배 세 척에 나눠 타고 대강을 따라 내려갔다. 밤마다 무언가 뒤를 쫓는 기척이 있었다. 통나무에 매달려 헤엄치는 골룸이었다.',
+      '어느 밤, 남쪽 하늘에서 거대한 날개 달린 그림자가 다가왔다. 차가운 공포가 배 위를 덮쳤다.',
+      '레골라스가 갈라드리엘에게 받은 활을 당겼다. 화살 한 대에 그림자가 비명을 지르며 강 건너로 떨어졌다.',
+      '김리: 훌륭하오, 요정 친구! 이번만큼은 인정하지.',
+    ]);
+    await story('아르고나스', 'aragorn_front', [
+      '강 양쪽에 손을 치켜든 거대한 왕들의 석상이 서 있었다. 곤도르의 옛 국경이다.',
+      '아라곤이 고개를 들고 조용히 석상을 바라보았다. 그는 이실두르의 후손이었다.',
+    ]);
+    S.step = 22; save();
+  },
+  async () => {
+    await story('아몬 헨', 'boromir_front', [
+      '원정대는 강가 언덕에서 길을 정해야 했다. 동쪽 모르도르로, 아니면 보로미르가 바라는 곤도르로.',
+      '홀로 생각에 잠긴 프로도를 보로미르가 따라왔다. 「반지를 나에게 빌려주게. 곤도르를 지킬 수 있는 힘이야!」',
+      '그의 눈빛이 이상하게 번들거렸다.',
+    ]);
+    let c = await choose('프로도는...', ['반지를 끼고 달아난다', '말로 설득한다']);
+    if (c === 0) { S.shadow++; await say('반지를 끼자 세상이 잿빛으로 변했다. 언덕 꼭대기에서 불타는 눈이 이쪽을 꿰뚫어 보았다! (그림자 +1)'); }
+    else await say('「보로미르, 당신은 지금 당신이 아니에요!」 보로미르가 덤벼들었고, 프로도는 몸을 비틀어 겨우 빠져나왔다.');
+    await say('정신을 차린 보로미르가 무릎을 꿇었다. 「내가 무슨 짓을...」 그러나 프로도는 이미 사라진 뒤였다.');
+    await story('아몬 헨 · 숲속', 'uruk', ['그때 숲 사이로 흰 손 표식을 단 거대한 오크들이 쏟아져 나왔다. 사루만의 우루크하이다!']);
+    let r = await battle('urukS'); if (r === 'lose') return lose();
+    await story('아몬 헨 · 숲속', 'boromir_front', [
+      '숲 저편에서 곤도르의 뿔나팔 소리가 길게 울렸다. 보로미르가 메리와 피핀을 지키며 홀로 싸우고 있었다!',
+      '검은 화살이 한 대, 또 한 대 그의 몸에 꽂혔다. 그래도 보로미르는 쓰러지지 않았다.',
+    ]);
+    await story('아몬 헨 · 숲속', 'uruk', ['우루크하이 대장이 마지막 화살을 메기며 돌아섰다!']);
+    r = await battle('uruk', { noRun: true }); if (r === 'lose') return lose();
+    await story('아몬 헨 · 숲속', 'boromir_front', [
+      '그러나 메리와 피핀은 이미 우루크하이에게 끌려간 뒤였다.',
+      '보로미르가 아라곤의 팔에 기대어 말했다. 「반지를 빼앗으려 했소... 미안하오. 내 백성을... 지켜 주시오.」',
+      '아라곤: 그대의 도시는 무너지지 않을 거요. 약속하겠소, 형제여.',
+      '곤도르의 용사는 그렇게 눈을 감았다. 원정대는 그를 요정 배에 눕혀 라우로스 폭포로 떠나보냈다.',
+    ]);
+    S.step = 23; save();
+  },
+  async () => {
+    await story('파르스 갈렌 · 강가', 'frodosam_front', [
+      '프로도는 혼자 배를 밀어냈다. 반지는 결국 모두를 망가뜨릴 것이다. 혼자 가야 한다.',
+      '샘: 나리! 기다려요! 저 헤엄 못 쳐요!',
+      '첨벙거리며 물에 빠진 샘을 프로도가 손을 뻗어 건져 올렸다.',
+      '샘: 약속했잖아요. 끝까지 함께한다고. 감지 할아버지한테도 그렇게 말하고 왔다고요.',
+      '프로도는 웃으며 울었다. 둘은 함께 동쪽 강둑으로 노를 저었다.',
+    ]);
+    await story('아몬 헨', 'aragorn_front', [
+      '언덕 위에서 아라곤은 멀어지는 배를 바라보았다. 그리고 쫓아가지 않았다.',
+      '아라곤: 프로도의 운명은 이제 우리 손을 떠났네. 하지만 메리와 피핀이 끌려가 고문당하게 둘 수는 없지.',
+      '레골라스·김리: 그럼 오크를 쫓아야겠군!',
+    ]);
+    // 반지 갈래: 프로도와 샘만 남는다
+    for (const id of ['aragorn', 'legolas', 'gimli']) removeMember(id);
+    if (S.hero !== 'frodosam') swapTo('frodosam');
+    healAll(); S.step = 24; save();
+  },
+  async () => {
+    await chapterTitle('제1부 「반지 원정대」 끝', '다음: 제2부 「두 개의 탑」');
     await say('여기까지가 지금 만들어진 이야기입니다. 저장되었습니다.');
-    S.step = 21; save();
+    S.step = 25; save();
   },
 ];
 const PRACTICE_INTRO = {
