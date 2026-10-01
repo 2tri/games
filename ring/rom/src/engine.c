@@ -45,7 +45,6 @@ void eng_init(void) {
     }
     memset(fb, 0, sizeof fb); memset(dirty, 1, sizeof dirty);
     flush();
-    SWITCH_ROM(1);
     add_VBL(vbl_isr);
     SHOW_BKG; DISPLAY_ON;
 }
@@ -90,14 +89,14 @@ void box(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
     rect(x, y, w, h, 3); rect(x + 1, y + 1, w - 2, h - 2, 0);
     rect(x + 3, y + 3, w - 6, 1, 3); rect(x + 3, y + h - 4, w - 6, 1, 3); rect(x + 3, y + 3, 1, h - 6, 3); rect(x + w - 4, y + 3, 1, h - 6, 3);
 }
-uint8_t spr_w(uint8_t id) { return SPRS[id].w * 8; }
-uint8_t spr_h(uint8_t id) { return SPRS[id].h * 8; }
+uint8_t spr_w(uint8_t id) { uint8_t sv = CURRENT_BANK, v; SWITCH_ROM(DATA_BANK); v = SPRS[id].w * 8; SWITCH_ROM(sv); return v; }
+uint8_t spr_h(uint8_t id) { uint8_t sv = CURRENT_BANK, v; SWITCH_ROM(DATA_BANK); v = SPRS[id].h * 8; SWITCH_ROM(sv); return v; }
 // 그림 붙이기 (x, y 는 8의 배수). white=1 이면 하얀 실루엣(맞았을 때 깜빡임)
 uint8_t blit_ymax = 144;   // 이 줄부터 아래는 그리지 않음 (대사창 가림)
 void blit(uint8_t id, uint8_t x, uint8_t y, uint8_t white) {
-    uint8_t w = SPRS[id].w, h = SPRS[id].h, tx, ty, r, m, col, row;
-    const uint8_t *d = SPRS[id].data; uint8_t *p;
-    SWITCH_ROM(SPRS[id].bank);
+    uint8_t sv = CURRENT_BANK, w, h, tx, ty, r, m, col, row, bk; const uint8_t *d; uint8_t *p;
+    SWITCH_ROM(DATA_BANK); w = SPRS[id].w; h = SPRS[id].h; d = SPRS[id].data; bk = SPRS[id].bank;
+    SWITCH_ROM(bk);
     for (ty = 0; ty < h; ty++) {
         row = (y >> 3) + ty;
         for (tx = 0; tx < w; tx++, d += 24) {
@@ -112,7 +111,7 @@ void blit(uint8_t id, uint8_t x, uint8_t y, uint8_t white) {
             }
         }
     }
-    SWITCH_ROM(1);
+    SWITCH_ROM(sv);
 }
 // ── 글자 (갈무리9, 롬에 쓰인 글자만) ──
 static uint16_t utf8(const char **ps) {
@@ -121,12 +120,16 @@ static uint16_t utf8(const char **ps) {
     if ((c & 0xE0) == 0xC0) { *ps += 2; return ((c & 0x1F) << 6) | (s[1] & 0x3F); }
     *ps += 3; return ((c & 0x0F) << 12) | ((uint16_t)(s[1] & 0x3F) << 6) | (s[2] & 0x3F);
 }
+// 글자 그림 찾기: 글자표(0번 은행)에서 번호 → 1번 또는 15번 은행으로 바꿔 그 주소 (부르는 쪽이 원래 은행으로 되돌림)
 static const uint8_t *glyph(uint16_t cp) {
     uint16_t lo = 0, hi = FONT_N, mid;
-    if (cp < 127) return FONT_GL + (cp - 32) * 21;
-    while (lo < hi) { mid = (lo + hi) >> 1; if (FONT_CP[mid] < cp) lo = mid + 1; else hi = mid; }
-    if (lo >= FONT_N || FONT_CP[lo] != cp) lo = '?' - 32;
-    return FONT_GL + lo * 21;
+    if (cp < 127) lo = cp - 32;
+    else {
+        while (lo < hi) { mid = (lo + hi) >> 1; if (FONT_CP[mid] < cp) lo = mid + 1; else hi = mid; }
+        if (lo >= FONT_N || FONT_CP[lo] != cp) lo = '?' - 32;
+    }
+    if (lo < FONT_SPLIT) { SWITCH_ROM(FONT_BANK); return FONT_GL + lo * 21; }
+    SWITCH_ROM(FONT_BANK2); return FONT_GL2 + (lo - FONT_SPLIT) * 21;
 }
 static uint8_t cw(uint16_t cp) { return glyph(cp)[0]; }
 static uint8_t draw_char(uint16_t cp, uint8_t x, uint8_t y, uint8_t tone) {
@@ -145,8 +148,20 @@ static uint8_t draw_char(uint16_t cp, uint8_t x, uint8_t y, uint8_t tone) {
     }
     return w;
 }
-uint8_t text(const char *s, uint8_t x, uint8_t y, uint8_t tone) { while (*s) x += draw_char(utf8(&s), x, y, tone); return x; }
-uint8_t text_w(const char *s) { uint8_t w = 0; while (*s) w += cw(utf8(&s)); return w; }
+// 글은 어느 은행에 있든 먼저 RAM 으로 옮긴 뒤 글꼴 은행으로 바꿔 그림 (끝나면 원래 은행으로)
+static char TB[128];
+uint8_t text(const char *s0, uint8_t x, uint8_t y, uint8_t tone) {
+    uint8_t sv = CURRENT_BANK; const char *s = TB;
+    strncpy(TB, s0, 127); TB[127] = 0; SWITCH_ROM(FONT_BANK);
+    while (*s) x += draw_char(utf8(&s), x, y, tone);
+    SWITCH_ROM(sv); return x;
+}
+uint8_t text_w(const char *s0) {
+    uint8_t sv = CURRENT_BANK, w = 0; const char *s = TB;
+    strncpy(TB, s0, 127); TB[127] = 0; SWITCH_ROM(FONT_BANK);
+    while (*s) w += cw(utf8(&s));
+    SWITCH_ROM(sv); return w;
+}
 
 // ── 글 조립 ──
 char SB[200]; static uint8_t sbn;
@@ -198,8 +213,9 @@ static uint8_t type_line(const char *s, uint8_t a, uint8_t b, uint8_t y, uint8_t
 }
 static char SAYBUF[200];
 void say(const char *s0) {
-    uint8_t i, fast, k, t;
-    strcpy(SAYBUF, s0);     // SB 로 만든 글을 넘겨도 안전하게
+    uint8_t i, fast, k, t, sv = CURRENT_BANK;
+    strcpy(SAYBUF, s0);     // SB 로 만든 글·다른 은행의 글도 안전하게
+    SWITCH_ROM(FONT_BANK);
     wrap(SAYBUF, 144);
     for (i = 0; i < NL; i += 2) {
         box(0, 96, 160, 48);
@@ -211,13 +227,14 @@ void say(const char *s0) {
             if (k == K_A || k == K_B) break;
         }
     }
+    SWITCH_ROM(sv);
 }
-uint8_t choose(const char *q, const char **opts, uint8_t n, uint8_t cancel) {
-    uint8_t w = 0, h, x, y, i = 0, k, tw;
+uint8_t choose(const char *q, const char * const *opts, uint8_t n, uint8_t cancel) {
+    uint8_t w = 0, h, x, y, i = 0, k, tw, sv;
     for (k = 0; k < n; k++) { tw = text_w(opts[k]); if (tw > w) w = tw; }
     w += 22; h = n * 14 + 10; x = 160 - w; y = 96 - h;
     box(0, 96, 160, 48);
-    if (q) { strcpy(SAYBUF, q); wrap(SAYBUF, 144); type_line(SAYBUF, LS[0], LE[0], 105, 1); if (NL > 1) type_line(SAYBUF, LS[1], LE[1], 121, 1); }
+    if (q) { strcpy(SAYBUF, q); sv = CURRENT_BANK; SWITCH_ROM(FONT_BANK); wrap(SAYBUF, 144); type_line(SAYBUF, LS[0], LE[0], 105, 1); if (NL > 1) type_line(SAYBUF, LS[1], LE[1], 121, 1); SWITCH_ROM(sv); }
     box(x, y, w, h);
     for (k = 0; k < n; k++) text(opts[k], x + 14, y + 6 + k * 14, 3);
     for (;;) {

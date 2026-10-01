@@ -33,6 +33,6 @@ void sb_josa(const char *a, const char *b);   // 받침 있으면 a, 없으면 b
 extern void (*scene)(void);       // 지금 장면 다시 그리기
 void redraw(void);
 void say(const char *s);
-uint8_t choose(const char *q, const char **opts, uint8_t n, uint8_t cancel);
+uint8_t choose(const char *q, const char * const *opts, uint8_t n, uint8_t cancel);
 uint8_t rnd(void);
 uint8_t rnd100(void);

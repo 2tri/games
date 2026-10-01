@@ -1,4 +1,5 @@
-// 전투: 웹판 battle()/heroTurn()/foeTurn() 을 그대로 옮김
+// 전투: 웹판 battle()/heroTurn()/foeTurn() 을 그대로 옮김 (2번 은행, 자료표와 같은 은행)
+#pragma bank 2
 #include <gb/gb.h>
 #include <string.h>
 #include "engine.h"
@@ -11,23 +12,24 @@ static int16_t fhp, fmax, fShown, hShown;
 static int8_t fAtkB, fDefB;
 static uint8_t heroSleep, heroBind, hide, foeSleep, phialUsed, foeShow, heroShow;
 
-uint16_t statOf(uint8_t id, uint8_t lv, uint8_t k) {
+uint16_t statOf(uint8_t id, uint8_t lv, uint8_t k) BANKED {
     const Hero *h = &HEROES[id]; uint16_t v;
     if (k == ST_HP) { v = h->hp + 4 * (lv - 5); if (id == HE_FRODOSAM && S.wound) v = (v * 7 + 5) / 10; return v; }
     if (k == ST_ATK) return h->atk + 2 * (lv - 5) + (id == HE_FRODOSAM && S.dagger ? 3 : 0);
     if (k == ST_DEF) return h->def + 2 * (lv - 5) + (id == HE_FRODOSAM && S.mithril ? 5 : 0) + (S.cloak ? 2 : 0);
     return h->spd + (lv - 5);
 }
-uint16_t stat(uint8_t k) { return statOf(S.hero, S.lv, k); }
+uint16_t stat(uint8_t k) BANKED { return statOf(S.hero, S.lv, k); }
 uint8_t heroMove(uint8_t id, uint8_t i) { return (id == HE_FRODOSAM && S.sting && i == 0) ? MV_STINGM : HEROES[id].moves[i]; }
+uint8_t has(uint8_t id) BANKED { uint8_t i; for (i = 0; i < S.np; i++) if (S.party[i] == id) return 1; return 0; }
 static uint8_t memi(uint8_t id) { uint8_t i; for (i = 0; i < S.np; i++) if (S.party[i] == id) return i; return 0; }
-void swapTo(uint8_t id) {
+void swapTo(uint8_t id) BANKED {
     uint8_t a = memi(S.hero), b = memi(id);
     S.mlv[a] = S.lv; S.mxp[a] = S.xp; S.mhp[a] = S.hp;
     S.hero = id; S.lv = S.mlv[b]; S.xp = S.mxp[b]; S.hp = S.mhp[b];
 }
-void addMember(uint8_t id, uint8_t lv) { uint8_t i = S.np++; S.party[i] = id; S.mlv[i] = lv; S.mxp[i] = 0; S.mhp[i] = statOf(id, lv, ST_HP); }
-void healAll(void) { uint8_t i; S.hp = stat(ST_HP); for (i = 0; i < S.np; i++) S.mhp[i] = statOf(S.party[i], S.mlv[i], ST_HP); }
+void addMember(uint8_t id, uint8_t lv) BANKED { uint8_t i; if (has(id)) return; i = S.np++; S.party[i] = id; S.mlv[i] = lv; S.mxp[i] = 0; S.mhp[i] = statOf(id, lv, ST_HP); }
+void healAll(void) BANKED { uint8_t i; S.hp = stat(ST_HP); for (i = 0; i < S.np; i++) S.mhp[i] = statOf(S.party[i], S.mlv[i], ST_HP); }
 
 // ── 화면 ──
 static void bar(uint8_t x, uint8_t y, int16_t cur, int16_t max) {
@@ -146,8 +148,8 @@ static uint8_t heroTurn(void) {
     return 0;
 }
 static uint8_t foeTurn(void) {
-    const Hero *H = &HEROES[S.hero]; const Move *mv; uint8_t i, n, alive[4];
-    const char *names[4];
+    const Hero *H = &HEROES[S.hero]; const Move *mv; uint8_t i, n, alive[5];
+    const char *names[5];
     if (foeSleep) { foeSleep--; sayName(F->name, "은", "는", " 움직이지 않는다."); return 0; }
     mv = &MOVES[F->moves[rnd() % 3]];
     sb_clear(); sb_add(F->name); sb_add("의 "); sb_add(mv->name); sb_add("!"); say(SB);
@@ -171,8 +173,8 @@ static uint8_t foeTurn(void) {
     return 0;
 }
 static const char *MAIN_OPTS[4] = { "싸운다", "가방", "동료", "도망" };
-uint8_t battle(uint8_t id, uint8_t noRun) {
-    const Hero *H; const char *opts[5]; char ib[3][24]; uint8_t c, k, i, n, others[4], r, heroFirst;
+uint8_t battle(uint8_t id, uint8_t noRun, uint8_t turns) BANKED {
+    const Hero *H; const char *opts[5]; char ib[4][24]; uint8_t c, k, i, n, others[5], r, heroFirst, turn = 0;
     foeId = id; F = &FOES[id]; fhp = fmax = fShown = F->hp; fAtkB = fDefB = 0; hShown = S.hp;
     heroSleep = heroBind = hide = foeSleep = phialUsed = 0; foeShow = heroShow = 1;
     S.buffAtk = S.buffDef = 0;
@@ -180,6 +182,8 @@ uint8_t battle(uint8_t id, uint8_t noRun) {
     sb_clear(); if (!F->boss) sb_add("야생의 "); sb_add(F->name); sb_josa("이", "가"); sb_add(F->boss ? " 앞을 가로막았다!" : " 덤벼들었다!"); say(SB);
     if (S.sting && F->type == TY_ORC) say("스팅의 칼날이 푸르게 빛난다! 오크가 가까이 있다.");
     for (;;) {
+        if (turns && turn >= turns) return R_RESCUE;   // 구원: 이야기 쪽에서 대사 뒤 rescue_end()
+        turn++;
         H = &HEROES[S.hero]; act = 0xFF;
         while (act == 0xFF) {
             sb_clear(); sb_add(H->name); sb_josa("은", "는"); sb_add(" 어떻게 할까?");
@@ -202,7 +206,7 @@ uint8_t battle(uint8_t id, uint8_t noRun) {
             } else if (c == 2) {
                 n = 0; for (i = 0; i < S.np; i++) if (S.party[i] != S.hero) others[n++] = S.party[i];
                 if (!n) { say(S.hero == HE_FRODOSAM ? "프로도와 샘은 서로를 바라보았다. 지금은 둘뿐이다." : "지금은 함께할 동료가 없다."); continue; }
-                for (i = 0; i < n; i++) { uint8_t m = memi(others[i]); sb_clear(); sb_add(HEROES[others[i]].name); sb_add(" "); sb_num(S.mhp[m], 0); sb_add("/"); sb_num(statOf(others[i], S.mlv[m], ST_HP), 0); strcpy(ib[i < 3 ? i : 2], SB); opts[i] = ib[i < 3 ? i : 2]; }
+                for (i = 0; i < n; i++) { uint8_t m = memi(others[i]); sb_clear(); sb_add(HEROES[others[i]].name); sb_add(" "); sb_num(S.mhp[m], 0); sb_add("/"); sb_num(statOf(others[i], S.mlv[m], ST_HP), 0); strcpy(ib[i], SB); opts[i] = ib[i]; }
                 opts[n] = "돌아가기";
                 k = choose("누구와 교대할까?", opts, n + 1, n);
                 if (k < n) { if (S.mhp[memi(others[k])] <= 0) say("쓰러져 있어서 나설 수 없다."); else { switchIn(others[k], 0); act = A_NONE; } }
@@ -219,3 +223,32 @@ uint8_t battle(uint8_t id, uint8_t noRun) {
         }
     }
 }
+
+// 구원 전투 마무리: 적이 사라지고 경험치 (웹판: lv × 8)
+void rescue_end(void) BANKED {
+    foeGone();
+    S.xp += F->lv * 8; sb_clear(); sb_add("경험치를 "); sb_num(F->lv * 8, 0); sb_add(" 얻었다."); say(SB);
+    while (S.xp >= S.lv * 10) { uint16_t old = stat(ST_HP); S.xp -= S.lv * 10; S.lv++; S.hp += stat(ST_HP) - old;
+        sb_clear(); sb_add("레벨이 올랐다! 이제 Lv"); sb_num(S.lv, 0); sb_add("이다."); say(SB); }
+}
+// 동료 빼기 (웹판 removeMember)
+void removeMember(uint8_t id) BANKED {
+    uint8_t i, j;
+    if (!has(id)) return;
+    if (S.hero == id) { for (i = 0; i < S.np; i++) if (S.party[i] != id) { swapTo(S.party[i]); break; } }
+    for (i = 0, j = 0; i < S.np; i++) if (S.party[i] != id) { S.party[j] = S.party[i]; S.mlv[j] = S.mlv[i]; S.mxp[j] = S.mxp[i]; S.mhp[j] = S.mhp[i]; j++; }
+    S.np = j;
+}
+// 웹판의 S.mem 반복문들
+void party_hurt(uint8_t d) BANKED { uint8_t i; for (i = 0; i < S.np; i++) if (S.party[i] != S.hero) { S.mhp[i] -= d; if (S.mhp[i] < 1) S.mhp[i] = 1; } }
+void party_floor_third(void) BANKED { uint8_t i; int16_t m; for (i = 0; i < S.np; i++) if (S.party[i] != S.hero) { m = (statOf(S.party[i], S.mlv[i], ST_HP) + 1) / 3; if (S.mhp[i] < m) S.mhp[i] = m; } }
+void frodo_cap_hp(void) BANKED { uint8_t i = memi(HE_FRODOSAM); int16_t m;
+    if (S.hero == HE_FRODOSAM) { m = stat(ST_HP); if (S.hp > m) S.hp = m; }
+    else if (has(HE_FRODOSAM)) { m = statOf(HE_FRODOSAM, S.mlv[i], ST_HP); if (S.mhp[i] > m) S.mhp[i] = m; } }
+void frodo_full_hp(void) BANKED { uint8_t i = memi(HE_FRODOSAM);
+    if (S.hero == HE_FRODOSAM) S.hp = stat(ST_HP); else if (has(HE_FRODOSAM)) S.mhp[i] = statOf(HE_FRODOSAM, S.mlv[i], ST_HP); }
+// 사우론의 입 막간: 일행을 잠시 맡겨 두고 아라곤 혼자
+static State keep;
+void keep_party(void) BANKED { keep = S; }
+void solo_party(uint8_t id) BANKED { S.np = 1; S.party[0] = id; S.mlv[0] = S.lv; S.mxp[0] = 0; S.mhp[0] = 0; }
+void restore_party(void) BANKED { uint8_t st = S.step; S = keep; S.step = st; }

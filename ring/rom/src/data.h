@@ -1,8 +1,10 @@
 #include <stdint.h>
+#define FONT_BANK 1
+#define DATA_BANK 2
 #define N_MOVES 54
 #define N_FOES 25
 #define N_HEROES 5
-#define N_SPR 38
+#define N_SPR 41
 #define MV_STAFF 0
 #define MV_STINGM 1
 #define MV_PAN 2
@@ -125,6 +127,9 @@
 #define SP_GALADRIEL_FRONT 35
 #define SP_FARAMIR_FRONT 36
 #define SP_GANDALFW_FRONT 37
+#define SP_EOWYN_FRONT 38
+#define SP_SAMFRODO_FRONT 39
+#define SP_TOM_FRONT 40
 #define T_0 0
 #define T_1 1
 #define T_2 2
@@ -140,4 +145,5 @@ typedef struct { const char *name; uint8_t spr, lv; uint16_t hp; uint8_t atk, de
 typedef struct { const char *name; uint8_t hp, atk, def, spd, moves[4], back, front; } Hero;
 typedef struct { uint8_t bank, w, h; const uint8_t *data; } Spr;
 extern const Move MOVES[]; extern const Foe FOES[]; extern const Hero HEROES[]; extern const Spr SPRS[]; extern const uint8_t EFFECT[4][7];
-extern const uint16_t FONT_CP[]; extern const uint8_t FONT_GL[]; extern const uint16_t FONT_N;
+extern const uint16_t FONT_CP[]; extern const uint8_t FONT_GL[], FONT_GL2[]; extern const uint16_t FONT_N, FONT_SPLIT;
+#define FONT_BANK2 15
