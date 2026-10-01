@@ -3,7 +3,7 @@
 
 OPS = ['END', 'SAY', 'ASK', 'JMP', 'JF', 'JNF', 'JNO', 'SETF', 'CLRF', 'CLOSE', 'FLASH', 'FADEOUT', 'FADEIN',
        'WARP', 'GIVEMON', 'GIVEITEM', 'GIVEEGG', 'HEAL', 'SETHEAL', 'PIC', 'PICOFF', 'EVOLVE', 'BATTLE', 'CREST',
-       'WAIT', 'JKID', 'PICKKID', 'SHAKE', 'FACE', 'SFX']
+       'WAIT', 'JKID', 'PICKKID', 'SHAKE', 'FACE', 'SFX', 'SHOP']
 OP = {n: i for i, n in enumerate(OPS)}
 
 # 특수 디지몬 번호
@@ -49,6 +49,7 @@ def IfKid(k, l): return ('JKID', k, l)
 def PickKid(): return ('PICKKID',)
 def Shake(n=6): return ('SHAKE', n)
 def End(): return ('END',)
+def Shop(): return ('SHOP',)
 
 
 class NPC:

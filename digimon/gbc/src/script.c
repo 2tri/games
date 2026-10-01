@@ -84,6 +84,7 @@ void run_script(uint8_t bank, const uint8_t *base, uint16_t off) BANKED {
             break;
         case OP_CREST: G.crests |= 1 << RB(); break;
         case OP_WAIT: wait_frames(RB()); break;
+        case OP_SHOP: tb_close(); shop_screen(); break;
         case OP_JKID: a = RB(); w = RW(); if (G.kid == a) pc = base + w; break;
         case OP_PICKKID: tb_close(); kid_pick(); break;
         case OP_SHAKE: shake(RB()); break;

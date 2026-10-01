@@ -8,7 +8,7 @@
 uint8_t bag_screen(uint8_t inbattle) BANKED;
 extern uint8_t print_max;
 
-static mon_t foe;
+mon_t foe;                       // 시험 도구가 읽음 (_foe)
 static uint8_t me, kind, runs, lvup;
 static int8_t sme, sfoe;          // 방어 단계
 static uint8_t used;              // 싸운 디지몬 (비트)
@@ -252,25 +252,34 @@ static uint8_t turn(uint8_t myslot) {   // myslot FF = 내 차례 없음
     return 0;
 }
 
-static void join_offer(void) {
-    uint8_t p = 0, t = SPECIES[foe.sp].tier, r;
-    if (t <= 1) p = 102; else if (t == 2) p = 77; else if (t == 3) p = 51;
-    if (rnd8(255) >= p) return;
-    pic_screen(foe.sp);
+// ───────── 포획 (디지몬 RPG 오마주: 디지바이스는 한 번 싸움에 3번, 그물은 확률↑·성장기까지) ─────────
+static uint8_t cap_tries;
+static uint8_t capture(uint8_t it) {      // 4 = 잡음(전투 끝), 0 = 계속
+    uint8_t tier = SPECIES[foe.sp].tier, k = IT_KIND[it], ch, lost, i;
+    uint16_t mx = mon_maxhp(&foe);
+    if (kind) { say(S_CAP_BOSS); return 0; }
+    if (k == 1) { if (!cap_tries) { say(S_CAP_NOMORE); return 0; } cap_tries--; say(S_CAP_DV); }
+    else { G.bag[it]--; var_item = it; say(S_CAP_NET); }
     var_sp[0] = foe.sp;
-    if (ask(S_JOIN)) {
-        uint8_t i;
-        foe.hp = mon_maxhp(&foe) / 2; if (!foe.hp) foe.hp = 1;
+    if (tier >= 3 || (tier == 2 && k != 3)) { flash(1); say(S_CAP_STRONG); return turn(0xFF); }   // 유년기(0·1)만, 성장기(2)는 성장기 그물
+    lost = (uint8_t)((uint32_t)(mx - foe.hp) * 100 / mx);
+    ch = k == 1 ? 6 + lost / 3 : k == 2 ? 45 + lost / 2 : (tier == 2 ? 25 + lost / 2 : 70 + lost / 4);
+    for (i = 0; i < 3; i++) { flash(1); blink_pic(1); }
+    if (rnd8(100) < ch) {
+        uint8_t r;
+        tb_close(); say(S_CAP_OK);
         for (i = 0; i < 4; i++) if (foe.mv[i] != 0xFF) foe.pp[i] = MOVES[foe.mv[i]].pp;
-        r = add_mon(&foe);
-        var_sp[0] = foe.sp; say(r == 0 ? S_JOINED : S_JOINED_BOX);
-    } else { var_sp[0] = foe.sp; say(S_LEFT); }
-    tb_close();
+        r = add_mon(&foe); set_own(foe.sp);
+        say(r == 0 ? S_JOINED : S_JOINED_BOX);
+        return 4;
+    }
+    say(S_CAP_NG);
+    return turn(0xFF);
 }
 
 uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
     uint8_t res = 0, act, s;
-    kind = k; runs = 0; sme = sfoe = 0; lvup = 0;
+    kind = k; runs = 0; sme = sfoe = 0; lvup = 0; cap_tries = 3;
     mon_make(&foe, sp, lv); set_seen(sp);
     me = first_alive(); used = 1 << me;
     tb_close(); music_play(kind ? SONG_BOSS : SONG_BATTLE); flash(2);
@@ -289,6 +298,7 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
             uint8_t used_item = bag_screen(1);
             screen_full(1);
             if (!used_item) continue;
+            if (used_item >= 0x10) { res = capture(used_item & 0x0F); continue; }
             dme = G.party[me].hp; hud_me();
             res = turn(0xFF);
         } else if (act == 2) {
@@ -315,7 +325,11 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
     }
     tb_close();
     if (res == 2) return 0;
-    if (res == 1 && kind == 0) join_offer();
+    if (res == 1) {          // 이기면 비트
+        uint16_t b = kind ? (uint16_t)foe.lv * 40 : (uint16_t)foe.lv * 8 + 10;
+        if (G.bits > 60000 - b) G.bits = 60000; else G.bits += b;
+        var_num[0] = b; say(S_GOT_BITS); tb_close();
+    }
     evolve_check();
     return res == 3 ? 2 : 1;
 }

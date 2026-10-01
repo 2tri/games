@@ -192,7 +192,7 @@ uint8_t bag_screen(uint8_t inbattle) BANKED {
         print_at(TGT_BG, 2, 0, S_BAG);
         for (i = 0; i < n; i++) {
             var_item = list[i]; print_at(TGT_BG, 2, 2 + i * 2, S_NAME_I0);
-            print_num(TGT_BG, 16, 3 + i * 2, G.bag[list[i]], 2);
+            if (IT_KIND[list[i]] != 1) print_num(TGT_BG, 16, 3 + i * 2, G.bag[list[i]], 2);   // 디지바이스는 개수 없음
         }
         print_at(TGT_BG, 2, 2 + n * 2, S_BAG_QUIT);
         DISPLAY_ON; pal_apply();
@@ -208,6 +208,10 @@ uint8_t bag_screen(uint8_t inbattle) BANKED {
         tb_close();
         if ((joy_new & J_B) || sel == n) return 0;
         t = list[sel];
+        if (IT_KIND[t]) {                       // 디지바이스·그물: 전투에서 포획 (전투 쪽에서 처리)
+            if (inbattle) return 0x10 | t;
+            say(S_CANTUSE); tb_close(); continue;
+        }
         if (IT_HEAL[t]) {
             uint8_t who = party_screen(2);
             if (who == 0xFF) continue;
@@ -222,6 +226,43 @@ uint8_t bag_screen(uint8_t inbattle) BANKED {
             continue;
         }
         say(S_CANTUSE); tb_close();
+    }
+}
+
+// ───────── 상점 (프렌들리숍 오마주) ─────────
+void shop_screen(void) BANKED {
+    uint8_t list[N_ITEMS], n = 0, i, sel = 0, t;
+    for (i = 0; i < N_ITEMS; i++) if (IT_PRICE[i]) list[n++] = i;
+    for (;;) {
+        DISPLAY_OFF;
+        screen_clear(); scene = SCENE_OTHER; pool_reset(1);
+        draw_frame(TGT_BG, 0, 0, 20, 13, 0);
+        print_at(TGT_BG, 2, 0, S_SHOP_TITLE);
+        for (i = 0; i < n; i++) {
+            var_item = list[i]; print_at(TGT_BG, 2, 2 + i * 2, S_NAME_I0);
+            print_num(TGT_BG, 14, 3 + i * 2, IT_PRICE[list[i]], 4);
+        }
+        print_at(TGT_BG, 2, 2 + n * 2, S_SHOP_QUIT);
+        draw_frame(TGT_BG, 0, 13, 20, 5, 1);
+        print_at(TGT_BG, 2, 14, S_SHOP_BITS); print_num(TGT_BG, 13, 15, G.bits, 5);
+        DISPLAY_ON; pal_apply();
+        if (sel > n) sel = n;
+        for (;;) {
+            for (i = 0; i <= n; i++) draw_cursor(TGT_BG, 1, 2 + i * 2, i == sel);
+            frame();
+            if (joy_new & J_UP) sel = sel ? sel - 1 : n;
+            else if (joy_new & J_DOWN) sel = sel >= n ? 0 : sel + 1;
+            else if (joy_new & (J_A | J_B)) break;
+        }
+        if ((joy_new & J_B) || sel == n) return;
+        t = list[sel]; var_item = t; var_num[0] = IT_PRICE[t];
+        say_nowait(IT_DESC[t]); wait_frames(30);
+        if (ask(S_SHOP_ASK)) {
+            if (G.bits < IT_PRICE[t]) say(S_SHOP_POOR);
+            else if (G.bag[t] >= 99) say(S_SHOP_FULL);
+            else { G.bits -= IT_PRICE[t]; G.bag[t]++; var_item = t; say(S_SHOP_THX); }
+        }
+        tb_close();
     }
 }
 
@@ -282,7 +323,8 @@ static void card_screen(void) {
     print_at(TGT_BG, 2, 1, S_CARD_TITLE);
     print_at(TGT_BG, 2, 3, KID_NAME[G.kid]);
     for (i = 0; i < N_SPECIES; i++) if (own(i)) n++;
-    print_at(TGT_BG, 2, 5, S_M_DEX); print_num(TGT_BG, 12, 6, n, 3);
+    print_at(TGT_BG, 2, 5, S_M_DEX); print_num(TGT_BG, 7, 6, n, 3);
+    print_at(TGT_BG, 11, 5, S_CARD_BITS); print_num(TGT_BG, 14, 6, G.bits, 5);
     mins = (uint16_t)(G.time / 3600);
     print_at(TGT_BG, 2, 7, S_CARD_TIME); print_num(TGT_BG, 11, 8, mins / 60, 3); print_num(TGT_BG, 15, 8, mins % 60, 2);
     print_at(TGT_BG, 2, 10, S_CARD_CREST);

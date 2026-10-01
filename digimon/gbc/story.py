@@ -11,7 +11,10 @@ COMP = ('yamato', 'taichi')                                 # 동행: 매튜, �
 PARTNER = {'taichi': 'agumon', 'yamato': 'gabumon', 'takeru': 'patamon', 'hikari': 'salamon'}
 BABY = {'taichi': 'koromon', 'yamato': 'tsunomon', 'takeru': 'tokomon', 'hikari': 'nyaromon'}
 EGGS = ['koromon', 'tsunomon', 'pyocomon', 'mochimon', 'tanemon', 'bukamon', 'tokomon', 'nyaromon']
-ITEMS = [('회복 디스크', 20, '디지몬의 체력을 20 회복한다'), ('고급 회복 디스크', 50, '디지몬의 체력을 50 회복한다')]
+# 물건: 이름, 회복량, 설명, 종류(0 회복 1 디지바이스 2 유년기 그물 3 성장기 그물), 값(비트, 0 = 안 팖)
+ITEMS = [('회복 디스크', 20, '디지몬의 체력을 20 회복한다', 0, 100), ('고급 회복 디스크', 50, '디지몬의 체력을 50 회복한다', 0, 300),
+         ('디지바이스', 0, '전투 중에 쓰면 유년기 디지몬을 포획한다', 1, 0),
+         ('유년기 그물', 0, '유년기 디지몬이 잘 잡히는 포획그물', 2, 200), ('성장기 그물', 0, '성장기 디지몬까지 잡을 수 있는 그물', 3, 600)]
 START = ('house2f', 3, 3, 'down')
 
 MAPS = {}
@@ -120,7 +123,7 @@ CAMP_SPOTS = {'taichi': (7, 9, 'right'), 'yamato': (10, 9, 'left'), 'takeru': (9
 AURORA = [
     Say('하늘에 오로라가 펼쳐졌다…!'), Close(), Flash(2),
     Say('하늘에서 빛나는 것들이 떨어졌다!'),
-    Say('{kid}{은/는} 작은 기계를 주웠다.\f디지바이스를 손에 넣었다!'), SetFlag('digivice'),
+    Say('{kid}{은/는} 작은 기계를 주웠다.\f디지바이스를 손에 넣었다!'), SetFlag('digivice'), GiveItem('디지바이스', 1),
     Say('디지바이스가 빛나기 시작했다…!\f몸이 어딘가로 빨려 들어간다!'), Close(),
     Flash(3), FadeOut(white=True), Wait(30),
     Warp('forest', 5, 10, 'up'),
@@ -214,7 +217,8 @@ MAPS['route1'] = Map('1번 길', [
     warps=edge([4, 5], -1, 'village', 7, 12) + edge([5, 6, 7], 18, 'forest', 5, 0),
     enc=(26, [('picodevimon', 2, 4, 20), ('tentomon', 2, 4, 15), ('palmon', 2, 4, 15), ('elecmon', 3, 4, 10), ('koromon', 2, 3, 25), ('tsunomon', 2, 3, 15)]),
     on_enter=[IfFlag('route1', 'e'), SetFlag('route1'),
-              Say('풀숲에는 야생 디지몬이 숨어 있다.\f쓰러뜨린 디지몬이 동료가 되고 싶어 할 때도 있다!'), Label('e')])
+              Say('풀숲에는 야생 디지몬이 숨어 있다.\f전투 중에 가방의 디지바이스를 쓰면 유년기 디지몬을 포획할 수 있다!'),
+              Say('상대의 체력을 줄일수록 잘 잡힌다.\n(한 번 싸움에 3번까지)'), Label('e')])
 
 # ── 행복의 마을 ──
 ELECMON = [
@@ -225,6 +229,8 @@ ELECMON = [
     GiveItem('회복 디스크', 3), Say('회복 디스크를 3개 받았다!'),
     Say('에렉몬: 그리고 이건 막 생겨난 디지타마야.\n데려가서 따뜻하게 해 줘.'),
     GiveEgg(), Say('디지타마를 받았다!'),
+    Say('에렉몬: 이것도 가져가. 포획그물이야.\f디지바이스보다 훨씬 잘 잡혀.\n지친 유년기 디지몬에게 던져 봐!'),
+    GiveItem('유년기 그물', 5), Say('유년기 그물을 5개 받았다!'),
     Say('에렉몬: 디지몬에게는 속성이 있어.\f백신은 바이러스에 강하고,\n바이러스는 데이터에 강하고,\f데이터는 백신에 강해.\n잘 기억해 둬!'),
     Label('heal'),
     Ask('에렉몬: 디지몬들을 쉬게 해 줄까?'), IfNo('no'),

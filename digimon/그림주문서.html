@@ -1,0 +1,338 @@
+<title>디지몬 그림 주문서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* 레이아웃: 한 줄 머리(진행률) + 걸러보기 칩 + 묶음별 주문 카드 목록. 디지바이스 화면처럼 맑은 청록 바탕에 워그레이몬 주황을 한 군데만 */
+:root {
+  --bg: #f3f7f6; --panel: #ffffff; --ink: #14232b; --muted: #5b6d74; --line: #d5e1df;
+  --accent: #e07a1f; --accent-ink: #ffffff; --screen: #e6f2ef;
+  --done: #2f8a57; --redo: #b5462f; --need: #3d6fb6;
+  --f-display: "Do Hyeon", "IBM Plex Sans KR", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f191d; --panel: #16242a; --ink: #e3eeec; --muted: #93a8ad; --line: #27393f;
+  --accent: #f0913a; --accent-ink: #1a0f05; --screen: #1b2d33;
+  --done: #5cc48a; --redo: #e7826b; --need: #7fa8e8; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f191d; --panel: #16242a; --ink: #e3eeec; --muted: #93a8ad; --line: #27393f;
+  --accent: #f0913a; --accent-ink: #1a0f05; --screen: #1b2d33;
+  --done: #5cc48a; --redo: #e7826b; --need: #7fa8e8; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 20px 60px }
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 22px }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: 2rem; margin: 0; letter-spacing: .01em; text-wrap: balance }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.45rem; margin: 0; text-wrap: balance }
+.lead { color: var(--muted); margin: 6px 0 0; max-width: 62ch }
+.how { background: var(--screen); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; font-size: 14px }
+.how b { font-weight: 600 }
+.progress { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-variant-numeric: tabular-nums; font-size: 14px; color: var(--muted) }
+.bar { flex: 1 1 200px; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; min-width: 0 }
+.bar i { display: block; height: 100%; background: var(--accent); width: 0 }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); padding-block: 8px; z-index: 2 }
+.chip { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 99px; padding: 5px 12px; cursor: pointer }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink) }
+.chip:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+section { display: grid; gap: 12px }
+.sec-note { color: var(--muted); font-size: 14px; margin: 0; max-width: 64ch }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 14px 12px; display: grid; gap: 8px; min-width: 0 }
+.card.got { opacity: .62 }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px }
+.id { font-family: var(--f-mono); font-size: 13px; color: var(--muted) }
+.name { font-weight: 600; font-size: 16px }
+.pill { font-size: 12px; border-radius: 99px; padding: 1px 9px; border: 1px solid currentColor; white-space: nowrap }
+.pill.done { color: var(--done) } .pill.redo { color: var(--redo) } .pill.need { color: var(--need) }
+.pri { font-size: 12px; color: var(--muted); white-space: nowrap }
+.meta { font-size: 13.5px; color: var(--muted); display: grid; gap: 2px }
+.meta span b { color: var(--ink); font-weight: 600 }
+.prompt { font-family: var(--f-mono); font-size: 12.5px; line-height: 1.5; background: var(--screen); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; word-break: break-word; margin: 0; max-height: 9.5em; overflow: auto }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.btn { font: inherit; font-size: 13.5px; font-weight: 600; border: 0; border-radius: 8px; padding: 7px 14px; cursor: pointer; background: var(--accent); color: var(--accent-ink) }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 400 }
+.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px; color: var(--muted); margin-left: auto; cursor: pointer }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 99px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none }
+.toast.on { opacity: 1 }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>디지몬 그림 주문서</h1>
+    <p class="lead">GBC 롬에 들어갈 그림 전체 목록을 중요한 순서로. 제미나이가 될 때마다 위에서부터 한 장씩 뽑아 대화에 올려 주면 이쪽에서 칸 맞춤·색 정리해서 넣는다. 디지몬은 앞·뒤가 다 필요하면 한 장에 세트로.</p>
+  </header>
+
+  <div class="how">
+    <div><b>대화방 4개로 나눠서</b> 뽑으면 그림체가 맞는다: ① 배경·건물 ② 사람 ③ 디지몬 전투 그림 ④ 디지몬 필드 그림. 같은 방에서는 앞에 “같은 스타일로”를 붙여도 된다.</div>
+    <div><b>크기·색 수는 AI가 정확히 안 지켜도 된다.</b> 이쪽에서 맞춘다. 이름 때문에 거절하면 이름만 지우고 설명만으로 다시.</div>
+    <div><b>위에서부터 중요한 순서.</b> #번호대로 뽑으면 된다. <b>필수</b>: 없으면 그 부분을 못 만들거나 임시 그림으로 남음 · <b>권장</b>: 없어도 돌아가지만 퀄리티가 확 떨어짐 · <b>선택</b>: 다른 그림으로 대체 가능.</div>
+  </div>
+
+  <div class="progress"><span id="cnt">0 / 0 뽑음</span><div class="bar" aria-hidden="true"><i id="barfill"></i></div></div>
+
+  <nav class="chips" aria-label="걸러보기">
+    <button class="chip" data-f="all" aria-pressed="true">전체</button>
+    <button class="chip" data-f="필수" aria-pressed="false">필수</button>
+    <button class="chip" data-f="권장" aria-pressed="false">권장</button>
+    <button class="chip" data-f="선택" aria-pressed="false">선택</button>
+    <button class="chip" data-f="todo" aria-pressed="false">아직 안 뽑은 것</button>
+  </nav>
+
+  <div id="list"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ───── 공통 꼬리말 ─────
+const T = {
+  scene: ", strict 16x16 pixel tile grid, 160x144 pixels, limited Game Boy Color palette, no people, no text",
+  indoor: ", Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text",
+  walk: ", Pokemon Gold and Silver style overworld walking sprite sheet, chibi proportions, three rows (walking down, walking up, walking left) with two frames each, every frame the same size on a strict grid, Game Boy Color pixel art, only 4 colors (white, black, skin tone and one main clothing color), plain white background, no text",
+  portrait: ", full body front view standing pose like the player character shown in the Pokemon Gold and Silver introduction, Game Boy Color pixel art, 56x56 pixels, only 4 colors (white, black, skin tone and one main color), 1 pixel black outline, plain white background, single character, no text",
+  front: ", Pokemon Gold and Silver Game Boy Color battle sprite style, pixel art, 56x56 pixels, only 4 colors: white, black, and two shades of the main color, 1 pixel black outline, 3/4 view facing left, dynamic pose, plain white background, single character, no text",
+  back: ", seen from behind: we see its back and the back of its head, facing away from the viewer toward the upper right, like the player's own Pokemon back sprite in Pokemon Gold and Silver battles, Game Boy Color pixel art, 48x48 pixels, only 4 colors: white, black, and two shades of the main color, 1 pixel black outline, plain white background, no text",
+  set: ". Draw a sprite SET of the same Digimon as two separate images side by side on one plain white background with empty space between them. LEFT image: front battle sprite, 3/4 view facing left, dynamic pose, about 56x56 pixels. RIGHT image: back battle sprite, seen from behind so we see its back and the back of its head, facing away from the viewer toward the upper right, like the player's own Pokemon back sprite in Pokemon Gold and Silver battles, about 48x48 pixels. Both in Pokemon Gold and Silver Game Boy Color battle sprite style, pixel art, only 4 colors: white, black, and two shades of the main color, 1 pixel black outline, same colors in both images, no text",
+  field: ", Pokemon HeartGold overworld sprite style but Game Boy Color colors, each creature facing down toward the viewer with two walking frames side by side, every frame 16x16 pixels on a strict grid, only 4 colors per creature (white, black and two shades of its main color), plain white background, no text"
+};
+const GBC = "Pokemon Gold and Silver Game Boy Color overworld screenshot style, top-down view of ";
+
+// ───── 주문 목록: 중요도 순 (r 이 작을수록 먼저) ─────
+// need: 필수(없으면 그 부분을 못 만들거나 임시 그림으로 남음) · 권장(없어도 돌아가지만 퀄리티가 확 떨어짐) · 선택(다른 그림으로 대체 가능)
+// st: done 받음 · redo 다시 · need 필요
+const ROOM = { A: "① 배경", B: "② 사람", C: "③ 디지몬", D: "① 배경", E: "① 배경", F: "④ 필드 디지몬" };
+const L = [];
+function add(o) { L.push(o); }
+// 디지몬 한 마리: set=true 이면 앞·뒤 세트 한 장
+function mon(r, need, id, ko, en, desc, set, why, st) {
+  const base = en + " from Digimon Adventure, " + desc;
+  add({ r, need, id, name: ko, en, st: st || "need", size: set ? "한 장에 앞(왼쪽) 56×56 + 뒤(오른쪽) 48×48" : "앞 56×56",
+        use: set ? "내 디지몬이 될 수 있음 → 앞·뒤 세트" : "상대 전용 → 앞모습만", why,
+        prompts: [[set ? "앞·뒤 세트 복사" : "앞모습 복사", base + (set ? T.set : T.front)]] });
+}
+const P_PART = "주인공 파트너라 처음부터 계속 화면에 나온다";
+const WHY_WILD = "야생으로 나오고 포획해서 내 디지몬이 될 수 있다";
+
+// ── 1. 지금 바로: 게임 구성 뼈대 + 주인공·파트너 ──
+add({ r: 1, need: "필수", id: "A11", name: "지형 타일: 강·다리·한쪽 턱·절벽·계단·동굴 입구", size: "타일 모음",
+  use: "2번 길부터 모든 길과 마을", why: "포켓몬처럼 한쪽으로만 뛰어내리는 턱, 강과 다리, 절벽 계단이 있어야 길 구조(지름길·막힌 길·돌아가는 길)를 짤 수 있다. 바닥에 떨어진 물건 상자도 여기서 쓴다.", alt: "없으면 평지 길만 반복돼서 단조롭다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color tileset sheet, 16x16 pixel tiles on a strict grid: river water with grass banks on all four sides and corners, a wooden plank bridge (horizontal and vertical), one-way jump-down ledges (grass ledge edges facing down, left and right), rocky cliff walls with corners, stone stairs going up a cliff, a cave entrance in a cliff, small boulders that can be pushed, a wooden fence gate, a small glowing item capsule lying on the ground, a cuttable small tree, limited Game Boy Color palette, no people, no text"]] });
+add({ r: 2, need: "필수", id: "A7", name: "회복 센터 안 (포켓몬 센터 오마주)", size: "자유", use: "모든 마을의 회복 센터",
+  why: "마을마다 들어가서 회복하고 저장하는 곳. 에렉몬이 카운터 뒤에 서서 회복해 준다.", alt: "없으면 집 안 그림을 돌려써서 회복 센터 같지 않다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view of a Digimon healing center interior like a Pokemon Center: a long curved reception counter across the back wall with an empty spot behind it for the nurse, a glowing healing machine with round slots on the counter, a red and white floor pattern, a PC terminal in the corner, a sofa and a potted plant in the waiting area, an entrance mat at the bottom center, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text"]] });
+add({ r: 3, need: "필수", id: "A8", name: "상점 안 (프렌들리숍 오마주)", size: "자유", use: "모든 마을의 상점",
+  why: "비트로 포획그물·회복 디스크를 사는 곳. 포획 시스템이 돌아가려면 필요하다.", alt: "없으면 집 안 그림을 돌려쓴다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view of a small item shop interior like a Poke Mart: a shop counter with a cash register near the entrance, rows of shelves full of colorful goods, a glass display case, a fridge, a blue and white checkered floor, an entrance mat at the bottom, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text"]] });
+const PORT = [["B10a", "신태일", "Taichi Yagami from Digimon Adventure, boy with big spiky brown hair and goggles on his forehead, blue shirt with a yellow star, brown shorts, white gloves, confident smile"],
+              ["B10b", "매튜", "Yamato Ishida from Digimon Adventure, cool blond boy with sharp blue eyes, green sleeveless shirt over a long sleeve shirt, blue jeans, hands in pockets"],
+              ["B10c", "리키", "Takeru Takaishi from Digimon Adventure, small cheerful blond boy wearing a green bucket hat, green long sleeve shirt, brown shorts, big smile"],
+              ["B10d", "신나리", "Hikari Yagami from Digimon Adventure, gentle girl with short brown hair and a hair clip, pink sleeveless top, white skirt, a whistle around her neck, a camera hanging on a strap"]];
+PORT.forEach(([id, ko, d], i) => add({ r: 4 + i, need: "권장", id, name: ko + " 초상 (전신)", size: "56×56", use: "주인공 고르기 화면·주인공 정보",
+  why: "지금 고르기 화면이 글자 목록이라 허전하다. 포켓몬 오프닝처럼 큰 전신 그림으로 고르게 한다.", alt: "없으면 걷기 그림으로만 고르기 화면을 꾸민다",
+  prompts: [["프롬프트 복사", d + T.portrait]] }));
+add({ r: 8, need: "필수", id: "B7", name: "리키 걷기", size: "시트", use: "주인공", why: "고를 수 있는 주인공 4명 중 하나.", alt: "없으면 웹판 작은 임시 그림",
+  prompts: [["프롬프트 복사", "Takeru Takaishi from Digimon Adventure, small blond boy wearing a green bucket hat, green long sleeve shirt, brown shorts" + T.walk]] });
+add({ r: 9, need: "필수", id: "B8", name: "신나리 걷기", size: "시트", use: "주인공", why: "고를 수 있는 주인공 4명 중 하나.", alt: "없으면 웹판 작은 임시 그림",
+  prompts: [["프롬프트 복사", "Hikari Yagami from Digimon Adventure, girl with short brown hair, pink sleeveless top over a white shirt, white skirt, a whistle on a string around her neck" + T.walk]] });
+add({ r: 10, need: "필수", id: "C1", name: "아구몬 뒷모습", en: "Agumon", st: "redo", size: "뒤 48×48", use: "신태일 파트너 (앞모습은 받음)",
+  why: "지난번 뒷모습이 옆모습으로 나와서 임시로 뒤집어 쓰는 중.", alt: "",
+  prompts: [["뒷모습 복사", "Agumon from Digimon Adventure, small yellow-orange dinosaur standing upright, big green eyes, sharp white claws" + T.back]] });
+mon(11, "필수", "C2", "파피몬", "Gabumon", "small yellow reptile wearing a blue and white striped wolf fur pelt over its head and back, one horn on top of the pelt", true, "매튜 " + P_PART.replace("주인공 ", ""));
+mon(12, "필수", "C7", "파닥몬", "Patamon", "small round orange creature with a cream belly and big wing-like ears, flying", true, "리키 파트너");
+mon(13, "필수", "C8", "플롯트몬", "Salamon (Plotmon)", "NOT a real dog: a chubby cartoon baby creature with an oversized round head, extremely long floppy ears that hang down to the ground, big blue-green eyes, pink cheeks, open mouth with a small pink tongue, tiny black nose, cream-white body, a golden ring collar engraved with symbols around its neck, short stubby legs with round feet and no claws", true, "신나리 파트너. 강아지처럼 나오면 다시");
+mon(14, "필수", "C15", "코로몬", "Koromon", "round pink blob with long rabbit-like ears, red eyes and a wide smile", true, "신태일의 첫 동료(유년기)");
+mon(15, "필수", "C16", "뿔몬", "Tsunomon", "small round orange-brown furry creature with one horn on its head", true, "매튜의 첫 동료(유년기)");
+mon(16, "필수", "C17", "토코몬", "Tokomon", "small white round creature with tiny arms and legs and a big mouth", true, "리키의 첫 동료(유년기)");
+mon(17, "필수", "C18", "야옹몬", "Nyaromon", "small yellow cat-like blob with big pointed ears", true, "신나리의 첫 동료(유년기)");
+mon(18, "필수", "C21", "그레이몬", "Greymon", "large orange dinosaur with a brown skull helmet with three horns, blue stripes, sharp claws", true, "쿠가몬 사건에서 첫 진화");
+mon(19, "필수", "C22", "가루몬", "Garurumon", "large wolf with blue and white striped fur and a single horn on its head", true, "첫 진화 (매튜)");
+mon(20, "필수", "C27", "엔젤몬", "Angemon", "angel warrior with six white wings, a metal helmet covering his eyes, holding a golden staff", true, "첫 진화 (리키)");
+mon(21, "필수", "C28", "가트몬", "Gatomon (Tailmon)", "small white cat standing upright, big yellow gloves with red claws, long striped tail with a golden ring", true, "첫 진화 (신나리)");
+mon(22, "필수", "C9", "쿠가몬", "Kuwagamon", "giant red stag beetle monster with huge serrated pincers on its head, four clawed arms, insect wings", false, "첫 보스 사건");
+mon(23, "필수", "C10", "쉘몬", "Shellmon", "sea monster living inside a huge conical spiral seashell, strong arms coming out of the shell", false, "첫 문장 시련 보스 (성실)");
+[["C12", "피코데블몬", "PicoDevimon (DemiDevimon)", "tiny black bat-like imp with big bat wings and a large head, holding a syringe"],
+ ["C11", "에렉몬", "Elecmon", "small red mammal with blue stripes and many fanned tails, standing on four legs"],
+ ["C4", "텐타몬", "Tentomon", "ladybug-like insect with a hard red shell, big green eyes, small claws, flying"],
+ ["C5", "팔몬", "Palmon", "small green plant creature with a big pink flower on its head, vine fingers, root feet"],
+ ["C3", "피요몬", "Biyomon", "small pink bird standing upright, wings used like arms, feathers on its head, metal ring on one leg"],
+ ["C6", "쉬라몬", "Gomamon", "small white seal-like creature with an orange mohawk, purple markings, sharp claws"]].forEach(([id, ko, en, d], i) => mon(24 + i, "필수", id, ko, en, d, true, "1번 길·해변 " + WHY_WILD));
+[["C13", "깜몬", "Botamon", "tiny round black blob baby creature with fuzzy hair and big yellow eyes"],
+ ["C14", "푸니몬", "Punimon", "tiny round red jelly-like baby creature with three small spikes on top and big eyes"],
+ ["C19", "어니몬", "Pyocomon", "small pink bulb-shaped creature with a big flower on its head and tiny feet"],
+ ["C20", "모티몬", "Motimon", "soft pink rice-cake-like blob with tiny arms and small black eyes"],
+ ["C23", "시드몬", "Tanemon", "green bulb-shaped creature with a leaf sprout on top and four tiny legs"],
+ ["C24", "둥실몬", "Bukamon", "small white seal-like baby with an orange tuft of hair and a fin tail"]].forEach(([id, ko, en, d], i) => mon(30 + i, "필수", id, ko, en, d, true, "유년기 " + WHY_WILD + " (디지바이스로 잡는 첫 목표)"));
+add({ r: 36, need: "필수", id: "A18", name: "문장 신전 안 (체육관 오마주)", size: "자유", use: "문장 8개를 걸고 보스와 싸우는 곳",
+  why: "포켓몬 체육관처럼 지역마다 하나. 문장 8개가 배지 역할을 한다.", alt: "없으면 동굴·집 그림으로 대충",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view of an ancient digital temple interior like a Pokemon gym: stone floor with glowing circuit lines, two rows of pillars, statues on both sides, a raised stone stage at the top with a glowing pedestal holding a crest tablet, an entrance mat at the bottom, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text"]] });
+add({ r: 37, need: "권장", id: "D1", name: "디지바이스", size: "56×56", use: "오로라 장면·가방·포획 연출", why: "포획 장치의 주인공. 오로라에서 줍는 장면과 포획할 때 보여 준다.", alt: "없으면 글로만 나온다",
+  prompts: [["프롬프트 복사", "Game Boy Color pixel art item sprite, the original Digivice from Digimon Adventure (1999): a small white handheld device with a square-ish body, a round LCD screen in the center glowing light blue, a gray bezel around the screen, two small buttons on the right side, a small strap loop at the top, front view, centered, 56x56 pixels, clean black outline, limited Game Boy Color palette, plain white background, no text"]] });
+add({ r: 38, need: "권장", id: "F1", name: "마을 주민 필드 그림: 에렉몬·코로몬·깜몬·푸니몬", size: "4마리", use: "행복의 마을 주민", why: "지금 마을 디지몬이 동그란 임시 덩어리로 보인다.", alt: "없으면 덩어리 그림 유지",
+  prompts: [["프롬프트 복사", "four Digimon from Digimon Adventure in one row: Elecmon (small red mammal with blue stripes and many fanned tails), Koromon (round pink blob with long ears), Botamon (tiny black fuzzy blob with yellow eyes), Punimon (tiny red jelly blob)" + T.field]] });
+add({ r: 39, need: "권장", id: "E1", name: "문장 8개 아이콘", size: "16×16 × 8", use: "주인공 정보의 문장 칸 (배지 케이스 오마주)", why: "모은 문장을 그림으로 보여 준다.", alt: "없으면 문장 이름 글자로만",
+  prompts: [["프롬프트 복사", "Game Boy Color pixel art icon sheet of the eight Crests from Digimon Adventure in one row, each 16x16 pixels on a strict grid: Crest of Courage (orange sun-like symbol), Crest of Friendship (blue), Crest of Love (red heart-like), Crest of Knowledge (purple), Crest of Sincerity (green), Crest of Reliability (gray-blue), Crest of Hope (yellow), Crest of Light (pink), each inside a small rounded tag, 1 pixel black outline, plain white background, no text"]] });
+add({ r: 40, need: "권장", id: "D4", name: "포획 연출 (데이터가 빨려 들어감)", size: "160×64", use: "포획 성공 장면", why: "포획이 이 게임의 핵심이라 연출이 있으면 손맛이 산다.", alt: "없으면 화면 번쩍임만",
+  prompts: [["프롬프트 복사", "Game Boy Color pixel art anime cut-in, a white Digivice from Digimon Adventure pointed forward, its screen pulling in a spiral stream of glowing blue digital data particles and 0 and 1 shaped light bits, wide banner 160x64 pixels, limited Game Boy Color palette, no text"]] });
+add({ r: 41, need: "권장", id: "D2", name: "진화 컷인 (디지바이스가 빛남)", size: "160×64", use: "진화 시작", why: "애니 진화 장면 오마주.", alt: "없으면 실루엣 깜빡임만",
+  prompts: [["프롬프트 복사", "Game Boy Color pixel art anime cut-in, close-up of a kid's hand holding up the white Digivice from Digimon Adventure, its screen shining with a bright beam of light, light rays bursting outward, dramatic anime action frame, wide banner 160x64 pixels, limited Game Boy Color palette, no face, no text"]] });
+add({ r: 42, need: "권장", id: "D3", name: "진화 배경 (빛 터널)", size: "160×144", use: "진화 중 배경", why: "애니 진화 장면 오마주.", alt: "없으면 흰 바탕",
+  prompts: [["프롬프트 복사", "Game Boy Color pixel art, Digimon Adventure evolution sequence background homage, 160x144 pixels: a swirling tunnel of glowing digital data streams and light lines rushing toward the center, rainbow light bands, bright white core in the middle, dynamic speed lines, limited Game Boy Color palette, no characters, no text"]] });
+add({ r: 43, need: "권장", id: "B11", name: "흰수염 도사 초상", size: "56×56", use: "오프닝 (오박사 오프닝 오마주)", why: "오프닝에서 말하는 사람이 지금은 빈 화면.", alt: "없으면 글만",
+  prompts: [["프롬프트 복사", "Gennai from Digimon Adventure as a short old man with a long white beard and white hair, wearing a simple gray-blue robe, kind wise expression, hands behind his back" + T.portrait]] });
+
+// ── 2. 파일섬 확장: 지역 2~6 (지역마다 장면 + 보스·야생) ──
+add({ r: 50, need: "필수", id: "A12", name: "동굴 타일", size: "타일 모음", use: "동굴·무한산 안", why: "포켓몬처럼 동굴 던전이 있어야 한다 (사다리·구멍·바위).", alt: "없으면 동굴을 못 만든다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color cave tileset sheet, 16x16 pixel tiles on a strict grid: cave floor, rocky cave walls with all corners, a ladder going up and a hole going down, stalagmites, small rocks, an underground pond with edges, a cave exit with light, limited Game Boy Color palette, brown and gray tones, no people, no text"]] });
+add({ r: 51, need: "필수", id: "A13", name: "기어 사바나", size: "160×144", use: "지역 2 (레오몬 마을, 2번 문장)", why: "지역마다 다른 모습이 있어야 탐험하는 맛이 난다.", alt: "없으면 A6 타일로 색만 바꿔 짠다",
+  prompts: [["프롬프트 복사", GBC + "a wide savanna in a digital world: yellow-green tall grass, acacia trees, large metal gears and cogs half buried in the ground, big rocks, a dirt path, a small stone hut village" + T.scene]] });
+mon(52, "필수", "C31", "레오몬", "Leomon", "muscular lion-man warrior with a golden mane and black pants, holding a sword", false, "지역 2 보스");
+mon(53, "필수", "C32", "우가몬", "Ogremon", "green ogre demon with white hair and one horn, holding a bone club", false, "지역 2 적");
+[["C23b", "버드라몬", "Birdramon", "giant bird made of fire with flaming orange-red wings"],
+ ["C24b", "캅테리몬", "Kabuterimon", "giant blue armored beetle with a big horn, four arms and insect wings"],
+ ["C25", "니드몬", "Togemon", "giant green cactus creature covered in needles, wearing red boxing gloves"],
+ ["C26", "원뿔몬", "Ikkakumon", "white walrus-like beast with a single horn, orange hair and long tusks"]].forEach(([id, ko, en, d], i) => mon(54 + i, "필수", id, ko, en, d, true, "잡은 성장기가 진화하면 나온다"));
+add({ r: 58, need: "필수", id: "A14", name: "장난감 마을", size: "160×144", use: "지역 3 (퍼펫몬, 3번 문장)", why: "지역 고유 모습.", alt: "없으면 마을 블록 그림으로 대체",
+  prompts: [["프롬프트 복사", GBC + "a town made entirely of giant toys in a digital world: houses shaped like toy boxes and building blocks, a toy train track, giant toy soldiers as statues, a big toy castle at the top with a door, colorful paths, toy trees" + T.scene]] });
+mon(59, "필수", "C55", "퍼펫몬", "Monzaemon", "giant yellow teddy bear Digimon with a zipper and stitches", false, "지역 3 보스");
+mon(60, "필수", "C41", "워매몬", "Numemon", "green slug creature with a red tongue and eyes on stalks", false, "지역 3 야생");
+mon(61, "필수", "C42", "모야몬", "Nanimon", "round black ball-like Digimon wearing sunglasses", false, "지역 3 야생");
+add({ r: 62, need: "필수", id: "A15", name: "개굴몬 성과 호수", size: "160×144", use: "지역 4 (왕개굴몬, 4번 문장)", why: "지역 고유 모습 + 물길(서핑) 구간.", alt: "없으면 A6·A11 물 타일로",
+  prompts: [["프롬프트 복사", GBC + "a Japanese-style castle beside a calm lake in a digital world: stone castle walls, a castle gate with a door, lily pads and reeds on the lake, a wooden pier, a small bridge, pine trees" + T.scene]] });
+mon(63, "필수", "C39", "개굴몬", "Gekomon", "frog Digimon with horn instruments growing from its back", false, "지역 4 야생");
+mon(64, "필수", "C56", "왕개굴몬", "ShogunGekomon", "giant frog lord with a samurai topknot and royal robes", false, "지역 4 보스");
+add({ r: 65, need: "권장", id: "A16", name: "설원", size: "160×144", use: "지역 5 (프리지몬)", why: "지역 고유 모습.", alt: "없으면 A6 타일 색 바꿈",
+  prompts: [["프롬프트 복사", GBC + "a snowy field and frozen lake in a digital world: snow-covered ground, snowy pine trees, a frozen pond with ice, snowdrifts, an igloo with a door, a rocky snow cliff" + T.scene]] });
+mon(66, "필수", "C47", "프리지몬", "Frigimon", "big round snowman-like creature made of snow and ice with stubby arms", false, "지역 5");
+add({ r: 67, need: "필수", id: "A17", name: "무한산 · 데블몬의 성", size: "160×144", use: "파일섬 마지막 (데블몬)", why: "1부 마지막 던전.", alt: "없으면 동굴 타일로만",
+  prompts: [["프롬프트 복사", GBC + "a dark rocky mountain path leading up to a sinister black castle on the summit in a digital world: jagged rocks, dead trees, a winding stone stairway, purple sky glow, a castle gate with a door" + T.scene]] });
+mon(68, "필수", "C33", "데블몬", "Devimon", "tall black demon with huge bat wings, long clawed arms wrapped in red belts, a horned mask face", false, "1부 마지막 보스");
+[["C34", "메라몬", "Meramon", "humanoid made entirely of fire with an angry flame-shaped head"],
+ ["C35", "모노크로몬", "Monochromon", "gray triceratops-like dinosaur with one horn on its nose and an armored head frill"],
+ ["C36", "켄터스몬", "Centarumon", "centaur-like Digimon with a white armored horse body, a one-eyed helmet and an arm cannon"],
+ ["C37", "꼬끼몬", "Kokatorimon", "huge rooster-like bird monster with a red comb, a big beak and tiny wings"],
+ ["C38", "두리몬", "Drimogemon", "brown mole-like Digimon with a big drill on its nose and sharp claws"],
+ ["C40", "키위몬", "Kiwimon", "round green kiwi-like bird with a long beak and strong legs"],
+ ["C43", "베지몬", "Vegimon", "green plant creature with long vine arms"],
+ ["C44", "시드라몬", "Seadramon", "giant light blue sea serpent with a yellow armored face"],
+ ["C45", "티라노몬", "Tyrannomon", "red tyrannosaurus-like dinosaur with a cream belly and sharp claws"]].forEach(([id, ko, en, d], i) => mon(69 + i, "필수", id, ko, en, d, false, "파일섬 야생·중간 보스"));
+add({ r: 78, need: "권장", id: "A19", name: "파일섬 지도", size: "160×144", use: "메뉴의 지도 (포켓기어 지도 오마주)", why: "어디로 가야 할지 보여 준다.", alt: "없으면 지도 기능 없이",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver town map style, Game Boy Color pixel art map of a tropical island called File Island from Digimon Adventure: a large mountain in the center, jungle in the south, a beach and village in the southwest, a savanna in the east, a lake in the north, a snowy area in the northwest, small square markers for towns and lines for routes, surrounded by blue sea, limited palette, no text, no labels"]] });
+add({ r: 79, need: "권장", id: "F2", name: "필드 그림: 레오몬·우가몬·퍼펫몬·개굴몬", size: "4마리", use: "파일섬 문장 지역 주민·보스", why: "보스·주민이 지도 위에 서 있어야 한다.", alt: "없으면 덩어리 임시 그림",
+  prompts: [["프롬프트 복사", "four Digimon from Digimon Adventure in one row: Leomon (lion-man warrior with golden mane), Ogremon (green ogre with a bone club), Monzaemon (giant yellow teddy bear), Gekomon (frog carrying a horn instrument)" + T.field]] });
+add({ r: 80, need: "권장", id: "F3", name: "필드 그림: 프리지몬·쉘몬·쿠가몬·데블몬", size: "4마리", use: "보스·지역 주민", why: "", alt: "없으면 덩어리 임시 그림",
+  prompts: [["프롬프트 복사", "four Digimon from Digimon Adventure in one row: Frigimon (big round snowman creature), Shellmon (sea monster in a spiral shell), Kuwagamon (red stag beetle), Devimon (black demon with bat wings)" + T.field]] });
+add({ r: 81, need: "권장", id: "F4", name: "필드 그림: 상점 주인 디지몬들", size: "4마리", use: "상점 카운터·길손", why: "", alt: "없으면 덩어리 임시 그림",
+  prompts: [["프롬프트 복사", "four Digimon from Digimon Adventure in one row: Digitamamon (an egg with legs and eyes peeking out of a crack), Numemon (green slug), Kiwimon (green kiwi bird with a long beak), Mamemon (tiny round green Digimon with big fists)" + T.field]] });
+add({ r: 82, need: "선택", id: "B12", name: "엄마 걷기", size: "시트", use: "1층 거실", why: "말 걸면 회복해 주는 엄마 (포켓몬 금 오마주).", alt: "없으면 식탁 위 쪽지로 대신 (지금 방식)",
+  prompts: [["프롬프트 복사", "a kind Japanese mother in her thirties with short brown hair, pink apron over a white blouse, long skirt" + T.walk]] });
+add({ r: 83, need: "선택", id: "A9", name: "편의점 안 (현실 세계)", size: "자유", use: "동네 편의점", why: "현실 동네의 들어갈 수 있는 가게.", alt: "없으면 A8 상점 그림을 돌려쓴다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view of a small Japanese convenience store interior: a checkout counter with a register, snack shelves, a drinks fridge along the wall, a magazine rack, bright tiled floor, an entrance mat at the bottom, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text"]] });
+add({ r: 84, need: "선택", id: "A10", name: "통나무 산장 안", size: "자유", use: "캠프 산장·관리 사무소", why: "캠프장 건물 안.", alt: "없으면 A4 집 안 그림을 돌려쓴다",
+  prompts: [["프롬프트 복사", "Pokemon Gold and Silver Game Boy Color indoor screenshot style, top-down view of a summer camp log cabin interior: wooden log walls, bunk beds, a long wooden dining table with benches, a fireplace, a notice board, a small office desk with a phone, an entrance mat at the bottom, strict 16x16 pixel tile grid, limited Game Boy Color palette, no people, no text"]] });
+add({ r: 85, need: "선택", id: "B13", name: "동네 사람들", size: "시트", use: "편의점 점원·캠프 선생님·동네 아이", why: "현실 세계 사람 NPC.", alt: "없으면 표지판·쪽지로 대신",
+  prompts: [["프롬프트 복사", "three different characters in one sheet: a convenience store clerk in a blue striped uniform and cap, a summer camp teacher with a whistle and a red jersey, a small neighborhood kid in a yellow t-shirt" + T.walk]] });
+
+// ── 3. 나중: 서버 대륙·어둠의 4천왕 ──
+[["C48", "메탈그레이몬", "MetalGreymon", "orange dinosaur with a metal left arm with claws, metal chest armor, metal helmet and wings"],
+ ["C49", "워가루몬", "WereGarurumon", "muscular blue and white wolf-man standing upright, ripped jeans, black belts, spiked shoulder pads"],
+ ["C53", "홀리엔젤몬", "MagnaAngemon", "angel knight with eight golden-white wings, purple armor and a visored golden helmet"],
+ ["C54", "엔젤우몬", "Angewomon", "female angel with eight white wings, a helmet over her eyes, long blond hair, holding a bow of light"],
+ ["C50", "가루다몬", "Garudamon", "giant red bird-man with large wings and a golden mask"],
+ ["C51", "릴리몬", "Lilimon", "small fairy with a pink flower petal dress and green leaf wings"],
+ ["C52", "쥬드몬", "Zudomon", "giant walrus-like beast with a turtle shell on its back and a big bronze hammer"],
+ ["C62", "워그레이몬", "WarGreymon", "dinosaur warrior in golden armor with a round shield on its back and large claw gauntlets"],
+ ["C63", "메탈가루몬", "MetalGarurumon", "wolf covered in sleek blue metal armor with missile pods"]].forEach(([id, ko, en, d], i) => mon(100 + i, "필수", id, ko, en, d, true, "문장으로 하는 다음 진화"));
+add({ r: 110, need: "필수", id: "A20", name: "서버 대륙 사막·피라미드", size: "160×144", use: "2부 (에테몬)", why: "", alt: "",
+  prompts: [["프롬프트 복사", GBC + "a desert in a digital world: sand dunes, cacti, a large stone pyramid with an entrance door, an oasis with palm trees, ruins" + T.scene]] });
+add({ r: 111, need: "필수", id: "A21", name: "기계 도시", size: "160×144", use: "안드로몬 공장·파워드라몬 도시", why: "", alt: "",
+  prompts: [["프롬프트 복사", GBC + "a mechanical factory town in a digital world: metal floor plates, pipes, conveyor belts, gears, factory buildings with doors, chimneys, warning stripes" + T.scene]] });
+add({ r: 112, need: "필수", id: "A22", name: "스파이럴 마운틴", size: "160×144", use: "어둠의 4천왕 구역 (사천왕 오마주)", why: "", alt: "",
+  prompts: [["프롬프트 복사", GBC + "a twisted spiral mountain in a corrupted digital world: a spiral road climbing the mountain, a dark sea at the bottom, a creepy wooden forest, a mechanical city zone and a dark amusement zone on different levels" + T.scene]] });
+[["C46", "위자몬", "Wizardmon", "small wizard in a wide-brimmed hat and cloak with a cloth mask, holding a staff"],
+ ["C57", "안드로몬", "Andromon", "tall humanoid robot with silver armor and exposed mechanical parts"],
+ ["C58", "디지타몬", "Digitamamon", "large egg with legs, red eyes glowing from a crack in the shell"],
+ ["C59", "콩알몬", "Mamemon", "tiny round green Digimon with a big head and huge fists in brass knuckles"],
+ ["C60", "에테몬", "Etemon", "monkey Digimon in a monkey suit with dark sunglasses, holding a microphone like a rock star"],
+ ["C61", "묘티스몬", "Myotismon", "vampire lord with a black cape with red lining, blond hair and a red bat-shaped mask"],
+ ["C64", "메탈시드라몬", "MetalSeadramon", "giant sea serpent covered in silver metal armor with a cannon on its nose"],
+ ["C65", "파워드라몬", "Machinedramon", "giant mechanical dinosaur made entirely of metal with two huge cannons on its back"],
+ ["C66", "피노키몬", "Puppetmon", "wooden puppet boy with a long nose, holding a big wooden hammer"],
+ ["C67", "피에몬", "Piedmon", "evil clown jester with a two-colored mask and four swords on his back"],
+ ["C68", "아포카리몬", "Apocalymon", "final boss: a huge dark sphere body with many claws and tendrils"]].forEach(([id, ko, en, d], i) => mon(120 + i, "필수", id, ko, en, d, false, "2부 이후 보스·야생"));
+
+// 받은 것
+[["A1", "제목 화면 (워그레이몬 노을)"], ["A2", "주인공 동네"], ["A3", "여름 캠프장"], ["A4", "집 안"], ["A5", "행복의 마을"], ["A6", "길·숲·해변 타일"],
+ ["B1", "신태일 걷기"], ["B2", "매튜 걷기"], ["C1f", "아구몬 앞모습"], ["C4f", "텐타몬 앞모습"], ["C6b", "쉬라몬 뒷모습"]].forEach(([id, n]) => add({ r: 999, need: "필수", id, name: n, st: "done", use: "넣었음", size: "", prompts: [] }));
+
+// ── 받은 그림·다시 뽑을 그림 (2026-10-01 반영) ──
+function setDone(id, name) { const o = L.find(x => x.id === id); if (o) { o.st = "done"; o.r = 999; o.prompts = []; if (name) o.name = name; } }
+setDone("B7"); setDone("B8"); setDone("C1", "아구몬 뒷모습"); setDone("C2", "파피몬 앞·뒤"); setDone("C3", "피요몬 앞·뒤"); setDone("C5", "팔몬 앞·뒤"); setDone("C7", "파닥몬 앞·뒤");
+(function () {
+  const t = L.find(x => x.id === "C4");
+  t.name = "텐타몬 뒷모습 (앞모습은 받음)"; t.st = "redo"; t.size = "뒤 48×48";
+  t.why = "지난번 뒷모습이 이상하게 나와서 뒤에서 본 모습을 더 자세히 적었다.";
+  t.prompts = [["뒷모습 복사", "Tentomon from Digimon Adventure seen from directly behind: we see the round dark red ladybug-like shell with black spots covering its whole back, two pairs of thin transparent insect wings spreading out from under the shell, the back of its head with two short antennae, small legs dangling below, its face is NOT visible, it is flying away from the viewer toward the upper right like the player's own Pokemon back sprite in Pokemon Gold and Silver battles, Game Boy Color pixel art, 48x48 pixels, only 4 colors: white, black and two shades of red, 1 pixel black outline, plain white background, no text"]];
+  const g = L.find(x => x.id === "C6");
+  g.name = "쉬라몬 앞모습 (뒷모습은 받음)"; g.st = "redo"; g.size = "앞 56×56";
+  g.why = "눈동자가 빨갛게 나와서 무섭다. 순한 눈으로 다시.";
+  g.prompts = [["앞모습 복사", "Gomamon from Digimon Adventure, small white seal-like creature with an orange mohawk, purple markings on its body, sharp black claws, a cute friendly face with big round dark eyes and a playful smile, the eyes are NOT red" + T.front]];
+  const k = L.find(x => x.id === "C9");
+  k.st = "redo"; k.why = "첫 보스 사건. 지난번에 이상하게 나와서 생김새를 자세히 적었다.";
+  k.prompts = [["앞모습 복사", "Kuwagamon from Digimon Adventure, a giant red stag beetle monster standing upright on two legs, a huge pair of silver serrated scissor-like pincers rising from its head, a menacing face with sharp fangs, four long arms ending in sharp claws, dark red armored body, transparent insect wings on its back, aggressive attacking pose" + T.front]];
+})();
+L.sort((a, b) => a.r - b.r);
+const TIERS = [[1, 49, "지금 바로", "지금 만든 부분과 바로 다음 작업 (게임 뼈대 · 주인공 · 파트너 · 첫 야생)"],
+               [50, 99, "파일섬 확장", "지역 2~6: 지역마다 장면 그림 + 보스·야생 (포켓몬 체육관 길 구조)"],
+               [100, 998, "나중", "서버 대륙 · 어둠의 4천왕 · 완전체/궁극체"],
+               [999, 999, "이미 받은 것", ""]];
+const SAVE = "digimon-order-v2";
+let got = {}; try { got = JSON.parse(localStorage.getItem(SAVE) || "{}"); } catch (e) { got = {}; }
+const save = () => { try { localStorage.setItem(SAVE, JSON.stringify(got)); } catch (e) {} };
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+const NEEDC = { "필수": "need", "권장": "redo", "선택": "done" };
+let filter = "all";
+function render() {
+  const list = document.getElementById("list"); list.innerHTML = "";
+  let rank = 0;
+  for (const [lo, hi, title, note] of TIERS) {
+    const items = L.filter(o => o.r >= lo && o.r <= hi).filter(o =>
+      filter === "all" ? true : filter === "todo" ? (o.st !== "done" && !got[o.id]) : o.need === filter);
+    if (!items.length) continue;
+    const sec = document.createElement("section");
+    sec.innerHTML = `<h2>${esc(title)}</h2>${note ? `<p class="sec-note">${esc(note)}</p>` : ""}`;
+    for (const o of items) {
+      const c = document.createElement("article"); c.className = "card" + (got[o.id] || o.st === "done" ? " got" : "");
+      const btns = o.prompts.map((pp, j) => `<button class="btn" data-copy="${o.id}:${j}">${esc(pp[0])}</button>`).join("");
+      const box = o.prompts.length ? `<pre class="prompt">${esc(o.prompts[0][1])}</pre>` : "";
+      const room = ROOM[o.id[0]] || "";
+      c.innerHTML = `<div class="top"><span class="id">${o.st === "done" ? "✓" : "#" + (++rank)}</span><span class="name">${esc(o.name)}${o.en ? ` <span class="id">${esc(o.en)}</span>` : ""}</span>
+        <span class="pill ${o.st === "done" ? "done" : NEEDC[o.need]}">${o.st === "done" ? "받음" : o.st === "redo" ? "다시 · " + o.need : o.need}</span><span class="pri">${esc(o.id)} · ${esc(room)} 대화방</span></div>
+        ${o.st === "done" ? "" : `<div class="meta"><span><b>쓰는 곳</b> ${esc(o.use || "")}</span>${o.why ? `<span><b>왜 필요</b> ${esc(o.why)}</span>` : ""}${o.alt ? `<span><b>없으면</b> ${esc(o.alt)}</span>` : ""}<span><b>크기</b> ${esc(o.size || "")}</span></div>`}
+        ${box}
+        ${o.st === "done" ? "" : `<div class="row">${btns}<label class="chk"><input type="checkbox" id="g-${o.id}" ${got[o.id] ? "checked" : ""}> 뽑았음</label></div>`}`;
+      sec.appendChild(c);
+    }
+    list.appendChild(sec);
+  }
+  const need = L.filter(o => o.st !== "done"); const n = need.filter(o => got[o.id]).length;
+  document.getElementById("cnt").textContent = `${n} / ${need.length} 뽑음 · 필수 ${need.filter(o => o.need === "필수").length} · 권장 ${need.filter(o => o.need === "권장").length} · 선택 ${need.filter(o => o.need === "선택").length}`;
+  document.getElementById("barfill").style.width = (need.length ? n / need.length * 100 : 0) + "%";
+}
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 1400); }
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]");
+  if (b) {
+    const [id, j] = b.dataset.copy.split(":"); const o = L.find(x => x.id === id); const text = o.prompts[+j][1];
+    const pre = b.closest(".card").querySelector(".prompt");
+    navigator.clipboard.writeText(text).then(() => toast("복사했어요")).catch(() => {
+      if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+      toast("글을 길게 눌러 복사하세요");
+    });
+  }
+  const chip = e.target.closest(".chip");
+  if (chip) { filter = chip.dataset.f; document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === chip)); render(); }
+});
+document.addEventListener("change", e => {
+  if (e.target.id && e.target.id.startsWith("g-")) { got[e.target.id.slice(2)] = e.target.checked; save(); render(); }
+});
+render();
+</script>

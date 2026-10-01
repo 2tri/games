@@ -21,8 +21,9 @@ uint8_t wait_press(void) {
     for (;;) { frame(); if (joy_new & (J_A | J_B)) return joy_new; }
 }
 uint16_t rnd(void) {
-    seed ^= seed << 7; seed ^= seed >> 9; seed ^= seed << 8;
-    return seed ^ frames ^ DIV_REG;
+    // 선형 합동(LCG) + 하드웨어 타이머: 위쪽 바이트가 고르므로 바이트를 바꿔서 돌려줌 (rnd8 은 아래 바이트를 씀)
+    seed = seed * 25173u + 13849u + DIV_REG;
+    return (seed >> 8) | (seed << 8);
 }
 uint8_t rnd8(uint8_t n) { return n ? (uint8_t)((rnd() & 0xFF) * n >> 8) : 0; }
 

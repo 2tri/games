@@ -28,7 +28,7 @@ ATTRS = ['백신', '데이터', '바이러스', '프리', '없음', '불명']
 KIDS = story.KIDS; KIDI = {k: i for i, k in enumerate(KIDS)}
 MAPNAMES = list(story.MAPS.keys()); MAPI = {k: i for i, k in enumerate(MAPNAMES)}
 DIRS = {'down': 0, 'up': 1, 'left': 2, 'right': 3}
-ITEMI = {n: i for i, (n, h, d) in enumerate(story.ITEMS)}
+ITEMI = {it[0]: i for i, it in enumerate(story.ITEMS)}
 CRESTI = {c: i for i, c in enumerate(story.CRESTS)}
 
 S = Strings()
@@ -87,6 +87,11 @@ ES = {
     'card_title': '선택받은 아이', 'card_crest': '문장', 'card_time': '모험 시간',
     'title_sub': '팬 게임 (가제)', 'press': 'START를 누르세요',
     'got_item': '{i0}{을/를} {n0}개 받았다!', 'crest_got': '{f0}의 문장을 손에 넣었다!',
+    'cap_dv': '{kid}{은/는} 디지바이스를 내밀었다!', 'cap_net': '{kid}{은/는} {i0}{을/를} 던졌다!',
+    'cap_boss': '이 디지몬의 데이터는 너무 강해서 받아들일 수 없다!', 'cap_nomore': '디지바이스의 빛이 다했다…\n(한 번 싸움에 3번까지)',
+    'cap_strong': '{s0}의 데이터가 너무 강해서 튕겨 나갔다!', 'cap_ok': '해냈다!\n{s0}의 데이터를 받아들였다!', 'cap_ng': '앗! 데이터가 흩어져 버렸다…',
+    'got_bits': '{n0} 비트를 얻었다!', 'shop_title': '상점', 'shop_ask': '{i0}{을/를} {n0} 비트에 살까?', 'shop_poor': '비트가 모자란다!',
+    'shop_thx': '고맙습니다!\n{i0}{을/를} 샀다!', 'shop_full': '더 이상 가질 수 없다!', 'shop_bits': '가진 비트', 'shop_quit': '그만두다', 'card_bits': '비트',
 }
 ESID = {k: sid(v) for k, v in ES.items()}
 
@@ -96,8 +101,8 @@ SP_GRADE = [sid(W['species'][sp]['grade']) for sp in SPECIES]
 SP_TYPE = [sid(W['species'][sp]['type']) for sp in SPECIES]
 ATTR_NAME = [sid(a) for a in ATTRS]
 MV_NAME = [sid(m[0]) for m in MOVES]
-IT_NAME = [sid(n) for (n, h, d) in story.ITEMS]
-IT_DESC = [sid(d) for (n, h, d) in story.ITEMS]
+IT_NAME = [sid(it[0]) for it in story.ITEMS]
+IT_DESC = [sid(it[2]) for it in story.ITEMS]
 KID_NAME = [sid(W['kids'][k]['name']) for k in KIDS]
 CREST_NAME = [sid(c) for c in story.CRESTS]
 
@@ -807,7 +812,8 @@ t += arr('KID_BABY', [SPI[story.BABY[k]] for k in KIDS], static=False)
 t += arr('KID_PAL', sum(KIDPAL, []), 'uint16_t', static=False)
 t += arr('EGGS', [SPI[e] for e in story.EGGS], static=False)
 t += arr('IT_NAME', IT_NAME, 'uint16_t', static=False) + arr('IT_DESC', IT_DESC, 'uint16_t', static=False)
-t += arr('IT_HEAL', [h for (n, h, d) in story.ITEMS], static=False)
+t += arr('IT_HEAL', [it[1] for it in story.ITEMS], static=False) + arr('IT_KIND', [it[3] for it in story.ITEMS], static=False)
+t += arr('IT_PRICE', [it[4] for it in story.ITEMS], 'uint16_t', static=False)
 t += arr('CREST_NAME', CREST_NAME, 'uint16_t', static=False)
 t += arr('TITLE_PAL', sum(([rgb15(c) for c in p] for p in TPALS), []), 'uint16_t', static=False)
 # 글자 번호 (엔진에서 쓰는 것)
