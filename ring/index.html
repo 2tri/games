@@ -149,7 +149,7 @@ const HEROES = {
 };
 // kind: hit(피해) / heal / buff / hide(반지) ; elem: 보통·불·빛
 const MOVES = {
-  staff: { name: '지팡이 휘두르기', pow: 9, acc: 95 }, pan: { name: '프라이팬', pow: 12, acc: 85, line: '샘이 프라이팬을 힘껏 휘둘렀다!' },
+  staff: { name: '지팡이 휘두르기', pow: 9, acc: 95 }, stingM: { name: '스팅', pow: 14, acc: 95, elem: '요정' }, pan: { name: '프라이팬', pow: 12, acc: 85, line: '샘이 프라이팬을 힘껏 휘둘렀다!' },
   ring: { name: '반지 끼기', kind: 'hide' }, stand: { name: '함께 버티기', kind: 'buff', stat: 'def', line: '둘이 등을 맞대고 버틴다!' },
   slash: { name: '장검 베기', pow: 13, acc: 95 }, strider: { name: '성큼걸이 일격', pow: 10, acc: 90, crit: 35 },
   athelas: { name: '아셀라스', kind: 'heal', amt: 0.45, line: '향긋한 풀잎으로 상처를 다스렸다.' }, torch: { name: '횃불', pow: 10, acc: 90, elem: '불' },
@@ -181,19 +181,19 @@ const FOES = {
   wight: { name: '무덤 악령', spr: 'wight', lv: 7, hp: 44, atk: 10, def: 9, spd: 8, type: '망령', boss: true, moves: ['cold', 'cold', 'dirge'] },
   rider: { name: '검은 기사', spr: 'rider', lv: 15, hp: 95, atk: 19, def: 15, spd: 12, type: '어둠', boss: true, moves: ['morgul', 'morgul', 'shriek'] },
   gollum: { name: '골룸', spr: 'gollum', lv: 8, hp: 42, atk: 11, def: 8, spd: 14, type: '짐승', moves: ['scratch', 'strangle', 'scratch'] },
-  watcher: { name: '호수의 감시자', spr: 'watcher', lv: 14, hp: 85, atk: 15, def: 12, spd: 8, type: '짐승', boss: true, moves: ['tentacle', 'tentacle', 'splash'] },
-  goblin: { name: '모리아 고블린', spr: 'goblin', lv: 10, hp: 34, atk: 12, def: 8, spd: 13, type: '오크', moves: ['rusty', 'swarm', 'rusty'] },
-  troll: { name: '동굴 트롤', spr: 'troll', lv: 16, hp: 115, atk: 20, def: 15, spd: 5, type: '짐승', boss: true, moves: ['club', 'stomp', 'roarT'] },
+  watcher: { name: '호수의 감시자', spr: 'watcher', lv: 11, hp: 72, atk: 13, def: 11, spd: 8, type: '짐승', boss: true, moves: ['tentacle', 'tentacle', 'splash'] },
+  goblin: { name: '모리아 고블린', spr: 'goblin', lv: 9, hp: 30, atk: 11, def: 8, spd: 13, type: '오크', moves: ['rusty', 'swarm', 'rusty'] },
+  troll: { name: '동굴 트롤', spr: 'troll', lv: 13, hp: 95, atk: 17, def: 13, spd: 5, type: '짐승', boss: true, moves: ['club', 'stomp', 'roarT'] },
   balrog: { name: '발로그', spr: 'balrog', lv: 30, hp: 240, atk: 28, def: 22, spd: 12, type: '어둠', boss: true, moves: ['whip', 'flame', 'wings'] },
   riders5: { name: '검은 기사 다섯', spr: 'rider', lv: 12, hp: 120, atk: 16, def: 13, spd: 10, type: '어둠', boss: true, moves: ['morgul', 'shriek', 'morgul'] },
   warg: { name: '와르그', spr: 'warg', lv: 13, hp: 60, atk: 16, def: 10, spd: 14, type: '짐승', moves: ['bite', 'bite', 'growl'] },
-  crebain: { name: '크레바인 떼', spr: 'crebain', lv: 11, hp: 40, atk: 12, def: 8, spd: 18, type: '짐승', moves: ['peck', 'peck', 'spy'] },
+  crebain: { name: '크레바인 떼', spr: 'crebain', lv: 9, hp: 36, atk: 10, def: 8, spd: 18, type: '짐승', moves: ['peck', 'peck', 'spy'] },
   saruman: { name: '사루만', spr: 'saruman', lv: 26, hp: 160, atk: 22, def: 18, spd: 12, type: '마법사', boss: true, moves: ['bolt', 'voice', 'staffS'] },
   shelob: { name: '쉴로브', spr: 'shelob', lv: 28, hp: 190, atk: 24, def: 20, spd: 10, type: '짐승', boss: true, moves: ['sting', 'fang', 'web'] },
   witchking: { name: '마술사왕', spr: 'witchking', lv: 34, hp: 260, atk: 30, def: 24, spd: 13, type: '어둠', boss: true, moves: ['mace', 'wraithfire', 'dread'] },
   uruk: { name: '우루크하이', spr: 'uruk', lv: 18, hp: 95, atk: 20, def: 16, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
 };
-const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 } };   // 나즈굴은 불을 두려워한다
+const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 }, '요정': { '오크': 2 } };   // 스팅은 오크·고블린에게 강하다   // 나즈굴은 불을 두려워한다
 
 // ═════════ 저장 ═════════
 const SAVE_KEY = 'ring-save-v1';
@@ -202,10 +202,13 @@ function newState(hero) {
   const h = HEROES[hero]; return { hero, lead: hero, party: [hero], mem: {}, lv: 5, xp: 0, hp: h.hp, items: { lembas: 3, herb: 2 }, shadow: 0, dagger: false, wound: false, step: 0, buff: { atk: 0, def: 0 } };
 }
 function statOf(id, lv, k) { const h = HEROES[id]; const base = { hp: h.hp, atk: h.atk, def: h.def, spd: h.spd }[k]; const grow = { hp: 4, atk: 2, def: 2, spd: 1 }[k];
-  let v = base + grow * (lv - 5) + (k === 'atk' && id === 'frodosam' && S.dagger ? 3 : 0);
+  let v = base + grow * (lv - 5) + (k === 'atk' && id === 'frodosam' && S.dagger ? 3 : 0) + (k === 'def' && id === 'frodosam' && S.mithril ? 5 : 0);
   if (k === 'hp' && id === 'frodosam' && S.wound) v = Math.round(v * 0.7);     // 모르굴 칼의 상처: 최대 체력 감소
   return v; }
 function stat(k) { return statOf(S.hero, S.lv, k); }
+// 장비에 따라 기술이 바뀜: 스팅을 얻으면 지팡이 → 스팅
+function heroMoves(id) { const m = HEROES[id].moves.slice(); if (id === 'frodosam' && S.sting) m[0] = 'stingM'; return m; }
+function removeMember(id) { if (S.hero === id) { const other = S.party.find(x => x !== id); if (other) swapTo(other); } S.party = S.party.filter(x => x !== id); }
 // 동료: 지금 싸우는 인물은 S.hero/S.lv/S.xp/S.hp, 나머지는 S.mem 에 보관
 function swapTo(id) { S.mem[S.hero] = { lv: S.lv, xp: S.xp, hp: S.hp }; const m = S.mem[id]; delete S.mem[id]; S.hero = id; S.lv = m.lv; S.xp = m.xp; S.hp = m.hp; }
 function addMember(id, lv) { if (S.party.includes(id)) return; S.party.push(id); S.mem[id] = { lv, xp: 0, hp: statOf(id, lv, 'hp') }; }
@@ -265,8 +268,10 @@ async function battle(foeId, opt) {
   scene = battleScene;
   await Promise.all([tween(B, 'foeX', 0, 600), tween(B, 'heroX', 0, 600)]);
   await say(F.boss ? josa(F.name, '이', '가') + ' 앞을 가로막았다!' : '야생의 ' + josa(F.name, '이', '가') + ' 덤벼들었다!');
-  const H = HEROES[S.hero]; let turn = 0;
+  if (S.sting && F.type === '오크' && S.party.includes('frodosam')) await say('스팅의 칼날이 푸르게 빛난다! 오크가 가까이 있다.');
+  let turn = 0;
   for (;;) {
+    const H = HEROES[S.hero];
     if (opt.rescue && turn >= opt.rescue.turns) { for (const l of opt.rescue.lines) await say(l); await tween(B, 'foeFade', 0, 600); B.foeShow = false; const gain = B.foe.lv * 8; S.xp += gain; await say(`경험치를 ${gain} 얻었다.`); return 'win'; }
     turn++;
     if (opt.rescue && turn === 1) await say(opt.rescue.hint);
@@ -275,8 +280,8 @@ async function battle(foeId, opt) {
     while (!act) {
       const c = await choose(josa(H.name, '은', '는') + ' 어떻게 할까?', ['싸운다', '가방', '동료', '도망']);
       if (c === 0) {
-        const opts = H.moves.map(m => MOVES[m].name); const k = await choose(null, opts.concat(['돌아가기']), opts.length);
-        if (k < opts.length) act = { type: 'move', id: H.moves[k] };
+        const mv = heroMoves(S.hero), opts = mv.map(m => MOVES[m].name); const k = await choose(null, opts.concat(['돌아가기']), opts.length);
+        if (k < opts.length) act = { type: 'move', id: mv[k] };
       } else if (c === 1) {
         const it = S.items, list = [`렘바스 ×${it.lembas}`, `약초 ×${it.herb}`, '돌아가기'];
         const k = await choose(null, list, 2);
@@ -542,9 +547,132 @@ const CH1 = [
     S.wound = false; healAll(); S.step = 11; save();
   },
   async () => {
-    await chapterTitle('제2장 끝', '다음 이야기: 깊은골의 회의');
+    await chapterTitle('제3장', '깊은골의 회의');
+    await story('깊은골', 'frodosam_front', [
+      '폭포 소리가 들리는 요정들의 골짜기. 늙은 빌보가 반갑게 프로도를 맞았다.',
+      '빌보: 이걸 가져가거라. 내 작은 칼 「스팅」이란다. 오크가 다가오면 푸르게 빛나지.',
+      '빌보는 은빛 쇠사슬 갑옷도 꺼냈다. 깃털처럼 가볍지만 어떤 칼도 뚫지 못하는 미스릴이었다.',
+      '스팅과 미스릴 갑옷을 얻었다! 프로도·샘의 「지팡이 휘두르기」가 「스팅」으로 바뀌고 방어가 5 올랐다.',
+    ]);
+    S.sting = true; S.mithril = true; S.step = 12; save();
+  },
+  async () => {
+    await story('깊은골 · 엘론드의 회의', 'gandalf_front', [
+      '요정, 난쟁이, 사람이 한자리에 모였다. 엘론드가 말했다. 반지는 오직 그것이 만들어진 운명의 산의 불 속에서만 녹일 수 있다고.',
+      '곤도르의 보로미르는 반지를 무기로 쓰자고 했고, 김리와 레골라스는 서로를 노려보며 언성을 높였다.',
+      '다툼 속에서 프로도가 일어섰다. 「제가 가져가겠습니다. 길은 모르지만요.」',
+      '샘이 뛰어나왔다. 「나리는 저 없이는 아무 데도 못 가요!」 메리와 피핀도 뒤따랐다.',
+      '그렇게 아홉 명의 원정대가 꾸려졌다.',
+    ]);
+    addMember('legolas', 10); addMember('gimli', 10); addMember('gandalf', 13);
+    await say('레골라스, 김리, 간달프가 동료가 되었다! (보로미르·메리·피핀도 함께한다)');
+    await story('깊은골', null, [
+      '길을 떠나기 전 두 달 동안 정찰대가 사방을 살피고 돌아왔다. 검은 기사들의 말은 강에서 모두 떠내려갔다고 한다.',
+      '원정대가 길을 나서는 날, 요정들이 문 앞에 나와 조용히 배웅했다.',
+      '가방을 다시 채웠다. 렘바스 5개, 약초 3개.',
+    ]);
+    S.items.lembas = Math.max(S.items.lembas, 5); S.items.herb = Math.max(S.items.herb, 3); healAll(); S.step = 13; save();
+  },
+  async () => {
+    await story('홀린의 바위 언덕', 'crebain', [
+      '남쪽으로 내려가던 길. 하늘 저편에서 검은 구름 같은 것이 빠르게 다가온다.',
+      '아라곤: 크레바인이다! 던랜드의 까마귀 떼야. 사루만의 눈이 되어 우리를 찾고 있다!',
+    ]);
+    const r = await battle('crebain', { noRun: true }); if (r === 'lose') return lose();
+    await story('홀린의 바위 언덕', 'gandalf_front', ['간달프: 남쪽 길도 감시당하고 있군. 카라드라스를 넘어야겠네.']);
+    S.step = 14; save();
+  },
+  async () => {
+    await story('카라드라스', 'gandalf_front', [
+      '눈보라가 몰아치는 산길. 바람 속에서 누군가 주문을 외는 목소리가 들린다.',
+      '레골라스: 저건 바람 소리가 아니오. 산 위에서 누군가 우리를 막고 있소!',
+      '눈사태가 쏟아져 길이 막혔다. 모두 지쳐 체력이 줄었다.',
+      '김리: 산 밑으로 가면 되지 않소! 내 사촌 발린이 다스리는 모리아로!',
+      '간달프는 모리아라는 말에 얼굴이 어두워졌다. 「반지 지기가 정하게.」',
+    ]);
+    S.hp = Math.max(1, S.hp - 8); for (const id in S.mem) S.mem[id].hp = Math.max(1, S.mem[id].hp - 8);
+    const c = await choose('프로도는...', ['모리아로 간다', '로한 협곡으로 돌아간다']);
+    if (c === 1) await say('간달프: 그 길은 사루만의 땅에 너무 가깝네... 그래도 결국 모리아밖에 없겠군.');
+    await say('원정대는 안개산맥 아래, 모리아로 향했다.');
+    S.step = 15; save();
+  },
+  async () => {
+    await chapterTitle('제4장', '모리아의 어둠');
+    await story('모리아 서문 · 거울 호수', 'gandalf_front', [
+      '절벽에 달빛이 비치자 은빛 선으로 된 문이 떠올랐다. 문 위에 요정 글자가 새겨져 있다.',
+      '간달프가 온갖 주문을 외워 봤지만 문은 열리지 않았다. 한참 뒤 프로도가 말했다.',
+      '프로도: 혹시 수수께끼 아닐까요? 「친구」를 요정 말로 하면 뭐예요?',
+    ]);
+    for (;;) {
+      const c = await choose('요정 말로 「친구」는?', ['열려라', '두린', '멜론']);
+      if (c === 2) { await say('「멜론!」 문이 소리 없이 열렸다.'); break; }
+      await say('아무 일도 일어나지 않았다...');
+    }
+    await story('모리아 서문 · 거울 호수', 'watcher', [
+      '그 순간 호수가 끓어오르더니 긴 촉수가 프로도의 발목을 낚아챘다!',
+      '샘: 나리를 놔! 이 괴물아!',
+    ]);
+    const r = await battle('watcher'); if (r === 'lose') return lose();
+    await say('촉수가 물러난 틈에 모두 문 안으로 뛰어들었다. 등 뒤에서 문이 무너져 내렸다. 이제 돌아갈 길은 없다.');
+    S.step = 16; save();
+  },
+  async () => {
+    await story('모리아 · 어둠 속 광산', 'goblin', [
+      '간달프의 지팡이 끝 희미한 빛만이 길을 비춘다. 난쟁이들의 거대한 기둥이 어둠 속으로 끝없이 이어진다.',
+      '어둠 속에서 무언가 졸졸 따라오는 기척이 있다. 그리고 벽 틈에서 노란 눈들이 번뜩였다!',
+    ]);
+    let r = await battle('goblin'); if (r === 'lose') return lose();
+    await say('한 마리가 아니었다. 또 다른 고블린이 기둥을 타고 내려온다!');
+    r = await battle('goblin'); if (r === 'lose') return lose();
+    await story('모리아 · 갈림길', 'gandalf_front', [
+      '세 갈래 길 앞에서 간달프가 한참 생각에 잠겼다.',
+      '간달프: 의심스러울 땐 코를 따르라 했지. 이쪽 공기가 덜 퀴퀴하군.',
+    ]);
+    S.step = 17; save();
+  },
+  async () => {
+    await story('마자르불의 방', 'gimli_front', [
+      '먼지 쌓인 방 한가운데 돌무덤이 있었다. 「발린, 모리아의 주인」.',
+      '김리가 무릎을 꿇고 오래도록 울었다.',
+      '그때 피핀이 우물가 해골을 건드렸다. 와르르 떨어지는 소리가 광산 깊숙이 울려 퍼졌다.',
+      '둥... 둥... 땅속 깊은 곳에서 북소리가 대답했다. 문을 막아라!',
+    ]);
+    let r = await battle('goblin'); if (r === 'lose') return lose();
+    await story('마자르불의 방', 'troll', ['문짝이 부서지며 거대한 동굴 트롤이 사슬을 끌고 들어왔다!']);
+    r = await battle('troll'); if (r === 'lose') return lose();
+    await story('마자르불의 방', 'gandalf_front', [
+      '트롤이 쓰러졌다. 창에 찔린 줄 알았던 프로도가 숨을 몰아쉬며 일어났다. 미스릴 갑옷이 막아 준 것이다!',
+      '모두가 빠져나가자 간달프가 문에 봉인 주문을 걸었다. 문 너머에서 무시무시한 힘이 주문을 맞받아쳤다.',
+      '간달프: 내 평생 이런 맞수는 처음이군... 서두르게! 다리로!',
+    ]);
+    healAll(); S.step = 18; save();
+  },
+  async () => {
+    await story('크하자드둠의 다리', 'balrog', [
+      '고블린들이 갑자기 비명을 지르며 흩어졌다. 붉은 불빛이 벽을 타고 번져 온다.',
+      '간달프: 발로그... 옛 세상의 악마일세. 자네들 칼로는 상대가 안 돼. 달려라!',
+      '좁은 돌다리 위. 간달프가 홀로 돌아서서 지팡이를 들었다.',
+    ]);
+    if (S.party.includes('gandalf') && S.hero !== 'gandalf') swapTo('gandalf');
+    await battle('balrog', { noRun: true, rescue: { turns: 3, hint: '(간달프가 원정대가 건널 시간을 벌어야 한다!)', lines: ['간달프가 지팡이로 다리를 내리찍었다!', '「이곳은 지나갈 수 없다!」 다리가 무너지며 발로그가 불길 속으로 떨어졌다...'] } });
+    await story('크하자드둠의 다리', null, [
+      '그러나 떨어지던 발로그의 채찍 끝이 간달프의 발목을 휘감았다.',
+      '간달프: 달아나라, 이 바보들아!',
+      '간달프는 어둠 속으로 사라졌다...',
+    ]);
+    removeMember('gandalf'); healAll(); S.step = 19; save();
+  },
+  async () => {
+    await story('어둔내 골짜기', 'frodosam_front', [
+      '햇빛 아래로 빠져나온 원정대는 아무 말도 하지 못했다. 샘이 소리 없이 울었다.',
+      '아라곤: 슬퍼할 시간이 없소. 해가 지면 이 언덕은 오크로 뒤덮일 거요. 로스로리엔으로 가야 하오.',
+    ]);
+    S.step = 20; save();
+  },
+  async () => {
+    await chapterTitle('제4장 끝', '다음 이야기: 로스로리엔');
     await say('여기까지가 지금 만들어진 이야기입니다. 저장되었습니다.');
-    S.step = 12; save();
+    S.step = 21; save();
   },
 ];
 const PRACTICE_INTRO = {
