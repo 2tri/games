@@ -1,0 +1,38 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#e6e6ee;font:15px Galmuri9,sans-serif;width:1200px}
+.grid{display:grid;grid-template-columns:repeat(6,192px);gap:8px;padding:12px 12px 0}
+.cell{text-align:center}.cell div{margin:2px 0 4px}
+canvas{image-rendering:pixelated;display:block;margin:0 auto;background:#f8f8f0}
+.row{display:flex;gap:16px;padding:8px 12px;align-items:flex-start}</style>
+<div class="grid" id="g"></div>
+<div class="row"><canvas id="bt" width="160" height="144" style="width:320px;height:288px;margin:0"></canvas><canvas id="bt2" width="160" height="144" style="width:320px;height:288px;margin:0"></canvas><div id="sm" style="display:flex;flex-wrap:wrap;gap:6px;width:500px"></div></div>
+<script src="gb32.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('10px Galmuri9');
+  const A=RingGB32, P=A.GB, g=document.getElementById('g');
+  for (const view of ['front','back']) for (const h of A.heroes) {
+    const d=document.createElement('div'); d.className='cell';
+    d.appendChild(A.toCanvas(h[view](),6));
+    const t=document.createElement('div'); t.textContent=h.name+(view==='front'?' · 앞':' · 뒤'); d.appendChild(t); g.appendChild(d);
+  }
+  function text(c,str,x,y){const k=document.createElement('canvas');k.width=160;k.height=14;const t=k.getContext('2d');t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=P[3];t.fillText(str,0,1);const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);c.drawImage(k,x,y);}
+  function box(c,x,y,w,h){c.fillStyle=P[3];c.fillRect(x,y,w,h);c.fillStyle=P[0];c.fillRect(x+1,y+1,w-2,h-2);c.fillStyle=P[3];c.fillRect(x+3,y+3,w-6,1);c.fillRect(x+3,y+h-4,w-6,1);c.fillRect(x+3,y+3,1,h-6);c.fillRect(x+w-4,y+3,1,h-6);}
+  function hp(c,x,y){text(c,'HP',x,y-4);c.fillStyle=P[3];c.fillRect(x+16,y,52,4);c.fillStyle=P[2];c.fillRect(x+17,y+1,50,2);}
+  function battle(id, me, mname, msg1, msg2){
+    const c=document.getElementById(id).getContext('2d'); c.imageSmoothingEnabled=false;
+    c.fillStyle=P[0];c.fillRect(0,0,160,144);
+    c.fillStyle=P[1];for(let y=0;y<7;y++){const w=Math.round(30*Math.sqrt(1-((y-3)/3.5)**2));c.fillRect(124-w,42+y,w*2,1);}
+    c.drawImage(A.toCanvas(A.dog(),1),104,6);
+    c.drawImage(A.toCanvas(me,2),10,32);
+    text(c,'송곳니',8,4);text(c,'Lv3',62,4);c.fillStyle=P[3];c.fillRect(8,22,72,1);c.fillRect(79,14,1,9);hp(c,10,16);
+    text(c,mname,88,56);text(c,'Lv5',136,56);c.fillStyle=P[3];c.fillRect(82,92,74,1);c.fillRect(82,64,1,29);hp(c,88,68);text(c,'22/ 22',112,76);
+    box(c,0,96,160,48);text(c,msg1,8,106);text(c,msg2,8,122);
+  }
+  battle('bt', A.heroes[0].back(), '프로도','농부 매곳네 개 송곳니가','으르렁거리며 달려들었다!');
+  battle('bt2', A.heroes[5].back(), '간달프','간달프는 지팡이를','높이 들었다!');
+  const sm=document.getElementById('sm');
+  for (const h of A.heroes) for (const v of ['front','back']) { const k=A.toCanvas(h[v](),2); k.style.margin='0'; sm.appendChild(k); }
+})();
+</script>
