@@ -169,5 +169,5 @@
     for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) { const v = s.p[y * s.w + x]; if (v) { g.fillStyle = v; g.fillRect(x * scale, y * scale, scale, scale); } }
     return c;
   }
-  root.RingArt = { frodoBack, maggotDog, toCanvas };
+  root.RingArt = { frodoBack, maggotDog, toCanvas, lib: { K, mk, inb, part, ell, poly, px, line, outline, E, P } };
 })(typeof window !== 'undefined' ? window : globalThis);
