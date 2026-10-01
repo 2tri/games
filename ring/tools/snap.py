@@ -43,15 +43,19 @@ def grid(g):
     return res  # [(칸폭, x시작), (칸높이, y시작)]
 
 def snap(img, size=None, tol=20):
-    g = np.asarray(img.convert('L')).astype(float)
+    rgb = np.asarray(img.convert('RGB')).astype(float)
+    g = rgb @ [0.299, 0.587, 0.114]
+    sat = rgb.max(2) - rgb.min(2)
+    g = np.where(sat > 70, rgb.max(2), g)      # 색이 진한 곳(노란 눈·불빛)은 밝게 → 흰색으로 빛나게
     (pw, ox), (ph, oy) = grid(g)
     nx, ny = int((g.shape[1] - ox) / pw), int((g.shape[0] - oy) / ph)
-    cells = np.zeros((ny, nx))
+    cells = np.zeros((ny, nx)); glow = np.zeros((ny, nx), bool)
     for j in range(ny):
         for i in range(nx):
             x0, x1 = int(ox + i * pw + pw * .3), int(ox + (i + 1) * pw - pw * .3)
             y0, y1 = int(oy + j * ph + ph * .3), int(oy + (j + 1) * ph - ph * .3)
             cells[j, i] = np.median(g[y0:y1 + 1, x0:x1 + 1])
+            glow[j, i] = np.median(sat[y0:y1 + 1, x0:x1 + 1]) > 70
     bg = flood_bg(cells.astype(np.uint8), True, tol)
     v = cells[~bg]; c = np.percentile(v, [5, 35, 65, 95])
     for _ in range(20):
@@ -60,7 +64,7 @@ def snap(img, size=None, tol=20):
     # 무리마다 실제 밝기로 톤을 정함 (어두운 그림이 회색으로 밀리지 않게)
     lab = np.argmin(np.abs(cells[..., None] - c[None, None]), 2)
     tone_of = np.array([0 if v > 205 else 1 if v > 135 else 2 if v > 62 else 3 for v in c])
-    t = tone_of[lab]; t = np.where(bg, -1, t)
+    t = tone_of[lab]; t = np.where(glow & (cells > 140), 0, t); t = np.where(bg, -1, t)
     ys, xs = np.where(t >= 0); t = t[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     return t, (pw, ph)
 
@@ -74,7 +78,7 @@ if __name__ == '__main__':
     to_image(t, a.scale, bg=(248, 248, 240)).save(a.dst); np.save(a.dst.rsplit('.', 1)[0] + '.npy', t)
     print('칸 크기', c, '도트', t.shape, '→', a.dst)
 
-def shrink(t, maxw, maxh, line_bias=0.28):
+def shrink(t, maxw, maxh, line_bias=0.28, keep_white=False):
     """도트 그림 줄이기: 칸 덩어리마다 검정 비율이 line_bias 넘으면 검정(선 보존), 아니면 다수결"""
     h, w = t.shape; k = min(1.0, maxw / w, maxh / h)
     if k >= 1: return t
@@ -86,6 +90,7 @@ def shrink(t, maxw, maxh, line_bias=0.28):
             b = t[y0:y1, x0:x1].ravel(); fg = b[b >= 0]
             if len(fg) < 0.5 * len(b): continue
             if (fg == 3).mean() >= line_bias: out[j, i] = 3
+            elif keep_white and (fg == 0).sum() >= 1 and (b == 0).mean() >= 0.2 and (fg == 3).mean() > 0.2: out[j, i] = 0
             else:
                 vals, cnt = np.unique(fg, return_counts=True); out[j, i] = vals[np.argmax(cnt)]
     return out

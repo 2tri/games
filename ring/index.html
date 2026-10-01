@@ -164,6 +164,11 @@ const MOVES = {
   cold: { name: '차가운 손', pow: 11, acc: 90, weaken: 40 }, dirge: { name: '무덤의 노래', kind: 'sleep', acc: 55, line: '오래된 주문이 안개 속에 울린다...' },
   morgul: { name: '모르굴 칼', pow: 18, acc: 90 }, shriek: { name: '날카로운 비명', kind: 'debuff', stat: 'atk', line: '귀를 찢는 비명이 울려 퍼졌다!' },
   scratch: { name: '할퀴기', pow: 9, acc: 95 }, strangle: { name: '목 조르기', pow: 12, acc: 80 },
+  tentacle: { name: '촉수 휘감기', pow: 12, acc: 85, bind: 40 }, splash: { name: '물보라', kind: 'debuff', stat: 'atk', line: '시커먼 물이 쏟아져 내렸다!' },
+  rusty: { name: '녹슨 칼', pow: 10, acc: 90 }, swarm: { name: '떼로 덤비기', pow: 6, acc: 90, hits: 2 },
+  club: { name: '몽둥이 내리치기', pow: 20, acc: 75 }, stomp: { name: '짓밟기', pow: 14, acc: 90 }, roarT: { name: '포효', kind: 'debuff', stat: 'def', line: '동굴이 쩌렁쩌렁 울린다!' },
+  whip: { name: '불채찍', pow: 22, acc: 90, bind: 30 }, flame: { name: '불칼', pow: 28, acc: 80 }, wings: { name: '그림자 날개', kind: 'debuff', stat: 'atk', line: '어둠과 불길이 날개처럼 펼쳐졌다!' },
+  cleave: { name: '언월도', pow: 18, acc: 85 }, bash: { name: '방패 밀치기', pow: 12, acc: 95 },
 };
 const FOES = {
   dog: { name: '송곳니', spr: 'dog', lv: 3, hp: 22, atk: 8, def: 6, spd: 10, type: '짐승', moves: ['bite', 'bite', 'growl'] },
@@ -171,6 +176,11 @@ const FOES = {
   wight: { name: '무덤 악령', spr: 'wight', lv: 8, hp: 60, atk: 12, def: 10, spd: 8, type: '망령', boss: true, moves: ['cold', 'cold', 'dirge'] },
   rider: { name: '검은 기사', spr: 'rider', lv: 15, hp: 95, atk: 19, def: 15, spd: 12, type: '어둠', boss: true, moves: ['morgul', 'morgul', 'shriek'] },
   gollum: { name: '골룸', spr: 'gollum', lv: 8, hp: 42, atk: 11, def: 8, spd: 14, type: '짐승', moves: ['scratch', 'strangle', 'scratch'] },
+  watcher: { name: '호수의 감시자', spr: 'watcher', lv: 14, hp: 85, atk: 15, def: 12, spd: 8, type: '짐승', boss: true, moves: ['tentacle', 'tentacle', 'splash'] },
+  goblin: { name: '모리아 고블린', spr: 'goblin', lv: 10, hp: 34, atk: 12, def: 8, spd: 13, type: '오크', moves: ['rusty', 'swarm', 'rusty'] },
+  troll: { name: '동굴 트롤', spr: 'troll', lv: 16, hp: 115, atk: 20, def: 15, spd: 5, type: '짐승', boss: true, moves: ['club', 'stomp', 'roarT'] },
+  balrog: { name: '발로그', spr: 'balrog', lv: 30, hp: 240, atk: 28, def: 22, spd: 12, type: '어둠', boss: true, moves: ['whip', 'flame', 'wings'] },
+  uruk: { name: '우루크하이', spr: 'uruk', lv: 18, hp: 95, atk: 20, def: 16, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
 };
 const EFFECT = { '불': { '나무': 2 }, '빛': { '망령': 2, '어둠': 2 } };
 
@@ -428,8 +438,8 @@ async function practice() {
   await story(null, S.hero + '_front', PRACTICE_INTRO[S.hero]);
   for (;;) {
     scene = storyScene('연습 전투', S.hero + '_front');
-    const ids = ['dog', 'gollum', 'willow', 'wight', 'rider'];
-    const k = await choose('누구와 겨뤄 볼까?', ids.map(i => FOES[i].name).concat(['그만하기']));
+    const ids = Object.keys(FOES).sort((a, b) => FOES[a].lv - FOES[b].lv);
+    const k = await choose('누구와 겨뤄 볼까?', ids.map(i => FOES[i].name + ' ' + FOES[i].lv).concat(['그만하기']));
     if (k === ids.length) return;
     const r = await battle(ids[k]);
     if (r === 'lose') { await lose(); }

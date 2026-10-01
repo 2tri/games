@@ -9,11 +9,11 @@ function spr(c,t,x0,y0){for(let y=0;y<t.length;y++)for(let x=0;x<t[0].length;x++
 function text(c,s,x,y){const k=document.createElement('canvas');k.width=160;k.height=14;const t=k.getContext('2d');t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=P[3];t.fillText(s,0,1);const d=t.getImageData(0,0,160,14);for(let i=3;i<d.data.length;i+=4)d.data[i]=d.data[i]>110?255:0;t.putImageData(d,0,0);c.drawImage(k,x,y);}
 function hp(c,x,y){text(c,'HP',x,y-4);c.fillStyle=P[3];c.fillRect(x+16,y,48,4);c.fillStyle=P[2];c.fillRect(x+17,y+1,46,2);}
 (async()=>{await document.fonts.load('10px Galmuri9');
-for(const [k,name,f,fname,lv,msg] of [['frodosam','프로도·샘','dog','송곳니','Lv3','매곳네 개 송곳니가 덤벼든다!'],['frodosam','프로도·샘','willow','버드나무 영감','Lv9','버드나무 영감이 뿌리를 뻗었다!'],['aragorn','아라곤','wight','무덤 악령','Lv12','무덤 악령이 차가운 손을 뻗었다!'],['frodosam','프로도·샘','rider','검은 기사','Lv15','검은 기사가 칼을 뽑았다!'],['legolas','레골라스','gollum','골룸','Lv12','골룸이 바위 위에서 노려본다!'],['gimli','김리','dog','송곳니','Lv3','김리는 어떻게 할까?']]){
+for(const [k,name,f,fname,lv,msg] of [['frodosam','프로도·샘','watcher','호수의 감시자','Lv14','물속에서 촉수가 솟아올랐다!'],['legolas','레골라스','goblin','고블린','Lv10','고블린이 벽을 타고 내려온다!'],['gimli','김리','troll','동굴 트롤','Lv16','동굴 트롤이 몽둥이를 치켜들었다!'],['gandalf','간달프','balrog','발로그','Lv30','불꽃과 그림자의 악마가 나타났다!'],['aragorn','아라곤','uruk','우루크하이','Lv18','우루크하이가 방패를 앞세웠다!'],['frodosam','프로도·샘','gollum','골룸','Lv12','골룸이 바위 위에서 노려본다!']]){
   const cv=document.createElement('canvas');cv.width=160;cv.height=144;document.body.appendChild(cv);const c=cv.getContext('2d');
   c.fillStyle=P[0];c.fillRect(0,0,160,144);
   c.fillStyle=P[1];for(let y=0;y<6;y++){const w=Math.round(34*Math.sqrt(1-((y-2.5)/3)**2));c.fillRect(124-w,58+y,w*2,1);}
-  const g=AISPR[f];spr(c,g,160-g[0].length-6,0);
+  const g=AISPR[f];spr(c,g,160-g[0].length-4,64-g.length);
   const b=AISPR[k+'_back'];spr(c,b,2,104-b.length);
   text(c,fname,4,4);if(fname.length<=4)text(c,lv,52,4);c.fillStyle=P[3];c.fillRect(4,22,72,1);c.fillRect(75,14,1,9);hp(c,6,16);
   c.fillStyle=P[0];c.fillRect(86,62,74,34);
