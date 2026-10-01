@@ -45,8 +45,9 @@ def grid(g):
 def snap(img, size=None, tol=20):
     rgb = np.asarray(img.convert('RGB')).astype(float)
     g = rgb @ [0.299, 0.587, 0.114]
-    sat = rgb.max(2) - rgb.min(2)
-    g = np.where(sat > 70, rgb.max(2), g)      # 색이 진한 곳(노란 눈·불빛)은 밝게 → 흰색으로 빛나게
+    yel = (np.minimum(rgb[..., 0], rgb[..., 1]) > 150) & (rgb[..., 2] < 120)   # 노랑·주황 빛(눈·불빛)만
+    sat = np.where(yel, 255.0, 0.0)
+    g = np.where(yel, rgb.max(2), g)      # 빛나는 노란색은 흰색으로
     (pw, ox), (ph, oy) = grid(g)
     nx, ny = int((g.shape[1] - ox) / pw), int((g.shape[0] - oy) / ph)
     cells = np.zeros((ny, nx)); glow = np.zeros((ny, nx), bool)

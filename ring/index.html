@@ -191,6 +191,7 @@ const FOES = {
   saruman: { name: '사루만', spr: 'saruman', lv: 26, hp: 160, atk: 22, def: 18, spd: 12, type: '마법사', boss: true, moves: ['bolt', 'voice', 'staffS'] },
   shelob: { name: '쉴로브', spr: 'shelob', lv: 28, hp: 190, atk: 24, def: 20, spd: 10, type: '짐승', boss: true, moves: ['sting', 'fang', 'web'] },
   witchking: { name: '마술사왕', spr: 'witchking', lv: 34, hp: 260, atk: 30, def: 24, spd: 13, type: '어둠', boss: true, moves: ['mace', 'wraithfire', 'dread'] },
+  fellbeast: { name: '날짐승 탄 나즈굴', spr: 'fellbeast', lv: 24, hp: 140, atk: 22, def: 16, spd: 15, type: '어둠', boss: true, moves: ['shriek', 'morgul', 'peck'] },
   uruk: { name: '우루크하이', spr: 'uruk', lv: 18, hp: 95, atk: 20, def: 16, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
 };
 const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 }, '요정': { '오크': 2 } };   // 스팅은 오크·고블린에게 강하다   // 나즈굴은 불을 두려워한다
@@ -525,7 +526,7 @@ const CH1 = [
     S.step = 9; save();
   },
   async () => {
-    await story('브루이넨 여울', 'rider', [
+    await story('브루이넨 여울', 'arwen_front', [
       '빛나는 요정 아르웬이 말을 타고 나타나 프로도를 안장에 태웠다.',
       '검은 기사 아홉이 바짝 뒤쫓는다. 여울 건너편에 닿자 그녀가 몸을 돌렸다.',
     ]);
@@ -548,7 +549,7 @@ const CH1 = [
   },
   async () => {
     await chapterTitle('제3장', '깊은골의 회의');
-    await story('깊은골', 'frodosam_front', [
+    await story('깊은골', 'bilbo_front', [
       '폭포 소리가 들리는 요정들의 골짜기. 늙은 빌보가 반갑게 프로도를 맞았다.',
       '빌보: 이걸 가져가거라. 내 작은 칼 「스팅」이란다. 오크가 다가오면 푸르게 빛나지.',
       '빌보는 은빛 쇠사슬 갑옷도 꺼냈다. 깃털처럼 가볍지만 어떤 칼도 뚫지 못하는 미스릴이었다.',
@@ -557,7 +558,7 @@ const CH1 = [
     S.sting = true; S.mithril = true; S.step = 12; save();
   },
   async () => {
-    await story('깊은골 · 엘론드의 회의', 'gandalf_front', [
+    await story('깊은골 · 엘론드의 회의', 'elrond_front', [
       '요정, 난쟁이, 사람이 한자리에 모였다. 엘론드가 말했다. 반지는 오직 그것이 만들어진 운명의 산의 불 속에서만 녹일 수 있다고.',
       '곤도르의 보로미르는 반지를 무기로 쓰자고 했고, 김리와 레골라스는 서로를 노려보며 언성을 높였다.',
       '다툼 속에서 프로도가 일어섰다. 「제가 가져가겠습니다. 길은 모르지만요.」',
