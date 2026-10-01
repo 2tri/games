@@ -19,8 +19,10 @@ walk(e, 'up', 1); walk(e, 'left', 1)
 for i in range(13):
     walk(e, 'up', 1); settle(e, 900)
 log('after challenger', gstate(e)); e.shot('r2_mid')
-walk(e, 'up', 1); walk(e, 'left', 3); walk(e, 'up', 4)
-log('top', gstate(e))
+walk(e, 'up', 1); walk(e, 'left', 3)
+for i in range(4):
+    walk(e, 'up', 1); settle(e, 1500)      # (4,3)에서 라이벌전
+log('top', gstate(e), 'rival', bool(e.pb.memory[G + FLAGS_OFF + (FL['rival1'] >> 3)] & (1 << (FL['rival1'] & 7))))
 walk(e, 'up', 1); settle(e); log('savanna', gstate(e), MP['savanna']); e.shot('r2_savanna')
 for i in range(10):
     walk(e, 'up', 1); settle(e)

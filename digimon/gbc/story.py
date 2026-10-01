@@ -290,7 +290,7 @@ MAPS['route1'] = Map('1번 길', [
     objs=[('r_tree', 7, 0), ('r_tree', 9, 4), ('r_sign', 2, 10), ('r_tree', 1, 4), ('r_rock', 8, 10), ('r_tree2', 9, 15), ('r_bush', 1, 12)],
     signs=[Sign(2, 10, [Say('1번 길\n↑ 행복의 마을  ↓ 파일섬 숲')])],
     warps=edge([4, 5], -1, 'village', 7, 12) + edge([5, 6, 7], 18, 'forest', 5, 0),
-    enc=(26, [('picodevimon', 2, 4, 20), ('tentomon', 2, 4, 15), ('palmon', 2, 4, 15), ('elecmon', 3, 4, 10), ('koromon', 2, 3, 25), ('tsunomon', 2, 3, 15)]),
+    enc=(26, [('koromon', 2, 3, 22), ('tsunomon', 2, 3, 15), ('mochimon', 2, 3, 10), ('picodevimon', 3, 4, 18), ('tentomon', 3, 4, 13), ('palmon', 3, 4, 13), ('elecmon', 4, 4, 9)]),
     on_enter=[IfFlag('route1', 'e'), SetFlag('route1'),
               Say('풀숲에는 야생 디지몬이 숨어 있다.\f전투 중에 가방의 디지바이스를 쓰면 유년기 디지몬을 포획할 수 있다!'),
               Say('상대의 체력을 줄일수록 잘 잡힌다.\n(한 번 싸움에 3번까지)'), Label('e')])
@@ -343,6 +343,12 @@ MAPS['village'] = Map('행복의 마을', [
 MAPS['center'] = center_map('center', 'village', 7, 5, ELECMON)
 MAPS['dshop'] = shop_map('village', 12, 4)
 
+# ── 라이벌전 1 (포켓몬 라이벌 오마주): 동행 친구가 자기 파트너로 ──
+RIVAL1 = [Say('{comp}: 기다렸어, {kid}!\f쉘몬을 이긴 건 대단했지만…\n누가 더 강한지 겨뤄 보자!'), Close(),
+          IfKid('yamato', 't'), Battle('gabumon', 11, 'boss'), Jmp('w'),
+          Label('t'), Battle('agumon', 11, 'boss'),
+          Label('w'), Say('{comp}: 칫… 제법인데!\f나도 질 수 없지.\n사바나 신전에서 보자!'), SetFlag('rival1')]
+
 # ── 2번 길 (강·한쪽 턱·덤비는 디지몬) ──
 MAPS['route2'] = Map('2번 길', [
     'JJJJ::JJJJJJ',
@@ -367,10 +373,12 @@ MAPS['route2'] = Map('2번 길', [
     'JJJJJJ:::JJJ'], {**KEYR, '~': 'r_sea', 'L': 'r_ledge'}, 'r_canopy', open=[(4, -9, 5, -1, 'r_path'), (6, 20, 8, 29, 'r_path')],
     objs=[('r_tree', 9, 1), ('r_rock', 1, 16), ('r_tree2', 9, 15)],
     warps=edge([4, 5], -1, 'savanna', 7, 12) + edge([6, 7, 8], 20, 'beach', 6, 0),
-    npcs=[Challenger(3, 5, 'picodevimon', '피코데블몬', 7, 'right', 'r2c1', '야생 피코데블몬이 이쪽을 노려보고 있다!\f피코데블몬: 케케케! 여긴 내 구역이야!'),
-          Challenger(10, 12, 'tentomon', '텐타몬', 8, 'left', 'r2c2', '야생 텐타몬이 날아들었다!\f텐타몬: 실력을 보여 주시죠!'),
-          ItemBall(1, 1, '회복 디스크', 1, 'r2i1'), ItemBall(10, 17, '유년기 그물', 2, 'r2i2')],
-    enc=(26, [('palmon', 5, 7, 20), ('tentomon', 5, 7, 15), ('tanemon', 4, 6, 15), ('pyocomon', 4, 6, 15), ('picodevimon', 6, 7, 15), ('elecmon', 6, 7, 10), ('mochimon', 4, 6, 10)]),
+    npcs=[Challenger(3, 5, 'picodevimon', '피코데블몬', 8, 'right', 'r2c1', '야생 피코데블몬이 이쪽을 노려보고 있다!\f피코데블몬: 케케케! 여긴 내 구역이야!'),
+          Challenger(10, 12, 'tentomon', '텐타몬', 9, 'left', 'r2c2', '야생 텐타몬이 날아들었다!\f텐타몬: 실력을 보여 주시죠!'),
+          ItemBall(1, 1, '회복 디스크', 1, 'r2i1'), ItemBall(10, 17, '유년기 그물', 2, 'r2i2'),
+          NPC(5, 1, 'COMP', 'down', [Say('{comp}: 사바나는 바로 위야!')], hide_if='rival1')],
+    triggers=[Trigger(4, 3, 2, 1, RIVAL1, once='rival1')],
+    enc=(26, [('tanemon', 6, 7, 15), ('mochimon', 6, 7, 12), ('palmon', 7, 9, 18), ('tentomon', 7, 9, 15), ('picodevimon', 7, 9, 15), ('elecmon', 8, 9, 12), ('pyocomon', 6, 7, 13)]),
     on_enter=[IfFlag('route2', 'e'), SetFlag('route2'),
               Say('강을 건너는 모래톱이 보인다.\f턱은 위에서 아래로만 뛰어내릴 수 있다.'), Label('e')])
 
@@ -402,7 +410,7 @@ MAPS['shop2'] = shop_map('savanna', 12, 9)
 # ── 우정의 신전 (문장 신전 1호, 체육관 오마주) ──
 LEOMON = [IfFlag('leomon', 'done'),
           Say('레오몬: …크윽…\n몸이… 말을 듣지 않는다…!'), Say('레오몬: 검은 톱니가… 도망쳐라, 아이야!'), Close(),
-          Battle('leomon', 12, 'boss'), SetFlag('leomon'),
+          Battle('leomon', 14, 'boss'), SetFlag('leomon'),
           Say('레오몬: …고맙다.\n머릿속의 검은 톱니가 부서졌다.'),
           Say('레오몬: 이 신전에 잠든 문장을 가져가라.\n너와 디지몬이라면 쓸 수 있을 것이다.'), Close(), Flash(1),
           Crest('우정'), Say('우정의 문장을 손에 넣었다!'),
@@ -428,7 +436,7 @@ SHELLMON = [
     Say('바다 쪽에서 땅이 울린다…!'), Close(), Shake(10),
     Pic('shellmon'),
     Say('쉘몬: 여기는 내 바다다!\n인간 따위가 발을 들이다니!'), Close(), PicOff(),
-    Battle('shellmon', 9, 'boss'),
+    Battle('shellmon', 10, 'boss'),
     SetFlag('shellmon'),
     Say('쉘몬은 바닷속으로 도망쳐 버렸다!'),
     Say('???: 어이~! 괜찮아?'),
@@ -453,9 +461,9 @@ MAPS['beach'] = Map('파일섬 해변', [
     'JJJJJJJJJJJw~~~'], KEYB, 'r_canopy', open=[(-9, 6, -1, 8, 'r_sand'), (6, -9, 8, -1, 'r_sand')], border_fn=lambda x, y: 'r_sea' if x >= 11 else 'r_canopy',
     objs=[('r_palm', 1, 4), ('r_palm2', 9, 8), ('r_booth', 4, 3), ('r_booth', 5, 3), ('r_booth', 6, 3)],
     warps=edgeV(-1, [6, 7, 8], 'village', 15, 6) + edge([6, 7, 8], -1, 'route2', 6, 19),
-    enc=(26, [('gomamon', 5, 7, 25), ('piyomon', 5, 7, 20), ('bukamon', 4, 6, 20), ('pyocomon', 4, 6, 15), ('tanemon', 4, 6, 10)]),
+    enc=(26, [('bukamon', 4, 5, 22), ('pyocomon', 4, 5, 18), ('tanemon', 4, 5, 12), ('gomamon', 5, 6, 25), ('piyomon', 5, 6, 23)]),
     npcs=[NPC(7, 0, 'blob:shellmon', 'down', SHELLMON, hide_if='shellmon', fixed=True),
-          NPC(5, 1, 'COMP', 'right', [Say('{comp}: 북쪽으로 가면 2번 길이야.\f풀숲이 깊으니까 회복 디스크를 챙겨!')], show_if='shellmon')],
+          NPC(5, 1, 'COMP', 'right', [Say('{comp}: 북쪽으로 가면 2번 길이야.\f풀숲이 깊으니까 회복 디스크를 챙겨!')], show_if='shellmon', hide_if='route2')],
     signs=[Sign(4, 4, [Say('전화기를 들어 보았다…\f「…오늘의 날씨는…」\n알 수 없는 안내 방송만 흘러나온다.')]),
            Sign(5, 4, [Say('전화기를 들어 보았다…\f「뚜― 뚜―」\n아무 데도 이어지지 않는다.')]),
            Sign(6, 4, [Say('해변 한가운데에 전화박스가 줄지어 서 있다.\f…왜 이런 곳에?')])],

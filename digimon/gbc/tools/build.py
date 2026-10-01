@@ -817,6 +817,8 @@ for i, sp in enumerate(SPECIES):
     d = W['species'][sp]; evo = (d.get('evo') or [None])[0]
     need = 0xFF if not evo or not evo.get('need') else (0xFE if evo['need'] == 'event' else CRESTI[evo['need']])
     sig = [MOVEI[n] for n in d['sig']][:3] + [0xFF] * 3
+    if evo and d['tier'] == 'rookie': evo = dict(evo, lv=14)          # 성장기→성숙기 Lv14 (기획서 레벨 설계)
+    if evo and d['tier'] == 'champion': evo = dict(evo, lv=30)        # 성숙기→완전체 문장 + Lv30
     sp_rows.append('{%d,%d,{%s},%d,%d,%d,%d,{%d,%d,%d},%d,%d,%d,%d,%d}' % (
         TIERS.index(d['tier']), ATTRS.index(d['attr']), ','.join(str(v) for v in d['base']), d['exp'],
         SPI[evo['to']] if evo else 0xFF, evo['lv'] if evo else 0, need, sig[0], sig[1], sig[2],
