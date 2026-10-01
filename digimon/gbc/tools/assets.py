@@ -352,6 +352,26 @@ def build_all():
              '####.......m', '####.......m', '#......#####', '#......#####', '#..........m', '#####mm#####']
     sa, swalk, sfl = room_obj(SHO, sgrid, (72, 112, 200), (216, 228, 244))
     put('s_room', sa, extra={'walk': swalk}); put('s_floor', sfl, False)
+    # ── A18 문장 신전 안: 넓고 낮은 방(14×8칸) 한 덩어리. 제단(6,2) 앞 계단(6~7,3)에서 우두머리와 마주봄, 아래 가운데가 출구 ──
+    TEM = load_native('temple')
+    tgrid = ['##############', '##############', '##.#.####.#.##', '##.#......#.##', '##.#......#.##',
+             '##.#......#.##', '##.#......#.##', '######..######']
+    ta = TEM[0:128, 7:231].copy()
+    twalk = [(i, j) for j, row in enumerate(tgrid) for i, ch in enumerate(row) if ch == '.']
+    put('t_temple', ta, extra={'walk': twalk}); put('t_tfloor', ta[64:80, 112:128].copy(), False)
+    def to_castle(arr):              # 데블몬의 성: 초록·청록 → 보라, 어둡게
+        a = arr.astype(float) / 255; r, g, b = a[..., 0], a[..., 1], a[..., 2]
+        mx = a.max(-1); mn = a.min(-1); d = mx - mn + 1e-6
+        h = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) / 6
+        sat = d / (mx + 1e-6); v = mx
+        h = (h + 0.42) % 1.0; v = v * 0.78; sat = np.minimum(1, sat * 1.15)
+        i = np.floor(h * 6).astype(int) % 6; f = h * 6 - np.floor(h * 6)
+        p_, q, t_ = v * (1 - sat), v * (1 - f * sat), v * (1 - (1 - f) * sat)
+        rgb = np.choose(i[..., None] * np.ones(3, int), [np.stack(x, -1) for x in
+              [(v, t_, p_), (q, v, p_), (p_, v, t_), (p_, q, v), (t_, p_, v), (v, p_, q)]])
+        return np.clip(rgb * 255, 0, 255).astype(np.uint8)
+    tc = to_castle(ta)
+    put('t_castle', tc, extra={'walk': twalk}); put('t_cfloor', tc[64:80, 112:128].copy(), False)
     sg = snowify(rg)
     put('s_snow', sg, False)
     put('s_tall', snowify(R[12:28, 104:120].copy()), False, extra={'grass': True})
@@ -368,7 +388,7 @@ def load_all():
     import pickle
     os.makedirs(CACHE, exist_ok=True)
     p = os.path.join(CACHE, 'all.pkl')
-    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house', 'tiles', 'terrain', 'center', 'shop')]
+    srcs = [os.path.abspath(__file__)] + [os.path.join(WEB, 'art', 'src', 'bg', n + '_ai.png') for n in ('town', 'camp', 'village', 'house', 'tiles', 'terrain', 'center', 'shop', 'temple')]
     if os.path.exists(p) and os.path.getmtime(p) > max(os.path.getmtime(f) for f in srcs):
         return pickle.load(open(p, 'rb'))
     A = build_all(); pickle.dump(A, open(p, 'wb')); return A

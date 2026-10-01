@@ -28,7 +28,7 @@ for i in range(10):
     walk(e, 'up', 1); settle(e)
     if gstate(e)['map'] == MP['temple1']: break
 log('temple', gstate(e)); e.shot('r2_temple')
-walk(e, 'up', 5); e.shot('r2_leo'); print('oam', [ (e.mem(0xFE00+i*4), e.mem(0xFE00+i*4+1), e.mem(0xFE00+i*4+2), e.mem(0xFE00+i*4+3)) for i in range(4, 8)])
+walk(e, 'up', 2); e.shot('r2_leo'); print('oam', [ (e.mem(0xFE00+i*4), e.mem(0xFE00+i*4+1), e.mem(0xFE00+i*4+2), e.mem(0xFE00+i*4+3)) for i in range(4, 8)])
 walk(e, 'up', 1); e.press('a', 4, 30); settle(e, 1500); log('after leomon', gstate(e), 'crests', bin(crests()))
 e.shot('r2_after')
 from emu import save_state; save_state(e, S + '/savanna.state'); e.stop()

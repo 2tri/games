@@ -359,6 +359,7 @@ function refFix(id, dir, desc, blob) {
 [["C1","agumon"],["C2","gabumon"],["C3","piyomon"],["C4","tentomon"],["C5","palmon"],["C6","gomamon"],["C7","patamon"],["C21","greymon-first"],["C22","garurumon"],["C27","angemon"],["C28","tailmon"]].forEach(([id, d]) => { const o = L.find(x => x.id === id); if (o) o.ref = REFURL(d); });
 setDone("A11", "지형 타일 (턱·다리·절벽·동굴 입구·바위·캡슐)"); setDone("A7", "회복 센터 안"); setDone("A8", "상점 안"); setDone("B10a", "신태일 초상");
 setDone("B10b", "매튜 초상 (흰 머리 → 금발로 고쳐 넣음)"); setDone("B10c", "리키 초상"); setDone("B10d", "신나리 초상"); setDone("C8", "플롯트몬 앞·뒤"); setDone("C15", "코로몬 앞·뒤");
+setDone("A18", "문장 신전 안 (데블몬의 성은 보라색으로 바꿔 씀)"); setDone("C21", "그레이몬 앞·뒤"); setDone("C27", "엔젤몬 앞·뒤"); setDone("C28", "가트몬 앞·뒤"); setDone("C6", "쉬라몬 앞모습 (다시 뽑음)");
 L.sort((a, b) => a.r - b.r);
 const TIERS = [[1, 49, "지금 바로", "지금 만든 부분과 바로 다음 작업 (게임 뼈대 · 주인공 · 파트너 · 첫 야생)"],
                [50, 99, "파일섬 확장", "지역 2~6: 지역마다 장면 그림 + 보스·야생 (포켓몬 체육관 길 구조)"],

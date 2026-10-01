@@ -88,6 +88,11 @@ def shop_map(town, dx, dy):
               + [Sign(x, 2, [Say('알록달록한 물건이 진열돼 있다.')]) for x in (1, 2, 3, 6, 7, 8, 9, 10, 11)] + [Sign(5, 2, [Say('시원한 음료가 가득한 냉장고다.')])],
         warps=mat_warps(5, 11, town, dx, dy + 1))
 
+def temple_room(name, room, floor, boss, back, bx, by, on_enter=None):
+    """문장 신전 안 (A18 그림 한 덩어리, 14×8칸): 우두머리는 제단(6,2), 계단(6,3)에서 말 걸기, 아래 (6~7,7) 출구"""
+    return Map(name, ['.' * 14] * 8, {'.': floor}, 'h_void', objs=[(room, 0, 0)], npcs=[boss],
+               warps=[Warp_(6, 7, back, bx, by, 'down'), Warp_(7, 7, back, bx, by, 'down')], on_enter=on_enter)
+
 def mat_warps(x, y, to, tx, ty):
     """출입구 깔개(2칸) → 바깥 문 아래"""
     return [Warp_(x, y, to, tx, ty, 'down'), Warp_(x + 1, y, to, tx, ty, 'down')]
@@ -408,7 +413,7 @@ MAPS['savanna'] = Map('기어 사바나', [
     'JJJJJJJ::JJJJJJJ'], {'J': 'r_canopy', '.': 'r_grass2', ':': 'r_path', ',': 'r_tall'}, 'r_canopy',
     objs=[('c_shrine', 6, 1), ('v_center', 1, 6), ('v_shop', 11, 7), ('r_tree', 1, 1), ('r_tree', 13, 1), ('r_palm', 13, 11), ('r_rock', 3, 1)],
     open=[(7, 14, 8, 29, 'r_path'), (16, 6, 29, 6, 'r_path')],
-    warps=edge([7, 8], 14, 'route2', 4, 0) + edgeV(16, [6], 'route3', 0, 6) + [Warp_(7, 2, 'temple1', 4, 8, 'up'), Warp_(3, 10, 'center2', 5, 10, 'up'), Warp_(12, 9, 'shop2', 5, 10, 'up')],
+    warps=edge([7, 8], 14, 'route2', 4, 0) + edgeV(16, [6], 'route3', 0, 6) + [Warp_(7, 2, 'temple1', 6, 6, 'up'), Warp_(3, 10, 'center2', 5, 10, 'up'), Warp_(12, 9, 'shop2', 5, 10, 'up')],
     npcs=[NPC(9, 4, 'blob:koromon', 'down', [Say('코로몬: 레오몬님이 이상해!\f신전 안에서 검은 톱니가 반짝였어…')]),
           NPC(4, 12, 'blob:tsunomon', 'down', [Say('뿔몬: 회복 센터는 마을마다 있어.\n쓰러지면 마지막에 들른 곳으로 돌아가!')]),
           NPC(15, 6, 'blob:koromon', 'left', [Say('코로몬: 이쪽은 장난감 마을로 가는 길이야.\f레오몬님이 이상해진 뒤로 위험해서 막고 있어…\n(신전의 레오몬을 먼저 도와주자)')], hide_if='leomon', fixed=True)],
@@ -426,21 +431,8 @@ LEOMON = [IfFlag('leomon', 'done'),
           Crest('우정'), Say('우정의 문장을 손에 넣었다!'),
           Say('레오몬: 문장은 파트너를 더 높은 곳으로 이끈다.\f동쪽 장난감 마을에도 이상한 기운이 감돈다.\n가 봐 다오.'), End(),
           Label('done'), Say('레오몬: 우정의 문장이 너를 지켜 줄 것이다.')]
-MAPS['temple1'] = Map('우정의 신전', [
-    'SSSSSSSSSS',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S........S',
-    'SSSS..SSSS'], {'S': 'r_stone', '.': 'r_path', 'P': 'p_rocks'}, 'r_stone',
-    npcs=[NPC(4, 1, 'blob:leomon', 'down', LEOMON, fixed=True)],
-    warps=[Warp_(4, 9, 'savanna', 7, 3, 'down'), Warp_(5, 9, 'savanna', 7, 3, 'down')],
+MAPS['temple1'] = temple_room('우정의 신전', 't_temple', 't_tfloor', NPC(6, 2, 'blob:leomon', 'down', LEOMON, fixed=True), 'savanna', 7, 3,
     on_enter=[IfFlag('temple1', 'e'), SetFlag('temple1'), Say('차가운 돌기둥이 늘어선 신전이다.\f안쪽에서 낮은 으르렁 소리가 들린다…'), Label('e')])
-
 # ── 3번 길 (가로 길, Lv12~16: 성장기 + 못 잡는 야생 성숙기) ──
 MAPS['route3'] = Map('3번 길', [
     'JJJJJJJJJJ:JJJJJJJJJ',
@@ -483,7 +475,7 @@ MAPS['toytown'] = Map('장난감 마을', [
     'W..............W',
     'WWWWWWWWWWWWWWWW'], {'W': 'r_canopy', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}, 'r_canopy', open=[(-9, 6, -1, 6, 'v_path'), (16, 6, 29, 6, 'v_path')],
     objs=[('c_shrine', 6, 1), ('v_center', 1, 7), ('v_shop', 11, 8), ('v_block4', 1, 1), ('v_block6', 11, 1), ('v_block7', 10, 4)],
-    warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 5, 10, 'up'), Warp_(12, 10, 'shop3', 5, 10, 'up')],
+    warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 6, 6, 'up'), Warp_(3, 11, 'center3', 5, 10, 'up'), Warp_(12, 10, 'shop3', 5, 10, 'up')],
     npcs=[NPC(9, 9, 'blob:numemon', 'down', [Say('워매몬: 퍼펫몬님이 이상해…\f예전엔 다 같이 놀았는데,\n지금은 장난감들을 마구 부숴!')]),
           NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')]),
           NPC(13, 12, 'blob:nyaromon', 'left', [Say('야옹몬: 완전체가 되려면 문장의 힘이 필요해.\f자기 문장이 없는데 억지로 진화하면\n어둠에 물든 모습이 된대…'),
@@ -502,20 +494,7 @@ MONZAEMON = [IfFlag('monzaemon', 'done'),
              Crest('순수'), Say('순수의 문장을 손에 넣었다!'),
              Say('퍼펫몬: 검은 톱니는 동쪽 무한산에서 날아온대.\f꼭대기의 성에 무서운 디지몬이 산다고…'), End(),
              Label('done'), Say('퍼펫몬: 다시 다 같이 놀 수 있게 됐어!\n고마워!')]
-MAPS['temple2'] = Map('순수의 신전', [
-    'SSSSSSSSSS',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S........S',
-    'SSSS..SSSS'], {'S': 'r_stone', '.': 'v_path', 'P': 'vp_rocks'}, 'r_stone',
-    npcs=[NPC(4, 1, 'blob:monzaemon', 'down', MONZAEMON, fixed=True)],
-    warps=[Warp_(4, 9, 'toytown', 7, 3, 'down'), Warp_(5, 9, 'toytown', 7, 3, 'down')])
-
+MAPS['temple2'] = temple_room('순수의 신전', 't_temple', 't_tfloor', NPC(6, 2, 'blob:monzaemon', 'down', MONZAEMON, fixed=True), 'toytown', 7, 3)
 # ── 4번 길 (무한산 기슭, Lv16~20) ──
 MAPS['route4'] = Map('4번 길', [
     'JCCCCCCC::CCCCCJ',
@@ -577,7 +556,7 @@ MAPS['summit'] = Map('무한산 꼭대기', [
     'J....::....J',
     'JJJJJJJJJJJJ'], {'J': 'k_wall', '.': 'r_path', ':': 'v_path', 'o': 'p_rocks'}, 'k_wall',
     objs=[('c_shrine', 4, 0), ('r_rock', 1, 1), ('r_rock', 9, 1)],
-    warps=[Warp_(5, 1, 'temple3', 4, 8, 'up'), Warp_(5, 11, 'cave1', 1, 2, 'down'), Warp_(6, 11, 'cave1', 1, 2, 'down')],
+    warps=[Warp_(5, 1, 'temple3', 6, 6, 'up'), Warp_(5, 11, 'cave1', 1, 2, 'down'), Warp_(6, 11, 'cave1', 1, 2, 'down')],
     npcs=[NPC(7, 6, 'COMP', 'left', [Say('{comp}: 저 성 안에 데블몬이 있어.\f회복은 충분해?\n준비되면 같이 가자!')], hide_if='devimon')],
     on_enter=[IfFlag('summit', 'e'), SetFlag('summit'), Say('무한산 꼭대기다.\f검은 성에서 차가운 바람이 불어온다…'), Label('e')])
 
@@ -593,20 +572,7 @@ DEVIMON = [IfFlag('devimon', 'done'),
            Say('{comp}: 해냈다, {kid}!\n파일섬에 평화가 돌아왔어!'),
            Say('{comp}: …그런데 데블몬이 말한 서버 대륙은 뭘까?\f(1장 끝 — 다음 이야기는 준비 중)'), End(),
            Label('done'), Say('텅 빈 성이다.\n바다 건너편이 보인다…')]
-MAPS['temple3'] = Map('데블몬의 성', [
-    'SSSSSSSSSS',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S.P....P.S',
-    'S........S',
-    'S........S',
-    'SSSS..SSSS'], {'S': 'k_wall', '.': 'k_floor', 'P': 'k_rocks'}, 'k_wall',
-    npcs=[NPC(4, 1, 'blob:devimon', 'down', DEVIMON, fixed=True)],
-    warps=[Warp_(4, 9, 'summit', 5, 2, 'down'), Warp_(5, 9, 'summit', 5, 2, 'down')])
-
+MAPS['temple3'] = temple_room('데블몬의 성', 't_castle', 't_cfloor', NPC(6, 2, 'blob:devimon', 'down', DEVIMON, fixed=True), 'summit', 5, 2)
 # ── 얼음 설원 (곁가지, 포켓몬의 들러도 되는 길 오마주): 3번 길 북쪽 ──
 MAPS['snow'] = Map('얼음 설원', [
     'TTTTTTTTTTTTTTTT',

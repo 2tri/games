@@ -33,7 +33,7 @@ p('b', 1, 30); p('b', 1, 30); settle(e)
 p('start', 1, 20); p('up', 1); p('a', 1, 30); p('a', 1, 30); p('a', 1, 40); e.shot('it_status')
 p('b', 1, 30); p('b', 1, 30); p('b', 1, 30); settle(e); log('field', gstate(e))
 # 센터 정화
-walk(e, 'down', 7); settle(e); log('out', gstate(e))
+walk(e, 'down', 4); settle(e); log('out', gstate(e))
 walk(e, 'down', 3); walk(e, 'left', 1); walk(e, 'down', 5); walk(e, 'left', 3); walk(e, 'up', 1); settle(e); log('center?', gstate(e))
 walk(e, 'up', 5); p('a', 1, 20)
 for i in range(80):

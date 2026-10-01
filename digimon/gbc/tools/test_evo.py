@@ -12,7 +12,7 @@ G = SYM['_G']; m = e.pb.memory
 P0 = G + 15
 m[P0] = SPN.index('greymon'); m[P0 + 1] = 29; m[P0 + 4] = 120; m[P0 + 5] = 0
 x = 26999; m[P0 + 6] = x & 255; m[P0 + 7] = (x >> 8) & 255; m[P0 + 8] = (x >> 16) & 255; m[P0 + 9] = 0
-walk(e, 'down', 7); settle(e); walk(e, 'down', 3); walk(e, 'right', 8); settle(e)
+walk(e, 'down', 4); settle(e); walk(e, 'down', 3); walk(e, 'right', 8); settle(e)
 walk(e, 'right', 1); settle(e); walk(e, 'right', 5); walk(e, 'down', 1); log('grass', gstate(e))
 for i in range(80):
     walk(e, 'down' if i % 2 else 'up', 1)

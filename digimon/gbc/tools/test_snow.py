@@ -14,7 +14,7 @@ m[G + 16] = 25; m[G + 19] = 0xF4; m[G + 20] = 1
 for i in range(4): m[G + 29 + i] = 30
 def go(d, n):
     for i in range(n): walk(e, d, 1); settle(e, 900, 'sig')
-go('down', 7); go('down', 3); go('left', 8); log('route3?', gstate(e), MP['route3'])
+go('down', 4); go('down', 3); go('left', 8); log('route3?', gstate(e), MP['route3'])
 go('left', 9); go('up', 6); go('up', 1); log('snow?', gstate(e), MP['snow']); e.shot('snow_in')
 gear0 = m[BAG + IT.index('검은 톱니')]
 go('up', 7); log('after frigimon?', gstate(e))

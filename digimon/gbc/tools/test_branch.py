@@ -9,7 +9,7 @@ log = lambda *a: print(*a, flush=True)
 G = SYM['_G']; m = e.pb.memory; P0 = G + 15
 GRASS = S + '/grass.state'
 load_state(e, S + '/savanna.state'); e.tick(5)
-walk(e, 'down', 7); settle(e); walk(e, 'down', 3); walk(e, 'right', 8); settle(e)
+walk(e, 'down', 4); settle(e); walk(e, 'down', 3); walk(e, 'right', 8); settle(e)
 walk(e, 'right', 1); settle(e); walk(e, 'right', 5); walk(e, 'down', 1); log('grass', gstate(e))
 save_state(e, GRASS)
 

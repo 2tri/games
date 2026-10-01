@@ -45,7 +45,7 @@ def hue_gap(a, b):
     ha = colorsys.rgb_to_hsv(*(a / 255))[0] * 360; hb = colorsys.rgb_to_hsv(*(b / 255))[0] * 360
     d = abs(ha - hb) % 360; return min(d, 360 - d)
 
-def snap(img, tol=24, k=6, accent=True):
+def snap(img, tol=24, k=6, accent=True, fixed=None):
     rgb = np.asarray(img.convert('RGB')).astype(float)
     (pw, ox), (ph, oy) = grid(lum(rgb))
     nx, ny = int((rgb.shape[1] - ox) / pw), int((rgb.shape[0] - oy) / ph)
@@ -76,6 +76,7 @@ def snap(img, tol=24, k=6, accent=True):
     groups.sort(key=lambda gr: -gr[1])
     c = np.array([gr[0] for gr in groups[:2]])
     if len(c) < 2: c = np.array([c[0], c[0] * 0.68])               # 한 색뿐이면 어두운 쪽을 만들어 줌
+    if fixed is not None: c = np.array(fixed, float); accent = False   # 몸 색 두 개를 직접 정함 (자동 선택이 틀릴 때)
     c = c[np.argsort(-lum(c))]                                    # 1 = 밝은 색, 2 = 어두운 색
     pal4 = [[248, 248, 248], c[0], c[1], [24, 24, 24]]
     if accent:                                                    # 눈처럼 색상이 확 다른 작은 색 하나는 5번째 색(4)으로 남김
@@ -145,9 +146,9 @@ def to_image(t, pal, scale=1, bg=None):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('name')
-    ap.add_argument('--max', type=int, default=56); ap.add_argument('--line', type=float, default=0.42); ap.add_argument('--flip', action='store_true', help='좌우 뒤집기 (내 쪽 그림이 상대를 보게)'); ap.add_argument('--mode', type=int, default=2, help='줄이기 1=반지 원정식 2=테두리 다시 그리기'); ap.add_argument('--k', type=int, default=6, help='처음 나눌 색 무리 수 (그중 큰 2개를 씀)')
+    ap.add_argument('--max', type=int, default=56); ap.add_argument('--line', type=float, default=0.42); ap.add_argument('--flip', action='store_true', help='좌우 뒤집기 (내 쪽 그림이 상대를 보게)'); ap.add_argument('--mode', type=int, default=2, help='줄이기 1=반지 원정식 2=테두리 다시 그리기'); ap.add_argument('--k', type=int, default=6, help='처음 나눌 색 무리 수 (그중 큰 2개를 씀)'); ap.add_argument('--pal', nargs=2, help='몸 색 두 개 고정 예: 232,96,48 136,96,176')
     a = ap.parse_args()
-    t, pal, cell = snap(Image.open(a.src), k=a.k)
+    t, pal, cell = snap(Image.open(a.src), k=a.k, fixed=[[int(v) for v in x.split(',')] for x in a.pal] if a.pal else None)
     t = drop_small(t, 8)
     t = shrink2(t, a.max, a.max, a.line) if a.mode == 2 else shrink(t, a.max, a.max, a.line)
     t = drop_small(t, 3)
