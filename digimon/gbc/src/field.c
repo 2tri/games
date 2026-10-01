@@ -46,7 +46,7 @@ static void map_load(uint8_t m) {
     far_copy(&M, map_bank, MAPTAB[m].map, sizeof(map_t));
     MAPB();
     VBK_REG = 0; set_bkg_data(152, M.n_t0, M.t0);
-    if (M.n_t1) { VBK_REG = 1; set_bkg_data(128, M.n_t1, M.t1); VBK_REG = 0; }
+    if (M.n_t1) { VBK_REG = 1; set_bkg_data(M.t1_base, M.n_t1, M.t1); VBK_REG = 0; }
     memcpy(&bgpal[4], M.pal, 56);
     if (M.n_spr) { VBK_REG = 1; set_sprite_data(24, M.n_spr, M.spr); VBK_REG = 0; }
     for (i = 0; i < M.n_objpal * 4; i++) obpal[4 + i] = M.objpal[i];

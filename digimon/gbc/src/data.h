@@ -12,7 +12,7 @@ typedef struct {
     const uint8_t *cells;
     uint8_t n_mt; const uint8_t *mt;        // 칸마다 타일4·속성4·성질1 (9바이트)
     uint8_t n_t0; const uint8_t *t0;        // VRAM 0번 칸 152~ 타일
-    uint8_t n_t1; const uint8_t *t1;        // VRAM 1번 칸 128~ 타일
+    uint8_t n_t1; const uint8_t *t1;        // VRAM 1번 칸 64~ 타일
     const uint16_t *pal;                    // 배경 팔레트 1~7 (28색)
     uint8_t n_npc; const uint8_t *npcs;     // 15바이트씩
     uint8_t n_sign; const uint8_t *signs;   // x,y,스크립트(2)
@@ -24,6 +24,7 @@ typedef struct {
     uint8_t n_objpal; const uint16_t *objpal;
     uint8_t n_spr; const uint8_t *spr;      // OBJ 타일 (1번 칸 24~)
     uint16_t name;
+    uint8_t t1_base;                        // 1번 VRAM 지도 타일 시작 (그 앞은 OBJ)
 } map_t;
 
 typedef struct { uint8_t bank; const map_t *map; } farmap_t;
@@ -70,5 +71,5 @@ extern const move_t MOVES[];
 extern const uint8_t TIER_BASIC[];
 extern const uint16_t ATTR_NAME[], KID_NAME[], KID_PAL[], IT_NAME[], IT_DESC[], CREST_NAME[], TITLE_PAL[], DIGCH[], JOSACH[];
 extern const uint8_t KID_PARTNER[], KID_BABY[], EGGS[], IT_HEAL[], BMAP[];
-extern const uint8_t ui_tiles[], title_tiles[], title_map[], title_attr[], kid_spr[], opening[];
+extern const uint8_t ui_tiles[], title_tiles[], title_tiles1[], title_map[], title_attr[], title_alt[], kid_spr[], opening[];
 #endif

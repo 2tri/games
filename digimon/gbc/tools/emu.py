@@ -35,14 +35,21 @@ def gstate(e):
     m = e.pb.memory
     return {'kid': m[G_ADDR + 4], 'map': m[G_ADDR + 5], 'x': m[G_ADDR + 6], 'y': m[G_ADDR + 7], 'dir': m[G_ADDR + 8], 'nparty': m[G_ADDR + 13]}
 def walk(e, d, steps):
-    """한 칸씩 정확히: 자리가 바뀌는 순간 손을 뗌"""
+    """한 칸씩 정확히: 화면이 움직이기 시작하면(걸음 시작) 바로 손을 떼고, 도착할 때까지 기다림"""
+    m = e.pb.memory
     for _ in range(steps):
-        g0 = gstate(e); e.pb.button_press(d)
+        g0 = gstate(e); sc0 = (m[0xFF42], m[0xFF43]); e.pb.button_press(d); started = False
         for i in range(40):
             e.tick(1)
-            g = gstate(e)
-            if (g['x'], g['y'], g['map']) != (g0['x'], g0['y'], g0['map']): break
-        e.pb.button_release(d); e.tick(3)
+            if (m[0xFF42], m[0xFF43]) != sc0 or (gstate(e)['x'], gstate(e)['y'], gstate(e)['map']) != (g0['x'], g0['y'], g0['map']):
+                started = True; break
+        e.pb.button_release(d)
+        if started:
+            for i in range(40):
+                g = gstate(e)
+                if (g['x'], g['y'], g['map']) != (g0['x'], g0['y'], g0['map']): break
+                e.tick(1)
+        e.tick(3)
 def save_state(e, path):
     with open(path, 'wb') as f: e.pb.save_state(f)
 def load_state(e, path):

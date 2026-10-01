@@ -9,22 +9,31 @@ extern uint8_t print_max;
 
 // ───────── 제목 ─────────
 uint8_t title_screen(void) BANKED {
-    static uint8_t tm[360], ta[360];
+    static uint8_t tm[360], ta[360], alt[N_TITLE_ALT * 4 + 1], keep[N_TITLE_ALT * 2 + 1];
     uint16_t i; uint8_t sel, blink = 0;
     DISPLAY_OFF;
     screen_clear(); scene = SCENE_OTHER; pool_reset(0);
-    far_vram(0, 80, N_TITLE_TILES, MISC_BANK, title_tiles);
+    far_vram(0, 80, N_TITLE0, MISC_BANK, title_tiles);
+    if (N_TITLE1) far_vram(1, 0, N_TITLE1, MISC_BANK, title_tiles1);
     far_copy(tm, MISC_BANK, title_map, 360); far_copy(ta, MISC_BANK, title_attr, 360);
-    for (i = 0; i < 360; i++) put_tile(TGT_BG, i % 20, i / 20, 80 + tm[i], ta[i]);
-    for (i = 0; i < 16; i++) bgpal[4 + i] = TITLE_PAL[i];
+    far_copy(alt, MISC_BANK, title_alt, N_TITLE_ALT * 4);
+    for (i = 0; i < 18; i++) { VBK_REG = 1; set_bkg_tiles(0, i, 20, 1, ta + i * 20); VBK_REG = 0; set_bkg_tiles(0, i, 20, 1, tm + i * 20); }
+    for (i = 0; i < N_TITLE_PAL * 4; i++) bgpal[4 + i] = TITLE_PAL[i];
     fade_lv = 0; pal_apply();
     DISPLAY_ON;
     for (;;) {
         frame();
         if (joy_new & (J_START | J_A)) break;
-        if ((frames & 31) == 0) { blink ^= 1; bgpal[13] = blink ? TITLE_PAL[8] : TITLE_PAL[9]; pal_apply(); }
+        if ((frames & 31) == 0) {          // START 글씨 깜빡임: 글씨 없는 칸과 바꿔 끼움
+            blink ^= 1;
+            for (i = 0; i < N_TITLE_ALT; i++) {
+                uint16_t pos = alt[i * 4] | (alt[i * 4 + 1] << 8);
+                if (blink) put_tile(TGT_BG, pos % 20, pos / 20, alt[i * 4 + 2], alt[i * 4 + 3]);
+                else put_tile(TGT_BG, pos % 20, pos / 20, tm[pos], ta[pos]);
+            }
+        }
     }
-    bgpal[13] = TITLE_PAL[9]; pal_apply();
+    for (i = 0; i < N_TITLE_ALT; i++) { uint16_t pos = alt[i * 4] | (alt[i * 4 + 1] << 8); put_tile(TGT_BG, pos % 20, pos / 20, tm[pos], ta[pos]); }
     if (!save_exists()) return 0;
     {
         static const uint16_t items[2] = { S_T_CONT, S_T_NEW };

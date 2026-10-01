@@ -299,12 +299,30 @@ BIG = {'tent': (2, 2), 'blockHouse': (2, 2), 'palm': (1, 2), 'booth': (1, 2)}
 SOLID = {'tree', 'dtree', 'sea', 'shore', 'crib', 'egg', 'sign', 'blockR', 'blockB', 'blockY', 'fire'} | set(BIG)
 GRASS = {'tall'}
 
+# 이미지 AI 배경에서 잘라 낸 조각 (tools/assets.py): 이름 → {img, w, h, solid, door, walk}
+import assets as _assets, palfit
+AS = _assets.load_all()
+def big_of(o): return (AS[o]['w'], AS[o]['h']) if o in AS else BIG.get(o, (1, 1))
+
+def mt_split(mt):
+    if '@' in mt:
+        n, xy = mt.split('@'); x, y = map(int, xy.split(',')); return n, x, y
+    return mt, 0, 0
+
 def mt_pixels(mt):
     """'tree' 또는 'tent@1,0' → 16×16×3"""
-    if '@' in mt:
-        n, xy = mt.split('@'); x, y = map(int, xy.split(','))
-        return tile_rgb(n)[y * 16:y * 16 + 16, x * 16:x * 16 + 16]
-    return tile_rgb(mt)
+    n, x, y = mt_split(mt)
+    src = AS[n]['img'] if n in AS else tile_rgb(n)
+    return src[y * 16:y * 16 + 16, x * 16:x * 16 + 16]
+
+def mt_flags(mt):
+    n, x, y = mt_split(mt)
+    if n in AS:
+        a = AS[n]
+        solid = a['solid'] and (x, y) != a.get('door') and (x, y) not in a.get('walk', [])
+        return (MT_SOLID if solid else 0) | (MT_GRASS if a.get('grass') else 0)
+    return (MT_SOLID if n in SOLID else 0) | (MT_GRASS if n in GRASS else 0)
+MT_SOLID, MT_GRASS = 1, 2
 
 def reduce_colors(cols, counts, k):
     """색을 k개로: 가장 덜 쓰는 색을 가장 가까운 색에 합침"""
@@ -406,9 +424,9 @@ for mname, M in story.MAPS.items():
     rows = [list(r) for r in M.rows]; H = len(rows); Wd = len(rows[0])
     cells = [[M.key[ch] for ch in r] for r in rows]
     for (o, ox, oy) in M.objs:
-        bw, bh = BIG.get(o, (1, 1))
+        bw, bh = big_of(o)
         for j in range(bh):
-            for i in range(bw): cells[oy + j][ox + i] = o + ('@%d,%d' % (i, j) if o in BIG else '')
+            for i in range(bw): cells[oy + j][ox + i] = o + ('@%d,%d' % (i, j) if bw * bh > 1 else '')
     border2 = None; split = 0xFF
     if M.border_fn:
         for x in range(-10, 40):
@@ -420,38 +438,6 @@ for mname, M in story.MAPS.items():
     cell_ids = [mtid(n) for r in cells for n in r]
     border_id = mtid(M.border); border2_id = mtid(border2) if border2 else border_id
     opens = [(o[0], o[1], o[2], o[3], mtid(o[4])) for o in M.open]
-    # 8×8 타일 + 팔레트
-    subs = []; wts = []
-    use = {}
-    for n in cell_ids: use[n] = use.get(n, 0) + 1
-    for k_ in (border_id, border2_id): use[k_] = use.get(k_, 0) + 30
-    for o in opens: use[o[4]] = use.get(o[4], 0) + 10
-    for i_, n in enumerate(mts):
-        px = mt_pixels(n)
-        for (y, x) in [(0, 0), (0, 8), (8, 0), (8, 8)]: subs.append(px[y:y + 8, x:x + 8]); wts.append(use.get(i_, 1))
-    pals, fit = fit_palettes(subs, wts, 7)
-    tl = {}; tlist = []
-    mtdata = []
-    for i, n in enumerate(mts):
-        ids = []; attrs = []
-        for q in range(4):
-            pi, a = fit[i * 4 + q]; k = a.astype(np.uint8).tobytes()
-            if k not in tl: tl[k] = len(tlist); tlist.append(a.astype(np.uint8))
-            ids.append(tl[k]); attrs.append(pi + 1)
-        base = n.split('@')[0]
-        fl = (1 if base in SOLID else 0) | (2 if base in GRASS else 0)
-        mtdata.append((ids, attrs, fl))
-    NT0 = 104
-    assert len(tlist) <= NT0 + 64, (mname, len(tlist))
-    mt_bytes = []
-    for ids, attrs, fl in mtdata:
-        for t in ids: mt_bytes.append((152 + t) & 255 if t < NT0 else (128 + t - NT0))
-        for t, a in zip(ids, attrs): mt_bytes.append(a | (0x08 if t >= NT0 else 0))
-        mt_bytes.append(fl)
-    tiles0 = sum((enc2bpp(t) for t in tlist[:NT0]), []); tiles1 = sum((enc2bpp(t) for t in tlist[NT0:]), [])
-    palw = []
-    for p in pals: palw += [rgb15(c) for c in p]
-    while len(palw) < 28: palw.append(rgb15(gfx.WHITE))
     # NPC 그림 묶음
     sprsets = []; sprtiles = []; objpals = []
     def objpal(pal):
@@ -484,9 +470,61 @@ for mname, M in story.MAPS.items():
     on_enter = scr(M.on_enter) if M.on_enter else None
     blob, starts = dsl.assemble(scripts, CTX)
     assert len(objpals) <= 7, (mname, len(objpals))
-    assert 24 + len(sprtiles) <= 128
+    assert 24 + len(sprtiles) <= 100, (mname, len(sprtiles))
+    # 8×8 타일 + 팔레트
+    subs = []; wts = []
+    use = {}
+    for n in cell_ids: use[n] = use.get(n, 0) + 1
+    for k_ in (border_id, border2_id): use[k_] = use.get(k_, 0) + 30
+    for o in opens: use[o[4]] = use.get(o[4], 0) + 10
+    for i_, n in enumerate(mts):
+        px = mt_pixels(n)
+        for (y, x) in [(0, 0), (0, 8), (8, 0), (8, 8)]: subs.append(px[y:y + 8, x:x + 8]); wts.append(use.get(i_, 1))
+    t1_base = max(64, 24 + len(sprtiles))      # 1번 VRAM: 0~ OBJ(주인공·NPC), t1_base~191 지도 타일
+    NT0, NT1 = 104, 192 - t1_base
+    ai = any(mt_split(n)[0] in AS for n in mts)
+    if ai:      # 이미지 AI 조각: 색을 k-평균으로 줄이고, 비슷한 타일을 합쳐 칸 수에 맞춤
+        pals, fit = palfit.fit2(subs, 7, weights=wts)
+        tlist, rep, reppal, thr = palfit.merge_tiles(fit, NT0 + NT1)
+        fit = [(reppal[r], None) for r in rep]; tid = rep
+    else:
+        pals, fit = fit_palettes(subs, wts, 7)
+        tl = {}; tlist = []; tid = []
+        for pi, a in fit:
+            k = a.astype(np.uint8).tobytes()
+            if k not in tl: tl[k] = len(tlist); tlist.append(a.astype(np.uint8))
+            tid.append(tl[k])
+    mtdata = []
+    for i, n in enumerate(mts):
+        ids = [tid[i * 4 + q] for q in range(4)]; attrs = [fit[i * 4 + q][0] + 1 for q in range(4)]
+        mtdata.append((ids, attrs, mt_flags(n)))
+    assert len(tlist) <= NT0 + NT1, (mname, len(tlist))
+    mt_bytes = []
+    for ids, attrs, fl in mtdata:
+        for t in ids: mt_bytes.append((152 + t) & 255 if t < NT0 else (t1_base + t - NT0))
+        for t, a in zip(ids, attrs): mt_bytes.append(a | (0x08 if t >= NT0 else 0))
+        mt_bytes.append(fl)
+    tiles0 = sum((enc2bpp(t) for t in tlist[:NT0]), []); tiles1 = sum((enc2bpp(t) for t in tlist[NT0:]), [])
+    # 확인용 그림: build/maps/<지도>.png (롬에 들어가는 색·타일 그대로, 바깥 2칸 포함)
+    os.makedirs(os.path.join(ROOT, 'build', 'maps'), exist_ok=True)
+    PV = np.zeros(((H + 4) * 16, (Wd + 4) * 16, 3), np.uint8)
+    def mt_at_(x, y):
+        if 0 <= x < Wd and 0 <= y < H: return cell_ids[y * Wd + x]
+        for o in opens:
+            if o[0] <= x <= o[2] and o[1] <= y <= o[3]: return o[4]
+        return border2_id if split != 0xFF and x >= split else border_id
+    for y in range(-2, H + 2):
+        for x in range(-2, Wd + 2):
+            i = mt_at_(x, y); ids, attrs, _f = mtdata[i]
+            for q, (dy, dx) in enumerate([(0, 0), (0, 8), (8, 0), (8, 8)]):
+                pal = np.array(pals[attrs[q] - 1], np.uint8)
+                PV[(y + 2) * 16 + dy:(y + 2) * 16 + dy + 8, (x + 2) * 16 + dx:(x + 2) * 16 + dx + 8] = pal[tlist[ids[q]]]
+    Image.fromarray(PV).save(os.path.join(ROOT, 'build', 'maps', mname + '.png'))
+    palw = []
+    for p in pals: palw += [rgb15(c) for c in p]
+    while len(palw) < 28: palw.append(rgb15(gfx.WHITE))
     MAPC[mname] = dict(W=Wd, H=H, cells=cell_ids, border=border_id, split=split, border2=border2_id, opens=opens,
-                       mt=mt_bytes, nmt=len(mts), tiles0=tiles0, n0=min(NT0, len(tlist)), tiles1=tiles1, n1=max(0, len(tlist) - NT0),
+                       mt=mt_bytes, nmt=len(mts), tiles0=tiles0, n0=min(NT0, len(tlist)), tiles1=tiles1, n1=max(0, len(tlist) - NT0), t1_base=t1_base,
                        pal=palw, npcs=[(a[0], a[1], sprsets[a[2]][1], sprsets[a[2]][2], sprsets[a[2]][3], sprsets[a[3]][1], sprsets[a[3]][2], sprsets[a[3]][3], a[4], a[5], a[6], a[7], a[8], starts[a[9]]) for a in npcs],
                        signs=[(a[0], a[1], starts[a[2]]) for a in signs],
                        warps=[(s8(w.x), s8(w.y), MAPI[w.to], w.tx, w.ty, DIRS[w.dir] if w.dir else 0xFF) for w in M.warps],
@@ -494,7 +532,7 @@ for mname, M in story.MAPS.items():
                        enc=M.enc, script=blob, on_enter=starts[on_enter] if on_enter is not None else 0xFFFF,
                        objpal=sum(objpals, []), nobjpal=len(objpals), spr=sum((enc2bpp(t) for t in sprtiles), []), nspr=len(sprtiles),
                        name=sid(M.name))
-    print('지도 %-8s %2d×%2d 칸종류 %2d 타일 %3d 팔레트 %d NPC %d 스크립트 %dB' % (mname, Wd, H, len(mts), len(tlist), len(pals), len(npcs), len(blob)))
+    print('지도 %-8s %2d×%2d 칸종류 %2d 타일 %3d 팔레트 %d NPC %d 스크립트 %dB%s' % (mname, Wd, H, len(mts), len(tlist), len(pals), len(npcs), len(blob), ' (AI 합침 %d)' % thr if ai else ''))
 OPEN_BLOB, OPEN_STARTS = dsl.assemble([story.OPENING], CTX)
 
 # 주인공 걷는 그림 (8명 × 24타일)
@@ -502,8 +540,10 @@ KIDSPR = []; KIDPAL = []
 for k in KIDS:
     tiles, pal = kid_frames(k, True); KIDSPR.append(sum((enc2bpp(t) for t in tiles), [])); KIDPAL.append([rgb15(c) for c in pal])
 
-# ───────── 제목 화면 ─────────
-# 팔레트 1: 하늘(진한0·중간1) 구름 흰3 / 2: 제목 글씨(바탕 진한하늘) / 3: START 글씨(바탕 중간하늘) / 4: 아구몬(흰 바탕)
+# ───────── 제목 화면 (금판 오마주: 위 로고 + 이미지 AI 그림) ─────────
+# 팔레트 0: 글상자용, 1: 로고(밤하늘·주황·진한주황·검정), 2~7: 그림
+sys.path.insert(0, os.path.join(WEB, 'tools'))
+import scene as _scene, palfit
 def text_px(s_, x, y, layer, v):
     cx = x
     for ch in s_:
@@ -516,58 +556,90 @@ def text_px(s_, x, y, layer, v):
         cx += dw
 def text_w(s_):
     return sum(4 if ch == ' ' else gfx.glyph_bits(FONT, ch)[0] for ch in s_)
-TITLE = np.zeros((144, 160), np.uint8)
-TITLE[64:, :] = 1
-yy, xx = np.mgrid[0:144, 0:160]
-for x0 in range(-12, 176, 12):
-    TITLE[((xx - x0) ** 2 + (yy - (88 + ((x0 + 12) // 12) % 2 * 2)) ** 2 <= 81)] = 3
-TITLE[88:, :] = 3
-text_px('팬 게임 (가제)', (160 - text_w('팬 게임 (가제)')) // 2, 47, TITLE, 3)
-logo = np.zeros((16, 28), np.uint8)
-for i, ch in enumerate('디지몬'): draw_glyph(logo, ch, 2 + i * 8, 0, 1)
-big = np.kron(logo, np.ones((3, 3), np.uint8))
-TIT = np.full((144, 160), 255, np.uint8)
-ox, oy = (160 - 84) // 2, 0
-sh = np.zeros_like(big); h_, w_ = big.shape; ys, xs = np.where(big)
-for (dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1), (1, 2), (0, 2), (2, 2), (2, 3), (1, 3)]:
-    ys2, xs2 = ys + dy, xs + dx; ok = (ys2 >= 0) & (ys2 < h_) & (xs2 >= 0) & (xs2 < w_); sh[ys2[ok], xs2[ok]] = 1
-for y in range(h_):
-    for x in range(w_):
-        if not (0 <= oy + y < 144 and 0 <= ox + x < 160): continue
-        if big[y, x]: TIT[oy + y, ox + x] = 1 if (y // 3) % 4 < 2 else 2
-        elif sh[y, x]: TIT[oy + y, ox + x] = 3
-PRESS = np.zeros((144, 160), np.uint8)
-text_px('START를 누르세요', (160 - text_w('START를 누르세요')) // 2, 65, PRESS, 1)
-
+NAVY = (30, 41, 94)
+TITLE_SRC = os.path.join(WEB, 'art', 'src', 'bg', 'title_ai.png')
 def build_title():
-    pals = {1: [hexrgb('#6890f0'), hexrgb('#a0c0f8'), hexrgb('#a0c0f8'), gfx.WHITE],
-            2: [hexrgb('#6890f0'), hexrgb('#f89830'), hexrgb('#c86818'), gfx.BLACK],
-            3: [hexrgb('#a0c0f8'), gfx.WHITE, gfx.WHITE, gfx.WHITE]}
-    ag_i = SP_FRONT[SPI['agumon']]; ag = PICS[ag_i][1]
-    agpal = [(ag[2 + i * 2] | (ag[3 + i * 2] << 8)) for i in range(4)]
-    tiles = Tiles(0); tmap = []; amap = []
-    ag_tiles = ag[10:]
+    img = np.zeros((144, 160, 3), np.uint8); img[:] = NAVY
+    if os.path.exists(TITLE_SRC):
+        nat, _ = _scene.native(TITLE_SRC)
+        band = 0
+        while band < nat.shape[0] and nat[band, 80].min() > 180: band += 1      # 위쪽 빈 하늘 띠
+        part = nat[band:, :160]
+        h = min(144 - 40, part.shape[0]); img[144 - h:, :part.shape[1]] = part[:h]
+        if part.shape[1] < 160: img[144 - h:, part.shape[1]:] = part[:h, -1:]
+    # 밤하늘 별
+    for (x, y) in [(12, 6), (40, 30), (70, 3), (110, 8), (150, 26), (132, 35), (25, 36), (95, 34)]: img[y, x] = (200, 220, 255)
+    # 로고 (3배)
+    logo = np.zeros((16, 28), np.uint8)
+    for i, ch in enumerate('디지몬'): draw_glyph(logo, ch, 2 + i * 8, 0, 1)
+    big = np.kron(logo, np.ones((3, 3), np.uint8)); h_, w_ = big.shape
+    ox, oy = (160 - 84) // 2, -1
+    ys, xs = np.where(big); sh = np.zeros_like(big)
+    for (dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1), (1, 2), (0, 2), (2, 2), (2, 3), (1, 3)]:
+        y2, x2 = ys + dy, xs + dx; ok = (y2 >= 0) & (y2 < h_) & (x2 >= 0) & (x2 < w_); sh[y2[ok], x2[ok]] = 1
+    LOGO = [NAVY, (248, 168, 48), (200, 96, 24), (24, 24, 24)]
+    lmask = np.zeros((144, 160), bool)
+    for y in range(h_):
+        for x in range(w_):
+            Y, X = oy + y, ox + x
+            if not (0 <= Y < 144 and 0 <= X < 160): continue
+            if big[y, x]: img[Y, X] = LOGO[1] if (y // 3) % 4 < 2 else LOGO[2]; lmask[Y, X] = True
+            elif sh[y, x]: img[Y, X] = LOGO[3]; lmask[Y, X] = True
+    # START 글씨 (깜빡임: 글씨 없는 판도 만듦)
+    plain = img.copy()
+    tl = np.zeros((144, 160), np.uint8); msg = 'START를 누르세요'
+    text_px(msg, (160 - text_w(msg)) // 2, 129, tl, 1)
+    for y, x in zip(*np.where(tl)):
+        img[y, x] = (248, 248, 248)
+        for dy, dx in ((1, 0), (0, 1), (1, 1)):
+            if y + dy < 144 and x + dx < 160 and not tl[y + dy, x + dx]: img[y + dy, x + dx] = (40, 36, 80)
+    logo_tiles = {(ty, tx) for ty in range(18) for tx in range(20) if lmask[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8].any() and ty < 5}
+    subs = []; order = []
     for ty in range(18):
         for tx in range(20):
-            if 6 <= tx < 13 and 11 <= ty < 18:
-                k = (ty - 11) * 7 + (tx - 6); raw = ag_tiles[k * 16:k * 16 + 16]
-                t = np.zeros((8, 8), np.uint8)
-                for r in range(8):
-                    lo, hi = raw[r * 2], raw[r * 2 + 1]
-                    for x in range(8): t[r, x] = ((lo >> (7 - x)) & 1) | (((hi >> (7 - x)) & 1) << 1)
-                if t.any(): tmap.append(tiles.add(t)); amap.append(4); continue
-            blk = TIT[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8]
-            pr = PRESS[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8]
-            if (blk != 255).any():
-                tmap.append(tiles.add(np.where(blk == 255, 0, blk))); amap.append(2)
-            elif pr.any():
-                tmap.append(tiles.add(pr)); amap.append(3)
-            else:
-                tmap.append(tiles.add(TITLE[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8])); amap.append(1)
-    return tiles, tmap, amap, pals, agpal
-TT, TMAP, TATTR, TPALS, AGPAL = build_title()
-assert len(TT.list) <= 176, len(TT.list)
-print('제목 타일', len(TT.list))
+            if (ty, tx) in logo_tiles: continue
+            subs.append(img[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8]); order.append((ty, tx))
+    text_rows = sorted({y // 8 for y, x in zip(*np.where(tl))})
+    for ty in text_rows:
+        for tx in range(20): subs.append(plain[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8]); order.append(('alt', ty, tx))
+    # 글씨 줄은 따로: 그 줄의 구름 색 3개 + 흰색 (글씨가 뭉개지지 않게)
+    tr = set(text_rows)
+    main_i = [i for i, k in enumerate(order) if (k[0] if k[0] != 'alt' else k[1]) not in tr]
+    text_i = [i for i, k in enumerate(order) if (k[0] if k[0] != 'alt' else k[1]) in tr]
+    pals, res_m = palfit.fit([subs[i] for i in main_i], 5, k=24)
+    rows_px = np.concatenate([plain[r * 8:r * 8 + 8].reshape(-1, 3) for r in text_rows]).astype(float)
+    tc = palfit.kmeans_colors(rows_px, None, 3)
+    tc = sorted([tuple(int(round(v)) for v in c) for c in tc], key=lambda c: -(c[0] * .299 + c[1] * .587 + c[2] * .114))
+    TPAL = [(248, 248, 248)] + tc
+    TA = np.array(TPAL, float)
+    res = [None] * len(subs)
+    for i, r in zip(main_i, res_m): res[i] = r
+    for i in text_i:
+        px = subs[i].reshape(-1, 3).astype(float)
+        res[i] = (5, ((px[:, None] - TA[None]) ** 2).sum(2).argmin(1).reshape(8, 8).astype(np.uint8))
+    pals = pals + [TPAL]
+    allp = [LOGO] + pals                       # 팔레트 1 = 로고, 2~6 = 그림, 7 = 글씨 줄
+    tiles = Tiles(0); tmap = [0] * 360; amap = [0] * 360; alt = []
+    for (key, (pi, t)) in zip(order, res):
+        ti = tiles.add(t)
+        if key[0] == 'alt': alt.append((key[1] * 20 + key[2], ti, pi + 2)); continue
+        ty, tx = key; tmap[ty * 20 + tx] = ti; amap[ty * 20 + tx] = pi + 2
+    LA = np.array(LOGO, float)
+    for (ty, tx) in logo_tiles:
+        blk = img[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8].reshape(-1, 3).astype(float)
+        t = ((blk[:, None] - LA[None]) ** 2).sum(2).argmin(1).reshape(8, 8).astype(np.uint8)
+        tmap[ty * 20 + tx] = tiles.add(t); amap[ty * 20 + tx] = 1
+    # VRAM: 0번 칸 80~255 (176) → 1번 칸 0~191
+    def place(ti):
+        return (80 + ti, 0) if ti < 176 else (ti - 176, 0x08)
+    vmap = []; vattr = []
+    for ti, a_ in zip(tmap, amap): v, bnk = place(ti); vmap.append(v); vattr.append(a_ | bnk)
+    valt = []
+    for (pos, ti, a_) in alt: v, bnk = place(ti); valt += [pos & 255, pos >> 8, v, a_ | bnk]
+    return tiles, vmap, vattr, allp, valt
+TT, TMAP, TATTR, TPALS, TALT = build_title()
+assert len(TT.list) <= 176 + 192, len(TT.list)
+print('제목 타일', len(TT.list), '팔레트', len(TPALS))
 
 # ───────── C 파일 쓰기 ─────────
 def arr(name, data, typ='uint8_t', static=True):
@@ -604,7 +676,8 @@ for i, chunk in enumerate(PICB):
     emit('pics%d.c' % i, arr('pics%d' % i, sum(chunk, []), static=False), sum(len(b) for b in chunk))
 # 화면 부품 + 제목 + 주인공 그림 + 오프닝
 misc = arr('ui_tiles', sum((enc2bpp(t) for t in UIT), []), static=False)
-misc += arr('title_tiles', TT.data(), static=False) + arr('title_map', TMAP, static=False) + arr('title_attr', TATTR, static=False)
+TD = TT.data()
+misc += arr('title_tiles', TD[:176 * 16], static=False) + arr('title_tiles1', TD[176 * 16:] or [0], static=False) + arr('title_map', TMAP, static=False) + arr('title_attr', TATTR, static=False) + arr('title_alt', TALT or [0], static=False)
 misc += arr('kid_spr', sum(KIDSPR, []), static=False)
 misc += arr('opening', OPEN_BLOB, static=False)
 emit('misc.c', misc, len(UIT) * 16 + len(TT.list) * 16 + 720 + 8 * 384 + len(OPEN_BLOB))
@@ -624,10 +697,10 @@ for mname, d in MAPC.items():
     encb = [] if not enc else sum(([SPI[e[0]], e[1], e[2], e[3]] for e in enc[1]), [])
     b += arr('enc', encb or [0])
     b += arr('script', d['script'] or [0])
-    b += ('const map_t map_%s = { %d, %d, %d, %d, %d, %d, opens, cells, %d, mt, %d, t0, %d, t1, pal, %d, npcs, %d, signs, %d, warps, %d, trigs, %d, %d, enc, script, %d, %d, objpal, %d, spr, %d };\n'
+    b += ('const map_t map_%s = { %d, %d, %d, %d, %d, %d, opens, cells, %d, mt, %d, t0, %d, t1, pal, %d, npcs, %d, signs, %d, warps, %d, trigs, %d, %d, enc, script, %d, %d, objpal, %d, spr, %d, %d };\n'
           % (mname, d['W'], d['H'], d['border'], d['split'], d['border2'], len(d['opens']), d['nmt'], d['n0'], d['n1'],
              len(d['npcs']), len(d['signs']), len(d['warps']), len(d['trigs']), enc[0] if enc else 0, len(enc[1]) if enc else 0,
-             d['on_enter'], d['nobjpal'], d['nspr'], d['name']))
+             d['on_enter'], d['nobjpal'], d['nspr'], d['name'], d['t1_base']))
     size = len(d['cells']) + len(d['mt']) + len(d['tiles0']) + len(d['tiles1']) + 56 + len(d['objpal']) * 2 + len(d['spr']) + len(d['script']) + 600
     emit('map_%s.c' % mname, b, size)
 
@@ -653,7 +726,7 @@ t = '#include <gbdk/platform.h>\n#include <stdint.h>\n#include "../../src/data.h
 for i in range(NFONT): t += 'extern const uint8_t font%d[];\n' % i
 for i in range(len(STRB)): t += 'extern const uint8_t strs%d[];\n' % i
 for i in range(len(PICB)): t += 'extern const uint8_t pics%d[];\n' % i
-t += 'extern const uint8_t ui_tiles[], title_tiles[], title_map[], title_attr[], kid_spr[], opening[];\n'
+t += 'extern const uint8_t ui_tiles[], title_tiles[], title_tiles1[], title_map[], title_attr[], title_alt[], kid_spr[], opening[];\n'
 for m in MAPNAMES: t += 'extern const map_t map_%s;\n' % m
 t += 'const farptr_t FONTS[] = {' + ','.join('{%d,font%d}' % (B['font%d.c' % i], i) for i in range(NFONT)) + '};\n'
 t += 'const farptr_t STRTAB[] = {' + ','.join('{%d,strs%d+%d}' % (B['str%d.c' % b_], b_, o) for (b_, o) in STRLOC) + '};\n'
@@ -685,7 +758,7 @@ t += arr('EGGS', [SPI[e] for e in story.EGGS], static=False)
 t += arr('IT_NAME', IT_NAME, 'uint16_t', static=False) + arr('IT_DESC', IT_DESC, 'uint16_t', static=False)
 t += arr('IT_HEAL', [h for (n, h, d) in story.ITEMS], static=False)
 t += arr('CREST_NAME', CREST_NAME, 'uint16_t', static=False)
-t += arr('TITLE_PAL', sum(([rgb15(c) for c in TPALS[k]] for k in (1, 2, 3)), []) + AGPAL, 'uint16_t', static=False)
+t += arr('TITLE_PAL', sum(([rgb15(c) for c in p] for p in TPALS), []), 'uint16_t', static=False)
 # 글자 번호 (엔진에서 쓰는 것)
 DIG = [S.charidx[d] for d in '0123456789']
 t += arr('DIGCH', DIG, 'uint16_t', static=False)
@@ -697,7 +770,7 @@ open(os.path.join(GEN, 'tables.c'), 'w').write(t)
 h = '#ifndef GEN_H\n#define GEN_H\n'
 h += '#define N_SPECIES %d\n#define N_MOVES %d\n#define N_MAPS %d\n#define N_KIDS %d\n#define N_ITEMS %d\n#define N_CRESTS %d\n#define N_CHARS %d\n#define FONT_PER %d\n#define N_EGGS %d\n#define N_BMAP %d\n' % (
     len(SPECIES), len(MOVES), len(MAPNAMES), len(KIDS), len(story.ITEMS), len(story.CRESTS), len(CHARS), FONT_PER, len(story.EGGS), len(BMAP))
-h += '#define N_TITLE_TILES %d\n#define N_UI_TILES %d\n#define PIC_EGG %d\n' % (len(TT.list), len(UIT), PIC_EGG)
+h += '#define N_TITLE0 %d\n#define N_TITLE1 %d\n#define N_TITLE_PAL %d\n#define N_TITLE_ALT %d\n#define N_UI_TILES %d\n#define PIC_EGG %d\n' % (min(176, len(TT.list)), max(0, len(TT.list) - 176), len(TPALS), len(TALT) // 4, len(UIT), PIC_EGG)
 for k, v in UI.items(): h += '#define T_%s %d\n' % (k, v)
 for k, v in ESID.items(): h += '#define S_%s %d\n' % (k.upper(), v)
 for k, v in SPI.items(): h += '#define SP_%s %d\n' % (k.upper(), v)
