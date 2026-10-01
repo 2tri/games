@@ -1,5 +1,6 @@
-// 걷는 화면: 지도 그리기·스크롤, 주인공·사람 그림, 걷기, 말 걸기·표지판, 물건 줍기, 사건 자리, 풀숲 야생 만남
-// (디지몬 세션 field.c 구조를 참고: 16×16 칸 지도, 화면 밖 한 칸까지 미리 그려 두고 스크롤)
+// 걷는 화면: 지도·스크롤·걷기, 말 걸기·표지판·물건, 여관·상점, 길 막는 적(눈 마주치면 전투), 풀숲 야생, START 메뉴
+// 지도 자료와 같은 11번 은행에 있음 (0번 은행이 꽉 차서). 다른 은행 자료는 BANKED 함수로만 다룬다.
+#pragma bank 11
 #include <gb/gb.h>
 #include <gb/cgb.h>
 #include <string.h>
@@ -13,11 +14,12 @@
 
 static MapDef MD;
 static int16_t camx, camy;
+static uint8_t npx[10], npy[10];          // 사람 지금 자리 (길 막는 적은 걸어옴)
 static const int8_t DX[4] = { 0, 0, -1, 1 }, DY[4] = { 1, -1, 0, 0 };   // 아래·위·왼쪽·오른쪽
 static const palette_color_t OBJPAL[4] = { RGB(31, 31, 31), RGB(31, 31, 30), RGB(11, 11, 11), RGB(2, 2, 2) };
 static const palette_color_t BGPAL[4] = { RGB(30, 30, 29), RGB(21, 21, 20), RGB(11, 11, 11), RGB(2, 2, 2) };
 static const palette_color_t FLASHPAL[4] = { RGB(2, 2, 2), RGB(11, 11, 11), RGB(21, 21, 20), RGB(30, 30, 29) };
-uint8_t ev_arg;
+uint8_t ev_arg, warp_map = 255, warp_x, warp_y;
 
 static uint8_t flag_get(uint8_t f) { return S.flags[f >> 3] & (1 << (f & 7)); }
 static void flag_set(uint8_t f) { S.flags[f >> 3] |= 1 << (f & 7); }
@@ -33,11 +35,9 @@ static uint8_t cell_at(int8_t x, int8_t y) {
     if (MTDEF[c][4] == MK_ITEM) { i = item_idx(x, y); if (i == 255 || flag_get(ITEM_FLAG(S.map, i))) c = MD.grass; }
     return c;
 }
-static uint8_t npc_at(int8_t x, int8_t y) { uint8_t i; for (i = 0; i < MD.nn; i++) if (MD.npc[i].x == (uint8_t)x && MD.npc[i].y == (uint8_t)y) return i; return 255; }
-static uint8_t passable(int8_t x, int8_t y) {
-    uint8_t k = MTDEF[cell_at(x, y)][4];
-    return (k == MK_WALK || k == MK_GRASS || k == MK_ITEM) && npc_at(x, y) == 255;
-}
+static uint8_t npc_at(int8_t x, int8_t y) { uint8_t i; for (i = 0; i < MD.nn; i++) if (npx[i] == (uint8_t)x && npy[i] == (uint8_t)y) return i; return 255; }
+static uint8_t open_at(int8_t x, int8_t y) { uint8_t k = MTDEF[cell_at(x, y)][4]; return k == MK_WALK || k == MK_GRASS || k == MK_ITEM; }
+static uint8_t passable(int8_t x, int8_t y) { return open_at(x, y) && npc_at(x, y) == 255; }
 static void draw_mt(int8_t mx, int8_t my) {
     static uint8_t t[4]; static const uint8_t a[4] = { 0, 0, 0, 0 };
     const uint8_t *p = MTDEF[cell_at(mx, my)];
@@ -49,7 +49,7 @@ static void draw_row(int8_t my) { int8_t x; for (x = (int8_t)S.x - 5; x <= (int8
 static void draw_col(int8_t mx) { int8_t y; for (y = (int8_t)S.y - 5; y <= (int8_t)S.y + 5; y++) draw_mt(mx, y); }
 static void render_all(void) { int8_t y; for (y = (int8_t)S.y - 5; y <= (int8_t)S.y + 5; y++) draw_row(y); }
 
-// ── 그림(OBJ): 8×16 두 장이 16×16 한 명. 주인공 0·1번, 사람 2번부터 ──
+// ── 그림(OBJ): 8×16 두 장이 16×16 한 명. 주인공 0·1번, 사람 2번부터, 느낌표 38·39번 ──
 static void spr16(uint8_t k, uint8_t tile, int16_t sx, int16_t sy) {
     if (sx < -16 || sx > 168 || sy < -16 || sy > 160) { move_sprite(k, 0, 0); move_sprite(k + 1, 0, 0); return; }
     set_sprite_tile(k, tile); set_sprite_tile(k + 1, tile + 2);
@@ -58,24 +58,30 @@ static void spr16(uint8_t k, uint8_t tile, int16_t sx, int16_t sy) {
 }
 #define PLAYER_TILE 128
 #define NPC_TILE 160
+#define EXCL_TILE 164
+static int8_t nofs_i = -1, nofs_x, nofs_y;   // 걸어오는 사람의 칸 사이 위치
 static void draw_player(uint8_t step) { spr16(0, PLAYER_TILE + (S.dir * 2 + step) * 4, 64, 60); }
 static void draw_npcs(void) {
-    uint8_t i;
-    for (i = 0; i < MD.nn && i < 8; i++) spr16(2 + i * 2, NPC_TILE, (int16_t)MD.npc[i].x * 16 - camx, (int16_t)MD.npc[i].y * 16 - camy - 4);
+    uint8_t i; int16_t ox, oy;
+    for (i = 0; i < MD.nn && i < 8; i++) {
+        ox = (int8_t)i == nofs_i ? nofs_x : 0; oy = (int8_t)i == nofs_i ? nofs_y : 0;
+        spr16(2 + i * 2, NPC_TILE, (int16_t)npx[i] * 16 - camx + ox, (int16_t)npy[i] * 16 - camy - 4 + oy);
+    }
 }
 static void set_cam(int8_t ox, int8_t oy) {
     camx = (int16_t)S.x * 16 - 64 + ox; camy = (int16_t)S.y * 16 - 64 + oy;
     move_bkg((uint8_t)camx, (uint8_t)camy);
 }
 
-void field_enter(void) {
-    uint8_t sv = CURRENT_BANK, r, c, row[20];
+void field_enter(void) BANKED {
+    uint8_t r, c, row[20];
     DISPLAY_OFF;
     field_mode = 1;
-    SWITCH_ROM(FIELD_BANK);
     memcpy(&MD, &MAPS[S.map], sizeof MD);
+    for (r = 0; r < MD.nn; r++) { npx[r] = MD.npc[r].x; npy[r] = MD.npc[r].y; }
+    nofs_i = -1;
     VBK_REG = 0; set_bkg_data(0, FT_N, FT_TILES);
-    VBK_REG = 1; set_sprite_data(PLAYER_TILE, 32, PLAYER_SPR); set_sprite_data(NPC_TILE, 4, NPC_SPR); VBK_REG = 0;
+    VBK_REG = 1; set_sprite_data(PLAYER_TILE, 32, PLAYER_SPR); set_sprite_data(NPC_TILE, 4, NPC_SPR); set_sprite_data(EXCL_TILE, 4, EXCL_SPR); VBK_REG = 0;
     if (_cpu == CGB_TYPE) { set_bkg_palette(0, 1, BGPAL); set_sprite_palette(0, 1, OBJPAL); }
     OBP0_REG = 0xE4;
     for (r = 0; r < 6; r++) {   // 글상자 창: VRAM 1번 칸 0~119
@@ -89,18 +95,17 @@ void field_enter(void) {
     for (r = 0; r < 40; r++) move_sprite(r, 0, 0);
     render_all(); set_cam(0, 0); draw_npcs(); draw_player(0);
     DISPLAY_ON;
-    music_play(MUS_SHIRE);
-    SWITCH_ROM(sv);
+    music_play(S.map == 0 ? MUS_SHIRE : MUS_STORY1);
 }
 static void talk(const char *t) {   // 글상자 아래로 내려가는 그림은 잠시 숨김
     uint8_t i;
     for (i = 2; i < 18; i += 2) if (shadow_OAM[i].y >= 96 + 16 - 8) { shadow_OAM[i].y = 0; shadow_OAM[i + 1].y = 0; }
     SHOW_WIN; say(t); HIDE_WIN; draw_npcs();
 }
+static void beep(uint8_t hi) { NR52_REG = 0x80; NR10_REG = 0; NR11_REG = 0x80; NR12_REG = 0xA2; NR13_REG = hi; NR14_REG = 0x87; }
 static void encounter_fx(void) {   // 띠리링: 화면 세 번 번쩍 + 소리
     uint8_t i;
-    NR52_REG = 0x80; NR51_REG = 0xFF; NR50_REG = 0x77;
-    NR10_REG = 0x16; NR11_REG = 0x80; NR12_REG = 0xF3; NR13_REG = 0x00; NR14_REG = 0x87;
+    NR52_REG = 0x80; NR10_REG = 0x16; NR11_REG = 0x80; NR12_REG = 0xF3; NR13_REG = 0x00; NR14_REG = 0x87;
     for (i = 0; i < 3; i++) {
         if (_cpu == CGB_TYPE) set_bkg_palette(0, 1, FLASHPAL); else BGP_REG = 0x1B;
         wait_frames(4);
@@ -119,7 +124,74 @@ static void walk(uint8_t d) {
     }
     S.x = nx; S.y = ny; set_cam(0, 0); draw_npcs(); draw_player(0);
 }
-// 한 걸음 뒤: 물건·사건·풀숲. 돌려주는 값: EV_NONE / EV_TRIG(ev_arg=단계) / EV_WILD(ev_arg=적)
+
+// ── 전투 (야생·길 막는 적) 뒤 처리: 지면 마지막 쉼터 → 지도 처음 자리 ──
+static uint8_t fight(uint8_t foe, uint8_t noRun) {
+    uint8_t r = battle(foe, noRun, 0);
+    if (r == R_WIN) { S.money += foe_lv(foe) * 4; }
+    if (r == R_LOSE) { lose(); S.x = MD.sx; S.y = MD.sy; S.dir = MD.sdir; }
+    field_enter();
+    return r;
+}
+// ── 여관: 쉬어 가면 모두 회복 + 기록 ──
+static const char * const YESNO[] = { "쉬어 간다", "그냥 간다" };
+static void inn(const char *t) {
+    uint8_t c;
+    talk(t);
+    c = choose(0, YESNO, 2, 1);
+    if (c == 0) { healAll(); save(); music_play(MUS_TITLE); field_enter(); talk("푹 쉬었다! 일행 모두 기운을 되찾았다. (기록했다)"); }
+    else field_enter();
+}
+// ── 상점: 은화로 렘바스·약초 ──
+static const char * const SHOP[] = { "렘바스  40은화", "약초  20은화", "그만" };
+static void shop(const char *t) {
+    uint8_t c;
+    talk(t);
+    for (;;) {
+        sb_clear(); sb_add("가진 은화 "); sb_num(S.money, 0); sb_add(". 무엇을 살까?");
+        c = choose(SB, SHOP, 3, 2);
+        if (c == 2) break;
+        if (S.money < (c ? 20 : 40)) { say("은화가 모자라다."); continue; }
+        S.money -= c ? 20 : 40;
+        if (c) { S.herb++; say("약초를 샀다!"); } else { S.lembas++; say("렘바스를 샀다!"); }
+    }
+    field_enter();
+}
+// ── 길 막는 적: 바라보는 방향 4칸 안에 주인공이 보이면 걸어와서 싸움 ──
+static uint8_t trainer_check(void) {
+    uint8_t i, k, d; int8_t x, y;
+    for (i = 0; i < MD.nn; i++) {
+        const Npc *n = &MD.npc[i];
+        if (n->kind != NK_TRAINER || flag_get(n->flag)) continue;
+        d = n->dir; x = npx[i]; y = npy[i];
+        for (k = 1; k <= 4; k++) {
+            x += DX[d]; y += DY[d];
+            if (x == (int8_t)S.x && y == (int8_t)S.y) break;
+            if (!open_at(x, y) || npc_at(x, y) != 255) { k = 9; break; }
+        }
+        if (k > 4) continue;
+        // 알아챘다! 느낌표 → 걸어와서 → 대사 → 전투
+        beep(0xC0);
+        spr16(38, EXCL_TILE, (int16_t)npx[i] * 16 - camx, (int16_t)npy[i] * 16 - camy - 20);
+        wait_frames(30); move_sprite(38, 0, 0); move_sprite(39, 0, 0);
+        while (!((int8_t)npx[i] + DX[d] == (int8_t)S.x && (int8_t)npy[i] + DY[d] == (int8_t)S.y)) {
+            uint8_t f;
+            nofs_i = i;
+            for (f = 1; f <= 8; f++) { nofs_x = DX[d] * f * 2; nofs_y = DY[d] * f * 2; draw_npcs(); wait_vbl_done(); }
+            npx[i] += DX[d]; npy[i] += DY[d]; nofs_i = -1; draw_npcs();
+        }
+        S.dir = d ^ 1; draw_player(0);           // 주인공이 그쪽을 봄
+        talk(n->text);
+        if (fight(n->arg, 1) == R_WIN) {
+            flag_set(n->flag); S.money += n->arg2;
+            sb_clear(); sb_add("은화를 "); sb_num(n->arg2, 0); sb_add(" 받았다!"); talk(SB);
+            if (n->text2) talk(n->text2);
+        }
+        return 1;
+    }
+    return 0;
+}
+// 한 걸음 뒤: 물건·사건·길 막는 적·풀숲. EV_TRIG 이면 이야기 단계로
 static uint8_t after_step(void) {
     uint8_t i, c = raw_at(S.x, S.y);
     if (MTDEF[c][4] == MK_ITEM && (i = item_idx(S.x, S.y)) != 255 && !flag_get(ITEM_FLAG(S.map, i))) {
@@ -128,34 +200,92 @@ static uint8_t after_step(void) {
     }
     for (i = 0; i < MD.nt; i++) {
         const Trig *t = &MD.trig[i];
-        if (S.x >= t->x && S.x < t->x + t->w && S.y >= t->y && S.y < t->y + t->h && S.step <= t->step) { ev_arg = t->step; return EV_TRIG; }
+        if (S.x >= t->x && S.x < t->x + t->w && S.y >= t->y && S.y < t->y + t->h && S.step <= t->step) {
+            ev_arg = t->step;
+            if (t->wmap != 255) { warp_map = t->wmap; warp_x = t->wx; warp_y = t->wy; } else warp_map = 255;
+            return EV_TRIG;
+        }
     }
+    if (trainer_check()) return EV_NONE;
     if (MTDEF[cell_at(S.x, S.y)][4] == MK_GRASS && rnd100() < MD.rate) {
-        ev_arg = MD.wild[rnd() % MD.nw]; encounter_fx(); return EV_WILD;
+        encounter_fx(); fight(MD.wild[rnd() % MD.nw], 0);
     }
     return EV_NONE;
 }
 static void interact(void) {
     int8_t fx = (int8_t)S.x + DX[S.dir], fy = (int8_t)S.y + DY[S.dir];
     uint8_t i = npc_at(fx, fy);
-    if (i != 255) { talk(MD.npc[i].text); return; }
+    if (i != 255) {
+        const Npc *n = &MD.npc[i];
+        if (n->kind == NK_INN) inn(n->text);
+        else if (n->kind == NK_SHOP) shop(n->text);
+        else if (n->kind == NK_TRAINER) talk(flag_get(n->flag) && n->text2 ? n->text2 : n->text);
+        else talk(n->text);
+        return;
+    }
     if (MTDEF[cell_at(fx, fy)][4] == MK_SIGN) for (i = 0; i < MD.ns; i++) if (MD.sign[i].x == (uint8_t)fx && MD.sign[i].y == (uint8_t)fy) { talk(MD.sign[i].text); return; }
 }
-uint8_t field_loop(void) {
-    uint8_t sv = CURRENT_BANK, k, h, d, ev;
-    SWITCH_ROM(FIELD_BANK);
+uint8_t field_loop(void) BANKED {
+    uint8_t k, h, d, ev;
     for (;;) {
         frame();
         k = key_poll(); h = key_held();
         if (k == K_A) { interact(); continue; }
-        if (k == K_START) { save(); talk("여기까지 기록했다."); continue; }
+        if (k == K_START) { menu_open(); field_enter(); continue; }
         d = (h & J_DOWN) ? 0 : (h & J_UP) ? 1 : (h & J_LEFT) ? 2 : (h & J_RIGHT) ? 3 : 255;
         if (d == 255) continue;
         if (S.dir != d) { S.dir = d; draw_player(0); }
         if (!passable((int8_t)S.x + DX[d], (int8_t)S.y + DY[d])) continue;
         walk(d);
         ev = after_step();
-        if (ev) { SWITCH_ROM(sv); return ev; }
+        if (ev) return ev;
     }
 }
-void field_start_pos(void) { uint8_t sv = CURRENT_BANK; SWITCH_ROM(FIELD_BANK); S.x = MAPS[S.map].sx; S.y = MAPS[S.map].sy; S.dir = MAPS[S.map].sdir; SWITCH_ROM(sv); }
+void field_start_pos(void) BANKED { S.x = MAPS[S.map].sx; S.y = MAPS[S.map].sy; S.dir = MAPS[S.map].sdir; }
+
+// ── START 메뉴 (그림 화면): 동료 · 가방 · 기록 ──
+static const char * const MENU[] = { "동료", "가방", "기록", "닫기" };
+static char lines[5][32];
+static uint8_t nl;
+static void menuScene(void) {
+    uint8_t i;
+    rect(0, 0, 160, 144, 0); box(0, 0, 160, 96);
+    text("일행", 10, 6, 3);
+    for (i = 0; i < nl; i++) text(lines[i], 10, 20 + i * 14, 3);
+    box(0, 96, 160, 48);
+}
+static void load_lines(void) { uint8_t i; nl = S.np; for (i = 0; i < nl; i++) { party_line(i); strncpy(lines[i], SB, 31); lines[i][31] = 0; } }
+void menu_open(void) BANKED {
+    uint8_t c, i, k; const char *opts[6];
+    for (;;) {
+        load_lines(); set_scene(menuScene); menuScene();
+        sb_clear(); sb_add("은화 "); sb_num(S.money, 0); sb_add(" · 그림자 "); sb_num(S.shadow, 0);
+        c = choose(SB, MENU, 4, 3);
+        if (c == 3) return;
+        if (c == 2) { save(); say("여기까지 기록했다."); continue; }
+        if (c == 0) {   // 동료: 고른 사람을 앞장 세우기 / 능력 보기
+            for (i = 0; i < nl; i++) opts[i] = lines[i]; opts[nl] = "돌아가기";
+            k = choose("누구를?", opts, nl + 1, nl);
+            if (k >= nl) continue;
+            party_info(k); say(SB);
+            if (S.party[k] != S.hero) {
+                static const char * const LEAD[] = { "앞장 세운다", "그대로" };
+                if (choose("앞장 세울까?", LEAD, 2, 1) == 0) {
+                    if (party_hp(k) <= 0) say("쓰러져 있어서 앞장설 수 없다.");
+                    else { swapTo(S.party[k]); say("앞장을 바꿨다."); }
+                }
+            }
+            continue;
+        }
+        // 가방: 렘바스·약초를 앞장선 사람에게
+        {
+            static char b0[24], b1[24];
+            sb_clear(); sb_add("렘바스 ×"); sb_num(S.lembas, 0); strcpy(b0, SB);
+            sb_clear(); sb_add("약초 ×"); sb_num(S.herb, 0); strcpy(b1, SB);
+            opts[0] = b0; opts[1] = b1; opts[2] = "돌아가기";
+            k = choose("무엇을 쓸까?", opts, 3, 2);
+            if (k == 0) { if (!S.lembas) say("렘바스가 없다."); else { S.lembas--; heal_lead(20); say("렘바스를 먹었다. 체력이 회복됐다."); } }
+            if (k == 1) { if (!S.herb) say("약초가 없다."); else { S.herb--; heal_lead(10); say("약초를 씹었다. 몸이 조금 가뿐하다."); } }
+        }
+    }
+}

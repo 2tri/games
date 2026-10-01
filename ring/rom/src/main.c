@@ -10,8 +10,8 @@
 #include "music.h"
 
 // 걷는 화면이 맡는 이야기 단계 (지금은 샤이어: 1~2단계). 그 밖은 이야기 장면을 차례로
-#define FIELD_FIRST 1
-#define FIELD_END 3
+#include "field.h"
+#define FIELD_FIRST 1          // FIELD_END 는 field.py 가 지도 사건에서 계산
 
 static void titleScene(void) {
     rect(0, 0, 160, 144, 3);
@@ -31,7 +31,7 @@ static void newGame(void) {
 static const char * const T_NEW[] = { "처음부터" };
 static const char * const T_CONT[] = { "이어하기", "처음부터" };
 void main(void) {
-    uint8_t has_save, c, before, ev, r;
+    uint8_t has_save, c, before, ev;
     eng_init();
     for (;;) {
         has_save = load() && !S.done && S.step > 0;
@@ -42,13 +42,11 @@ void main(void) {
         while (S.step < N_STEPS) {
             if (S.step >= FIELD_FIRST && S.step < FIELD_END) {
                 field_enter();
-                ev = field_loop();
-                if (ev == EV_WILD) {
-                    r = battle(ev_arg, 0, 0);
-                    if (r == R_LOSE) { lose(); field_start_pos(); }
-                } else if (ev == EV_TRIG) {
+                ev = field_loop();          // 야생·길 막는 적·여관·상점·메뉴는 안에서 처리, 사건 자리만 돌아옴
+                if (ev == EV_TRIG) {
                     // 건너뛴 단계가 있으면 차례로 (사건 순서가 꼬이지 않게)
                     while (S.step <= ev_arg && S.step < N_STEPS) { before = S.step; run_step(S.step); if (S.step == before) break; }
+                    if (warp_map != 255 && S.step > ev_arg) { S.map = warp_map; S.x = warp_x; S.y = warp_y; S.dir = 1; warp_map = 255; save(); }
                 }
             } else {
                 // 이야기 장면 곡: 1부 메인 테마 · 2부 미나스 티리스 · 3부 곤도르 · 끝 Into the West

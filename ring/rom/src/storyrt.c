@@ -35,7 +35,7 @@ void lose(void) {
     healAll(); save();       // 마지막 쉼터에서 다시
 }
 // ── 저장: 카트리지 배터리 램(SRAM). Delta 도 .sav 로 보관 ──
-#define MAGIC 0x52494E33UL   // "RIN3" — 저장 형식이 바뀌면 숫자를 올려 옛 저장은 무시
+#define MAGIC 0x52494E34UL   // "RIN4" — 저장 형식이 바뀌면 숫자를 올려 옛 저장은 무시
 void save(void) {
     uint32_t m = MAGIC;
     ENABLE_RAM; SWITCH_RAM(0);

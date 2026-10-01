@@ -2,7 +2,7 @@
 #define FONT_BANK 1
 #define DATA_BANK 2
 #define N_MOVES 54
-#define N_FOES 27
+#define N_FOES 30
 #define N_HEROES 5
 #define N_SPR 43
 #define MV_STAFF 0
@@ -83,9 +83,12 @@
 #define FO_GOLLUMF 21
 #define FO_SHARKEY 22
 #define FO_DOGW 23
-#define FO_CROWW 24
-#define FO_URUKS 25
-#define FO_URUK 26
+#define FO_DOGT 24
+#define FO_ROOTW 25
+#define FO_WIGHTW 26
+#define FO_CROWW 27
+#define FO_URUKS 28
+#define FO_URUK 29
 #define HE_FRODOSAM 0
 #define HE_ARAGORN 1
 #define HE_LEGOLAS 2

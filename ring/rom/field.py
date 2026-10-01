@@ -88,8 +88,11 @@ MAPS = [dict(
     name='샤이어', rows=SHIRE, start=(5, 4, 0),
     objs=[('house', 4, 2), ('house', 10, 2), ('house', 4, 8), ('house', 26, 6)],
     wild=['dogW', 'dogW', 'crowW'], rate=12,
-    npcs=[   # x, y, 대사
+    npcs=[   # (x, y, 대사) 말하기 · ('inn'|'shop', x, y, 대사) · ('trainer', x, y, 보는 방향, 적, 은화, 덤빌 때, 진 뒤)
         (7, 5, '샘의 아버지 햄: 프로도 나리, 우리 샘 녀석 잘 부탁드려요. 손은 굼떠도 마음은 단단한 놈이에요.'),
+        ('inn', 12, 5, '초록용 주막 주인: 어서 오세요! 쉬어 가시겠어요? 한숨 자고 나면 기운이 날 거예요.'),
+        ('shop', 3, 6, '호빗골 장터: 길 떠나는 분께 필요한 것들 있어요!'),
+        ('trainer', 20, 9, 'up', 'dogT', 40, '테드 샌디맨: 배긴스네 도련님이 어딜 가시나? 우리 사냥개랑 한판 붙어 보시지!', '테드 샌디맨: 쳇, 개가 겁을 먹다니…'),
         (13, 7, '호빗 아주머니: 동쪽 풀숲엔 매곳 영감네 개들이 돌아다녀요. 풀숲에 들어가면 조심하세요!'),
         (19, 5, '호빗 아이: 요즘 밤마다 검은 옷 입은 사람이 말 타고 돌아다닌대요. 「배긴스」를 찾는대요!'),
         (28, 8, '매곳네 일꾼: 영감님 밭에서 버섯 훔쳐 가면 개를 푼다니까!'),
@@ -97,8 +100,50 @@ MAPS = [dict(
     signs=[(8, 5, '호빗골 → 동쪽 매곳 농장 · 남동쪽 노루말 나루'), (23, 13, '이 길 끝은 노루말 나루. 강을 건너면 샤이어 밖이다.')],
     items=[(9, 13, 'herb'), (29, 13, 'herb'), (2, 7, 'lembas')],
     # 사건 자리 (x, y, w, h, 그 단계까지): 농장 어귀(동쪽으로 가려면 꼭 지나감) → 숲길
-    triggers=[(22, 2, 2, 12, 1), (24, 16, 2, 1, 2)],
+    triggers=[(22, 2, 2, 12, 1), (24, 16, 2, 1, 2, 1, 2, 20)],   # 숲길 사건 뒤 나룻배로 강 건너 묵은숲(지도 1)
 )]
+# ── 묵은숲·무덤 언덕 ──
+OLDFOREST = build([
+    'TTTTTTTTTTTTTTTT',
+    'T....TT......,,T',
+    'T.TT.TT.TTTT.,,T',
+    'T.TT....T..T...T',
+    'T....TT.T.WWW..T',
+    'TTT.TTT...WWW..T',
+    'T...T.....WWWTTT',
+    'T.TTT.TTT..W...T',
+    'W.....T,,,.....T',
+    'WT.TTTT,,,TTTT.T',
+    'W......,,,.....T',
+    'TTTTTTTTTTTTTTTT',
+], [
+    (':', hline(21, 1, 13) + vline(2, 12, 21) + hline(12, 2, 6) + vline(6, 6, 12) + hline(6, 6, 18) + vline(18, 6, 15) + hline(15, 18, 28) + vline(28, 4, 15)),
+    ('b', [(26, 2), (29, 6), (27, 5)]), ('*', [(9, 16), (21, 4)]), ('g', [(14, 3), (5, 17)]),
+])
+MAPS.append(dict(
+    name='묵은숲', rows=OLDFOREST, start=(2, 21, 1),
+    objs=[('house', 25, 16), ('tree', 8, 12)],
+    wild=['rootW', 'crowW', 'rootW', 'wightW'], rate=14,
+    npcs=[
+        ('inn', 27, 17, '톰 봄바딜: 헤이 돌! 메리 돌! 지친 나그네여, 톰의 집에서 쉬어 가렴!'),
+        (4, 19, '샘: 이 숲은 나무들이 우릴 노려보는 것 같아요, 나리. 길에서 벗어나지 말아요.'),
+    ],
+    signs=[(3, 20, '묵은숲. 길은 자꾸 강가로 이어진다.')],
+    items=[(13, 3, 'herb'), (29, 2, 'lembas'), (15, 17, 'herb')],
+    triggers=[(18, 11, 1, 2, 3), (28, 4, 1, 1, 4)],                 # 버드나무 영감(강가) → 무덤 언덕
+))
+D = json.loads(__import__('subprocess').check_output(['node', HERE + '/extract.js']))
+fids = list(D['FOES'])
+TRAINER_FLAG0 = 96
+def npc_norm(m):
+    out = []
+    for n in m['npcs']:
+        if isinstance(n[0], int): out.append((n[0], n[1], 0, 0, 0, 0, n[2], ''))
+        elif n[0] in ('inn', 'shop'): out.append((n[1], n[2], 1 if n[0] == 'inn' else 2, 0, 0, 0, n[3], ''))
+        else:
+            _, x, y, d, foe, money, t1, t2 = n
+            out.append((x, y, 3, ['down', 'up', 'left', 'right'].index(d), fids.index(foe), money, t1, t2))
+    return out
 def grid_names(m):
     H, W = len(m['rows']), len(m['rows'][0])
     g = [[None] * W for _ in range(H)]
@@ -153,24 +198,32 @@ def obj_tiles(img):   # 8×16 순서: 왼쪽 위·아래, 오른쪽 위·아래
 import sys as _s; _s.path.insert(0, HERE + '/art'); import frodo_walk
 pspr = sum((obj_tiles(np.array(frodo_walk.tones(f))) for f in frodo_walk.FRAMES), [])   # 프로도 (임시 손그림)
 npc_spr = obj_tiles(sprite16(TS[0:16, 32:48]))   # 마을 사람 (타일 묶음의 사람 칸)
+EXCL = draw(['                ', '      ####      ', '     #----#     ', '     #----#     ', '     #----#     ', '     #----#     ', '      #--#      ', '      #--#      ',
+             '      #--#      ', '       ##       ', '      ####      ', '      #--#      ', '      ####      ', '                ', '                ', '                '])
+excl_spr = obj_tiles(np.where(EXCL == 0, 0, EXCL))
 
 def cstr(s): return json.dumps(s, ensure_ascii=False)
-D = json.loads(__import__('subprocess').check_output(['node', HERE + '/extract.js']))
-fids = list(D['FOES'])
 out = ['#pragma bank %d' % FIELD_BANK, '#include <stdint.h>', '#include "field.h"']
 out.append('const uint8_t FT_TILES[] = {%s};' % ','.join(map(str, sum((enc(t) for t in tiles), []))))
 out.append('const uint8_t FT_N = %d;' % len(tiles))
 out.append('const uint8_t MTDEF[][5] = {%s};' % ','.join('{%s}' % ','.join(map(str, r)) for r in mt_rows))
 out.append('const uint8_t PLAYER_SPR[] = {%s};' % ','.join(map(str, pspr)))
 out.append('const uint8_t NPC_SPR[] = {%s};' % ','.join(map(str, npc_spr)))
+out.append('const uint8_t EXCL_SPR[] = {%s};' % ','.join(map(str, excl_spr)))
 hdr = []
+tcount = [0]
 for i, m in enumerate(MAPS):
     g = grid_names(m); H, W = len(g), len(g[0])
     out.append('const uint8_t MAP%d_CELLS[] = {%s};' % (i, ','.join(str(names.index(n)) for r in g for n in r)))
-    out.append('const Npc MAP%d_NPC[] = {%s};' % (i, ','.join('{%d,%d,%s}' % (x, y, cstr(t)) for x, y, t in m['npcs']) or '{0}'))
+    nl = []
+    for (x, y, k, d, a, a2, t1, t2) in npc_norm(m):
+        fl = 0
+        if k == 3: fl = TRAINER_FLAG0 + tcount[0]; tcount[0] += 1
+        nl.append('{%d,%d,%d,%d,%d,%d,%d,%s,%s}' % (x, y, k, d, a, a2, fl, cstr(t1), cstr(t2) if t2 else '0'))
+    out.append('const Npc MAP%d_NPC[] = {%s};' % (i, ','.join(nl) or '{0}'))
     out.append('const Sign MAP%d_SIGN[] = {%s};' % (i, ','.join('{%d,%d,%s}' % (x, y, cstr(t)) for x, y, t in m['signs']) or '{0}'))
     out.append('const Item MAP%d_ITEM[] = {%s};' % (i, ','.join('{%d,%d,%d,%d}' % (x, y, {'herb': 0, 'lembas': 1}[k], j) for j, (x, y, k) in enumerate(m['items'])) or '{0}'))
-    out.append('const Trig MAP%d_TRIG[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d}' % t for t in m['triggers']) or '{0}'))
+    out.append('const Trig MAP%d_TRIG[] = {%s};' % (i, ','.join('{%d,%d,%d,%d,%d,%d,%d,%d}' % (tuple(t) + (255, 0, 0))[:8] for t in m['triggers']) or '{0}'))
     out.append('const uint8_t MAP%d_WILD[] = {%s};' % (i, ','.join(str(fids.index(f)) for f in m['wild'])))
     hdr.append('{%d,%d,MAP%d_CELLS,%d,MAP%d_NPC,%d,MAP%d_SIGN,%d,MAP%d_ITEM,%d,MAP%d_TRIG,%d,MAP%d_WILD,%d,%d,%d,%d,%d}' % (
         W, H, i, len(m['npcs']), i, len(m['signs']), i, len(m['items']), i, len(m['triggers']), i, len(m['wild']), i, m['rate'], *m['start'], names.index('grass')))
@@ -180,16 +233,19 @@ open(SRC + '/field.h', 'w').write('''#include <stdint.h>
 #define FIELD_BANK %d
 #define N_MAPS %d
 #define MT_TREE0 %d
+#define FIELD_END %d
+extern const uint8_t EXCL_SPR[];
 enum { MK_WALK, MK_SOLID, MK_GRASS, MK_WATER, MK_SIGN, MK_ITEM };
-typedef struct { uint8_t x, y; const char *text; } Npc;
+enum { NK_TALK, NK_INN, NK_SHOP, NK_TRAINER };
+typedef struct { uint8_t x, y, kind, dir, arg, arg2, flag; const char *text, *text2; } Npc;
 typedef struct { uint8_t x, y; const char *text; } Sign;
 typedef struct { uint8_t x, y, kind, flag; } Item;
-typedef struct { uint8_t x, y, w, h, step; } Trig;
+typedef struct { uint8_t x, y, w, h, step, wmap, wx, wy; } Trig;   // wmap != 255 이면 사건 뒤 그 지도로
 typedef struct { uint8_t w, h; const uint8_t *cells; uint8_t nn; const Npc *npc; uint8_t ns; const Sign *sign; uint8_t ni; const Item *item;
                  uint8_t nt; const Trig *trig; uint8_t nw; const uint8_t *wild; uint8_t rate, sx, sy, sdir, grass; } MapDef;
 extern const uint8_t FT_TILES[], FT_N, MTDEF[][5], PLAYER_SPR[], NPC_SPR[];
 extern const MapDef MAPS[];
-''' % (FIELD_BANK, len(MAPS), names.index('tree0')))
+''' % (FIELD_BANK, len(MAPS), names.index('tree0'), max(t[4] for m in MAPS for t in m['triggers']) + 1))
 
 # ── 미리보기 ──
 P = np.array([248, 176, 96, 24], np.uint8)
@@ -199,8 +255,9 @@ for i, m in enumerate(MAPS):
     for y in range(H):
         for x in range(W): im[y * 16:y * 16 + 16, x * 16:x * 16 + 16] = MT[g[y][x]][0]
     rgb = np.stack([P[im]] * 3, -1)
-    for x, y, _ in m['npcs']: rgb[y * 16 + 4:y * 16 + 12, x * 16 + 4:x * 16 + 12] = [200, 60, 60]
-    for x, y, w, h, s in m['triggers']: rgb[y * 16:(y + h) * 16, x * 16:(x + w) * 16, 2] = 255
+    for n in npc_norm(m): x, y = n[0], n[1]; rgb[y * 16 + 4:y * 16 + 12, x * 16 + 4:x * 16 + 12] = [[200, 60, 60], [60, 180, 60], [200, 160, 40], [140, 40, 160]][n[2]]
+    for t in m['triggers']:
+        x, y, w, h = t[:4]; rgb[y * 16:(y + h) * 16, x * 16:(x + w) * 16, 2] = 255
     sx, sy, _ = m['start']; rgb[sy * 16 + 4:sy * 16 + 12, sx * 16 + 4:sx * 16 + 12] = [60, 60, 220]
     Image.fromarray(rgb.astype(np.uint8)).resize((W * 32, H * 32), 0).save(HERE + '/field_preview%d.png' % i)
 print('필드 타일', len(tiles), '칸', len(names), '지도', len(MAPS))

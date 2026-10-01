@@ -261,3 +261,18 @@ static State keep;
 void keep_party(void) BANKED { keep = S; }
 void solo_party(uint8_t id) BANKED { S.np = 1; S.party[0] = id; S.mlv[0] = S.lv; S.mxp[0] = 0; S.mhp[0] = 0; }
 void restore_party(void) BANKED { uint8_t st = S.step; S = keep; S.step = st; }
+
+// ── 걷는 화면 메뉴용 (자료가 이 은행에 있어서 여기서 글을 만들어 SB 로) ──
+uint8_t foe_lv(uint8_t id) BANKED { return FOES[id].lv; }
+int16_t party_hp(uint8_t i) BANKED { return S.party[i] == S.hero ? S.hp : S.mhp[i]; }
+void party_line(uint8_t i) BANKED {
+    uint8_t id = S.party[i], lv = id == S.hero ? S.lv : S.mlv[i];
+    sb_clear(); sb_add(id == S.hero ? "▶" : "  "); sb_add(HEROES[id].name); sb_add(" Lv"); sb_num(lv, 0);
+    sb_add(" "); sb_num(party_hp(i) < 0 ? 0 : party_hp(i), 0); sb_add("/"); sb_num(statOf(id, lv, ST_HP), 0);
+}
+void party_info(uint8_t i) BANKED {
+    uint8_t id = S.party[i], lv = id == S.hero ? S.lv : S.mlv[i];
+    sb_clear(); sb_add(HEROES[id].name); sb_add(" — 공격 "); sb_num(statOf(id, lv, ST_ATK), 0); sb_add(" · 방어 "); sb_num(statOf(id, lv, ST_DEF), 0);
+    sb_add(" · 빠르기 "); sb_num(statOf(id, lv, ST_SPD), 0);
+}
+void heal_lead(uint8_t n) BANKED { S.hp += n; if (S.hp > (int16_t)stat(ST_HP)) S.hp = stat(ST_HP); }

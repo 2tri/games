@@ -11,6 +11,7 @@ typedef struct {
     int8_t buffAtk, buffDef;
     uint8_t step, gollum, done;
     uint8_t map, x, y, dir, flags[16];
+    uint16_t money;
 } State;
 extern State S;
 uint16_t statOf(uint8_t id, uint8_t lv, uint8_t k) BANKED;
@@ -29,3 +30,8 @@ void frodo_full_hp(void) BANKED;
 void keep_party(void) BANKED;
 void solo_party(uint8_t id) BANKED;
 void restore_party(void) BANKED;
+uint8_t foe_lv(uint8_t id) BANKED;
+int16_t party_hp(uint8_t i) BANKED;
+void party_line(uint8_t i) BANKED;
+void party_info(uint8_t i) BANKED;
+void heal_lead(uint8_t n) BANKED;
