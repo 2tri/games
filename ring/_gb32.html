@@ -31,7 +31,7 @@ canvas{image-rendering:pixelated;display:block;margin:0 auto;background:#f8f8f0}
     box(c,0,96,160,48);text(c,msg1,8,106);text(c,msg2,8,122);
   }
   battle('bt', A.heroes[0].back(), '프로도','농부 매곳네 개 송곳니가','으르렁거리며 달려들었다!');
-  battle('bt2', A.heroes[5].back(), '간달프','간달프는 지팡이를','높이 들었다!');
+  battle('bt2', A.heroes[4].back(), '김리','김리는 도끼를','힘껏 휘둘렀다!');
   const sm=document.getElementById('sm');
   for (const h of A.heroes) for (const v of ['front','back']) { const k=A.toCanvas(h[v](),2); k.style.margin='0'; sm.appendChild(k); }
 })();
