@@ -6,9 +6,14 @@ S = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'build')
 e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 e.tick(90); e.shot('00_title'); e.press('start', 4, 30)
-for i in range(60):                      # 아이 고르기 화면이 뜰 때까지
-    if oam(e, 0) == (72, 28): break
+import re as _re
+T_CUR_T = int(_re.search(r'#define T_CUR_T (\d+)', open(os.path.join(S, 'gen', 'gen.h')).read()).group(1))
+for i in range(60):                      # 아이 고르기 화면이 뜰 때까지 (이름 줄 (0,9) 의 커서)
+    if e.pb.memory[0x9800 + 9 * 32] == T_CUR_T and scene(e) == 2: break
     e.press('a', 3, 10)
+e.tick(30)
+for k in range(4):                       # 4명 초상 차례로
+    e.shot('01_kidpick%d' % k); e.press('right', 4, 40)
 e.shot('01_kidpick'); e.press('a', 4, 30); e.shot('02_confirm'); e.press('a', 4, 30)
 settle(e); log('house2f', gstate(e)); e.shot('03_room')
 walk(e, 'down', 3); walk(e, 'right', 4); settle(e); log('house1f', gstate(e)); e.shot('04_1f')
@@ -38,7 +43,7 @@ for i in range(8):                       # 쉘몬 앞(위쪽 1줄)까지
     if gstate(e)['y'] <= 1 or tb(e): break
     walk(e, 'up', 1)
 log('before shell', gstate(e))
-G_ = SYM['_G']; e.pb.memory[G_ + 16] = 11; e.pb.memory[G_ + 19] = 40; e.pb.memory[G_ + 20] = 0   # 시험용: 해변에서 Lv11까지 올린 것으로
+G_ = SYM['_G']; e.pb.memory[G_ + 16] = 12; e.pb.memory[G_ + 19] = 40; e.pb.memory[G_ + 20] = 0   # 시험용: 해변에서 Lv12까지 올린 것으로 (회복 아이템 없이)
 for i in range(4): e.press('a', 3, 10)
 e.shot('16_shell_pic')
 settle(e, 1500, 'sig'); log('after shell', gstate(e), 'crests', bin(e.pb.memory[G_ + 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 16 + 32])); e.shot('17_after_shell')

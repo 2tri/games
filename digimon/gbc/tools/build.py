@@ -306,14 +306,21 @@ for (x, y) in [(10, 14), (19, 20), (12, 27), (21, 30), (16, 9), (8, 22)]: egg[y:
 egg[inside & (xx > 22) & (yy > 18)] = np.where(egg[inside & (xx > 22) & (yy > 18)] == 0, 2, egg[inside & (xx > 22) & (yy > 18)])
 PIC_EGG = add_pic('egg', place(egg, 56, 56), [gfx.WHITE, hexrgb('#f89830'), hexrgb('#e0d8c0'), gfx.BLACK])
 # 주인공 초상 (B10: art/src/people/<아이>_portrait_ai.png) → 56×72 (7×9칸) 4색: 흰 바탕 · 피부 · 옷 주색 · 어두운색(머리·외곽선)
-PORT_PAL = {'taichi': [(248, 208, 168), (48, 88, 208), (64, 40, 24)], 'yamato': [(248, 216, 136), (40, 136, 104), (24, 24, 32)],
-            'takeru': [(248, 216, 150), (64, 152, 64), (24, 32, 24)], 'hikari': [(248, 208, 168), (216, 120, 136), (56, 32, 24)]}
+PORT_PAL = {'taichi': [(248, 208, 168), (48, 88, 208), (64, 40, 24)], 'yamato': [(248, 216, 136), (48, 144, 88), (32, 40, 96)],
+            'takeru': [(248, 212, 160), (56, 152, 72), (64, 40, 24)], 'hikari': [(248, 208, 168), (224, 104, 152), (64, 48, 40)]}
+PORT_BLOND = {'yamato'}      # 그림에서 머리가 하얗게 나온 아이 → 위쪽 밝은 화소를 금발(밝은 색)로 (원작: 매튜는 금발)
 def portrait(kid):
     f = os.path.join(WEB, 'art', 'src', 'people', kid + '_portrait_ai.png')
     if not os.path.exists(f): return 0xFF
     sys.path.insert(0, os.path.join(WEB, 'tools')); import scene
     img, _ = scene.native(f); a = img.astype(int)
-    fg = ~((a.min(2) > 225))                                   # 흰 바탕이 아닌 곳
+    wh = a.min(2) > 225; H0, W0 = wh.shape; bgm = np.zeros_like(wh)   # 바탕 = 가장자리에서 이어진 흰색 (외곽선 안의 흰 머리·옷은 그림)
+    st = [(y, x) for y in range(H0) for x in (0, W0 - 1)] + [(y, x) for x in range(W0) for y in (0, H0 - 1)]
+    while st:
+        y, x = st.pop()
+        if not (0 <= y < H0 and 0 <= x < W0) or bgm[y, x] or not wh[y, x]: continue
+        bgm[y, x] = True; st += [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+    fg = ~bgm
     ys, xs = np.nonzero(fg); a = a[ys.min():ys.max() + 1, xs.min():xs.max() + 1]; fg = fg[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     h, w = a.shape[:2]
     if h > 72 or w > 56:                                       # 크면 줄임 (가장 가까운 화소)
@@ -324,7 +331,11 @@ def portrait(kid):
     P = np.array(pal[1:], float); lum = a @ np.array([.3, .59, .11])
     d = (((a[..., None, :] - P[None, None]) ** 2) * np.array([3, 4, 2])).sum(-1)
     idx = d.argmin(-1) + 1
-    idx[(lum > 215) & fg] = 0                                  # 흰 장갑·고글 → 흰색
+    sat = a.max(2) - a.min(2)
+    idx[(lum > 205) & (sat < 30) & fg] = 0                     # 흰 장갑·고글·소매 → 흰색 (피부는 채도가 있어 그대로)
+    if kid in PORT_BLOND:
+        top = np.zeros_like(fg); top[:int(h * 0.36)] = True
+        idx[top & fg & (lum > 110) & (sat < 40)] = 1               # 흰·회색 머리 → 금발
     idx[lum < 70] = 3                                          # 외곽선
     idx[~fg] = 0
     out = np.zeros((72, 56), np.uint8); oy, ox = 72 - h, (56 - w) // 2
