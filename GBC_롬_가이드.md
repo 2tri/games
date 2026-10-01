@@ -29,3 +29,9 @@
 ## 그림 만드는 방식 (반지 원정에서 정착)
 - 사용자가 이미지 AI(ChatGPT·제미나이)로 "Pokemon Gold and Silver Game Boy battle sprite, pixel art, 4 shades of gray, white background" 류의 도트풍 그림을 만들어 줌
 - `ring/tools/snap.py`(칸 주기 자동 검출 → 진짜 도트 칸 → 4단계) + `ring/tools/ingest.py`(잡티 제거·크기 맞춤·게임 데이터 갱신)로 정리
+
+## 서로 참고 (2026-10-01, 반지 원정 세션 → 디지몬 세션)
+- **무료(CC0) 걷는 화면 타일**: opengameart `gb-mini-pixel-world`(GB 4색 집·나무·풀·울타리·4방향 걷기 캐릭터), `gameboy-tileset`(grayscale.png: 물·다리·바위·돌길), `zelda-like-tilesets-and-sprites`(gfx_3.zip: 지붕집·숲·동굴·실내·16×32 걷기). 반지 원정은 `ring/ref/tiles/` 에 받아 둠.
+- **이야기 자동 변환**: 반지 원정은 웹판 이야기(JS)를 TypeScript 파서로 읽어 C로 바꿔(`ring/rom/story.js`) 이야기 은행 여러 개에 자동 분배. 웹판만 고치면 롬도 같이 바뀜.
+- **은행을 넘는 함수 포인터 주의**: 다시 그리기 함수(scene)처럼 다른 은행 함수를 가리키는 포인터는 그 은행 번호도 같이 저장해 부를 때 바꿔야 함 (전투 끝난 뒤 이야기 쪽 고르기에서 멈춘 원인).
+- **반지 원정이 디지몬에서 배운 것**: 지도를 글자 격자로 짜고(NPC·트리거·깃발) 야생 만남을 붙이는 `story.py` 구조, 이미지 AI 대화방 3개(배경·걷기·전투) 나누기 → 반지 원정 걷는 화면 개편에 그대로 적용 예정.
