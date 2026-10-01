@@ -109,10 +109,10 @@ static uint8_t beats(uint8_t a, uint8_t d) {     // 0 백신 1 데이터 2 바�
 // who: 0 나, 1 상대
 static void use_move(uint8_t who, uint8_t slot) {
     mon_t *att = who ? &foe : &G.party[me], *def = who ? &G.party[me] : &foe;
-    uint8_t mv = att->mv[slot], aa, da, crit, mult;
+    uint8_t mv = slot == 4 ? MV_STRUGGLE : att->mv[slot], aa, da, crit, mult;     // 4 = 발버둥
     const move_t *M_ = &MOVES[mv];
     uint32_t dmg;
-    if (att->pp[slot]) att->pp[slot]--;
+    if (slot < 4 && att->pp[slot]) att->pp[slot]--;
     var_sp[0] = att->sp; var_mv = mv;
     say((who && kind == 0) ? S_USE_W : S_USE);
     if (rnd8(100) >= M_->acc) { say(S_MISS); return; }
@@ -144,6 +144,11 @@ static void use_move(uint8_t who, uint8_t slot) {
     anim_hp();
     if (crit) say(S_CRIT);
     if (mult == 2) say(S_SUPER); else if (mult == 0) say(S_WEAK);
+    if (M_->eff == 3 && att->hp) {                // 반동
+        dmg = dmg / 4; if (!dmg) dmg = 1;
+        if (dmg >= att->hp) att->hp = 0; else att->hp -= (uint16_t)dmg;
+        anim_hp(); var_sp[0] = att->sp; say(S_RECOIL);
+    }
 }
 
 static void give_exp(void) {
@@ -218,7 +223,7 @@ static uint8_t move_menu(void) {
 static uint8_t foe_pick(void) {
     uint8_t ok[4], n = 0, i;
     for (i = 0; i < 4; i++) if (foe.mv[i] != 0xFF && foe.pp[i]) ok[n++] = i;
-    return n ? ok[rnd8(n)] : 0;
+    return n ? ok[rnd8(n)] : 4;
 }
 // 쓰러짐 확인: 0 계속, 1 이김, 2 짐
 static uint8_t check_faint(void) {
@@ -292,9 +297,17 @@ uint8_t battle(uint8_t sp, uint8_t lv, uint8_t k) BANKED {
     while (!res) {
         act = battle_menu();
         if (act == 0) {
+            for (s = 0; s < 4; s++) if (G.party[me].mv[s] != 0xFF && G.party[me].pp[s]) break;
+            if (s == 4) { var_sp[0] = G.party[me].sp; say(S_STRUGGLE); res = turn(4); continue; }
             s = move_menu();
             if (s == 0xFF) continue;
             if (!G.party[me].pp[s]) { say(S_NO_PP); continue; }
+            if (SPECIES[G.party[me].sp].dark && rnd8(100) < 30) {      // 암흑 진화체 폭주
+                uint8_t t, n = 0;
+                for (t = 0; t < 4; t++) if (G.party[me].mv[t] != 0xFF) n = t + 1;
+                var_sp[0] = G.party[me].sp; say(S_RAMPAGE);
+                s = rnd8(n); if (!G.party[me].pp[s]) s = 0;
+            }
             res = turn(s);
         } else if (act == 1) {
             uint8_t used_item = bag_screen(1);
@@ -345,7 +358,17 @@ void evolve_check(void) BANKED {
         s = &SPECIES[m->sp];
         if (s->evo_to == 0xFF || m->lv < s->evo_lv) continue;
         if (s->evo_need == 0xFE) continue;
-        if (s->evo_need != 0xFF && !((G.crests >> s->evo_need) & 1)) continue;
+        if (s->evo_need != 0xFF) {                  // 완전체로: 문장 진화 / 암흑 진화
+            if (!G.crests) continue;                // 문장이 하나도 없으면 아직
+            var_sp[0] = m->sp;
+            if (!((G.crests >> s->evo_need) & 1) && s->dark_to != 0xFF) {   // 자기 문장이 없다 → 암흑 진화 위험
+                if (!ask(S_DARK_Q)) { tb_close(); continue; }
+                tb_close(); flash(2); say(S_DARK_EVO); tb_close();
+                evolve_scene(i, s->dark_to);
+                continue;
+            }
+            if ((G.crests >> s->evo_need) & 1) { flash(1); say(S_CREST_SHINE); tb_close(); }
+        }
         evolve_scene(i, s->evo_to);
     }
     lvup = 0;

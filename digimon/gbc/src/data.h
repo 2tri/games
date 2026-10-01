@@ -38,6 +38,7 @@ typedef struct {
     uint8_t sig[3];
     uint16_t name, grade, type;
     uint8_t front, back;
+    uint8_t dark_to, dark;        // 자기 문장 없이 진화하면 이것으로 (FF 없음) · 1 = 암흑 진화체 (폭주)
 } species_t;
 
 typedef struct { uint16_t name; uint8_t power, acc, pp, eff, kind; } move_t;   // eff 0 피해 1 상대방어↓ 2 내방어↑, kind 0 기본기 1 필살기

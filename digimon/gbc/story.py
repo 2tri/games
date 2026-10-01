@@ -22,7 +22,8 @@ MAPS = {}
 MAP_SONG = {'house2f': 'town', 'house1f': 'town', 'town': 'town', 'camp': 'town', 'forest': 'field', 'route1': 'field',
             'village': 'village', 'beach': 'field', 'center': 'village', 'dshop': 'village', 'neighbor': 'town', 'store': 'town',
             'lodge': 'town', 'office': 'town', 'route2': 'field', 'savanna': 'village', 'center2': 'village', 'shop2': 'village',
-            'temple1': 'field', 'route3': 'field', 'toytown': 'village', 'center3': 'village', 'shop3': 'village', 'temple2': 'field'}
+            'temple1': 'field', 'route3': 'field', 'toytown': 'village', 'center3': 'village', 'shop3': 'village', 'temple2': 'field',
+            'route4': 'field', 'cave1': 'boss', 'summit': 'boss', 'temple3': 'boss'}
 
 # ── 오프닝 (흰수염 도사) ──
 OPENING = [
@@ -428,7 +429,7 @@ MAPS['temple1'] = Map('우정의 신전', [
     'S.P....P.S',
     'S........S',
     'S........S',
-    'SSSS..SSSS'], {'S': 'r_stone', '.': 'r_path', 'P': 'r_rocks'}, 'r_stone',
+    'SSSS..SSSS'], {'S': 'r_stone', '.': 'r_path', 'P': 'p_rocks'}, 'r_stone',
     npcs=[NPC(4, 1, 'blob:leomon', 'down', LEOMON, fixed=True)],
     warps=[Warp_(4, 9, 'savanna', 7, 3, 'down'), Warp_(5, 9, 'savanna', 7, 3, 'down')],
     on_enter=[IfFlag('temple1', 'e'), SetFlag('temple1'), Say('차가운 돌기둥이 늘어선 신전이다.\f안쪽에서 낮은 으르렁 소리가 들린다…'), Label('e')])
@@ -465,18 +466,19 @@ MAPS['toytown'] = Map('장난감 마을', [
     'W..............W',
     'W..............W',
     'W..............W',
-    '::::::::::::::.W',
+    '::::::::::::::::',
     'W......::......W',
     'W......::......W',
     'W......::......W',
     'W......::......W',
     'W......::......W',
     'W..............W',
-    'WWWWWWWWWWWWWWWW'], {'W': 'r_canopy', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}, 'r_canopy', open=[(-9, 6, -1, 6, 'v_path')],
+    'WWWWWWWWWWWWWWWW'], {'W': 'r_canopy', '.': 'v_grass', ':': 'v_path', 'c': 'v_crib'}, 'r_canopy', open=[(-9, 6, -1, 6, 'v_path'), (16, 6, 29, 6, 'v_path')],
     objs=[('c_shrine', 6, 1), ('v_center', 1, 7), ('v_shop', 11, 8), ('v_block4', 1, 1), ('v_block6', 11, 1), ('v_block7', 10, 4)],
-    warps=edgeV(-1, [6], 'route3', 19, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 4, 7, 'up'), Warp_(12, 10, 'shop3', 3, 6, 'up')],
+    warps=edgeV(-1, [6], 'route3', 19, 6) + edgeV(16, [6], 'route4', 0, 6) + [Warp_(7, 2, 'temple2', 4, 8, 'up'), Warp_(3, 11, 'center3', 4, 7, 'up'), Warp_(12, 10, 'shop3', 3, 6, 'up')],
     npcs=[NPC(9, 9, 'blob:numemon', 'down', [Say('워매몬: 퍼펫몬님이 이상해…\f예전엔 다 같이 놀았는데,\n지금은 장난감들을 마구 부숴!')]),
-          NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')])],
+          NPC(4, 5, 'blob:tokomon', 'down', [Say('토코몬: 신전 안에 퍼펫몬님이 있어.\n검은 톱니가 등에 박혀 있었어…')]),
+          NPC(15, 6, 'blob:tokomon', 'left', [Say('토코몬: 이쪽은 무한산으로 가는 길이야.\f검은 톱니가 날아오는 곳이라 위험해!\n(퍼펫몬을 먼저 도와주자)')], hide_if='monzaemon', fixed=True)],
     on_enter=[IfFlag('toytown', 'e'), SetFlag('toytown'),
               Say('알록달록한 장난감 블록으로 지은 마을이다.\f…그런데 아무도 웃고 있지 않다.'), Label('e')])
 MAPS['center3'] = center_map('center3', 'toytown', 3, 11)
@@ -488,7 +490,7 @@ MONZAEMON = [IfFlag('monzaemon', 'done'),
              Say('퍼펫몬: …어라? 나는 무슨 짓을…\f고마워. 등의 검은 톱니가 떨어졌어.'),
              Say('퍼펫몬: 이 신전의 문장은 순수한 마음을 비춘대.\n네가 가져가 줘.'), Close(), Flash(1),
              Crest('순수'), Say('순수의 문장을 손에 넣었다!'),
-             Say('퍼펫몬: 검은 톱니는 북쪽 무한산에서 날아온대.\f(다음 이야기는 준비 중)'), End(),
+             Say('퍼펫몬: 검은 톱니는 동쪽 무한산에서 날아온대.\f꼭대기의 성에 무서운 디지몬이 산다고…'), End(),
              Label('done'), Say('퍼펫몬: 다시 다 같이 놀 수 있게 됐어!\n고마워!')]
 MAPS['temple2'] = Map('순수의 신전', [
     'SSSSSSSSSS',
@@ -500,9 +502,99 @@ MAPS['temple2'] = Map('순수의 신전', [
     'S.P....P.S',
     'S........S',
     'S........S',
-    'SSSS..SSSS'], {'S': 'r_stone', '.': 'v_path', 'P': 'r_rocks'}, 'r_stone',
+    'SSSS..SSSS'], {'S': 'r_stone', '.': 'v_path', 'P': 'vp_rocks'}, 'r_stone',
     npcs=[NPC(4, 1, 'blob:monzaemon', 'down', MONZAEMON, fixed=True)],
     warps=[Warp_(4, 9, 'toytown', 7, 3, 'down'), Warp_(5, 9, 'toytown', 7, 3, 'down')])
+
+# ── 4번 길 (무한산 기슭, Lv16~20) ──
+MAPS['route4'] = Map('4번 길', [
+    'JJJJJJJJ::JJJJJJ',
+    'J.......::.,,,.J',
+    'J.,,,...::.,,,.J',
+    'J.,,,...::.....J',
+    'J.....LLLL..LL.J',
+    'J..............J',
+    '::::::::::.....J',
+    'J...,,,,.......J',
+    'J...,,,,..,,,..J',
+    'J.*.......,,,..J',
+    'J..........*...J',
+    'JJJJJJJJJJJJJJJJ'], {**KEYR, 'L': 'r_ledge'}, 'r_canopy', open=[(-9, 6, -1, 6, 'r_path'), (8, -9, 9, -1, 'r_path')],
+    objs=[('r_rock', 12, 9), ('r_cliff', 1, 9), ('r_tree', 5, 1)],
+    warps=edgeV(-1, [6], 'toytown', 15, 6) + edge([8, 9], -1, 'cave1', 6, 13),
+    npcs=[Challenger(12, 3, 'ogremon', '우가몬', 18, 'left', 'r4c1', '우가몬: 크하하! 데블몬님의 산에 오다니!\f여기서 끝이다!'),
+          Challenger(3, 10, 'meramon', '메라몬', 19, 'up', 'r4c2', '야생 메라몬이 활활 타오르고 있다!'),
+          ItemBall(14, 1, '고급 회복 디스크', 2, 'r4i1'), ItemBall(1, 1, '성장기 그물', 2, 'r4i2')],
+    enc=(28, [('gabumon', 16, 18, 12), ('piyomon', 16, 18, 12), ('gomamon', 16, 18, 10), ('picodevimon', 17, 19, 16),
+              ('ogremon', 18, 20, 18), ('meramon', 18, 20, 16), ('monochromon', 19, 20, 16)]),
+    on_enter=[IfFlag('route4', 'e'), SetFlag('route4'), Say('하늘을 찌를 듯한 산이 보인다.\f무한산… 꼭대기에 검은 성이 있다.'), Label('e')])
+
+# ── 무한산 동굴 (어디서나 야생, A12 그림 오기 전 임시) ──
+KEYK = {'#': 'k_wall', '.': 'k_floor', 'H': 'c_stairs', 'o': 'k_rocks'}
+MAPS['cave1'] = Map('무한산 동굴', [
+    '##############',
+    '#H...#.......#',
+    '#....#..o....#',
+    '#.o..#....#..#',
+    '#....###..#..#',
+    '#.........#..#',
+    '###..o....#..#',
+    '#.....#####..#',
+    '#.o...#......#',
+    '#.....#..o...#',
+    '#..####......#',
+    '#.......o....#',
+    '#............#',
+    '######..######'], KEYK, 'k_wall', open=[(6, 14, 7, 29, 'k_floor')],
+    warps=edge([6, 7], 14, 'route4', 8, 0) + [Warp_(1, 1, 'summit', 5, 10, 'up')],
+    npcs=[ItemBall(12, 1, '성장기 그물', 1, 'k1i1'), ItemBall(2, 8, '회복 디스크', 3, 'k1i2'),
+          Challenger(4, 8, 'drimogemon', '두리몬', 21, 'right', 'k1c1', '땅이 흔들리더니 두리몬이 튀어나왔다!')],
+    enc=(32, [('picodevimon', 20, 22, 25), ('drimogemon', 20, 23, 25), ('monochromon', 21, 23, 20), ('meramon', 21, 24, 15), ('tsunomon', 18, 20, 15)]),
+    on_enter=[IfFlag('cave1', 'e'), SetFlag('cave1'), Say('어둡고 축축한 동굴이다.\f어디서든 디지몬이 튀어나올 것 같다…'), Label('e')])
+
+# ── 무한산 꼭대기 · 데블몬의 성 ──
+MAPS['summit'] = Map('무한산 꼭대기', [
+    'JJJJJJJJJJJJ',
+    'J..........J',
+    'J..........J',
+    'J..........J',
+    'J..........J',
+    'J....::....J',
+    'J.o..::..o.J',
+    'J....::....J',
+    'J.o..::..o.J',
+    'J....::....J',
+    'J....::....J',
+    'JJJJJJJJJJJJ'], {'J': 'k_wall', '.': 'r_path', ':': 'v_path', 'o': 'p_rocks'}, 'k_wall',
+    objs=[('c_shrine', 4, 0), ('r_rock', 1, 1), ('r_rock', 9, 1)],
+    warps=[Warp_(5, 1, 'temple3', 4, 8, 'up'), Warp_(5, 11, 'cave1', 1, 2, 'down'), Warp_(6, 11, 'cave1', 1, 2, 'down')],
+    npcs=[NPC(7, 6, 'COMP', 'left', [Say('{comp}: 저 성 안에 데블몬이 있어.\f회복은 충분해?\n준비되면 같이 가자!')], hide_if='devimon')],
+    on_enter=[IfFlag('summit', 'e'), SetFlag('summit'), Say('무한산 꼭대기다.\f검은 성에서 차가운 바람이 불어온다…'), Label('e')])
+
+DEVIMON = [IfFlag('devimon', 'done'),
+           Say('데블몬: 크크크… 선택받은 아이로군.\f검은 톱니로 파일섬을 지배하려 했건만…\n방해꾼이 나타날 줄이야.'),
+           Say('데블몬: 여기서 사라져라!'), Close(),
+           Battle('devimon', 28, 'boss'), SetFlag('devimon'),
+           Say('데블몬: 크윽… 이 힘은…!\f하지만 기억해라… 어둠은 서버 대륙에도…'), Close(), Flash(2),
+           Say('데블몬은 데이터가 되어 흩어졌다…'),
+           Say('제단 위에서 무언가가 빛나고 있다…'), Close(), Flash(1),
+           Crest('희망'), Say('희망의 문장을 손에 넣었다!'),
+           Say('{comp}: 해냈다, {kid}!\n파일섬에 평화가 돌아왔어!'),
+           Say('{comp}: …그런데 데블몬이 말한 서버 대륙은 뭘까?\f(1장 끝 — 다음 이야기는 준비 중)'), End(),
+           Label('done'), Say('텅 빈 성이다.\n바다 건너편이 보인다…')]
+MAPS['temple3'] = Map('데블몬의 성', [
+    'SSSSSSSSSS',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S.P....P.S',
+    'S........S',
+    'S........S',
+    'SSSS..SSSS'], {'S': 'k_wall', '.': 'k_floor', 'P': 'k_rocks'}, 'k_wall',
+    npcs=[NPC(4, 1, 'blob:devimon', 'down', DEVIMON, fixed=True)],
+    warps=[Warp_(4, 9, 'summit', 5, 2, 'down'), Warp_(5, 9, 'summit', 5, 2, 'down')])
 
 # ── 해변 ──
 SHELLMON = [

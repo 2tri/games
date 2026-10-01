@@ -37,7 +37,7 @@ def dname(sp): return re.sub(r'\(.*?\)', '', W['species'][sp]['name']).strip()
 
 # ───────── 기술 ─────────
 POW = W['power']
-BASIC = [('부딪치기', 40, 100, 35, 0), ('할퀴기', 40, 100, 35, 0), ('물기', 60, 100, 25, 0), ('노려보기', 0, 100, 30, 1), ('웅크리기', 0, 100, 30, 2)]
+BASIC = [('부딪치기', 40, 100, 35, 0), ('할퀴기', 40, 100, 35, 0), ('물기', 60, 100, 25, 0), ('노려보기', 0, 100, 30, 1), ('웅크리기', 0, 100, 30, 2), ('발버둥', 50, 100, 1, 3)]
 MOVES = []; MOVEI = {}
 for (n, p, a, pp, e) in BASIC: MOVEI[n] = len(MOVES); MOVES.append((n, p, a, pp, e, 0))
 sigtier = {}
@@ -69,7 +69,7 @@ ES = {
     'learn': '{s0}{은/는} {m0}{을/를} 익혔다!', 'evo1': '어라…!? {s0}의 모습이…!', 'evo2': '축하합니다! {s0}{은/는}\n{s1}{으로/로} 진화했다!',
     'join': '{s0}{이/가} 일어나 동료가 되고 싶은 듯 이쪽을 보고 있다!\f{s0}{을/를} 데려갈까?',
     'joined': '{s0}{이/가} 동료가 되었다!', 'joined_box': '{s0}{이/가} 동료가 되었다!\n(보관함으로 보냈다)', 'left': '{s0}{은/는} 숲으로 돌아갔다…',
-    'run_ok': '무사히 도망쳤다!', 'run_ng': '도망칠 수 없었다!', 'no_run': '도망칠 수 없다!', 'no_pp': '기술을 쓸 힘이 남아 있지 않다!',
+    'run_ok': '무사히 도망쳤다!', 'run_ng': '도망칠 수 없었다!', 'no_run': '도망칠 수 없다!', 'no_pp': '기술을 쓸 힘이 남아 있지 않다!', 'struggle': '{s0}{은/는} 쓸 수 있는 기술이 없다!', 'recoil': '{s0}{은/는} 반동으로 다쳤다!',
     'back': '돌아와, {s0}!', 'cant': '{s0}{은/는} 싸울 힘이 없다!', 'already': '{s0}{은/는} 이미 싸우고 있다!', 'egg_cant': '디지타마는 싸울 수 없다!',
     'wo1': '{kid}에게는 싸울 수 있는 디지몬이 없다!', 'wo2': '눈앞이 캄캄해졌다…', 'wo3': '…정신을 차려 보니 쉴 곳으로 돌아와 있었다.\f디지몬들이 모두 기운을 되찾았다.',
     'hatch1': '어라…?', 'hatch2': '디지타마가 부화해서\n{s0}{이/가} 태어났다!',
@@ -90,7 +90,9 @@ ES = {
     'cap_dv': '{kid}{은/는} 디지바이스를 내밀었다!', 'cap_net': '{kid}{은/는} {i0}{을/를} 던졌다!',
     'cap_boss': '이 디지몬의 데이터는 너무 강해서 받아들일 수 없다!', 'cap_nomore': '디지바이스의 빛이 다했다…\n(한 번 싸움에 3번까지)',
     'cap_strong': '{s0}의 데이터가 너무 강해서 튕겨 나갔다!', 'cap_ok': '해냈다!\n{s0}의 데이터를 받아들였다!', 'cap_ng': '앗! 데이터가 흩어져 버렸다…',
-    'got_bits': '{n0} 비트를 얻었다!', 'shop_title': '상점', 'shop_ask': '{i0}{을/를} {n0} 비트에 살까?', 'shop_poor': '비트가 모자란다!',
+    'got_bits': '{n0} 비트를 얻었다!', 'crest_shine': '문장이 눈부시게 빛난다…!\n{s0}의 문장 진화!',
+    'dark_q': '{s0}에게서 검은 기운이 느껴진다…\f자기 문장 없이 진화하면\n암흑 진화할지도 모른다.\f그래도 진화시킬까?',
+    'dark_evo': '검은 빛이 {s0}{을/를} 감싼다…!\n암흑 진화!', 'rampage': '{s0}{은/는} 폭주하고 있다!\n명령을 듣지 않는다!', 'shop_title': '상점', 'shop_ask': '{i0}{을/를} {n0} 비트에 살까?', 'shop_poor': '비트가 모자란다!',
     'shop_thx': '고맙습니다!\n{i0}{을/를} 샀다!', 'shop_full': '더 이상 가질 수 없다!', 'shop_bits': '가진 비트', 'shop_quit': '그만두다', 'card_bits': '비트',
     'box_title': '디지몬 보관함', 'box_dep': '맡기기', 'box_wd': '데려오기', 'box_q': '무엇을 할까?', 'box_empty': '보관함이 비어 있다.',
     'box_full': '보관함이 가득 찼다!', 'box_one': '함께하는 디지몬이 하나뿐이라 맡길 수 없다!', 'party_full': '더 이상 데려갈 수 없다!\n(함께하는 디지몬은 6마리까지)',
@@ -819,10 +821,10 @@ for i, sp in enumerate(SPECIES):
     sig = [MOVEI[n] for n in d['sig']][:3] + [0xFF] * 3
     if evo and d['tier'] == 'rookie': evo = dict(evo, lv=14)          # 성장기→성숙기 Lv14 (기획서 레벨 설계)
     if evo and d['tier'] == 'champion': evo = dict(evo, lv=30)        # 성숙기→완전체 문장 + Lv30
-    sp_rows.append('{%d,%d,{%s},%d,%d,%d,%d,{%d,%d,%d},%d,%d,%d,%d,%d}' % (
+    sp_rows.append('{%d,%d,{%s},%d,%d,%d,%d,{%d,%d,%d},%d,%d,%d,%d,%d,%d,%d}' % (
         TIERS.index(d['tier']), ATTRS.index(d['attr']), ','.join(str(v) for v in d['base']), d['exp'],
         SPI[evo['to']] if evo else 0xFF, evo['lv'] if evo else 0, need, sig[0], sig[1], sig[2],
-        SP_NAME[i], SP_GRADE[i], SP_TYPE[i], SP_FRONT[i], SP_BACK[i]))
+        SP_NAME[i], SP_GRADE[i], SP_TYPE[i], SP_FRONT[i], SP_BACK[i], SPI[d['darkevo']] if d.get('darkevo') else 0xFF, 1 if d.get('dark') else 0))
 t += 'const species_t SPECIES[] = {' + ','.join(sp_rows) + '};\n'
 t += 'const move_t MOVES[] = {' + ','.join('{%d,%d,%d,%d,%d,%d}' % (MV_NAME[i], m[1], m[2], m[3], m[4], m[5]) for i, m in enumerate(MOVES)) + '};\n'
 tb = []
@@ -849,6 +851,7 @@ t += arr('BMAP', sum(([x, y, v] for (x, y), v in sorted(BMAP.items())), []), sta
 open(os.path.join(GEN, 'tables.c'), 'w').write(t)
 
 h = '#ifndef GEN_H\n#define GEN_H\n'
+h += '#define MV_STRUGGLE %d\n' % MOVEI['발버둥']
 h += '#define N_SPECIES %d\n#define N_MOVES %d\n#define N_MAPS %d\n#define N_KIDS %d\n#define N_ITEMS %d\n#define N_CRESTS %d\n#define N_CHARS %d\n#define FONT_PER %d\n#define N_EGGS %d\n#define N_BMAP %d\n' % (
     len(SPECIES), len(MOVES), len(MAPNAMES), len(KIDS), len(story.ITEMS), len(story.CRESTS), len(CHARS), FONT_PER, len(story.EGGS), len(BMAP))
 h += '#define N_TITLE0 %d\n#define N_TITLE1 %d\n#define N_TITLE_PAL %d\n#define N_TITLE_ALT %d\n#define N_UI_TILES %d\n#define PIC_EGG %d\n' % (min(176, len(TT.list)), max(0, len(TT.list) - 176), len(TPALS), len(TALT) // 4, len(UIT), PIC_EGG)

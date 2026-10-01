@@ -19,7 +19,7 @@
 "garurumon":{"name":"가루몬","grade":"성숙기","type":"짐승형","attr":"백신","sig":["푸른화염포"],"tier":"champion","base":[70,85,68,73],"exp":110,"evo":[{"to":"weregarurumon","lv":28,"need":"우정"}],"src":"garurumon"},
 "gekomon":{"name":"개굴몬","grade":"성숙기","type":"양서류형","attr":"바이러스","sig":["크래시 심포니"],"tier":"champion","base":[73,78,66,63],"exp":110,"evo":[],"src":"gekomon"},
 "gomamon":{"name":"쉬라몬","grade":"성장기","type":"바다짐승형","attr":"백신","sig":["물고기 행진"],"tier":"rookie","base":[49,49,43,47],"exp":55,"evo":[{"to":"ikkakumon","lv":10}],"src":"gomamon"},
-"greymon":{"name":"그레이몬","grade":"성숙기","type":"공룡형","attr":"백신","sig":["메가파이어"],"tier":"champion","base":[76,88,69,61],"exp":110,"evo":[{"to":"metalgreymon","lv":28,"need":"용기"}],"src":"greymon-first"},
+"greymon":{"name":"그레이몬","grade":"성숙기","type":"공룡형","attr":"백신","sig":["메가파이어"],"tier":"champion","base":[76,88,69,61],"exp":110,"evo":[{"to":"metalgreymon","lv":28,"need":"용기"}],"darkevo":"skullgreymon","src":"greymon-first"},
 "magnaangemon":{"name":"홀리엔젤몬","grade":"완전체","type":"대천사형","attr":"백신","sig":["천국의 문"],"tier":"ultimate","base":[94,100,87,84],"exp":170,"evo":[],"src":"holyangemon"},
 "ikkakumon":{"name":"원뿔몬","grade":"성숙기","type":"바다짐승형","attr":"백신","sig":["뿔 날리기"],"tier":"champion","base":[75,78,70,63],"exp":110,"evo":[{"to":"zudomon","lv":28,"need":"성실"}],"src":"ikkakumon"},
 "kabuterimon":{"name":"캅테리몬","grade":"성숙기","type":"곤충형","attr":"백신","sig":["전기충격"],"tier":"champion","base":[74,78,64,64],"exp":110,"evo":[],"src":"kabuterimon"},
@@ -51,7 +51,7 @@
 "punimon":{"name":"푸니몬","grade":"유아기Ⅰ","type":"슬라임형","attr":"없음","sig":["산성 거품"],"tier":"baby","base":[26,24,19,23],"exp":20,"evo":[{"to":"tsunomon","lv":4}],"src":"punimon"},
 "seadramon":{"name":"시드라몬","grade":"성숙기","type":"수생형","attr":"데이터","sig":["얼음 화살"],"tier":"champion","base":[68,76,69,63],"exp":110,"evo":[],"src":"seadramon"},
 "shellmon":{"name":"쉘몬","grade":"성숙기","type":"연체형","attr":"데이터","sig":["하이드로 프레셔"],"tier":"champion","base":[80,74,90,47],"exp":110,"evo":[],"src":"shellmon"},
-"gatomon":{"name":"가트몬","grade":"성숙기","type":"성수형","attr":"백신","sig":["고양이 펀치","최면술"],"tier":"champion","base":[69,78,66,63],"exp":110,"evo":[{"to":"angewomon","lv":28,"need":"빛"}],"src":"tailmon"},
+"gatomon":{"name":"가트몬","grade":"성숙기","type":"성수형","attr":"백신","sig":["고양이 펀치","최면술"],"tier":"champion","base":[69,78,66,63],"exp":110,"evo":[{"to":"angewomon","lv":28,"need":"빛"}],"darkevo":"ladydevimon","src":"tailmon"},
 "tanemon":{"name":"시드몬","grade":"유년기Ⅱ","type":"알뿌리형","attr":"없음","sig":["점성 거품"],"tier":"baby2","base":[43,32,28,31],"exp":35,"evo":[{"to":"palmon","lv":8}],"src":"tanemon"},
 "tentomon":{"name":"텐타몬","grade":"성장기","type":"곤충형","attr":"백신","sig":["쁘띠 썬더"],"tier":"rookie","base":[48,48,45,47],"exp":55,"evo":[{"to":"kabuterimon","lv":10}],"src":"tentomon"},
 "togemon":{"name":"니드몬","grade":"성숙기","type":"식물형","attr":"데이터","sig":["바늘 뿜기"],"tier":"champion","base":[73,79,66,63],"exp":110,"evo":[{"to":"lilimon","lv":28,"need":"순수"}],"src":"togemon"},
@@ -67,5 +67,7 @@
 "frigimon":{"name":"프리지몬","grade":"성숙기","type":"빙설형","attr":"백신","sig":["절대 영도 펀치"],"tier":"champion","base":[82,82,78,51],"exp":110,"evo":[],"src":"yukidarumon"},
 "zudomon":{"name":"쥬드몬","grade":"완전체","type":"바다짐승형","attr":"백신","sig":["해머 스파크"],"tier":"ultimate","base":[94,103,89,83],"exp":170,"evo":[],"src":"zudomon"},
 "bukamon":{"name":"둥실몬","grade":"유년기Ⅱ","type":"렛서형","attr":"없음","sig":["공기 거품"],"tier":"baby2","base":[38,31,28,31],"exp":35,"evo":[{"to":"gomamon","lv":8}],"src":"pukamon"},
-"pyocomon":{"name":"어니몬","grade":"유년기Ⅱ","type":"알뿌리형","attr":"없음","sig":["샤본 플라워"],"tier":"baby2","base":[38,30,30,31],"exp":35,"evo":[{"to":"piyomon","lv":8}],"src":"pyocomon"}};
+"pyocomon":{"name":"어니몬","grade":"유년기Ⅱ","type":"알뿌리형","attr":"없음","sig":["샤본 플라워"],"tier":"baby2","base":[38,30,30,31],"exp":35,"evo":[{"to":"piyomon","lv":8}],"src":"pyocomon"},
+"skullgreymon":{"name":"스컬그레이몬","grade":"완전체","type":"스켈레톤형","attr":"바이러스","sig":["그라운드 제로"],"tier":"ultimate","base":[90,118,70,82],"exp":170,"evo":[],"src":"skullgreymon","dark":true},
+"ladydevimon":{"name":"레이디데블몬","grade":"완전체","type":"타락천사형","attr":"바이러스","sig":["다크니스 웨이브"],"tier":"ultimate","base":[86,104,78,98],"exp":170,"evo":[],"src":"ladydevimon","dark":true}};
 root.DigiPower={"baby": 25, "baby2": 35, "rookie": 50, "champion": 75, "ultimate": 95, "mega": 120};})(typeof window!=="undefined"?window:globalThis);

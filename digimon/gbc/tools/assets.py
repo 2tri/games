@@ -264,6 +264,14 @@ def build_all():
     put('r_flowers', unwhite(stamp(R, (6, 176, 22, 192), 1, 1, rg, white, 30)), False)
     put('r_flowers2', stamp(R, (30, 178, 46, 194), 1, 1, rg, white, 30))
     put('r_booth', stamp(R, (62, 172, 78, 205), 1, 2, R[143:159, 4:20].copy(), white, 30))
+    # 임시 동굴 바닥 (A12 받으면 교체): 흙길을 어둡게, 어디서나 야생이 나옴
+    cf = (R[107:123, 12:28].astype(int) * 0.62).astype(np.uint8)
+    put('k_floor', cf, False, extra={'grass': True})
+    put('k_wall', (R[40:56, 101:117].astype(int) * 0.55).astype(np.uint8))
+    # 바위 무더기를 바닥마다 따로 (풀 테두리 안 남게)
+    put('k_rocks', stamp(R, (150, 40, 169, 59), 1, 1, cf, white, 30))
+    put('p_rocks', stamp(R, (150, 40, 169, 59), 1, 1, R[107:123, 12:28].copy(), white, 30))
+    put('vp_rocks', stamp(R, (150, 40, 169, 59), 1, 1, A['v_path']['img'], white, 30))
     # 임시 한쪽 턱 (A11 받으면 교체): 풀 위에 아래로 떨어지는 턱 모서리
     ld = rg.copy().astype(int)
     ld[9:12] = (ld[9:12] * 0.55).astype(int); ld[12:16] = (ld[12:16] * 0.8).astype(int); ld[8] = np.minimum(ld[8] + 40, 255); ld[11] = (30, 70, 30)

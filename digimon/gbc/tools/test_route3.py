@@ -8,6 +8,7 @@ e = Emu(os.path.join(S, '..', 'digimon.gbc'), os.path.join(S, 'shots'))
 log = lambda *a: print(*a, flush=True)
 load_state(e, S + '/savanna.state'); e.tick(5)
 G = SYM['_G']; FLAGS_OFF = 4 + 5 + 4 + 2 + 20 * 6 + 20 * 20 + 8
+e.pb.memory[G + 16] = 40; e.pb.memory[G + 19] = 200; e.pb.memory[G + 20] = 0      # 시험용 Lv40·체력 가득
 walk(e, 'down', 7); settle(e); log('savanna', gstate(e))
 walk(e, 'down', 3); walk(e, 'right', 8); settle(e); log('route3', gstate(e), MP['route3'])
 for i in range(26):
@@ -20,4 +21,5 @@ for i in range(6):
     if gstate(e)['map'] == MP['temple2']: break
 log('temple2', gstate(e))
 walk(e, 'up', 6); e.press('a', 4, 30); settle(e, 1500)
-log('after monzaemon', gstate(e), 'crests', bin(e.pb.memory[G + FLAGS_OFF + 32])); e.shot('r3_after'); e.stop()
+log('after monzaemon', gstate(e), 'crests', bin(e.pb.memory[G + FLAGS_OFF + 32])); e.shot('r3_after')
+from emu import save_state; save_state(e, S + '/toytown.state'); e.stop()
