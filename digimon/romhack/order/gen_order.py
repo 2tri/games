@@ -10,6 +10,7 @@ import dmrom
 rom = dmrom.Rom(dmrom.WORK + '/myver.gbc')
 S = json.load(open(WEB + 'romhack/series.json')); G = json.load(open(WEB + 'romhack/grades.json'))
 keep = json.load(open(R + 'keep.json'))
+KD = {int(a): b for a, b in json.load(open(R + 'keep_dirs.json')).items()}
 needs = json.load(open(R + 'needs.json')) if os.path.exists(R + 'needs.json') else {}
 
 def b64(p):
@@ -86,7 +87,8 @@ for e in ESS:
         p = WEB + 'art/%s-%s.png' % (did, side)
         if os.path.exists(p): got[side] = b64(p)
     ess.append({'id': did, 'ko': ko, 'en': en, 'grade': grade, 'use': use, 'size': '16×16' if did == 'digivice' else '%d×%d · 48×48' % (front_size(grade), front_size(grade)),
-                'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + dirn) if dirn else '', 'prompt': prompt(e), 'got': got})
+                'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + dirn) if dirn else 'https://wikimon.net/Digivice',
+                'img': ('https://digimon.net/cimages/digimon/%s.jpg' % dirn) if dirn else '', 'prompt': prompt(e), 'got': got})
 
 # ── 지금 롬 ──
 REC = {4: '뒷모습이 머리만 남은 덩어리', 7: '뒷모습 모양이 어색함', 16: '뒷모습이 뭉개짐', 6: '색이 빠져 갑옷이 구분 안 됨',
@@ -98,7 +100,8 @@ romlist = []
 for n in keep:
     g = (G.get(str(n)) or {}).get('grade') or {161: '유년기Ⅱ', 212: '완전체', 217: '완전체'}.get(n, '')
     romlist.append({'id': 'rom-%d' % n, 'no': n, 'ko': rom.name(n), 'grade': g, 'rec': REC.get(n, ''), 'note': NEW.get(n, ''),
-                    'f': b64(SP + 'sp/%d-f.png' % n), 'b': b64(SP + 'sp/%d-b.png' % n)})
+                    'f': b64(SP + 'sp/%d-f.png' % n), 'b': b64(SP + 'sp/%d-b.png' % n),
+                    'img': ('https://digimon.net/cimages/digimon/%s.jpg' % KD[n]) if KD.get(n) else '', 'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + KD[n]) if KD.get(n) else ''})
 
 # ── 빠지는 것 ──
 drop = {'테이머즈': [], '그 밖의 작품': [], '애니에 안 나옴': [], '확인 안 됨': []}
@@ -115,6 +118,7 @@ later = []
 for k, v in needs.items():
     if not v.get('name') or v.get('dir') in essen: continue
     later.append({'id': 'need-' + re.sub(r'[^a-z0-9]', '', k.lower()), 'ko': v['name'], 'en': k, 'grade': v.get('grade') or '', 'n': v['n'],
+                  'img': ('https://digimon.net/cimages/digimon/%s.jpg' % v['dir']) if v.get('dir') else '', 'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + v['dir']) if v.get('dir') else '',
                   'first': v['first'].replace('DA 02 - Episode ', '02 ').replace('DA - Episode ', '어드벤처 ').replace('DA 02:', '02 극장판').replace('DA:', '극장판').replace('DA (Movie)', '극장판')})
 ORDER = ['유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ', '성장기', '아머체', '성숙기', '완전체', '궁극체', '']
 later.sort(key=lambda x: (ORDER.index(x['grade']) if x['grade'] in ORDER else 8, -x['n']))

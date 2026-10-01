@@ -30,6 +30,8 @@ section { display: grid; gap: 16px; min-width: 0; }
 .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted); }
 .lede { font-size: 16px; }
 .note { font-size: 13px; color: var(--muted); }
+.lk { font-size: 13px; }
+.lk a { color: var(--blue); text-underline-offset: 3px; }
 .steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
 .steps li::marker { font-family: var(--mono); color: var(--muted); }
 .how { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; }
@@ -95,7 +97,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <div class="how">
       <div class="box">
         <ol class="steps">
-          <li>카드의 <b>공식 도감</b> 링크(또는 검색)에서 그 디지몬 그림을 한 장 저장합니다.</li>
+          <li>카드의 <b>그림 열기</b>를 누르면 디지몬 공식 도감(digimon.net)의 그림이 바로 열려요. 길게 눌러 저장하면 됩니다. 따로 검색할 필요 없어요.</li>
           <li>Gemini에 그 그림과 카드의 <b>주문문 복사</b> 내용을 같이 넣습니다.</li>
           <li>나온 그림 한 장을 이 채팅에 올리면서 디지몬 이름만 적어 주세요. 파일 이름은 상관없어요.</li>
           <li>제가 잘라서 4색으로 맞춰 롬에 넣고, 게임 화면으로 확인한 뒤 여기 올립니다.</li>
@@ -174,7 +176,8 @@ for (const e of D.ess) {
     try { navigator.clipboard.writeText(e.prompt).then(done, fallback); } catch (err) { fallback(); }
   });
   r.append(b);
-  if (e.ref) { const a = el("a", "btn", "공식 도감"); a.href = e.ref; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
+  if (e.img) { const a = el("a", "btn", "그림 열기"); a.href = e.img; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
+  if (e.ref) { const a = el("a", "btn", e.img ? "공식 도감" : "참고 문서 (위키몬)"); a.href = e.ref; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
   c.append(r, det);
   const g = el("div", "got");
   if (e.got.f) { const p = el("div", "pic"); p.append(img(e.got.f, 2)); g.append(p); if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 2)); g.append(q); } g.append(el("span", "ok", "받음 · 롬에 넣음")); }
@@ -183,6 +186,12 @@ for (const e of D.ess) {
   $("#ess").append(c);
 }
 
+function links(m) {
+  const s = el("span", "lk");
+  const a = el("a", "", "그림"); a.href = m.img; a.target = "_blank"; a.rel = "noopener";
+  const b = el("a", "", "도감"); b.href = m.ref; b.target = "_blank"; b.rel = "noopener";
+  s.append(a, document.createTextNode(" · "), b); return s;
+}
 function box(id, kind, label) {
   const l = el("label", "ck"); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true;
   i.addEventListener("change", async () => {
@@ -203,6 +212,7 @@ for (const m of D.rom) {
   t.append(p, el("div", "nm", m.ko), el("div", "meta", "#" + m.no + " · " + (m.grade || "등급 ?")));
   if (m.rec) t.append(el("div", "why", "추천: " + m.rec));
   if (m.note) t.append(el("div", "ok", m.note));
+  if (m.img) t.append(links(m));
   if (![212, 217].includes(m.no)) t.append(box(m.id, "redraw", "다시 그리기"));
   $("#rom").append(t);
 }
@@ -214,6 +224,7 @@ for (const m of D.later) {
   if (m.grade !== last) { const tr = el("tr", "grp"); const td = el("td", "", m.grade || "등급 모름"); td.colSpan = 5; tr.append(td); $("#later").append(tr); last = m.grade; }
   const tr = el("tr"); const td0 = el("td"); td0.append(box(m.id, "first", ""));
   const td1 = el("td"); td1.append(el("b", "", m.ko), document.createTextNode(" "), el("span", "note", m.en));
+  if (m.img) { td1.append(document.createTextNode(" ")); td1.append(links(m)); }
   tr.append(td0, td1, el("td", "", m.grade), el("td", "num", m.first), el("td", "num", m.n + "회"));
   $("#later").append(tr);
 }
