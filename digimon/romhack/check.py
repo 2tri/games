@@ -211,10 +211,13 @@ def rules(c, out):
         for e in c.evos(n):
             if e[-1] in c.drop: r10[('진화', c.name(n) + '→' + c.name(e[-1]))] += 1
     for s in c.sites:
+        if s['cur'] in c.empty:                                       # 빈 칸(-----)을 가리키는 야생·트레이너·이벤트
+            k = '야생' if s['kind'] in remap.WILD else ('트레이너' if s['kind'] == '트레이너' else '이벤트')
+            r10[(k, '빈 칸 %d번(%s)' % (s['cur'], s['where']))] += 1
         if s['cur'] in c.drop:
             k = '야생' if s['kind'] in remap.WILD else ('트레이너' if s['kind'] == '트레이너' else '이벤트')
             r10[(k, c.name(s['cur']))] += 1
-    rep('R10', sorted(r10.items()), '진화 결과·야생·트레이너·이벤트가 뺄 종을 안 가리킴',
+    rep('R10', sorted(r10.items()), '진화 결과·야생·트레이너·이벤트가 뺄 종·빈 칸을 안 가리킴',
         lambda b: '%s: %s%s' % (b[0][0], b[0][1], '' if b[1] == 1 else ' ×%d' % b[1]))
     # R11
     pics = collections.defaultdict(list)

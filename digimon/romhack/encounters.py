@@ -15,8 +15,9 @@ def _grass_water(d, names):
     sp_ok = lambda s: 1 <= s <= 251
     def grass_ok(e):
         return (e[0], e[1]) in names and all(1 <= e[5 + 2 * k] <= 100 and sp_ok(e[6 + 2 * k]) for k in range(21)) and all(e[2 + t] <= 100 for t in range(3))
-    def water_ok(e):
-        return (e[0], e[1]) in names and e[2] <= 100 and all(1 <= e[3 + 2 * k] <= 100 and sp_ok(e[4 + 2 * k]) for k in range(3))
+    def water_ok(e):        # 1.4 가 끈 기록(은빛 산 바깥: 지도 번호 0·출현율 0)도 표의 일부로 인정 — 아니면 성도 물 표 전체를 놓침
+        known = (e[0], e[1]) in names or (1 <= e[0] <= 26 and e[1] == 0 and e[2] == 0)
+        return known and e[2] <= 100 and all(1 <= e[3 + 2 * k] <= 100 and sp_ok(e[4 + 2 * k]) for k in range(3))
     out = []
     tabs = [('grass', a, k, False) for a, k in W.find_tables(d, 47, grass_ok)] + [('water', a, k, False) for a, k in W.find_tables(d, 9, water_ok, 4)]
     key = {v[0]: g for g, v in names.items()}
@@ -32,7 +33,9 @@ def _grass_water(d, names):
     for kind, a, k, swarm in tabs:
         rec = 47 if kind == 'grass' else 9
         for i in range(k):
-            e = a + rec * i; place = names[(d[e], d[e + 1])][1]
+            e = a + rec * i
+            if (d[e], d[e + 1]) not in names: continue                     # 끈 기록 (게임에서 안 쓰임)
+            place = names[(d[e], d[e + 1])][1]
             tag = ('대량발생 ' if swarm else '') + ('풀숲' if kind == 'grass' else '물')
             if kind == 'grass':
                 for t, tn in enumerate(('아침', '낮', '밤')):
