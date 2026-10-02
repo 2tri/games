@@ -181,6 +181,30 @@ class Patch:
             k = seg.index(0x4d, 5)                                    # 첫 writetext = '…로 하겠니?' 글
             texts[new] = addr(a // 0x4000, seg[k + 1] | seg[k + 2] << 8) + 1
         return texts
+    # 스타팅 고르는 물건: 공박사 연구소의 볼 3개만 '금 트로피' 필드 그림 칸(방 꾸미기에만 쓰임)으로 바꾸고 그 그림을 디지바이스로
+    #   (볼 그림을 바꾸면 땅에 떨어진 아이템 볼까지 바뀌므로). png: 16×16, 투명 + 밝은·어두운 색 + 검정
+    def digivice(self, png, sprite_id=0x5E, pal=5):
+        d = bytes(self.d)
+        m = re.search(rb'\xe5\x21(..)\x3d\x4f\x06\x00\x3e\x06\xcd..\x2a\x5f\x2a\x57', d, re.S)       # GetSprite: ld hl, OverworldSprites
+        tab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+        a = np.asarray(Image.open(png).convert('RGBA')).astype(int)
+        idx = np.zeros((16, 16), int); op = a[..., 3] > 128; L = a[..., :3] @ np.array([.299, .587, .114])
+        idx[op & (L >= 170)] = 1; idx[op & (L < 170) & (L >= 60)] = 2; idx[op & (L < 60)] = 3
+        gfx = bytearray()
+        for ty, tx in ((0, 0), (0, 1), (1, 0), (1, 1)):                    # 좌상·우상·좌하·우하
+            for y in range(8):
+                row = idx[ty * 8 + y, tx * 8:tx * 8 + 8]
+                gfx += bytes([sum(((v & 1) << (7 - i)) for i, v in enumerate(row)), sum((((v >> 1) & 1) << (7 - i)) for i, v in enumerate(row))])
+        b, p = self.sp.take(64, banks=[0x77, 0x7c, 0x7d, 0x76, 0x75]); self.put(addr(b, p), bytes(gfx))
+        self.put(tab + 6 * (sprite_id - 1), bytes([p & 255, p >> 8, 64, b, 3, pal]))
+        n = 0; i = d.find(b'\x54\x07\x0a')                                  # 볼 셋: SPRITE_POKE_BALL, y 3+4, x 6~8+4
+        while i >= 0:
+            if d[i + 13:i + 16] == b'\x54\x07\x0b' and d[i + 26:i + 29] == b'\x54\x07\x0c':
+                for k in (0, 13, 26): self.put(i + k, bytes([sprite_id]))
+                n += 1
+            i = d.find(b'\x54\x07\x0a', i + 1)
+        assert n == 1, '연구소 볼 셋을 못 찾음 (%d)' % n
+        self.log.append('스타팅 고르는 물건 → 디지바이스 (%s)' % os.path.basename(png))
     # 트레이너가 데리고 있는 종 바꾸기 {옛 종: 새 종}
     def trainer_species(self, mapping):
         n = 0
@@ -374,6 +398,8 @@ def build(base, out_rom, out_ips):
     P.text_at(T[S('파피몬')], '공박사『물디지몬<LINE>파피몬이 마음에 드느냐!?')
     P.text_at(T[VM], '공박사『소룡디지몬<LINE>브이몬이 마음에 들었느냐!?')
     P.log.append('스타팅 → 아구몬·파피몬·브이몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
+    dv = os.path.join(WEB, 'art', 'digivice.png')                     # 받은 그림 (16×16), 없으면 임시 그림
+    P.digivice(dv if os.path.exists(dv) else os.path.join(WEB, 'art', 'digivice_temp.png'))
     # 10 브이몬 줄: 디지몬스터는 엑스브이몬·황제드라몬을 우파·누오 칸 능력치·기술(물대포·지진) 그대로 둠 → 스타팅답게 다시 잡음
     #   아머 진화(디지멘탈 도구)는 그대로, 애니에 안 나온 브이드라몬 갈래만 뺌. 레벨 진화는 다른 스타팅처럼 16
     P.evos(VM, [(ITEM, 23, S('번개드라몬')), (ITEM, 24, S('매그너몬')), (ITEM, 22, S('화염드라몬')), (LV, 16, XV)])
