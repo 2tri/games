@@ -35,8 +35,11 @@ def split(im):
 
 
 def is_gray(im):
+    """흰 배경을 뺀 그림 부분의 채도가 낮으면 회색 4톤 그림"""
     a = np.asarray(im.convert('RGB')).astype(int)
-    return float((a.max(2) - a.min(2)).mean()) < 18
+    ink = a[a.min(2) < 230]
+    if len(ink) == 0: return True
+    return float((ink.max(1) - ink.min(1)).mean()) < 18
 
 
 def gray4(img, flat, maxs, tol=24):
@@ -68,16 +71,26 @@ def gray4(img, flat, maxs, tol=24):
     return t[ys.min():ys.max() + 1, xs.min():xs.max() + 1], tuple(round(x) for x in c)
 
 
-def convert(part, maxs, pal, flat=False):
-    """→ (칸 배열, 4색 팔레트)"""
+def convert(part, maxs, pal, flat=False, fixed=None):
+    """→ (칸 배열, 4색 팔레트). 회색 그림이면 pal(specs) 색을 입힘. 색 그림이면 그림에서 몸 색 두 개를 고르고(fixed 가 있으면 그 색으로)"""
     if is_gray(part) or flat:
         t, lv = gray4(part, flat, maxs)
         print('  회색 4톤 밝기', lv)
         p4 = [(248, 248, 248), tuple(pal[0]), tuple(pal[1]), (24, 24, 24)]
-    else:                                                          # 색 그림 (옛 주문문): 몸 색 두 개를 specs 색으로 고정해 나눔
-        t, p4, cell = snapc.snap(part, accent=False, fixed=[list(pal[0]), list(pal[1])] if pal else None)
+    else:
+        t, p4, cell = snapc.snap(part, accent=False, fixed=fixed, mids_only=True)
+        print('  색 그림 도트 칸', tuple(round(x, 2) for x in cell))
     t = snapc.drop_small(t, 8); t = snapc.shrink2(t, maxs, maxs); t = snapc.drop_small(t, 3)
     return t, p4
+
+
+def front_colors(did):
+    """이미 넣은 앞모습의 몸 색 두 개 (뒷모습만 따로 받을 때 같은 팔레트로)"""
+    p = os.path.join(WEB, 'art', did + '-f.png')
+    if not os.path.exists(p): return None
+    a = np.asarray(Image.open(p).convert('RGBA')).reshape(-1, 4)
+    cols = sorted({tuple(x[:3]) for x in a if x[3] > 128 and 40 < max(x[:3]) and min(x[:3]) < 235}, key=lambda c: -sum(c))
+    return [list(cols[0]), list(cols[-1])] if len(cols) >= 2 else None
 
 
 def main():
@@ -96,9 +109,11 @@ def main():
     keep = os.path.join(WEB, 'art', 'src', a.id + tag + '_ai' + os.path.splitext(a.src)[1])
     if os.path.abspath(a.src) != os.path.abspath(keep): shutil.copy(a.src, keep)
     parts = list(zip(split(im), ('f', 'b'))) if a.side == 'sheet' else [(im, a.side)]
+    body = front_colors(a.id) if a.side == 'b' else None
     for part, side in parts:
         maxs = FRONT.get(grade, 56) if side == 'f' else 48
-        t, p4 = convert(part, maxs, pal, a.flat)
+        t, p4 = convert(part, maxs, pal, a.flat, body)
+        body = [list(p4[1]), list(p4[2])]                           # 롬은 앞·뒤가 팔레트 하나 → 뒷모습은 앞모습 몸 색으로
         snapc.to_image(t, p4).save(os.path.join(WEB, 'art', '%s-%s.png' % (a.id, side)))
         snapc.to_image(t, p4, 6, (248, 248, 248)).save(os.path.join(WEB, 'art', '_%s-%s_x6.png' % (a.id, side)))
         print(side, '→', t.shape[::-1], '색', p4[1:3])

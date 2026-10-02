@@ -45,7 +45,7 @@ def hue_gap(a, b):
     ha = colorsys.rgb_to_hsv(*(a / 255))[0] * 360; hb = colorsys.rgb_to_hsv(*(b / 255))[0] * 360
     d = abs(ha - hb) % 360; return min(d, 360 - d)
 
-def snap(img, tol=24, k=6, accent=True, fixed=None):
+def snap(img, tol=24, k=6, accent=True, fixed=None, mids_only=False):
     rgb = np.asarray(img.convert('RGB')).astype(float)
     (pw, ox), (ph, oy) = grid(lum(rgb))
     nx, ny = int((rgb.shape[1] - ox) / pw), int((rgb.shape[0] - oy) / ph)
@@ -85,7 +85,10 @@ def snap(img, tol=24, k=6, accent=True, fixed=None):
                 pal4.append(gr[0]); break
     pal4 = np.array(pal4, float)
     t = -np.ones((ny, nx), int); t[white] = 0; t[black] = 3
-    near = np.argmin(((cells[..., None, :] - pal4[None, None]) ** 2).sum(3), 2)
+    if mids_only:                                                 # 검정·흰색은 밝기 기준으로만, 나머지 색은 몸 색 둘 중 가까운 쪽 (갈색 띠가 검정 덩어리가 되지 않게)
+        near = 1 + np.argmin(((cells[..., None, :] - pal4[None, None, 1:3]) ** 2).sum(3), 2)
+    else:
+        near = np.argmin(((cells[..., None, :] - pal4[None, None]) ** 2).sum(3), 2)
     t[rest] = near[rest]
     ys, xs = np.where(t >= 0); t = t[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     pal = [tuple(int(x) for x in cc) for cc in pal4]; pal[0] = (248, 248, 248); pal[3] = (24, 24, 24)

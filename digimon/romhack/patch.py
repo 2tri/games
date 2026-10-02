@@ -457,7 +457,11 @@ def build(base, out_rom, out_ips):
         P.pic(no, f, b)
         P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], moves_by_name(m['moves']))
         P.dex(no, *m['dex'])
-        if m['grade'].startswith(('유년기', '유아기')): P.icon(no, ICON_JIGGLYPUFF)
+        lk = S(m['like']); idx, pitch, length = P.cry_of(lk)
+        baby = m['grade'].startswith(('유년기', '유아기'))
+        P.cry(no, idx, (pitch + (0x30 if baby else -0x20)) & 0xffff, (length - 0x10 if baby else length + 0x20) & 0xffff)
+        d_ = bytes(P.d); mi = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', d_, re.S)
+        P.icon(no, ICON_JIGGLYPUFF if baby else d_[addr(mi.start() // 0x4000, int.from_bytes(mi.group(1), 'little')) + lk - 1])
         if m['id'] == 'tokomon' and egg > 0: P.put(egg + 1, bytes([no])); P.log.append('조수의 알 → 토코몬')
         installed[no] = m
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
