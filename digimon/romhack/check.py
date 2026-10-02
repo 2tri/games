@@ -1,11 +1,12 @@
 """검수 보고서 — 고친 롬(myver.gbc)을 읽어 100줄 이내로 요약·규칙 검사 (자문자에게 그대로 붙임)
-  python3 check.py                 요약 + 규칙 R1~R12
+  python3 check.py                 요약 + 규칙 R1~R14
   python3 check.py --full evo      + 진화 표 전체 (칸 | 이름 | 순서 | 종류 | 조건 | 결과)
   python3 check.py --full party    + 관장·사천왕·챔피언·라이벌·레드 파티
   python3 check.py --full wild     + 야생표 지역별 종·레벨
 줄 앞 표시: [X] 규칙 위반 · [OK] 통과 · [?] 확인 불가. 규칙은 계획서 v0.4 기준."""
 import argparse, collections, json, os, re, struct, sys, zlib
 import dmrom, krtext, encounters as E, remap, texts as T
+import rules as RU
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 KR = E.KR
@@ -16,7 +17,8 @@ JOHTO = [('Falkner', '버드라몬'), ('Bugsy', '캅테리몬'), ('Whitney', '�
 BOSS = ['Falkner', 'Bugsy', 'Whitney', 'Morty', 'Chuck', 'Jasmine', 'Pryce', 'Clair', 'Will', 'Koga', 'Bruno', 'Karen', 'Champion',
         'Brock', 'Misty', 'LtSurge', 'Erika', 'Janine', 'Sabrina', 'Blaine', 'Blue', 'Red', 'Rival1', 'Rival2']
 EARLY = ['29번 도로', '30번 도로', '31번 도로', '32번 도로', '너도밤나무 숲', '모다피의 탑']
-CATCH = {'유아기Ⅰ': 255, '유아기Ⅱ': 255, '유년기Ⅰ': 255, '유년기Ⅱ': 255, '성장기': 190, '성숙기': 90, '완전체': 30, '궁극체': 0}
+ORIG_MOVES = [tuple(int(x) for x in (m.group(1), m.group(2))) for m in
+              re.finditer(r'^\s*move \w+,\s*\w+,\s*(\d+),\s*\w+,\s*\d+,\s*(\d+),', open(os.path.join(KR, 'data/moves/moves.asm')).read(), re.M)]
 EVK = {1: '레벨', 2: '도구', 3: '통신', 4: '친밀도', 5: '능력치', 6: '유대 높음', 7: '유대 낮음', 8: '자기 문장', 9: '암흑', 10: '아무 문장'}
 LEVELED = {1, 5, 6, 7, 8, 9, 10}
 
@@ -127,19 +129,21 @@ def rules(c, out):
         else: out.append('[OK] %s %s' % (code, ok_msg))
     dig = sorted(c.keep)                    # 남길 종 + 설치된 새 종 (뺄 종·포켓몬 칸의 진화는 게임에서 안 보이므로 빼고 봄)
     # R1 · R2
-    r1, r2, unk = [], [], set()
+    r1, r2, r2x, unk = [], [], [], set()
     for n in dig:
         for e in c.evos(n):
             g = c.grade.get(e[-1])
             if g is None: unk.add(e[-1]); continue
             if e[0] not in LEVELED: continue
-            lv = e[1]
-            if g == '완전체' and lv < 30: r1.append((n, e, '완전체인데 30 미만'))
-            if g == '궁극체' and lv < 50: r1.append((n, e, '궁극체인데 50 미만'))
-            if g == '성숙기' and not 16 <= lv <= 25: r2.append((n, e, '16~25 밖'))
+            lv = e[1]; lo, hi = RU.CHAMPION_LV
+            if g == '완전체' and lv < RU.COMPLETE_LV: r1.append((n, e, '완전체인데 %d 미만' % RU.COMPLETE_LV))
+            if g == '궁극체' and lv < RU.ULTIMATE_LV: r1.append((n, e, '궁극체인데 %d 미만' % RU.ULTIMATE_LV))
+            if g == '성숙기' and not lo <= lv <= hi:
+                (r2x if c.name(n) in RU.R2_EXCEPT else r2).append((n, e, '%d~%d 밖' % (lo, hi)))
     f = lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2])
-    rep('R1', r1, '완전체 ≥30, 궁극체 ≥50 (남길 종 %d)' % len(dig), f)
-    rep('R2', r2, '성숙기 진화 Lv16~25', f)
+    rep('R1', r1, '완전체 ≥%d, 궁극체 ≥%d (남길 종 %d)' % (RU.COMPLETE_LV, RU.ULTIMATE_LV, len(dig)), f)
+    rep('R2', r2, '성숙기 진화 Lv%d~%d' % RU.CHAMPION_LV, f)
+    for b in r2x: out.append('[?] R2 예외(rules.R2_EXCEPT, 확인 필요): ' + f(b))
     # R3 순서
     r3 = []
     for n in dig:
@@ -155,11 +159,13 @@ def rules(c, out):
     else: out.append('[X] R4 종류 9(암흑) 갈래에 친밀도(유대 낮음) 비교가 없음 (코드 %s)' % where)
     # R5
     r5, r5q = [], []
+    want = lambda n: RU.CATCH_BY_NAME.get(c.name(n), RU.CATCH_BY_GRADE.get(c.grade.get(n)))
     for n in dig:
         g = c.grade.get(n); cr = c.r.d[c.r.bs + 0x20 * (n - 1) + 9]
-        if g is None or g not in CATCH: r5q.append(n); continue
-        if cr != CATCH[g]: r5.append((n, g, cr))
-    rep('R5', r5, '포획률 %d종 전부 단계 규칙과 일치 (남길 종 기준)' % (len(dig) - len(r5q)), lambda b: '%s (%s) 포획률 %d → %d 이어야' % (c.name(b[0]), b[1], b[2], CATCH[b[1]]),
+        if want(n) is None: r5q.append(n); continue
+        if cr != want(n): r5.append((n, g, cr))
+    rep('R5', r5, '포획률 %d종 전부 단계표와 일치 (남길 종 기준, 이름 지정 %d종 포함)' % (len(dig) - len(r5q), sum(c.name(n) in RU.CATCH_BY_NAME for n in dig)),
+        lambda b: '%s (%s) 포획률 %d → %d 이어야' % (c.name(b[0]), b[1], b[2], want(b[0])),
         note=' (남길 종 %d 중, 단계별 기대값과 다름)' % len(dig))
     if r5q: out.append('[?] R5 단계를 몰라 판정 못 함 %d종: %s' % (len(r5q), ', '.join('%s(%s)' % (c.name(n), c.grade.get(n, '?')) for n in r5q)))
     # R6
@@ -177,9 +183,11 @@ def rules(c, out):
     a, mnames = moves_table(c)
     if a < 0: out.append('[?] R8 기술 표를 못 찾음')
     else:
-        r8 = [(mnames[i] if i < len(mnames) else str(i + 1), c.d[a + 7 * i + 2], c.d[a + 7 * i + 5]) for i in range(251)
-              if c.d[a + 7 * i + 2] > 120 or c.d[a + 7 * i + 5] > 40]
-        rep('R8', r8, '기술 위력 ≤120, PP ≤40', lambda b: '%s 위력 %d PP %d' % b)
+        cur = [(c.d[a + 7 * i + 2], c.d[a + 7 * i + 5]) for i in range(len(ORIG_MOVES))]
+        diff = [i for i in range(len(ORIG_MOVES)) if cur[i] != ORIG_MOVES[i]]
+        r8 = [(mnames[i] if i < len(mnames) else str(i + 1),) + cur[i] + ORIG_MOVES[i] for i in diff if cur[i][0] > 120 or cur[i][1] > 40]
+        rep('R8', r8, '원작 금과 위력·PP가 다른 기술 %d개 모두 위력 ≤120, PP ≤40 (원작 그대로인 기술은 안 봄)' % len(diff),
+            lambda b: '%s 위력 %d PP %d (원작 %d / %d)' % b)
     # R9
     r9 = []
     for n in range(1, 252):
@@ -228,6 +236,19 @@ def rules(c, out):
     waiting = [m['name'] for m in c.slots.values() if m['name'] not in {c.name(n) for n in c.installed}]
     rep('R12', r12, '설치된 새 종 %d개 7항목(이름·능력치·진화·그림·도감·아이콘·울음) 다 있음' % len(new), lambda b: '%s: %s 없음/원래 것' % (b[0], '·'.join(b[1])))
     out.append('     (그림 대기라 아직 안 넣은 새 종 %d: %s)' % (len(waiting), ', '.join(waiting)))
+    # R13 트레이너 파티의 궁극체: 사천왕·챔피언·레드·라이벌 마지막만
+    r13, gi = [], collections.Counter()
+    for t in c.trainers:
+        g = GROUPS[t['group']]; i = gi[g]; gi[g] += 1
+        if g in RU.ULTIMATE_OK or (g == RU.RIVAL_FINAL[0] and i >= RU.RIVAL_FINAL[1]): continue
+        for lv, sp, _ in t['mons']:
+            if c.grade.get(sp) == '궁극체': r13.append((g, i + 1, t['name'], c.name(sp), lv))
+    rep('R13', r13, '궁극체는 사천왕·챔피언·레드·라이벌 마지막(%s %d번째 이후) 파티에만' % (RU.RIVAL_FINAL[0], RU.RIVAL_FINAL[1] + 1),
+        lambda b: '%s (%d) %s: %s Lv%d' % b)
+    # R14 포켓몬 칸(잠자는 칸 포함)의 진화 결과가 디지몬 칸을 가리키지 않음
+    r14 = [(n, e) for n in sorted(c.pk) for e in c.evos(n) if e[-1] not in c.pk]
+    rep('R14', r14, '포켓몬 칸 %d개의 진화 결과가 디지몬 칸을 안 가리킴' % len(c.pk),
+        lambda b: '%s %s %s → %s' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1])))
 
 
 def full_evo(c, out):

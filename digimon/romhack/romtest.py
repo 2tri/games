@@ -82,11 +82,11 @@ def candy(slot, mons, names, badges=0, presses=16):
 
 def test_evo(names):
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
-    PARTY = [(N['파피몬'], 15, 120), (N['파피몬'], 15, 70), (N['그레이몬'], 31, 70), (N['코로몬'], 10, 70),
+    PARTY = [(N['파피몬'], 15, 200), (N['파피몬'], 15, 70), (N['그레이몬'], 31, 70), (N['코로몬'], 10, 70),
              (N['메탈그레몬'], 44, 70), (N['가루몬'], 32, 70)]
     cases = [  # 이름, slot, 배지, 레벨 덮어쓰기, 기대 종
-        ('파피몬 유대↑ → 가루몬', 0, 0, None, N['가루몬']),
-        ('파피몬 유대↓ → 우가몬', 1, 0, None, N['우가몬']),
+        ('파피몬 유대↑(200) → 가루몬', 0, 0, None, N['가루몬']),
+        ('파피몬 유대 보통(70) → 우가몬', 1, 0, None, N['우가몬']),
         ('그레이몬 + 용기 배지 Lv32 → 메탈그레이몬', 2, 1 << 5, None, N['메탈그레몬']),
         ('그레이몬 배지 없음 Lv32 → 그대로', 2, 0, None, N['그레이몬']),
         ('그레이몬 다른 배지 Lv32 → 그대로', 2, 1, None, N['그레이몬']),
@@ -96,15 +96,21 @@ def test_evo(names):
         ('가루몬 + 우정 배지 Lv33 → 워가루몬', 5, 1 << 4, None, N['워가루몬']),
         ('코로몬 Lv11 → 아구몬', 3, 0, None, N['아구몬']),
     ]
-    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종
-        ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬'),
-        ('뿔몬 Lv11 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 10, '파피몬'),
-        ('토코몬 Lv10 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 9, '파닥몬'),
+    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)
+        ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬', 70),
+        ('뿔몬 Lv11 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 10, '파피몬', 70),
+        ('토코몬 Lv10 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 9, '파닥몬', 70),
+        ('파닥몬 유대 높음(200) → 엔젤몬', '파닥몬', 15, '엔젤몬', 200),
+        ('파닥몬 유대 낮음(40) → 데블몬', '파닥몬', 15, '데블몬', 40),
+        ('파닥몬 유대 보통(100) → 엔젤몬', '파닥몬', 15, '엔젤몬', 100),
+        ('파피몬 유대 140 (150 미만) → 우가몬', '파피몬', 15, '우가몬', 140),
+        ('쉬라몬 Lv18 → 원뿔몬', '쉬라몬', 17, '원뿔몬', 70),
+        ('피코데블몬 Lv20 → 데블몬', '피코데블몬', 19, '데블몬', 70),
     ]
     bad = 0
-    for name, sp_name, lv, want_name in extra:
+    for name, sp_name, lv, want_name, hap in extra:
         if sp_name not in N: print('  %-36s → 건너뜀 (아직 롬에 없음)' % name); continue
-        sp, got_lv = candy(0, [(N[sp_name], lv, 70)], names, 0, 30)
+        sp, got_lv = candy(0, [(N[sp_name], lv, hap)], names, 0, 30)
         ok = sp == N[want_name]; bad += not ok
         print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % N[want_name]))
     for name, slot, badge, lv, want, *more in cases:
@@ -179,6 +185,33 @@ def test_catch(names, trials=10):
     return bad
 
 
+def test_dark(names):
+    """암흑 진화(종류 9) 코드 시험: 아직 쓰는 종이 없으므로 시험용 롬을 따로 만들어
+    그레이몬 목록의 둘째(아무 문장 Lv36)를 「암흑 Lv32 → 데블몬」으로 바꿔 넣고 확인 (myver.gbc 는 그대로)"""
+    global ROM
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    d = bytearray(r.d); g = N['그레이몬']
+    p = d[r.evos + 2 * (g - 1)] | d[r.evos + 2 * (g - 1) + 1] << 8; a = dmrom.addr(r.evos // 0x4000, p)
+    assert d[a] == 8 and d[a + 3] == 10, '그레이몬 목록 모양이 예상과 다름'
+    d[a + 3:a + 6] = bytes([9, 32, N['데블몬']])
+    test_rom = os.path.join(W, 'dark_test.gbc'); open(test_rom, 'wb').write(bytes(d))
+    cases = [  # 이름, 유대, 배지, 기대 종
+        ('암흑: 유대 40 + 다른 배지 Lv32 → 데블몬', 40, 1, N['데블몬']),
+        ('암흑: 유대 100 + 다른 배지 Lv32 → 그대로', 100, 1, g),
+        ('암흑: 유대 40 + 배지 없음 Lv32 → 그대로', 40, 0, g),
+        ('암흑: 유대 40 + 용기 배지 Lv32 → 메탈그레이몬', 40, 1 << 5, N['메탈그레몬']),
+    ]
+    keep, ROM = ROM, test_rom; bad = 0
+    try:
+        for name, hap, badge, want in cases:
+            sp, got_lv = candy(0, [(g, 31, hap)], names, badge)
+            ok = sp == want; bad += not ok
+            print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % want))
+    finally:
+        ROM = keep
+    return bad
+
+
 if __name__ == '__main__':
     os.makedirs(SHOTS, exist_ok=True)
     if not os.path.exists(os.path.join(W, 'intro.state')) or '--intro' in sys.argv:
@@ -186,6 +219,7 @@ if __name__ == '__main__':
     r = dmrom.Rom(ROM)
     names = {n: bytes(r.d[r.names + 10 * (n - 1):r.names + 10 * n]) for n in range(1, dmrom.NUM + 1)}
     print('진화'); bad = test_evo(names)
+    print('암흑 진화 (시험용 롬)'); bad += test_dark(names)
     print('포획'); bad += test_catch(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

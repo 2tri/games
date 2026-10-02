@@ -22,7 +22,8 @@ import dmrom, gblz, krtext, encounters, remap
 from dmrom import addr, bankptr
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
-HIGH_BOND, LOW_BOND = 100, 40
+from rules import HIGH_BOND, LOW_BOND
+import rules
 CREST_BIT = {'사랑': 0, '지식': 1, '순수': 2, '빛': 3, '우정': 4, '용기': 5, '성실': 6, '희망': 7}
 NUM_SP = dmrom.NUM
 MOVES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'moves.json')))      # 금판 기술 이름 → 번호
@@ -270,6 +271,10 @@ class Patch:
         for lv, m in mv: blob += bytes([lv, m])
         blob.append(0)
         bank = self.r.evos // 0x4000
+        p0 = self.d[self.r.evos + 2 * (no - 1)] | self.d[self.r.evos + 2 * (no - 1) + 1] << 8
+        a0 = addr(bank, p0); n0 = sum(4 if e[0] == STAT else 3 for e in old_ev) + 1 + 2 * len(old_mv) + 1
+        if len(blob) <= n0 and 0x4000 <= p0 < 0x8000:                   # 원래 자리에 들어가면 그 자리에 (뱅크 빈 곳 아낌)
+            self.put(a0, blob); return
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
         self.put(self.r.evos + 2 * (no - 1), struct.pack('<H', p))
     def raw_moves_after(self, no, n_evo_bytes):
@@ -294,7 +299,7 @@ class Patch:
         m = find(d, 'fa90d13d0600', '진화 전 종 번호'); OLDSP = d[m + 1] | d[m + 2] << 8
         bdg = find(d, 'fa30d647fa2fd64f', '배지'); BADGES = d[bdg + 5] | d[bdg + 6] << 8
         n_code = 140
-        b, org = self.sp.take(n_code + 251, bank=bank)
+        b, org = self.evo_space if getattr(self, 'evo_space', None) else self.sp.take(n_code + 251, bank=bank)
         a = Asm(org)
         a.db(0x78); a.cp(STAT); a.jr('custom', 'nz')            # ld a,b / cp 5
         a.ld_a_mem(LEVEL); a.jp(0x4000 + (site + 3) % 0x4000)    # 원래 길로 (cp [hl] 부터)
@@ -308,7 +313,8 @@ class Patch:
         a.L('low'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc'); a.jr('ok')
         a.L('any'); a.ld_a_mem(BADGES); a.db(0xA7); a.jp(DONT2, 'z'); a.jr('ok')
         a.L('crest'); a.call('own'); a.jp(DONT2, 'z'); a.jr('ok')
-        a.L('dark'); a.ld_a_mem(BADGES); a.db(0xA7); a.jp(DONT2, 'z'); a.call('own'); a.jp(DONT2, 'nz')
+        a.L('dark'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc')          # 유대 낮음일 때만
+        a.ld_a_mem(BADGES); a.db(0xA7); a.jp(DONT2, 'z'); a.call('own'); a.jp(DONT2, 'nz')   # 문장(배지)은 있지만 자기 문장이 아님
         a.L('ok')
         a.call(EVERSTONE); a.jp(DONT2, 'z')                      # 변함없는 돌이면 안 함
         a.db(0x23); a.jp(PROCEED)                                # inc hl → 대상 종
@@ -360,13 +366,11 @@ def build(base, out_rom, out_ips):
     # 6 어드벤처 완전체 빈칸: 그레이몬 → 메탈그레이몬 → 워그레이몬, 가루몬 → 워가루몬 → 메탈가루몬
     #   야생·트레이너·이벤트 어디에도 안 쓰이는 포켓몬 칸에 넣음. 그림이 아직 없으면 임시 그림(물음표 알)
     #   도감: 공식 도감(digimon.net) 프로필을 3줄로 줄임. 키·몸무게는 공식 값이 없어 임시
+    P.evo_space = P.sp.take(140 + 251, bank=r.evos // 0x4000)          # 진화 확장 코드 자리 (코드는 B단계 진화 표 뒤에 씀)
     MGR = N.get('메탈그레몬') or S('핫삼'); WGR = N.get('워가루몬') or S('링곰')
     P.new_mon(MGR, '메탈그레몬', S('그레이몬'), S('워그레이몬'), 'metalgreymon', '사이보그형', ['몸의 절반 이상을 기계화한', '디지몬. 공격력은 핵탄두', '한 발에 맞먹는다고 한다'], 42, 2800)
     P.new_mon(WGR, '워가루몬', S('가루몬'), S('메탈가루몬'), 'weregarurumon', '수인형', ['가루몬이 진화해 두 발로', '걷게 된 디지몬. 발차기와', '점프력이 강하다'], 21, 1100)
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
-    crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛',
-             '메탈그레몬': '용기', '워가루몬': '우정'}
-    P.evo_engine({S(nm): 1 << CREST_BIT[c] for nm, c in crest.items()})
     # 8 디지몬스터 버그: 기술 목록이 (기술, 레벨) 순서로 뒤집혀 들어간 종 (워그레이몬 등) → 바로잡음
     #   금은 (레벨, 기술) 로 읽으므로 '레벨 108에 막치기' 같은 엉뚱한 값이 됨. 뒤집어 읽어 레벨이 1~100 오름차순이면 뒤집힌 것으로 봄
     fixed = {}
@@ -395,10 +399,10 @@ def build(base, out_rom, out_ips):
     P.evos(S('가루몬'), [(CREST, 33, WGR), (ANYCREST, 36, WGR)])
     P.evos(WGR, [(CREST, 46, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
     P.evos(S('버드라몬'), [(CREST, 31, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
-    P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
+    P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬'))])   # 로제몬(태양의 돌) 갈래는 뺌 (B단계)
     P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
     P.evos(S('원뿔몬'), [(CREST, 34, S('쥬드몬')), (ANYCREST, 38, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
-    P.evos(S('엔젤몬'), [(CREST, 25, S('홀리엔젤몬')), (ANYCREST, 30, S('홀리엔젤몬'))])
+    P.evos(S('엔젤몬'), [(CREST, 30, S('홀리엔젤몬')), (ANYCREST, 34, S('홀리엔젤몬'))])   # 완전체 30 이상 (B단계)
     # 성장기 → 성숙기: 유대
     P.evos(S('파피몬'), [(BOND_HI, 16, S('가루몬')), (LV, 16, S('우가몬'))])               # 유대 높음 가루몬, 아니면 우가몬
     P.evos(S('플롯트몬'), [(BOND_HI, 16, S('가트몬')), (LV, 16, S('위자몬'))])             # 유대 높음 가트몬, 아니면 위자몬
@@ -466,6 +470,44 @@ def build(base, out_rom, out_ips):
         installed[no] = m
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
+    # B단계 진화 표 (2026-10-02 자문 판정). 갈래체·중간체 그림이 들어오면(그 이름이 롬에 있으면) 그 칸으로
+    has = lambda nm: nm in N
+    def T(*ev): return [(k, lv, S(nm)) for k, lv, nm in ev]
+    EV = {
+        '쿠네몬': T((LV, 14, '플라이몬')),
+        '플라이몬': T((ANYCREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
+        '스나이몬': T((ANYCREST, 34, '아라크네몬')),
+        '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((ANYCREST, 35, '실피드몬')),
+        '가트몬': T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else [],     # 달맞이 돌 → 오파니몬 삭제
+        '홀리엔젤몬': T((CREST, 45, '세라피몬')),
+        '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
+        '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
+        '에테몬': T((LV, 45, '메탈에테몬')),
+        '레오몬': T((LV, 50, '샤벨레오몬')),                            # 통신 → 개굴몬 삭제
+        '울퉁몬': T((LV, 25, '모노크로몬')) if has('모노크로몬') else [],
+        '쉬라몬': T((LV, 18, '원뿔몬')),
+        '베타몬': T((LV, 16, '시드라몬')) if has('시드라몬') else T((LV, 30, '메가시라몬')),
+        '인펠몬': T((LV, 45, '디아블로몬')),
+        '엑스브이몬': T((LV, 45, '황제드라몬')),
+        '파닥몬': T((BOND_HI, 16, '엔젤몬'), (BOND_LO, 16, '데블몬'), (LV, 16, '엔젤몬')),
+        '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 32, '스컬그레몬')) if has('스컬그레몬') else []) + T((ANYCREST, 36, '메탈그레몬')),
+    }
+    if has('아쿠이라몬'): EV['아쿠이라몬'] = T((ANYCREST, 35, '실피드몬'))
+    if has('엔젤우몬'): EV['엔젤우몬'] = T((CREST, 45, '마그나드몬'))
+    for nm, ev in EV.items(): P.evos(S(nm), ev)
+    # 잠자는 포켓몬 칸의 진화가 디지몬 칸을 가리키면 지움 (스라크 → 메탈그레몬 칸, 깜지곰 → 워가루몬 칸 같은 것, R14)
+    orig = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
+    pk = {n for n in range(1, dmrom.NUM + 1) if r.name(n) == orig[n - 1]}
+    cut = []
+    for n in sorted(pk):
+        ev = r.evos_attacks(n)[0]
+        keep_ev = [e for e in ev if e[-1] in pk]
+        if len(keep_ev) != len(ev): P.evos(n, keep_ev); cut.append(r.name(n))
+    P.log.append('B단계 진화 표 %d종, 포켓몬 칸 진화 정리: %s' % (len(EV), ', '.join(cut) or '없음'))
+    # 1·2 진화 확장 코드 + 문장표 (문장 = 배지): 조건부 종까지 정해진 뒤에
+    crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛',
+             '메탈그레몬': '용기', '워가루몬': '우정', '홀리엔젤몬': '희망', '엔젤우몬': '빛'}
+    P.evo_engine({N[nm]: 1 << CREST_BIT[c] for nm, c in crest.items() if nm in N})
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
     remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
@@ -476,28 +518,26 @@ def build(base, out_rom, out_ips):
         if not g.startswith('_'): P.party(g, mons, N, groups)
     # 3 포획 규칙
     P.catch_engine()
+    # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
     G = json.load(open(os.path.join(HERE, 'grades.json')))
-    CATCHABLE = {'유년기Ⅰ', '유년기Ⅱ', '성장기'}
-    # 등급 모를 때: 다른 종의 진화 대상이 아니면(=줄의 첫 단계) 잡을 수 있게.
-    # 고친 뒤의 롬에서 올바른 진화 종류(1~10)만 센다 — 원본 메탈가루몬처럼 끝 표시가 깨진 목록이 엉뚱한 종을 대상으로 만들지 않게
-    P.r.d = P.d
-    targets = set()
-    for no in range(1, dmrom.NUM + 1):
-        for e in P.r.evos_attacks(no)[0]:
-            if 1 <= e[0] <= 10 and 1 <= e[-1] <= dmrom.NUM: targets.add(e[-1])
-    blocked = []
-    for k, v in G.items():
-        no = int(k); g = v['grade']
-        ok = (g in CATCHABLE) if g else (no not in targets)
-        if not ok:
-            P.stats(no, catch=0); blocked.append(no)
-    for no in (MGR, WGR):
-        P.stats(no, catch=0); blocked.append(no)
-    for no, m in installed.items():
-        P.stats(no, catch=m['catch'])
-        if m['catch'] == 0 and no not in blocked: blocked.append(no)
-        if m['catch'] and no in blocked: blocked.remove(no)
-    P.log.append('포획 불가 %d종 (성숙기 이상)' % len(blocked))
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    grade = {int(k): v['grade'] for k, v in G.items() if v['grade'] and v['name'] == r.name(int(k))}
+    grade.update({KORO: '유년기Ⅱ', MGR: '완전체', WGR: '완전체'})
+    for no, m in installed.items(): grade[no] = m['grade']
+    zero = []
+    for no, g in sorted(grade.items()):
+        rate = rules.CATCH_BY_NAME.get(r.name(no), rules.CATCH_BY_GRADE.get(g))
+        if rate is None: continue
+        P.stats(no, catch=rate)
+        if rate == 0: zero.append(r.name(no))
+    P.log.append('포획률: 단계표 %d종, 못 잡는 종 %d (%s)' % (len(grade), len(zero), ', '.join(zero)))
+    # 기술: 1.4 가 원작에서 바꾼 것만 고침 (rules.MOVE_FIX)
+    mt = bytes(P.d).find(bytes([1, 0, 40, 0, 255, 35, 0, 2, 0, 50, 1, 255, 25, 0]))
+    assert mt > 0, '기술 표를 못 찾음'
+    for no, (pw, pp) in rules.MOVE_FIX.items():
+        if pw is not None: P.d[mt + 7 * (no - 1) + 2] = pw
+        if pp is not None: P.d[mt + 7 * (no - 1) + 5] = pp
+    P.log.append('기술 고침 %d개' % len(rules.MOVE_FIX))
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)
