@@ -3,6 +3,7 @@
     python3 ingest.py 받은그림.png kuwagamon --side f        앞모습
     python3 ingest.py 받은그림.png kuwagamon --side b        뒷모습
     python3 ingest.py 받은그림.png kuwagamon --side f --flat 평면 그림(격자 없음)으로 받은 것
+    python3 ingest.py 받은그림.png kuwagamon --side f --sketch ../art/sketch/kuwagamon.png   밑그림 주문문으로 받은 것 (실루엣 맞춤·일치율)
   옛 방식 (한 장에 왼쪽 앞 · 오른쪽 뒤):
     python3 ingest.py 받은그림.png metalgreymon --side sheet --grade 완전체
 등급·색은 order/specs.py 에서 읽는다 (--grade, --pal 로 바꿀 수 있음).
@@ -94,12 +95,27 @@ def front_colors(did):
     return [list(cols[0]), list(cols[-1])] if len(cols) >= 2 else None
 
 
+def fit_sketch(t, sketch):
+    """밑그림 실루엣에 맞추기: 받은 그림 칸 배열을 밑그림 크기로 맞춘 뒤, 실루엣 밖 칸은 지우고 안쪽 빈 곳은 밝은 톤으로.
+    → (새 배열, 실루엣 일치율 % = 겹친 칸 / (그림 ∪ 밑그림))"""
+    a = np.asarray(Image.open(sketch).convert('L')) < 235
+    ys, xs = np.where(a); S = a[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    h, w = S.shape; th, tw = t.shape
+    yi = np.minimum((np.arange(h) * th / h).astype(int), th - 1); xi = np.minimum((np.arange(w) * tw / w).astype(int), tw - 1)
+    r = t[yi][:, xi]; T = r >= 0
+    rate = 100.0 * (T & S).sum() / max(1, (T | S).sum())
+    r[~S] = -1; r[S & ~T] = 1
+    p = np.pad(S, 1); r[S & ~(p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:])] = 3
+    return r, rate
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('src'); ap.add_argument('id')
     ap.add_argument('--side', choices=['f', 'b', 'sheet'], default='f')
     ap.add_argument('--grade'); ap.add_argument('--flat', action='store_true')
     ap.add_argument('--pal', nargs=2, help='몸 색 두 개 예: 232,96,48 136,96,176')
+    ap.add_argument('--sketch', help='밑그림 png (tools/lcd2sketch.py → art/sketch/<id>.png). 앞모습을 그 실루엣에 맞추고 일치율을 알림')
     a = ap.parse_args()
     sp = specs.by_id(a.id) or {}
     grade = a.grade or sp.get('grade') or '성숙기'
@@ -114,6 +130,9 @@ def main():
     for part, side in parts:
         maxs = FRONT.get(grade, 56) if side == 'f' else 48
         t, p4 = convert(part, maxs, pal, a.flat, body)
+        if a.sketch and side == 'f':
+            t, rate = fit_sketch(t, a.sketch)
+            print('  실루엣 일치율 %.0f%%%s' % (rate, '' if rate >= 80 else '  → 80% 아래: 다시 받기'))
         body = [list(p4[1]), list(p4[2])]                           # 롬은 앞·뒤가 팔레트 하나 → 뒷모습은 앞모습 몸 색으로
         snapc.to_image(t, p4).save(os.path.join(WEB, 'art', '%s-%s.png' % (a.id, side)))
         snapc.to_image(t, p4, 6, (248, 248, 248)).save(os.path.join(WEB, 'art', '_%s-%s_x6.png' % (a.id, side)))
