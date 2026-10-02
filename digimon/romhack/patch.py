@@ -508,7 +508,7 @@ def build(base, out_rom, out_ips):
         if not (os.path.exists(f) and os.path.exists(b)):
             if os.environ.get('PLACEHOLDER') != '1': continue
             f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
-        no = N.get(m['name']) or S(m['slot'])
+        no = N.get(m['name']) or (m['slot'] if isinstance(m['slot'], int) else S(m['slot']))      # 빈 칸(-----)은 번호로
         st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
         P.name(no, m['name']); N[m['name']] = no                        # 새 칸끼리 진화(푸니몬 → 뿔몬)도 찾게
         P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
@@ -532,7 +532,7 @@ def build(base, out_rom, out_ips):
         '플라이몬': T((ANYCREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
         '스나이몬': T((ANYCREST, 34, '아라크네몬')),
         '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((ANYCREST, 35, '실피드몬')),
-        '가트몬': T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else [],     # 달맞이 돌 → 오파니몬 삭제
+        '가트몬': (T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else []) + (T((DARK, 30, '레이디데블')) if has('레이디데블') else []),     # 달맞이 돌 → 오파니몬 삭제. 자기 문장 → 암흑 순서
         '홀리엔젤몬': T((CREST, 45, '세라피몬')),
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],

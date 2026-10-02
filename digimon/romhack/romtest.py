@@ -111,6 +111,7 @@ def test_evo(names):
          SK if SK != '그레이몬' else '메탈그레몬', 40, 1, 30),
         ('가트몬 + 빛 배지 Lv30 → 엔젤우몬', '가트몬', 29, '엔젤우몬', 70, 1 << 3, 30),
         ('가트몬 다른 배지 Lv30 → 그대로', '가트몬', 29, '가트몬', 70, 1, 16),
+        ('가트몬 다른 배지 + 유대 40 Lv30 → 레이디데블 (암흑)', '가트몬', 29, '레이디데블' if '레이디데블' in N else '가트몬', 40, 1, 30),
         ('엔젤우몬 + 빛 배지 Lv45 → 마그나드몬', '엔젤우몬', 44, '마그나드몬', 70, 1 << 3, 30),
         ('쉬라몬 Lv18 → 원뿔몬', '쉬라몬', 17, '원뿔몬', 70),
         ('텐타몬 유대 낮음(40) Lv16 → 쿠가몬', '텐타몬', 15, '쿠가몬', 40),
@@ -181,9 +182,9 @@ def test_catch(names, trials=10):
         p.stop(); return got
     c0 = sum(throw(0, k) for k in range(trials))
     c90 = sum(throw(90, k) for k in range(trials))
-    c255 = sum(throw(255, k) for k in range(trials))
-    print('  상대 %d번 체력 가득, 몬스터볼 %d번씩 — 포획률 0: %d 잡힘 (0이어야 함) / 포획률 90(성숙기·아머체): %d 잡힘 (기록) / 포획률 255: %d 잡힘 (0보다 커야 함)'
-          % (sp, trials, c0, c90, c255))
+    c255 = sum(throw(255, k) for k in range(2 * trials))             # 체력 가득이면 한 번에 약 33% → 20번 (10번이면 모두 실패할 확률 약 2%)
+    print('  상대 %d번 체력 가득, 몬스터볼 %d번씩 — 포획률 0: %d 잡힘 (0이어야 함) / 포획률 90(성숙기·아머체): %d 잡힘 (기록) / 포획률 255: %d/%d 잡힘 (0보다 커야 함)'
+          % (sp, trials, c0, c90, c255, 2 * trials))
     # 실제 풀숲 만남에서 잡을 수 없는 종이 포획률 0으로 들어오는지
     seen = {}
     for t in range(12):
@@ -336,7 +337,8 @@ def test_battle_pics(names, pairs=None):
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     if pairs is None:
         pairs = [('다크그레몬', '블랙워그몬'), ('블랙워그몬', '다크그레몬'), ('모티몬', '시드몬'), ('둥실몬', '깜몬'), ('푸니몬', '야옹몬'),
-                 ('가지몬', '고스몬'), ('쿠가몬', '팬텀몬'), ('스컬그레몬', '엔젤우몬')]
+                 ('가지몬', '고스몬'), ('쿠가몬', '팬텀몬'), ('스컬그레몬', '엔젤우몬'),
+                 ('묘티스몬', '레이디데블'), ('피노키몬', '아포카리몬'), ('오메가몬', '디아블로몬')]
     grass = [s['addr'] for s in encounters.find_all(dmrom.Rom(dmrom.default_rom())) if s['kind'] == '풀숲' and s['where'].startswith('29번 도로')]
     bad = 0; keep = ROM
     try:
