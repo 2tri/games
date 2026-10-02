@@ -1,0 +1,221 @@
+<title>디지몬스터 그림 주문서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 한 줄 문서: 보내는 법 → 남은 주문(카드) → 받은 그림(모음) → 다시 그리기 34칸(카드). 기존 주문서의 색·글꼴을 이어받음 */
+:root {
+  --paper: #F1F4EC; --card: #FAFBF7; --ink: #1D2620; --muted: #5B675D; --rule: #CCD5C5;
+  --gold: #8A5F00; --gold-bg: #F2E2B3; --blue: #2B5799; --blue-bg: #DCE6F5; --warn: #9B3B22; --warn-bg: #F6DCD3; --sprite: #FFFFFF; --sprite-ink: #5B675D;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #121714; --card: #18201B; --ink: #E3E9E1; --muted: #9AA69C; --rule: #2C3730;
+  --gold: #E3B84C; --gold-bg: #3A2F12; --blue: #93B4EC; --blue-bg: #1C2A42; --warn: #F0937A; --warn-bg: #3B1E16; --sprite: #F4F6F0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #121714; --card: #18201B; --ink: #E3E9E1; --muted: #9AA69C; --rule: #2C3730;
+  --gold: #E3B84C; --gold-bg: #3A2F12; --blue: #93B4EC; --blue-bg: #1C2A42; --warn: #F0937A; --warn-bg: #3B1E16; --sprite: #F4F6F0; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font: 15px/1.65 var(--body); padding: 0 16px; }
+main { max-width: 920px; margin: 0 auto; padding-block: 32px 72px; display: grid; gap: 40px; }
+h1, h2 { font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 30px; line-height: 1.25; }
+h2 { font-size: 19px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+h2 small { font: 400 13px var(--body); color: var(--muted); }
+p { margin: 0; max-width: 70ch; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); }
+.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.steps li::marker { font-family: var(--mono); color: var(--muted); }
+.box { background: var(--card); border: 1px solid var(--rule); padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--ink); color: var(--paper); padding: 10px 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.bar b { font-family: var(--mono); font-weight: 500; }
+.bar .st { margin-left: auto; font-size: 12px; opacity: .8; }
+.cards { display: grid; gap: 12px; }
+.card { background: var(--card); border: 1px solid var(--rule); padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.card.prio { border: 2px solid var(--ink); }
+.head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.head .ko { font-size: 18px; font-weight: 600; }
+.head .en { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.chip { font: 500 12px/1 var(--mono); padding: 4px 6px; background: var(--gold-bg); color: var(--gold); white-space: nowrap; }
+.chip.need { background: var(--warn-bg); color: var(--warn); }
+.chip.no { background: var(--blue-bg); color: var(--blue); }
+.why { font-size: 13px; color: var(--warn); background: var(--warn-bg); padding: 4px 8px; }
+.use { font-size: 13px; color: var(--muted); }
+.pics { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.pic { background: var(--sprite); border: 1px solid var(--rule); padding: 6px; display: grid; gap: 4px; justify-items: center; }
+.pic img { image-rendering: pixelated; display: block; }
+.pic span { font: 11.5px var(--mono); color: var(--sprite-ink); }
+.pic.att { border: 2px solid var(--blue); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+button.copy, a.btn { font: 600 13px var(--body); border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 6px 12px; cursor: pointer; text-decoration: none; }
+a.btn, button.copy.alt { background: transparent; color: var(--ink); }
+button.copy:focus-visible, a.btn:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+details pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); background: var(--paper); border: 1px solid var(--rule); padding: 10px; margin: 6px 0 0; overflow-x: auto; }
+details b { display: block; margin-top: 8px; font-size: 13px; }
+.checks { display: flex; gap: 18px; flex-wrap: wrap; }
+label.ck { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+label.ck input { width: 18px; height: 18px; accent-color: var(--blue); }
+label.ck.red input { accent-color: var(--warn); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+#redrawDone { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.tile .pics { flex-wrap: wrap; }
+.tile { background: var(--card); border: 1px solid var(--rule); padding: 8px; display: grid; gap: 6px; align-content: start; }
+.tile .pics { background: var(--sprite); padding: 6px; min-height: 70px; }
+.tile .pics img { image-rendering: pixelated; }
+.tile .nm { font-size: 14px; font-weight: 600; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 4px; }
+</style>
+
+<main>
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">디지몬스터 내 버전 · 그림 주문서 · 2026-10-02 정리판</div>
+    <h1>디지몬스터 그림 주문서</h1>
+    <p>남은 그림만 위에 모았습니다. 이미 받은 그림은 아래 모음에, 주문서에서 「다시 그리기」를 체크한 롬 34칸은 맨 아래에 주문문과 함께 있습니다.</p>
+  </header>
+
+  <section>
+    <h2>보내는 법</h2>
+    <div class="box">
+      <ol class="steps">
+        <li><b>첨부 1장</b>: 카드의 파란 테두리 <b>LCD 도트</b> 그림을 길게 눌러(PC는 오른쪽 클릭) 저장합니다.</li>
+        <li><b>첨부 2장</b>: <b>공식 그림 열기</b>로 공식 그림을 저장합니다.</li>
+        <li>Gemini에 1장·2장 순서로 붙이고 <b>앞 주문문</b>(LCD가 있으면 「밑그림 주문문」)을 넣습니다. 4장 뽑아서 LCD 모양을 가장 잘 따른 것을 고르세요.</li>
+        <li>고른 그림을 세션에 <b>파일로 첨부</b>해 "○○ 앞"이라고 보냅니다. 채팅 화면에 붙인 그림만 오면 파일이 남지 않아 넣을 수 없었어요(피노키몬·아포카리몬·티라노몬).</li>
+        <li>뒷모습: 공식 그림 + 카드의 <b>받은 앞모습</b>(길게 눌러 저장) + <b>뒤 주문문</b>. "○○ 뒤"로 보냅니다.</li>
+        <li>계속 모양이 틀리면 <b>평면 그림 주문문</b>을 쓰세요.</li>
+      </ol>
+      <p class="note">받은 앞모습은 LCD 실루엣과 겹쳐 보고 「실루엣 일치율」이 80% 아래면 다시 받기를 부탁드려요.</p>
+    </div>
+  </section>
+
+  <div class="bar" role="status"><span>남은 주문 <b id="nTodo">0</b></span><span>다시 그리기 <b id="nRed">0</b></span><span>앞 잘 나옴 <b id="nF">0</b></span><span>뒤 잘 나옴 <b id="nB">0</b></span><span class="st" id="dbState">체크 저장 확인 중…</span></div>
+
+  <section>
+    <h2>남은 주문 <small>위에서부터 순서대로 · 굵은 테두리가 먼저</small></h2>
+    <div class="cards" id="todo"></div>
+  </section>
+
+  <section>
+    <h2>받은 그림 <small id="doneCount"></small></h2>
+    <p class="note">앞·뒤가 모두 롬에 들어간 디지몬이에요. 다시 받고 싶은 게 있으면 채팅으로 이름만 알려 주세요.</p>
+    <div class="grid" id="done"></div>
+  </section>
+
+  <section>
+    <h2>다시 그리기 <small>주문서에서 체크한 롬 칸</small></h2>
+    <p>지금 롬 그림(왼쪽)과 LCD 도트(파란 테두리, 첨부 1장)를 같이 보여 드려요. 주문문은 새 디지몬과 같은 방식입니다. 그만 다시 그리고 싶으면 「다시 그리기」 체크를 풀면 돼요.</p>
+    <h3 style="margin:8px 0 0;font-size:15px">새 그림이 이미 들어간 칸 <small class="note" id="rdDoneCount"></small></h3>
+    <p class="note">왼쪽 두 장이 원래 롬 그림, 오른쪽 두 장이 지금 들어간 새 그림이에요.</p>
+    <div class="grid" id="redrawDone"></div>
+    <h3 style="margin:8px 0 0;font-size:15px">아직 다시 그릴 칸 <small class="note" id="rdCount"></small></h3>
+    <div class="cards" id="redraw"></div>
+  </section>
+
+  <footer>
+    <span>이 페이지에는 디지몬스터 롬의 그림이 들어 있어요. 링크는 다른 사람에게 공유하지 말아 주세요.</span>
+    <span>체크는 이 페이지에 저장되고 Claude가 바로 읽습니다.</span>
+  </footer>
+</main>
+
+<script>
+const D = /*DATA*/null;
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const img = (src, scale) => { const i = new Image(); i.src = src; i.alt = ""; i.onload = () => { i.width = i.naturalWidth * scale; i.height = i.naturalHeight * scale; }; return i; };
+const checks = {}; const boxes = {}; let db = null; const LS = "dmorder2";
+function lsLoad() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+function lsSave() { try { localStorage.setItem(LS, JSON.stringify(checks)); } catch (e) {} }
+function counts() {
+  const n = { redraw: 0, good_f: 0, good_b: 0 };
+  for (const v of Object.values(checks)) if (v.on && v.kind in n) n[v.kind]++;
+  $("#nRed").textContent = n.redraw; $("#nF").textContent = n.good_f; $("#nB").textContent = n.good_b;
+}
+function box(id, kind, label, cls) {
+  const l = el("label", "ck" + (cls ? " " + cls : "")); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true; i.id = "ck-" + id;
+  i.addEventListener("change", async () => {
+    checks[id] = { on: i.checked, kind }; counts();
+    if (!db) { lsSave(); return; }
+    i.disabled = true;
+    try { await db.collection("checks").doc(id).set({ on: i.checked, kind }); }
+    catch (err) { i.checked = !i.checked; checks[id] = { on: i.checked, kind }; counts(); $("#dbState").textContent = "저장 실패 · 다시 눌러 주세요"; }
+    i.disabled = false;
+  });
+  boxes[id] = i; l.append(i, document.createTextNode(label)); return l;
+}
+function copyBtn(label, text, pre, det, cls) {
+  const b = el("button", "copy" + (cls ? " " + cls : ""), label); b.type = "button";
+  b.addEventListener("click", () => {
+    const done = () => { b.textContent = "복사했어요"; setTimeout(() => (b.textContent = label), 1600); };
+    const fallback = () => { det.open = true; const s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(pre); s.removeAllRanges(); s.addRange(rg); b.textContent = "선택했어요 · 길게 눌러 복사"; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+  });
+  return b;
+}
+function linkBtn(label, href) { const a = el("a", "btn", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; return a; }
+function pic(src, scale, cap, cls) { const p = el("div", "pic" + (cls ? " " + cls : "")); p.append(img(src, scale), el("span", "", cap)); return p; }
+
+function orderCard(e, opts) {
+  const c = el("article", "card" + (opts.prio ? " prio" : ""));
+  const h = el("div", "head");
+  h.append(el("span", "ko", e.ko), el("span", "en", e.en), el("span", "chip", e.grade));
+  if (e.no) h.append(el("span", "chip no", "롬 " + e.no + "번"));
+  if (e.need.includes("f")) h.append(el("span", "chip need", "앞 필요"));
+  if (e.need.includes("b")) h.append(el("span", "chip need", "뒤 필요"));
+  c.append(h);
+  if (e.use) c.append(el("p", "use", e.use));
+  if (e.note) c.append(el("p", "why", e.note));
+  const ps = el("div", "pics");
+  if (e.romf) ps.append(pic(e.romf, 2, "지금 롬 앞"));
+  if (e.romb) ps.append(pic(e.romb, 2, "지금 롬 뒤"));
+  if (e.f) ps.append(pic(e.f, 2, "받은 앞"));
+  if (e.b) ps.append(pic(e.b, 2, "받은 뒤"));
+  if (e.lcd8) ps.append(pic(e.lcd8, 0.5, "LCD 도트 · 첨부 1장", "att"));
+  if (ps.childElementCount) c.append(ps);
+  const r = el("div", "row");
+  if (e.img) r.append(linkBtn("공식 그림 열기", e.img));
+  if (e.lcd) r.append(linkBtn("LCD 원본 열기", e.lcd));
+  if (e.ref) r.append(linkBtn("공식 도감", e.ref));
+  c.append(r);
+  const det = el("details"); det.append(el("summary", "", "주문문 보기"));
+  const r2 = el("div", "row");
+  if (e.prompt.f) { const p = el("pre", "", e.prompt.f); det.append(el("b", "", e.sketch_mode ? "밑그림 주문문 (첨부 1장 = LCD 도트, 2장 = 공식 그림)" : "앞 주문문 (첨부 = 공식 그림)"), p); r2.append(copyBtn(e.sketch_mode ? "밑그림 주문문 복사" : "앞 주문문 복사", e.prompt.f, p, det)); }
+  if (e.prompt.b) { const p = el("pre", "", e.prompt.b); det.append(el("b", "", "뒤 주문문 (첨부 = 공식 그림 + 받은 앞모습)"), p); r2.append(copyBtn("뒤 주문문 복사", e.prompt.b, p, det)); }
+  if (e.prompt.flat) { const p = el("pre", "", e.prompt.flat); det.append(el("b", "", "평면 그림 주문문 (도트가 계속 틀릴 때)"), p); r2.append(copyBtn("평면 그림 주문문 복사", e.prompt.flat, p, det, "alt")); }
+  c.append(r2, det);
+  const ck = el("div", "checks");
+  const key = e.no ? "r" + e.no : e.id;
+  if (e.no) ck.append(box("rom-" + e.no, "redraw", "다시 그리기", "red"));
+  ck.append(box("good-f-" + key, "good_f", "앞 잘 나옴"), box("good-b-" + key, "good_b", "뒤 잘 나옴"));
+  c.append(ck);
+  return c;
+}
+
+$("#nTodo").textContent = D.todo.length;
+D.todo.forEach((e, i) => $("#todo").append(orderCard(e, { prio: i < 5 })));
+$("#doneCount").textContent = D.done.length + "종";
+for (const e of D.done) {
+  const t = el("div", "tile"); const ps = el("div", "pics");
+  if (e.f) ps.append(img(e.f, 1)); if (e.b) ps.append(img(e.b, 1));
+  t.append(ps, el("span", "nm", e.ko)); $("#done").append(t);
+}
+for (const e of D.redraw) $("#redraw").append(orderCard(e, {}));
+$("#rdCount").textContent = D.redraw.length + "칸"; $("#rdDoneCount").textContent = D.redraw_done.length + "칸";
+for (const e of D.redraw_done) {
+  const t = el("div", "tile"); const ps = el("div", "pics");
+  for (const s of [e.romf, e.romb, e.f, e.b]) if (s) ps.append(img(s, 1));
+  t.append(ps, el("span", "nm", e.ko + " · 롬 " + e.no + "번")); $("#redrawDone").append(t);
+}
+
+function applyChecks() { for (const [id, v] of Object.entries(checks)) if (boxes[id]) boxes[id].checked = !!v.on; counts(); }
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
+  for (const i of Object.values(boxes)) i.disabled = false;
+  if (!db) { Object.assign(checks, lsLoad()); applyChecks(); $("#dbState").textContent = "체크는 이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return; }
+  $("#dbState").textContent = "체크는 바로 저장되고 Claude가 읽어요";
+  db.collection("checks").onSnapshot((snap) => { for (const d of snap.docs) checks[d.id] = d.data(); applyChecks(); },
+    () => { $("#dbState").textContent = "저장소 연결이 끊겼어요 · 새로 고침해 주세요"; });
+})();
+</script>

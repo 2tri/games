@@ -212,7 +212,6 @@ for (const e of D.ess) {
       const ps = el("pre", "", e.prompt.sketch);
       det.append(el("b", "", "밑그림 주문문 (첨부 1장 = 아래 밑그림, 2장 = 공식 그림)"), ps);
       r2.prepend(copyBtn("밑그림 주문문 복사", e.prompt.sketch, ps, det));
-      const a = el("a", "btn", "밑그림 저장 (첨부 1장)"); a.href = e.sketch; a.download = e.id + "_밑그림.png"; r2.append(a);
     }
     c.append(r2);
     const hint = el("span", "hint", e.front_done ? "앞모습은 롬에 들어가 있어요. 아래 받은 그림(앞)을 저장해 뒤 주문에 같이 붙이세요." : "뒤 주문문은 '앞 잘 나옴'을 체크하면 켜져요.");
