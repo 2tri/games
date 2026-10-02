@@ -475,6 +475,7 @@ def build(base, out_rom, out_ips):
     SL = json.load(open(os.path.join(HERE, 'slots.json')))
     egg = bytes(P.d).find(bytes([0x2e, S('파닥몬'), 5]))            # 공박사 조수의 알 (giveegg 종, 레벨)
     installed = {}
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}               # 코로몬·메탈그레몬처럼 앞에서 만든 칸도 찾게
     for m in SL['mons']:
         f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
         if not (os.path.exists(f) and os.path.exists(b)):
@@ -482,7 +483,7 @@ def build(base, out_rom, out_ips):
             f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
         no = N.get(m['name']) or S(m['slot'])
         st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
-        P.name(no, m['name'])
+        P.name(no, m['name']); N[m['name']] = no                        # 새 칸끼리 진화(푸니몬 → 뿔몬)도 찾게
         P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
         P.pic(no, f, b)
         P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], moves_by_name(m['moves']))
