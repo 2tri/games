@@ -112,5 +112,6 @@ MUSIC = {'title':   [0x01],                          # 제목
          'capture': [0x4c]}                          # 잡았을 때 (한 번)
 
 # 제목 화면 (사용자 지시 2026-10-02): 칠색조 자리에 넣을 디지몬 그림과 스프라이트 색 3개 (밝은 → 어두운)
-TITLE_MON = ('omegamon', [(248, 248, 248), (184, 48, 48), (24, 24, 24)])     # 시안 B1 (사용자 결정 전 임시): 일본어 원판 로고 + 오메가몬
+TITLE_MON = ('title/omegamon', [(248, 248, 248), (184, 48, 48), (24, 24, 24)])     # 사용자 결정 2026-10-02: 일본어 원판 로고 + 오메가몬(64칸으로 키움, art/title/omegamon.png)
+TITLE_BG = 'digital'      # 어두운 디지털 배경 + 오메가몬 뒤 빛 번짐 (title.digital_background)
 TITLE_LOGO = None          # None = 1.4 로고 그대로. 한글 로고로 할 때는 'logo.png' (art/title/, title_logo.py 로 만듦)
