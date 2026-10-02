@@ -44,7 +44,7 @@ def intro():
     save(p, 'intro.state'); p.stop()
 
 
-def put_party(p, mons, names):
+def put_party(p, mons, names, item=None):
     """mons = [(종, 레벨, 유대)]"""
     m = p.pb.memory
     m[PARTY_COUNT] = len(mons)
@@ -61,14 +61,14 @@ def put_party(p, mons, names):
         ot = list(krtext.encode('시험')) + [0x50] * 11
         for k in range(11): m[PARTY_NICK + 11 * i + k] = nm[k]; m[PARTY_OT + 11 * i + k] = ot[k]
     m[PARTY_SPECIES + len(mons)] = 0xff
-    m[NUM_ITEMS] = 1; m[NUM_ITEMS + 1] = RARE_CANDY; m[NUM_ITEMS + 2] = 10; m[NUM_ITEMS + 3] = 0xff
+    m[NUM_ITEMS] = 1; m[NUM_ITEMS + 1] = item or RARE_CANDY; m[NUM_ITEMS + 2] = 10; m[NUM_ITEMS + 3] = 0xff
     m[NUM_BALLS] = 1; m[NUM_BALLS + 1] = POKE_BALL; m[NUM_BALLS + 2] = 20; m[NUM_BALLS + 3] = 0xff
 
 
-def candy(slot, mons, names, badges=0, presses=16):
-    """방에서 가방 → 이상한사탕 → slot 번째에게 1번(이어서 몇 번 더) 먹이고 종 번호를 돌려줌"""
+def candy(slot, mons, names, badges=0, presses=16, item=None):
+    """방에서 가방 → 이상한사탕(또는 item) → slot 번째에게 1번(이어서 몇 번 더) 쓰고 종 번호를 돌려줌"""
     p = new('intro.state'); m = p.pb.memory
-    put_party(p, mons, names); m[JOHTO_BADGES] = badges; p.tick(10)
+    put_party(p, mons, names, item); m[JOHTO_BADGES] = badges; p.tick(10)
     p.press('start', 6, 80); p.press('down', 6, 30); p.press('a', 6, 90)   # 가방
     p.press('a', 6, 60); p.press('a', 6, 90)                                # 사탕 → 사용하다
     for _ in range(slot): p.press('down', 6, 20)
@@ -219,6 +219,19 @@ def test_trainers():
     return bad + (not ok)
 
 
+def test_black_gear(names):
+    """D-4: 검은 톱니(태양의 돌 칸)를 그레이몬에게 쓰면 다크그레몬. 다른 종에게는 안 됨"""
+    import rules
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; it = rules.BLACK_GEAR['item']; bad = 0
+    if rules.BLACK_GEAR['to'] not in N: print('  건너뜀 (다크그레몬 없음)'); return 0
+    for name, sp, lv, want in (('검은 톱니 → 그레이몬 Lv20 → 다크그레몬', '그레이몬', 20, N['다크그레몬']),
+                               ('검은 톱니 → 가루몬 Lv20 → 그대로', '가루몬', 20, N['가루몬'])):
+        got, got_lv = candy(0, [(N[sp], lv, 70)], names, 0, 30, item=it)
+        ok = got == want; bad += not ok
+        print('  %-36s → %3d Lv%-3d %s' % (name, got, got_lv, 'OK' if ok else '틀림(기대 %d)' % want))
+    return bad
+
+
 def test_dark_real(names, N):
     """스컬그레몬이 들어온 롬: 그레이몬 자기 문장 32 메탈그레몬 → 암흑 32 스컬그레몬 → 아무 문장 36 메탈그레몬"""
     g = N['그레이몬']; bad = 0
@@ -312,6 +325,39 @@ def test_texts(names):
     return bad
 
 
+def test_battle_pics(names, pairs=None):
+    """전투 화면 그림 확인: 시험용 롬에서 29번 도로 풀숲 종을 모두 상대 종으로, 내 파티 첫 칸을 내 종으로 → 만남 화면 찍기
+    (상대 앞모습 + 내 뒷모습, 둘 다 롬 팔레트). work/shots/pic_*.png. myver.gbc 는 그대로"""
+    global ROM
+    import encounters
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    if pairs is None:
+        pairs = [('다크그레몬', '블랙워그몬'), ('블랙워그몬', '다크그레몬'), ('모티몬', '시드몬'), ('둥실몬', '깜몬'), ('푸니몬', '야옹몬'),
+                 ('가지몬', '고스몬'), ('쿠가몬', '팬텀몬'), ('스컬그레몬', '엔젤우몬')]
+    grass = [s['addr'] for s in encounters.find_all(dmrom.Rom(dmrom.default_rom())) if s['kind'] == '풀숲' and s['where'].startswith('29번 도로')]
+    bad = 0; keep = ROM
+    try:
+        for k, (foe, mine) in enumerate(pairs):
+            if foe not in N or mine not in N: print('  %s / %s → 건너뜀 (롬에 없음)' % (foe, mine)); continue
+            e = bytearray(r.d)
+            for a in grass: e[a] = N[foe]
+            ROM = os.path.join(W, 'pic_test.gbc'); open(ROM, 'wb').write(bytes(e))
+            p = new('grass.state'); m = p.pb.memory
+            put_party(p, [(N[mine], 30, 70)], names); m[ENEMY_SPECIES] = 0
+            for i in range(120):
+                p.press(['left', 'right'][i % 2], 10, 10); p.tick(30)
+                if m[ENEMY_SPECIES]: break
+            p.tick(400)
+            for _ in range(3): p.press('a', 6, 60)
+            p.tick(300); p.shot('pic_%d' % k)
+            ok = m[ENEMY_SPECIES] == N[foe]; bad += not ok
+            print('  상대 %-6s / 내 %-6s → %s (work/shots/pic_%d.png)' % (foe, mine, 'OK' if ok else '만남 종 %d' % m[ENEMY_SPECIES], k))
+            p.stop()
+    finally:
+        ROM = keep
+    return bad
+
+
 if __name__ == '__main__':
     os.makedirs(SHOTS, exist_ok=True)
     if not os.path.exists(os.path.join(W, 'intro.state')) or '--intro' in sys.argv:
@@ -321,7 +367,9 @@ if __name__ == '__main__':
     print('트레이너 표'); bad = test_trainers()
     print('진화'); bad += test_evo(names)
     print('암흑 진화'); bad += test_dark(names)
+    print('검은 톱니'); bad += test_black_gear(names)
     print('대사 화면 (시험용 롬)'); bad += test_texts(names)
     print('포획'); bad += test_catch(names)
+    print('전투 화면 그림 (시험용 롬)'); bad += test_battle_pics(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

@@ -39,15 +39,19 @@ class Ctx:
             if nm in self.slots: self.grade[n] = self.slots[nm]['grade']
             elif n in G and G[n]['name'] == nm and G[n]['grade']: self.grade[n] = G[n]['grade']
         self.grade.update({161: '유년기Ⅱ', 212: '완전체', 217: '완전체'})
-        self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed
+        self.palswap = {v[1]: nm for nm, v in RU.PALSWAP.items() if self.name(v[1]) == nm}     # F단계 색만 바꾼 종
+        self.grade.update({n: RU.PALSWAP[nm][2] for n, nm in self.palswap.items()})
+        self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed | set(self.palswap)
         if self.name(RU.UNOWN[0]) == RU.UNOWN[1]: self.keep.add(RU.UNOWN[0])      # 안농 칸 → 디지문자 (D단계)
         self.empty = {n for n in range(1, 252) if self.name(n) == RU.EMPTY_NAME}       # D-7 잠자는 칸 정리
         self.drop = {n for n in range(1, 252) if n not in self.pk and n not in self.keep and n not in self.empty}
         self.sites = E.find_all(self.base)
         for s in self.sites: s['cur'] = self.d[s['addr']]
         self.trainers = self.r.trainers(len(GROUPS))
-        try: self.items = json.load(open(os.path.join(dmrom.WORK, 'item_names.json')))
-        except Exception: self.items = []
+        il = self.d.find(krtext.encode('마스터볼') + b'\x50' + krtext.encode('하이퍼볼') + b'\x50'); self.items = []
+        if il >= 0:                                                   # 지금 롬의 도구 이름표 (D단계에서 바뀐 이름 반영)
+            for _ in range(256):
+                j = self.d.index(0x50, il); self.items.append(krtext.decode(self.d, il, j)); il = j + 1
 
     def evos(self, n):
         return [e for e in self.r.evos_attacks(n)[0] if 1 <= e[0] <= 10]

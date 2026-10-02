@@ -78,14 +78,15 @@ def find(d, pat, what):
     return i
 
 # ── 그림 넣기 ──
-def png_to_idx(path, maxw, maxh):
+def png_to_idx(path, maxw, maxh, pal=None):
+    """pal 을 주면 그 두 색에 맞춰 칸을 나눔 (뒷모습은 앞모습 팔레트로 — 롬은 앞·뒤가 팔레트 하나)"""
     im = Image.open(path).convert('RGBA'); a = np.asarray(im).astype(int)
     h, w = a.shape[:2]; idx = np.zeros((h, w), np.uint8)
     op = a[..., 3] > 128; L = a[..., :3] @ np.array([.299, .587, .114])
     cols = sorted({tuple(a[y, x, :3]) for y, x in zip(*np.nonzero(op))}, key=lambda c: -(c[0] * .299 + c[1] * .587 + c[2] * .114))
     white = [c for c in cols if min(c) > 230]; black = [c for c in cols if max(c) < 60]
     mid = [c for c in cols if c not in white and c not in black]
-    pal = [mid[0] if mid else (200, 200, 200), mid[-1] if len(mid) > 1 else (120, 120, 120)]
+    pal = pal or [mid[0] if mid else (200, 200, 200), mid[-1] if len(mid) > 1 else (120, 120, 120)]
     for y in range(h):
         for x in range(w):
             if not op[y, x]: continue
@@ -128,7 +129,7 @@ class Patch:
         a = self.r.pal + 8 * no
         self.put(a, struct.pack('<4H', rgb555(c1), rgb555(c2), rgb555(c1), rgb555(c2)))
     def pic(self, no, front_png, back_png):
-        fi, pal = png_to_idx(front_png, 56, 56); bi, _ = png_to_idx(back_png, 48, 48)
+        fi, pal = png_to_idx(front_png, 56, 56); bi, _ = png_to_idx(back_png, 48, 48, pal)
         size = 7 if max(fi.shape) > 48 else 6 if max(fi.shape) > 40 else 5
         fdat = gblz.compress(to_gb_pic(fi, size, size)); bdat = gblz.compress(to_gb_pic(bi, 6, 6))
         ents = []
@@ -149,13 +150,25 @@ class Patch:
         d = bytes(self.d); m = re.search(rb'\x3e(.)\xd7\x21(..)\x09\x09\x09\x09\x09\x09\x5e\x23\x56\x23\x2a', d, re.S)
         a = addr(m.group(1)[0], int.from_bytes(m.group(2), 'little')) + 6 * (no - 1); return struct.unpack('<3H', d[a:a + 6])
     # 도감: 분류(형) · 키(0.1m) · 몸무게(0.1kg) · 3줄. 원래 자리 크기 안에서만 씀 (도감 글은 종 번호로 뱅크가 정해져 옮기기 어려움)
-    def dex(self, no, kind, height, weight, lines):
+    def _dex_tab(self):
         d = bytes(self.d)
         m = re.search(rb'\x21(..)\x78\x3d\x06\x00\x4f\x09\x09\x07\xe6\x01\xc6(.)\x47\x2a\x66\x6f\xc9', d, re.S)
         tab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')); b0 = m.group(2)[0]
-        ent = lambda sp: addr(b0 + ((sp - 1) >> 7), d[tab + 2 * (sp - 1)] | d[tab + 2 * (sp - 1) + 1] << 8)
+        return d, tab, (lambda sp: addr(b0 + ((sp - 1) >> 7), d[tab + 2 * (sp - 1)] | d[tab + 2 * (sp - 1) + 1] << 8))
+    def dex(self, no, kind, height, weight, lines):
         assert len(lines) == 3 and all(len(l) <= 16 for l in lines), '도감 글은 3줄, 줄마다 16자까지'
         e = krtext.encode(kind) + b'\x50' + bytes([height]) + struct.pack('<H', weight) + b'\x59'.join(krtext.encode(l) for l in lines) + b'\x50'
+        self.dex_bytes(no, e)
+    def dex_entry(self, no):
+        """도감 한 항목 그대로 (분류 @ 키 몸무게 글 @)"""
+        d, tab, ent = self._dex_tab(); a = ent(no); i = a
+        for part in (0, 1):
+            while d[i] != 0x50: i += 2 if 1 <= d[i] <= 0x0b else 1
+            i += 1
+            if part == 0: i += 3
+        return d[a:i]
+    def dex_bytes(self, no, e):
+        d, tab, ent = self._dex_tab()
         room = min((ent(s) - ent(no) for s in range(1, NUM_SP + 1) if ent(s) > ent(no) and ent(s) // 0x4000 == ent(no) // 0x4000), default=0)
         if len(e) <= room:
             self.put(ent(no), e + bytes(room - len(e))); self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room)); return
@@ -541,11 +554,51 @@ def build(base, out_rom, out_ips):
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
     remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
+    # F단계 색만 바꾼 종 (rules.PALSWAP): 원본의 기본 정보·그림·기술·울음·아이콘·도감을 그대로 가리키고, 팔레트와 공격 +10·방어 −10 만 다르게
+    P.r.d = P.d; N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    dm = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', bytes(P.d), re.S)
+    icons = addr(dm.start() // 0x4000, int.from_bytes(dm.group(1), 'little'))
+    for nm, (src, slot, grade, c1, c2) in rules.PALSWAP.items():
+        s_ = N[src]; a_, b_ = r.bs + 0x20 * (slot - 1), r.bs + 0x20 * (s_ - 1)
+        P.put(a_ + 1, bytes(P.d[b_ + 1:b_ + 0x20]))                          # 첫 바이트(종 번호)만 빼고 복사
+        P.stats(slot, atk=min(255, P.d[b_ + 2] + 10), **{'def': max(1, P.d[b_ + 3] - 10)})
+        P.name(slot, nm)
+        P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (s_ - 1):r.pics + 6 * s_]))
+        P.palette(slot, c1, c2)
+        P.evos(slot, [], P.r.evos_attacks(s_)[1])
+        P.cry(slot, *P.cry_of(s_)); P.put(icons + slot - 1, bytes([P.d[icons + s_ - 1]]))
+        P.dex_bytes(slot, P.dex_entry(s_))                                   # 원본 글 그대로 (3줄이라 한 줄 더할 자리 없음)
+    P.log.append('F단계 색만 바꾼 종: ' + ', '.join('%s(%d, %s 그림)' % (nm, v[1], v[0]) for nm, v in rules.PALSWAP.items()))
+    # D-4 검은 톱니 (rules.BLACK_GEAR)
+    BG = rules.BLACK_GEAR; it = BG['item']; dd = bytes(P.d); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    ob, nb = krtext.encode(BG['old']), krtext.encode(BG['name'])
+    assert len(ob) == len(nb) and dd.count(ob) == 1, '도구 이름'
+    P.put(dd.find(ob), nb)
+    s4 = dd.find(krtext.encode('디지몬을 잡기 위한 도구') + b'\x59')                 # 수퍼볼(4번) 설명 → 설명 포인터 표
+    bk = s4 // 0x4000; pb = struct.pack('<H', 0x4000 + s4 % 0x4000); dtab = dd.find(pb, bk * 0x4000, (bk + 1) * 0x4000) - 6
+    da = addr(bk, struct.unpack('<H', dd[dtab + 2 * (it - 1):dtab + 2 * it])[0]); de = dd.index(0x50, da)
+    j = da
+    while dd[j] != 0x50: j += 2 if 1 <= dd[j] <= 0x0b else 1
+    ne = krtext.encode(BG['desc']) + b'\x50'; assert len(ne) <= j + 1 - da, '설명이 김'
+    P.put(da, ne + b'\x50' * (j + 1 - da - len(ne)))
+    at = next(a_ for a_ in range(len(dd) - 40) if dd[a_ + 7:a_ + 9] == b'\xb0\x04' and dd[a_ + 21:a_ + 23] == b'\x58\x02' and dd[a_ + 28:a_ + 30] == b'\xc8\x00')
+    P.put(at + 7 * (it - 1), b'\x00\x00')                                         # 값 0 (상점 판매 없음)
+    gr = N[BG['from']]
+    P.evos(gr, [(ITEM, it, N[BG['to']])] + [tuple(e) for e in P.r.evos_attacks(gr)[0] if 1 <= e[0] <= 10])
+    assert dd.count(BG['ball']) == 1, '아지트 아이템볼'
+    P.d[dd.find(BG['ball']) + 4] = it
+    vg = [k for k in range(len(dd) - 3) if dd[k:k + 3] == bytes([0x9e, it, 1])]
+    assert len(vg) == 2, '대회 상품 스크립트 %d곳' % len(vg)
+    for k in vg:
+        P.d[k + 1] = BG['prize']
+        if dd[k - 7:k - 5] == bytes([0x41, it]): P.d[k - 6] = BG['prize']           # getitemname (결과 발표 글)
+    P.log.append('D-4 검은 톱니: %s 칸 이름·설명·값 0, %s 도구 진화 → %s, 아지트 B1F 아이템볼, 대회 1등 상품 → 이상한사탕' % (BG['old'], BG['from'], BG['to']))
     # 종 번호 → 단계 (grades.json + 새로 넣은 칸). C단계 파티와 포획률이 같이 씀
     G = json.load(open(os.path.join(HERE, 'grades.json')))
     grade = {int(k): v['grade'] for k, v in G.items() if v['grade'] and v['name'] == r.name(int(k))}
     grade.update({KORO: '유년기Ⅱ', MGR: '완전체', WGR: '완전체'})
     for no, m in installed.items(): grade[no] = m['grade']
+    for nm, v in rules.PALSWAP.items(): grade[v[1]] = v[2]
     # C단계 상대 파티 — A단계 바꾸기 뒤에
     #   1) parties.json: 「무리」 = 그 무리 첫 사람, 「무리#n」 = n번째 사람. 종(sp)이 아직 롬에 없으면(그림·색 바꾸기 전) until 종
     #   2) 암흑단 조직원(rules.GRUNT_GROUPS): parties.json 에 없는 사람은 레벨대별 종으로 (레벨은 그대로)
