@@ -168,12 +168,14 @@ function orderCard(e, opts) {
   const h = el("div", "head");
   h.append(el("span", "ko", e.ko), el("span", "en", e.en), el("span", "chip", e.grade));
   if (e.no) h.append(el("span", "chip no", "롬 " + e.no + "번"));
-  if (e.plist) h.append(el("span", "chip need", "캐릭터 그림 필요"));
+  if (e.plist) h.append(e.need ? el("span", "chip need", "캐릭터 그림 필요") : el("span", "chip no", "두 가지 다 받음"));
   else { if (e.need.includes("f")) h.append(el("span", "chip need", "앞 필요")); if (e.need.includes("b")) h.append(el("span", "chip need", "뒤 필요")); }
   c.append(h);
   if (e.use) c.append(el("p", "use", e.use));
-  if (e.note) c.append(el("p", "why", e.note));
+  if (e.note) c.append(el("p", e.plist && !e.need ? "use" : "why", e.note));
   const ps = el("div", "pics");
+  if (e.portrait) ps.append(pic(e.portrait, 3, "받은 인트로 박사 그림"));
+  if (e.walk) ps.append(pic(e.walk, 1, "받은 필드 걷기 그림"));
   if (e.romf) ps.append(pic(e.romf, 2, "지금 롬 앞"));
   if (e.romb) ps.append(pic(e.romb, 2, "지금 롬 뒤"));
   if (e.f) ps.append(pic(e.f, 2, "받은 앞"));
