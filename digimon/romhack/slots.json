@@ -818,5 +818,12 @@
     ]
    ]
   }
+ ],
+ "waiting_art": [
+  {
+   "art": "weregarurumon",
+   "name": "워가루몬",
+   "쓰는 곳": "규리 파티 셋째 Lv35 (그림 오기 전에는 가루몬, parties.json)"
+  }
  ]
 }

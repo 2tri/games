@@ -12,6 +12,7 @@ cp <디지몬스터 롬> work/base.gbc                # 또는 DMROM=<경로>
 python3 audit.py      # 종마다 이름·능력치·진화·그림 → work/audit.json, work/sheet0~3.png
 python3 patch.py      # work/base.gbc → work/myver.gbc + work/myver.ips
 python3 romtest.py    # 고친 롬 자동 시험 (PyBoy, 약 30초)
+python3 check.py      # 검수 보고서 (자문자에게 그대로 붙임). --full evo 로 진화 표
 python3 wild.py       # 야생 출현표 → work/wild.json, 아직 포켓몬인데 야생에 나오는 칸 목록
 python3 grades.py     # 롬이 바뀌었을 때(2.0판) grades.json 다시 만들기
 python3 trainers.py   # 트레이너가 데리고 있는 종 → work/trainers.json, 아직 포켓몬을 쓰는 트레이너
@@ -34,6 +35,8 @@ python3 trainers.py   # 트레이너가 데리고 있는 종 → work/trainers.j
 | `trainers.py` | 트레이너 496명의 데리고 있는 종과 레벨 |
 | `audit.py` | 롬 조사표 |
 | `encounters.py` | 롬에서 종을 가리키는 곳 전부 (풀숲·물·대량발생·낚시·박치기 나무·벌레잡기 대회·트레이너·선물·고정 만남·경품·교환·떠돌이) 3,492곳 |
+| `check.py` | 검수 보고서: 요약 + 규칙 R1~R12 ([X]/[OK]/[?]), `--full evo|party|wild` 로 표 |
+| `parties.json` | 상대 파티 (C단계). 그림 대기 종은 그림이 올 때까지 다른 종 |
 | `remap.py`, `mapping.csv` | A단계: 포켓몬·뺄 종 → 남길 디지몬. 계획종이 설치된 칸은 그대로, 야생은 레벨로 단계 낮춤 |
 | `play.py` | PyBoy 실행·화면 찍기 |
 

@@ -242,6 +242,24 @@ class Patch:
         self.icon(no, d[addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + prev - 1])
         idx, pitch, length = self.cry_of(prev); self.cry(no, idx, max(0, pitch - 32), length + 32)
         self.dex(no, kind, height, weight, dex_lines)
+    # 상대 파티 한 사람 바꾸기 (같은 마릿수). 기술이 있는 트레이너는 그 레벨까지 배운 마지막 4개로
+    def party(self, group, mons, N, groups, n=0):
+        ts = [t for t in self.r.trainers(len(groups)) if groups[t['group']] == group]
+        t = ts[n]; assert len(t['mons']) == len(mons), (group, len(t['mons']), len(mons))
+        out = []
+        for (lv0, sp0, a), m in zip(t['mons'], mons):
+            nm = m['sp']
+            if m.get('art') and not os.path.exists(os.path.join(WEB, 'art', m['art'] + '-f.png')): nm = m['until']
+            sp = N[nm]; self.d[a - 1] = m['lv']; self.d[a] = sp
+            if t['kind'] in (1, 3):
+                ms = []
+                for l, mv in self.r.evos_attacks(sp)[1]:
+                    if l <= m['lv'] and mv not in ms:
+                        ms.append(mv)
+                        if len(ms) > 4: ms.pop(0)
+                o = a + (2 if t['kind'] == 3 else 1); self.put(o, bytes(ms + [0] * (4 - len(ms))))
+            out.append('%s Lv%d' % (nm, m['lv']))
+        self.log.append('파티 %s %s: %s' % (group, t['name'], ', '.join(out)))
     def evos(self, no, evos, moves=None):
         """진화·기술 목록을 새로 써서 뱅크 0x10 빈 곳에 두고 포인터를 바꿈. moves=None 이면 원래 기술 목록 유지"""
         old_ev, old_mv = self.r.evos_attacks(no)
@@ -378,7 +396,7 @@ def build(base, out_rom, out_ips):
     P.evos(WGR, [(CREST, 46, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
     P.evos(S('버드라몬'), [(CREST, 31, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
     P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬')), (ITEM, 169, S('로제몬'))])   # 로제몬 갈래는 그대로
-    P.evos(S('니드몬'), [(CREST, 29, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
+    P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
     P.evos(S('원뿔몬'), [(CREST, 34, S('쥬드몬')), (ANYCREST, 38, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
     P.evos(S('엔젤몬'), [(CREST, 25, S('홀리엔젤몬')), (ANYCREST, 30, S('홀리엔젤몬'))])
     # 성장기 → 성숙기: 유대
@@ -447,6 +465,11 @@ def build(base, out_rom, out_ips):
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
     remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
+    # C단계 상대 파티 (parties.json) — A단계 바꾸기 뒤에
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    for g, mons in json.load(open(os.path.join(HERE, 'parties.json'))).items():
+        if not g.startswith('_'): P.party(g, mons, N, groups)
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))

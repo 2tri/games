@@ -1,0 +1,8 @@
+{
+  "_설명": "상대 파티 (C단계에서 채움). 그룹 이름은 pokegold-kr data/trainers/party_pointers.asm. 마릿수는 지금과 같아야 함(트레이너 표 길이를 안 바꿈). art 가 있으면 그 그림(art/<art>-f.png)이 올 때까지 until 종을 씀. 기술은 그 레벨까지 배운 마지막 4개",
+  "Jasmine": [
+    {"lv": 30, "sp": "안드로몬"},
+    {"lv": 30, "sp": "가루몬"},
+    {"lv": 35, "sp": "워가루몬", "art": "weregarurumon", "until": "가루몬"}
+  ]
+}
