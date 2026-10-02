@@ -98,3 +98,14 @@ PLACE_ADD = [  # (종, 종류, 지역 앞부분, 칸 번호, (최저, 최고) �
 REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '그레이몬': 'greymon', '피요몬': 'piyomon',
           '쉬라몬': 'gomamon', '파닥몬': 'patamon', '엔젤몬': 'angemon', '가트몬': 'gatomon', '레오몬': 'leomon',
           '플롯트몬': 'salamon', '니드몬': 'togemon'}
+
+# 노래 (사용자 지시 2026-10-02): 예전 GBC 판 곡(gbc/music/<곡>.json) → 금 음악 번호 (constants/music_constants.asm)
+MUSIC = {'title':   [0x01],                          # 제목
+         'town':    [0x3c, 0x26, 0x25],              # 연두마을·무궁시티·고동마을 (내일은 나의 바람이 분다)
+         'village': [0x2d, 0x3d, 0x2c, 0x09],        # 도라지·금빛·인주·디지몬센터 (Butterfly 피아노)
+         'field':   [0x34, 0x2b, 0x35, 0x47],        # 29·30·36·37번 도로 (Target)
+         'battle':  [0x29, 0x4a, 0x2a, 0x08, 0x07, 0x31],   # 야생(낮·밤)·트레이너·관동 야생·관동 트레이너·암흑단 전투
+         'boss':    [0x2e, 0x2f, 0x30, 0x06],        # 관장·챔피언·라이벌·관동 관장 (Brave Heart)
+         'evolve':  [0x22],                          # 진화 (되풀이)
+         'heal':    [0x0d],                          # 회복 (한 번)
+         'capture': [0x4c]}                          # 잡았을 때 (한 번)

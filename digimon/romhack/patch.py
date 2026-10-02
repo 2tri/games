@@ -726,6 +726,16 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    # 노래 (rules.MUSIC): gbc/music 곡을 금 음악 엔진 형식으로 (music.py) 빈 뱅크에 넣고 음악 포인터 표(Music, 3바이트 dba)를 바꿈
+    import music
+    m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)
+    mtab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+    for nm, ids in rules.MUSIC.items():
+        js = music.load(nm); loop = True if nm == 'evolve' else None
+        size = len(music.song_bytes(js, 0x4000, loop))
+        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop))
+        for i in ids: P.put(mtab + 3 * i, bytes([b]) + struct.pack('<H', p))
+    P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab))
     # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
     DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
     nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
