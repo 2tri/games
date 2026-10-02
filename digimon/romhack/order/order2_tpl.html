@@ -82,9 +82,9 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
       <ol class="steps">
         <li><b>첨부 1장</b>: 카드의 파란 테두리 <b>LCD 도트</b> 그림을 길게 눌러(PC는 오른쪽 클릭) 저장합니다.</li>
         <li><b>첨부 2장</b>: <b>공식 그림 열기</b>로 공식 그림을 저장합니다.</li>
-        <li>Gemini에 1장·2장 순서로 붙이고 <b>앞 주문문</b>(LCD가 있으면 「밑그림 주문문」)을 넣습니다. 4장 뽑아서 LCD 모양을 가장 잘 따른 것을 고르세요.</li>
+        <li>Gemini에 1장·2장 순서로 붙이고 <b>앞모습 주문문</b>을 넣습니다. 4장 뽑아서 LCD 모양을 가장 잘 따른 것을 고르세요. (LCD 도트가 없는 종은 공식 그림 1장만 붙여요)</li>
         <li>고른 그림을 세션에 <b>파일로 첨부</b>해 "○○ 앞"이라고 보냅니다. 채팅 화면에 붙인 그림만 오면 파일이 남지 않아 넣을 수 없었어요(피노키몬·아포카리몬·티라노몬).</li>
-        <li>뒷모습: 공식 그림 + 카드의 <b>받은 앞모습</b>(길게 눌러 저장) + <b>뒤 주문문</b>. "○○ 뒤"로 보냅니다.</li>
+        <li>뒷모습: 1장 = 공식 그림, 2장 = 카드의 <b>받은 앞모습</b>(길게 눌러 저장) + <b>뒷모습 주문문</b>. "○○ 뒤"로 보냅니다. 앞모습을 먼저 받아야 뒷모습을 주문할 수 있어요.</li>
         <li>계속 모양이 틀리면 <b>평면 그림 주문문</b>을 쓰세요.</li>
       </ol>
       <p class="note">받은 앞모습은 LCD 실루엣과 겹쳐 보고 「실루엣 일치율」이 80% 아래면 다시 받기를 부탁드려요.</p>
@@ -96,6 +96,12 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
   <section>
     <h2>남은 주문 <small>위에서부터 순서대로 · 굵은 테두리가 먼저</small></h2>
     <div class="cards" id="todo"></div>
+  </section>
+
+  <section>
+    <h2>사람 그림 <small>박사 자리 → 디지몬 인물</small></h2>
+    <p class="note">공박사 자리를 겐나이로 바꿉니다. 연구소를 걸어 다니는 필드 그림과 인트로 박사 그림 두 가지예요. 받은 그림은 "겐나이 걷기" / "겐나이 박사"라고 올려 주세요.</p>
+    <div class="cards" id="people"></div>
   </section>
 
   <section>
@@ -162,8 +168,8 @@ function orderCard(e, opts) {
   const h = el("div", "head");
   h.append(el("span", "ko", e.ko), el("span", "en", e.en), el("span", "chip", e.grade));
   if (e.no) h.append(el("span", "chip no", "롬 " + e.no + "번"));
-  if (e.need.includes("f")) h.append(el("span", "chip need", "앞 필요"));
-  if (e.need.includes("b")) h.append(el("span", "chip need", "뒤 필요"));
+  if (e.plist) h.append(el("span", "chip need", "캐릭터 그림 필요"));
+  else { if (e.need.includes("f")) h.append(el("span", "chip need", "앞 필요")); if (e.need.includes("b")) h.append(el("span", "chip need", "뒤 필요")); }
   c.append(h);
   if (e.use) c.append(el("p", "use", e.use));
   if (e.note) c.append(el("p", "why", e.note));
@@ -173,6 +179,7 @@ function orderCard(e, opts) {
   if (e.f) ps.append(pic(e.f, 2, "받은 앞"));
   if (e.b) ps.append(pic(e.b, 2, "받은 뒤"));
   if (e.lcd8) ps.append(pic(e.lcd8, 0.5, "LCD 도트 · 첨부 1장", "att"));
+  if (e.refpic) ps.append(pic(e.refpic, 1, "참고 그림 · 첨부", "att"));
   if (ps.childElementCount) c.append(ps);
   const r = el("div", "row");
   if (e.img) r.append(linkBtn("공식 그림 열기", e.img));
@@ -181,20 +188,23 @@ function orderCard(e, opts) {
   c.append(r);
   const det = el("details"); det.append(el("summary", "", "주문문 보기"));
   const r2 = el("div", "row");
-  if (e.prompt.f) { const p = el("pre", "", e.prompt.f); det.append(el("b", "", e.sketch_mode ? "밑그림 주문문 (첨부 1장 = LCD 도트, 2장 = 공식 그림)" : "앞 주문문 (첨부 = 공식 그림)"), p); r2.append(copyBtn(e.sketch_mode ? "밑그림 주문문 복사" : "앞 주문문 복사", e.prompt.f, p, det)); }
-  if (e.prompt.b) { const p = el("pre", "", e.prompt.b); det.append(el("b", "", "뒤 주문문 (첨부 = 공식 그림 + 받은 앞모습)"), p); r2.append(copyBtn("뒤 주문문 복사", e.prompt.b, p, det)); }
+  if (e.prompt.f) { const p = el("pre", "", e.prompt.f); det.append(el("b", "", e.sketch_mode ? "앞모습 주문문 (첨부 1장 = LCD 도트, 2장 = 공식 그림)" : "앞모습 주문문 (첨부 = 공식 그림)"), p); r2.append(copyBtn(e.sketch_mode ? "앞모습 주문문 복사 (LCD 첨부)" : "앞모습 주문문 복사", e.prompt.f, p, det)); }
+  if (e.prompt.b) { const p = el("pre", "", e.prompt.b); det.append(el("b", "", "뒷모습 주문문 (첨부 1장 = 공식 그림, 2장 = 받은 앞모습)"), p); r2.append(copyBtn("뒷모습 주문문 복사", e.prompt.b, p, det)); }
+  for (const [btn, title, text] of (e.plist || [])) { const p = el("pre", "", text); det.append(el("b", "", title), p); r2.append(copyBtn(btn, text, p, det)); }
   if (e.prompt.flat) { const p = el("pre", "", e.prompt.flat); det.append(el("b", "", "평면 그림 주문문 (도트가 계속 틀릴 때)"), p); r2.append(copyBtn("평면 그림 주문문 복사", e.prompt.flat, p, det, "alt")); }
   c.append(r2, det);
   const ck = el("div", "checks");
   const key = e.no ? "r" + e.no : e.id;
   if (e.no) ck.append(box("rom-" + e.no, "redraw", "다시 그리기", "red"));
-  ck.append(box("good-f-" + key, "good_f", "앞 잘 나옴"), box("good-b-" + key, "good_b", "뒤 잘 나옴"));
+  if (e.plist) ck.append(box("good-walk-" + key, "good_walk", "걷기 그림 잘 나옴"), box("good-pic-" + key, "good_pic", "박사 그림 잘 나옴"));
+  else ck.append(box("good-f-" + key, "good_f", "앞 잘 나옴"), box("good-b-" + key, "good_b", "뒤 잘 나옴"));
   c.append(ck);
   return c;
 }
 
 $("#nTodo").textContent = D.todo.length;
 D.todo.forEach((e, i) => $("#todo").append(orderCard(e, { prio: i < 5 })));
+for (const e of D.people) $("#people").append(orderCard(e, {}));
 $("#doneCount").textContent = D.done.length + "종";
 for (const e of D.done) {
   const t = el("div", "tile"); const ps = el("div", "pics");

@@ -18,7 +18,7 @@ NOTES = {
     'tyranomon': ('b', '앞모습 받음(왼쪽 보게 뒤집음) · 뒷모습 필요'),
     'metalseadramon': ('b', '앞모습 받음 (시드라몬 칸에 잘못 들어가 있던 그림을 옮김) · 뒷모습 필요'),
     'shellmon': ('b', '앞모습 받음 · 뒷모습 필요'),
-    'seadramon': ('fb', '앞모습으로 받은 그림이 메탈시드라몬이었음 → 앞부터 다시'),
+    'seadramon': ('b', '앞모습 다시 받음 · 뒷모습 필요'),
     'mugendramon': ('b', '앞모습 받음 · 뒷모습 필요'),
 }
 # 다시 그리기 칸의 상태
@@ -44,6 +44,34 @@ def card(e, need, note, lcd_url, img, ref):
     return {'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e.get('use', ''), 'need': need, 'note': note,
             'img': img, 'ref': ref, 'lcd': lcd_url, 'lcd8': lcdx8(e['id']) if lcd_url else '',
             'f': art(e['id'], 'f'), 'b': art(e['id'], 'b'), 'prompt': p, 'sketch_mode': bool(lcd_url) and 'f' in need}
+
+
+# 사람 그림 (포켓몬 박사 자리 → 디지몬 인물). 참고 그림은 art/ref/<id>.jpg (공식 그림이라 저장소에 안 올림)
+PEOPLE = [dict(id='gennai', ko='겐나이', en='Gennai', grade='사람', use='공박사 자리 캐릭터: 연구소 안을 걸어 다니는 필드 그림(16×16, 앞·뒤·옆 걷기) + 인트로 박사 그림(56칸)',
+               tones=dict(white='the long white mustache, eyebrows and the hair tuft, the boot soles', light='face and bald head skin',
+                          dark='the long navy robe', black='outline, closed eyes'),
+               keep=['A short, bald old man with a long drooping WHITE MUSTACHE hanging down past his chin.', 'One white hair tuft curling up from the top of his head.',
+                     'A long navy robe down to the ankles with a high red collar and two brown belts crossing the chest.', 'Eyes closed, calm face, hands at his sides, big red shoes.'],
+               not_=['No beard, only the mustache.', 'Not a wizard hat, not a staff.'])]
+
+
+def walk_prompt(e):
+    """필드 걷기 그림 시트 (그림프롬프트.md B 꼬리말 형식. 「포켓몬」이라는 말은 뺌: 재미나이가 포켓몬처럼 바꿔 그림)"""
+    return (f"{e['en']}, the short bald old man from Digimon Adventure (1999): a long drooping white mustache, one white hair tuft on top of the head, "
+            "a long navy robe with a red collar, brown belts crossing the chest, red shoes, eyes closed. "
+            "late-1990s Game Boy Color RPG overworld walking sprite sheet of a person (top-down town map character), chibi proportions, three rows (walking down, walking up, walking left) with two frames each, "
+            "each frame 16x16 pixels on a strict grid, Game Boy Color, only 4 colors (white, black, skin tone and one clothing color), plain white background, no text")
+
+
+def people_prompt(e):
+    t = e['tones']
+    return (f"This is {e['en']}, the old man character from the anime Digimon Adventure (1999). Keep this exact character: same face, mustache, clothes and proportions.\n\n"
+            "Task: convert the attached picture into a late-1990s Game Boy Color RPG portrait sprite of a person, like the professor shown in the game's intro. Change only the art style, never the design.\n\n"
+            "Composition:\n- ONE square image, pure white background, nothing else.\n- Front view, whole body visible, standing on the bottom edge, filling about 90% of the image height.\n\n"
+            "Style:\n- VERY low resolution: about 56 pixels tall. Big chunky pixels, every pixel a crisp square of the same size. No anti-aliasing, no blur, no gradients, no dithering, no shadow.\n"
+            "- Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black.\n"
+            f"  - white = {t['white']}\n  - light gray = {t['light']}\n  - dark gray = {t['dark']}\n  - black = {t['black']}\n\n"
+            f"MUST KEEP (most important first):\n{prompts.lst(e['keep'])}\n\nMUST NOT:\n{prompts.dash(e['not_'])}\n\nNo text, no frame, no grid lines, no background.")
 
 
 def main():
@@ -79,7 +107,15 @@ def main():
                  e['lcd'], 'https://digimon.net/cimages/digimon/%s.jpg' % e['id'], 'https://digimon.net/reference_ko/detail.php?directory_name=' + e['id'])
         c.update(no=e['no'], romf=r.get('f', ''), romb=r.get('b', ''))
         red.append(c)
-    D = {'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
+    people = []
+    for e in PEOPLE:
+        ref = WEB + 'art/ref/%s.jpg' % e['id']
+        refpic = 'data:image/jpeg;base64,' + base64.b64encode(open(ref, 'rb').read()).decode() if os.path.exists(ref) else ''
+        people.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e['use'], 'need': '' if os.path.exists(WEB + 'art/%s_portrait.png' % e['id']) and os.path.exists(WEB + 'art/src/people/%s_ai.png' % e['id']) else 'f',
+                       'note': '전투 그림(앞·뒤)이 아니라 캐릭터 그림 두 가지예요. 참고 그림(첨부)은 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': b64(WEB + 'art/%s_portrait.png' % e['id']), 'b': '',
+                       'prompt': {}, 'plist': [['필드 걷기 그림 시트 주문문 복사', '필드 걷기 그림 (3줄 × 2칸, 칸마다 16×16)', walk_prompt(e)],
+                                               ['인트로 박사 그림 주문문 복사', '인트로 박사 그림 (56칸, 전신)', people_prompt(e)]]})
+    D = {'people': people, 'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
     tpl = open(HERE + '/order2_tpl.html', encoding='utf-8').read()
     html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower() and 'pokémon' not in html.lower()
