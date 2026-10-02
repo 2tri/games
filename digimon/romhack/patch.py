@@ -15,7 +15,7 @@
  4. 롬에 없던 코로몬 추가 (꼬리선 자리, 29번 도로 야생) → Lv11 아구몬, 아이콘·울음소리·도감
  5. 디지몬스터 버그: 메탈가루몬 진화 목록 끝 표시 없음 → 고침 (Lv39에 팔몬이 되던 문제)
 """
-import os, re, sys, json, struct
+import os, re, sys, json, struct, collections
 import numpy as np
 from PIL import Image
 import dmrom, gblz, krtext, encounters, remap
@@ -553,7 +553,27 @@ def build(base, out_rom, out_ips):
     P.evo_engine({N[nm]: 1 << CREST_BIT[c] for nm, c in crest.items() if nm in N})
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
-    remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
+    sites0 = encounters.find_all(P.r)                                  # 원래 롬 자리 (치환 뒤에는 표를 원래 종으로 못 찾으므로 한 번만)
+    remap.apply(P, sites0, installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
+    # E단계 출현 연결 (rules.PLACE_SWAP·PLACE_ADD)
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; groups_ = collections.OrderedDict(); nsw = nadd = 0
+    for s in sites0:
+        if s['kind'] in remap.WILD: groups_.setdefault((s['kind'], s['where']), []).append(s)
+    for frm, to, area in rules.PLACE_SWAP:
+        for (kd, wh), ss in groups_.items():
+            if area and not wh.startswith(area): continue
+            for s in ss:
+                if P.d[s['addr']] == N[frm]: P.d[s['addr']] = N[to]; nsw += 1
+    for nm, kd, area, slots, (lo, hi), cond in rules.PLACE_ADD:
+        per = 7 if kd == '풀숲' else 3
+        for (k_, wh), ss in groups_.items():
+            if k_ != kd or not wh.startswith(area): continue
+            for i, s in enumerate(ss):
+                lv = P.d[s['addr'] - 1]
+                if cond and not cond[0] <= lv <= cond[1]: continue
+                if i % per in slots: P.d[s['addr']] = N[nm]; nadd += 1
+                if P.d[s['addr']] == N[nm]: P.d[s['addr'] - 1] = min(max(lv, lo), hi)    # 그 지역에 원래 있던 같은 종도 레벨 맞춤
+    P.log.append('E단계 출현 연결: 바꿈 %d자리, 넣음 %d자리' % (nsw, nadd))
     # F단계 색만 바꾼 종 (rules.PALSWAP): 원본의 기본 정보·그림·기술·울음·아이콘·도감을 그대로 가리키고, 팔레트와 공격 +10·방어 −10 만 다르게
     P.r.d = P.d; N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     dm = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', bytes(P.d), re.S)

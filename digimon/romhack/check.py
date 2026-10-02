@@ -269,6 +269,21 @@ def rules(c, out):
     r15 = [(c.name(n), c.d[ia0 + n - 1]) for n in dig if c.d[ia0 + n - 1] not in G_ICONS]
     rep('R15', r15, '남길 종 %d 메뉴 아이콘이 모두 10종(유년기·공룡·짐승·새·벌레·식물·바다·기계·천사·악마) 안에 있음' % len(dig),
         lambda b: '%s: 아이콘 %d' % b)
+    # R16 E단계 출현 연결 (rules.PLACE_SWAP·PLACE_ADD): 넣을 종이 그 지역 야생에 있고, 없앨 종이 그 지역에 없음
+    N = {c.name(n): n for n in range(1, 252)}; r16 = []
+    wild = [s for s in c.sites if s['kind'] in remap.WILD]
+    for frm, to, area in RU.PLACE_SWAP:
+        if frm not in N: continue
+        left = [s['where'] for s in wild if s['cur'] == N[frm] and (not area or s['where'].startswith(area))]
+        if left: r16.append(('%s 가 %s 에 남음' % (frm, area or '야생'), len(left)))
+    for nm, kd, area, slots, (lo, hi), cond in RU.PLACE_ADD:
+        if nm not in N: continue
+        here = [s for s in wild if s['kind'] == kd and s['where'].startswith(area) and s['cur'] == N[nm]]
+        bad_lv = [s for s in here if not lo <= c.d[s['addr'] - 1] <= hi]
+        if not here: r16.append(('%s 가 %s %s 에 없음' % (nm, area, kd), 0))
+        elif bad_lv: r16.append(('%s 의 %s 레벨이 %d~%d 밖' % (nm, area, lo, hi), len(bad_lv)))
+    rep('R16', r16, '출현 연결표 %d줄 (없앨 종 %d, 넣을 곳 %d) 모두 맞음' % (len(RU.PLACE_SWAP) + len(RU.PLACE_ADD), len(RU.PLACE_SWAP), len(RU.PLACE_ADD)),
+        lambda b: '%s (%d곳)' % b)
 
 
 def full_evo(c, out):

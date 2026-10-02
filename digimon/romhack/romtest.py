@@ -196,6 +196,9 @@ def test_catch(names, trials=10):
     print('  29번 도로 만남:', ', '.join('%s(%d) 포획률 %d' % (r.name(s), s, c) for s, c in sorted(seen.items()) if s))
     bad = (c0 != 0) + (c255 == 0)
     bad += sum(c != r.base_stats(s)['catch'] for s, c in seen.items() if s)
+    toko = [s for s in seen if s and r.name(s) == '토코몬']                  # E 연결표: 토코몬은 야생 없음 (조수의 알 전용)
+    if toko: print('  틀림: 29번 도로에 토코몬이 나옴'); bad += 1
+    else: print('  29번 도로 12번 만남에 토코몬 없음 (연결표: 야생 없음) OK')
     return bad
 
 
