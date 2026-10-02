@@ -111,8 +111,8 @@ def main():
     for e in PEOPLE:
         ref = WEB + 'art/ref/%s.jpg' % e['id']
         refpic = 'data:image/jpeg;base64,' + base64.b64encode(open(ref, 'rb').read()).decode() if os.path.exists(ref) else ''
-        people.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e['use'], 'need': '' if os.path.exists(WEB + 'art/%s.png' % e['id']) else 'f',
-                       'note': '전투 그림(앞·뒤)이 아니라 캐릭터 그림 두 가지예요. 참고 그림(첨부)은 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': '', 'b': '',
+        people.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e['use'], 'need': '' if os.path.exists(WEB + 'art/%s_portrait.png' % e['id']) and os.path.exists(WEB + 'art/src/people/%s_ai.png' % e['id']) else 'f',
+                       'note': '전투 그림(앞·뒤)이 아니라 캐릭터 그림 두 가지예요. 참고 그림(첨부)은 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': b64(WEB + 'art/%s_portrait.png' % e['id']), 'b': '',
                        'prompt': {}, 'plist': [['필드 걷기 그림 시트 주문문 복사', '필드 걷기 그림 (3줄 × 2칸, 칸마다 16×16)', walk_prompt(e)],
                                                ['인트로 박사 그림 주문문 복사', '인트로 박사 그림 (56칸, 전신)', people_prompt(e)]]})
     D = {'people': people, 'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
