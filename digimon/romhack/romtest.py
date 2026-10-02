@@ -265,6 +265,53 @@ def test_dark(names):
     return bad
 
 
+def text_targets(r):
+    """화면으로 볼 대사: 관장 비상 승리 대사(D-2), 유대 측정(D-3) 150~199·0~49 구간 → [(이름, text 시작 주소)]"""
+    import rules
+    d = bytes(r.d); out = []
+    m = re.search(re.escape(bytes([0x64])) + b'(..)' + re.escape(bytes([0, 0, 0x5e, 1, 1])), d, re.S)
+    out.append(('관장 비상 승리 대사', dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))))
+    for k, label in ((2, '유대 측정 150~199'), (5, '유대 측정 0~49')):
+        body = rules.BOND_TEXTS[k][1].split('<')[0]
+        h = d.find(krtext.encode(body))
+        out.append((label, h - 1 if h > 0 and d[h - 1] == 0 else None))
+    return out
+
+
+def test_texts(names):
+    """대사 화면 확인: 시험용 롬에서 주인공 방 책장 글(공용 「그림책 책장」)을 대상 대사로 점프(text_far)하게 바꾸고
+    책장 앞에서 말을 걸어 쪽마다 찍음 → work/shots/txt_*.png (myver.gbc 는 그대로)"""
+    global ROM
+    r = dmrom.Rom(ROM); d = bytes(r.d)
+    hb = krtext.encode('그림책이 모여져있군'); h = d.find(hb)
+    s = h - 1
+    while d[s] != 0x00: s -= 1                                   # 책장 글 시작 (text 명령)
+    assert s > h - 12, '책장 글 시작을 못 찾음'
+    bad = 0; keep = ROM
+    try:
+        for k, (label, ta) in enumerate(text_targets(r)):
+            if ta is None: print('  %-24s → 못 찾음' % label); bad += 1; continue
+            e = bytearray(d); bank, ptr = ta // 0x4000, ta % 0x4000 + 0x4000
+            e[s:s + 5] = bytes([0x16, ptr & 255, ptr >> 8, bank, 0x50])
+            ROM = os.path.join(W, 'text_test.gbc'); open(ROM, 'wb').write(bytes(e))
+            p = new('intro.state'); m = p.pb.memory
+            for d_, cond in (('right', lambda: m[XC] >= 5), ('up', lambda: m[YC] <= 2)):
+                for _ in range(10):
+                    if cond(): break
+                    p.press(d_, 10, 10); p.tick(30)
+            p.press('up', 6, 30)                                      # 책장(5,1) 보기
+            p.press('a', 6, 120); shots = 0
+            for page in range(8):
+                p.tick(90); p.shot('txt_%d_%d' % (k, page)); shots += 1
+                p.press('a', 6, 40)
+            ok = (m[XC], m[YC]) == (5, 2); bad += not ok
+            print('  %-24s → 책장 앞 %s, 화면 %d장 (work/shots/txt_%d_*.png)' % (label, 'OK' if ok else '못 감 %d,%d' % (m[XC], m[YC]), shots, k))
+            p.stop()
+    finally:
+        ROM = keep
+    return bad
+
+
 if __name__ == '__main__':
     os.makedirs(SHOTS, exist_ok=True)
     if not os.path.exists(os.path.join(W, 'intro.state')) or '--intro' in sys.argv:
@@ -274,6 +321,7 @@ if __name__ == '__main__':
     print('트레이너 표'); bad = test_trainers()
     print('진화'); bad += test_evo(names)
     print('암흑 진화'); bad += test_dark(names)
+    print('대사 화면 (시험용 롬)'); bad += test_texts(names)
     print('포획'); bad += test_catch(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

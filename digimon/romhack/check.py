@@ -41,7 +41,8 @@ class Ctx:
         self.grade.update({161: '유년기Ⅱ', 212: '완전체', 217: '완전체'})
         self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed
         if self.name(RU.UNOWN[0]) == RU.UNOWN[1]: self.keep.add(RU.UNOWN[0])      # 안농 칸 → 디지문자 (D단계)
-        self.drop = {n for n in range(1, 252) if n not in self.pk and n not in self.keep}
+        self.empty = {n for n in range(1, 252) if self.name(n) == RU.EMPTY_NAME}       # D-7 잠자는 칸 정리
+        self.drop = {n for n in range(1, 252) if n not in self.pk and n not in self.keep and n not in self.empty}
         self.sites = E.find_all(self.base)
         for s in self.sites: s['cur'] = self.d[s['addr']]
         self.trainers = self.r.trainers(len(GROUPS))
@@ -89,15 +90,15 @@ def summary(c, out):
     ips = os.path.join(os.path.dirname(c.path), 'myver.ips')
     out.append('롬: %s  CRC32 %08X  IPS 크기 %s B' % (os.path.basename(c.path), zlib.crc32(c.d), os.path.getsize(ips) if os.path.exists(ips) else '?'))
     # 잠자는 칸: 어디에도 안 나오고(야생·트레이너·이벤트·스타팅) 얻을 수 있는 종에서 진화로도 못 가는 칸
-    seen = {s['cur'] for s in c.sites}
+    seen = {s['cur'] for s in c.sites if s['kind'] != '트레이너'} | {sp for t in c.trainers for _, sp, _ in t['mons']}   # 트레이너는 지금 파티(옮긴 무리 포함)
     stack = list({s['cur'] for s in c.sites if s['kind'] != '트레이너'}); got = set(stack)
     while stack:
         n = stack.pop()
         for e in c.evos(n):
             if e[-1] not in got: got.add(e[-1]); stack.append(e[-1])
     sleep = [n for n in range(1, 252) if n not in seen and n not in got]
-    dig = 251 - len(c.pk)
-    out.append('칸: 디지몬 %d / 포켓몬 %d / 잠자는 칸 %d (그중 포켓몬 %d)' % (dig, len(c.pk), len(sleep), sum(n in c.pk for n in sleep)))
+    dig = 251 - len(c.pk) - len(c.empty)
+    out.append('칸: 디지몬 %d / 포켓몬 %d / 빈 칸(%s) %d / 잠자는 칸 %d (그중 포켓몬 %d)' % (dig, len(c.pk), RU.EMPTY_NAME, len(c.empty), len(sleep), sum(n in c.pk for n in sleep)))
     wk = collections.OrderedDict((k, set()) for k in ('풀숲', '물', '낚시', '박치기 나무', '대량발생 풀숲', '대량발생 물', '벌레잡기 대회'))
     for s in c.sites:
         if s['kind'] in wk and s['cur'] in c.pk: wk[s['kind']].add(s['cur'])

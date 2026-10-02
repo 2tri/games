@@ -602,9 +602,37 @@ def build(base, out_rom, out_ips):
     ie = il
     for _ in range(256): ie = P.d.index(0x50, ie) + 1                 # 도구 이름 256개 (pokegold-kr data/items/names.asm)
     P.words(rules.WORDS, (il, ie))
+    # D-2 관장 승리 대사 + 문장 두 줄 (원래 자리에 안 들어가면 retext 가 빈 뱅크로 옮기고 text_far 로 연결)
+    import texts as TX
+    for cls, (l1, l2) in rules.GYM_LINES.items():
+        mt_ = re.search(re.escape(bytes([0x64])) + b'(..)' + re.escape(bytes([0, 0, 0x5e, cls, 1])), bytes(P.d), re.S)
+        ta = addr(mt_.start() // 0x4000, int.from_bytes(mt_.group(1), 'little'))
+        end_, _, s_ = TX.read_text(bytes(P.d), ta)
+        assert s_.endswith('<DONE>'), s_
+        P.retext(ta, s_[:-len('<DONE>')] + '<PARA>%s<LINE>%s<DONE>' % (l1, l2))
+    # D-3 유대 측정 대사 6구간
+    for head, new in rules.BOND_TEXTS:
+        hb = krtext.encode(head); h = bytes(P.d).find(hb)
+        assert h > 0 and P.d[h - 1] == 0x00 and bytes(P.d).find(hb, h + 1) < 0, head
+        P.retext(h - 1, new)
+    P.log.append('D-2 관장 승리 대사 %d명, D-3 유대 측정 %d구간' % (len(rules.GYM_LINES), len(rules.BOND_TEXTS)))
     un, unm = rules.UNOWN
     P.name(un, unm)
     P.dex(un, '문자형', 5, 50, ['디지털 월드의 문자가', '형체를 얻은 것. 유적', '벽에 새겨진 글자 모양'])   # 주말 작업팩 D-6 (길이에 맞춰 줄임)
+    # D-7 잠자는 포켓몬 칸 → 「-----」, 포획률 0 (check.py 의 잠자는 칸과 같은 판정)
+    P.r.d = P.d
+    ORIG = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
+    # 자리는 원래 롬에서 찾고(표를 원래 종 배열로 찾으므로) 지금 종을 읽음. 트레이너는 지금 파티(옮긴 무리 포함)
+    wild_ev = {P.d[s['addr']] for s in encounters.find_all(dmrom.Rom(base)) if s['kind'] != '트레이너'}
+    seen = wild_ev | {sp for t in P.r.trainers(len(groups)) for _, sp, _ in t['mons']}
+    stack = list(wild_ev); got = set(stack)
+    while stack:
+        n_ = stack.pop()
+        for e in P.r.evos_attacks(n_)[0]:
+            if 1 <= e[0] <= 10 and e[-1] not in got: got.add(e[-1]); stack.append(e[-1])
+    empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
+    for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
+    P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)
