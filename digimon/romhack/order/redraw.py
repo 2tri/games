@@ -7,7 +7,13 @@ W = 'https://wikimon.net/images/'
 
 def d(no, id, ko, en, grade, lcd, white, light, dark, black, keep, not_=()):
     return dict(no=no, id=id, ko=ko, en=en, grade=grade, lcd=(W + lcd) if lcd else '',
-                tones=dict(white=white, light=light, dark=dark, black=black), keep=list(keep), not_=list(not_) or ['Do not add features from other monsters.'])
+                tones=dict(white=white, light=light, dark=dark, black=black), keep=list(keep), not_=list(not_) or ['Do not add features from other monsters.'],
+                pal=PAL.get(id))
+
+
+# 롬에 넣을 때 입힐 몸 색 두 개 (밝은·어두운). 받은 그림이 생긴 종부터 채움
+PAL = {'piemon': ((216, 200, 160), (88, 64, 112)), 'meramon': ((248, 168, 72), (200, 48, 32)), 'omegamon': ((216, 216, 224), (184, 48, 48)),
+       'imperialdramondragonmode': ((88, 88, 104), (200, 48, 48))}
 
 
 R = [
@@ -45,7 +51,7 @@ R = [
  d(41, 'picodevimon', '피코데블몬', 'DemiDevimon', '성장기', '4/4b/Picodevimon_vpet_dv.gif', 'mask, eye whites', 'dark gray body', 'bat wings', 'eyes, claws',
    ['A small black bat-like imp: a round body with big bat wings.', 'A bone mask with big eyes.', 'Small clawed feet.']),
  d(42, 'piemon', '피에몬', 'Piemon', '궁극체', 'c/c9/Piemon_vpet_dv.gif', 'mask, gloves', 'clown suit', 'cape, swords on the back', 'eyes',
-   ['A clown magician in a mask.', 'A long cape.', 'Several swords on the back.']),
+   ['A clown magician in a mask.', 'A long cape.', 'Several swords on the back.', 'Seam lines on the costume are CLOTHING SEAMS of the outfit (not stitches on skin).']),
  d(43, 'tentomon', '텐타몬', 'Tentomon', '성장기', '6/6e/Tentomon_vpet_dv.gif', 'eye shine', 'red shell', 'belly, legs, claws', 'eyes',
    ['A small red ladybug-like insect.', 'Big green eyes.', 'Six legs, stands on the back pair.']),
  d(44, 'kabuterimon', '캅테리몬', 'Kabuterimon', '성숙기', '6/6f/Kabuterimon_vpet_dv.gif', 'horn highlights', 'blue shell', 'four arms, wings', 'eyes',
@@ -79,5 +85,6 @@ R = [
  d(186, 'gekomon', '개굴몬', 'Gekomon', '성숙기', '3/3b/Gekomon_vpet_dv.gif', 'belly', 'green frog body', 'the three horns on the back', 'eyes',
    ['A green frog on two legs.', 'Horn-like trumpets on its back.', 'A wide mouth.']),
  d(195, 'imperialdramondragonmode', '황제드라몬', 'Imperialdramon (Dragon Mode)', '궁극체', '2/2a/Imperialdramon_vpet_d3.gif', 'armor highlights', 'black armor', 'red wings, cannon', 'eyes',
-   ['A huge black dragon on four legs.', 'Big red wings.', 'A cannon mounted on the back.']),
+   ['A huge black dragon standing on ALL FOUR LEGS like a beast: the body is horizontal, chest low, both front legs on the ground.', 'Big red wings.', 'A long cannon mounted on the back.'],
+   ['Do not draw it standing upright on two legs; it is NOT a humanoid. Fighter Mode (upright) is a different form.']),
 ]

@@ -21,6 +21,8 @@ NOTES = {
     'seadramon': ('fb', '앞모습으로 받은 그림이 메탈시드라몬이었음 → 앞부터 다시'),
     'mugendramon': ('b', '앞모습 받음 · 뒷모습 필요'),
 }
+# 다시 그리기 칸의 상태
+RNOTES = {'imperialdramondragonmode': '받은 뒷모습이 서 있는 느낌 → 네 발로 선 모습으로 다시 (주문문에 반영)'}
 PRIO = ['kuwagamon', 'seadramon', 'shellmon', 'mugendramon', 'metalseadramon']
 
 
@@ -67,7 +69,13 @@ def main():
         if os.path.exists(WEB + 'art/%s-f.png' % aid) and os.path.exists(WEB + 'art/%s-b.png' % aid):
             red_done.append({'id': e['id'], 'ko': e['ko'], 'no': e['no'], 'f': art(aid, 'f'), 'b': art(aid, 'b'), 'romf': r.get('f', ''), 'romb': r.get('b', '')})
             continue
-        c = card(dict(e, use='지금 롬 %d번 칸' % e['no']), 'fb', '' if e['lcd'] else 'LCD 도트 없음 → 공식 그림만 붙이는 앞 주문문',
+        hf, hb = os.path.exists(WEB + 'art/%s-f.png' % aid), os.path.exists(WEB + 'art/%s-b.png' % aid)
+        need = ('' if hf else 'f') + ('' if hb else 'b')
+        note = RNOTES.get(e['id'], '')
+        if not note and hf: note = '앞모습 받음 · 뒷모습 필요'
+        if not note and hb: note = '뒷모습 받음 · 앞모습 필요'
+        if not e['lcd']: note = (note + ' · ' if note else '') + 'LCD 도트 없음 → 공식 그림만 붙이는 앞 주문문'
+        c = card(dict(e, use='지금 롬 %d번 칸' % e['no']), need, note,
                  e['lcd'], 'https://digimon.net/cimages/digimon/%s.jpg' % e['id'], 'https://digimon.net/reference_ko/detail.php?directory_name=' + e['id'])
         c.update(no=e['no'], romf=r.get('f', ''), romb=r.get('b', ''))
         red.append(c)
