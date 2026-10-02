@@ -130,6 +130,7 @@ def main():
     ap.add_argument('--side', choices=['f', 'b', 'sheet'], default='f')
     ap.add_argument('--grade'); ap.add_argument('--flat', action='store_true')
     ap.add_argument('--pal', nargs=2, help='몸 색 두 개 예: 232,96,48 136,96,176')
+    ap.add_argument('--size', type=int, help='최대 크기(칸)를 직접 정함 (예: 유년기 뒷모습 40)')
     ap.add_argument('--sketch', help='밑그림 png (tools/lcd2sketch.py → art/sketch/<id>.png). 앞모습을 그 실루엣에 맞추고 일치율을 알림')
     a = ap.parse_args()
     sp = specs.by_id(a.id) or {}
@@ -143,7 +144,7 @@ def main():
     parts = list(zip(split(im), ('f', 'b'))) if a.side == 'sheet' else [(im, a.side)]
     body = front_colors(a.id) if a.side == 'b' else None
     for part, side in parts:
-        maxs = FRONT.get(grade, 56) if side == 'f' else 48
+        maxs = a.size or (FRONT.get(grade, 56) if side == 'f' else 48)
         t, p4 = convert(part, maxs, pal, a.flat, body)
         if a.sketch and side == 'f':
             t, rate = fit_sketch(t, a.sketch)

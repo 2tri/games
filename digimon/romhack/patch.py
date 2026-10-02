@@ -720,6 +720,12 @@ def build(base, out_rom, out_ips):
     empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
     for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
+    # 1.4 그림 다시 그리기 (rules.REDRAW): 우리 그림이 앞·뒤 다 있는 종. 팔레트도 그림 색으로
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; nrd = []
+    for nm, art in rules.REDRAW.items():
+        f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
+        if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
+    P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
     # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
     DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
     nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
