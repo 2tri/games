@@ -174,9 +174,23 @@ class Patch:
             self.put(ent(no), e + bytes(room - len(e))); self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room)); return
         # 원래 자리가 모자라면 같은 뱅크의 빈 곳으로 옮기고 포인터를 바꿈 (도감 뱅크는 종 번호로 정해짐: 1~128 / 129~251)
         bank = ent(no) // 0x4000
-        b, p = self.sp.take(len(e), bank=bank)
+        for k, (fb, fs, fe) in enumerate(getattr(self, 'dexfree', [])):     # 빈 칸 도감 자리 (dex_pool)
+            if fb == bank and fe - fs >= len(e):
+                self.dexfree[k] = (fb, fs + len(e), fe); b, p = fb, 0x4000 + fs % 0x4000; break
+        else:
+            b, p = self.sp.take(len(e), bank=bank)
         self.put(addr(b, p), e); self.put(tab + 2 * (no - 1), struct.pack('<H', p))
         self.log.append('도감 %d번 %d바이트 → 빈 곳 %02X:%04X' % (no, len(e), b, p))
+    def dex_pool(self, empty_nos):
+        """빈 칸(-----) 도감 글은 게임에서 안 보임 → 5바이트(분류@ 키·몸무게 0 글@)로 줄이고 남는 자리를 dex_bytes 가 옮길 곳으로 씀"""
+        d, tab, ent = self._dex_tab(); self.dexfree = []
+        for no in empty_nos:
+            a = ent(no)
+            room = min((ent(s) - a for s in range(1, NUM_SP + 1) if ent(s) > a and ent(s) // 0x4000 == a // 0x4000), default=0)
+            if room < 5: continue
+            self.put(a, bytes([0x50, 0, 0, 0, 0x50]))
+            if room > 5: self.dexfree.append((a // 0x4000, a + 5, a + room))
+        return sum(fe - fs for _, fs, fe in self.dexfree)
     # 글 한 덩이 바꾸기: a = 글자 시작(text 명령 0x00 다음). <DONE>/<PROMPT> 앞까지를 새 글로, 남는 자리는 빈칸(0x7f)
     def text_at(self, a, new):
         d = self.d; end = a
@@ -706,6 +720,15 @@ def build(base, out_rom, out_ips):
     empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
     for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
+    # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
+    DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
+    nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
+    for nm, v in DX.items():
+        if nm.startswith('_') or nm not in N: continue
+        e = P.dex_entry(N[nm]); i = 0
+        while e[i] != 0x50: i += 2 if 1 <= e[i] <= 0x0b else 1          # 분류 끝 '@'
+        P.dex(N[nm], v[0], e[i + 1], e[i + 2] | e[i + 3] << 8, v[1:]); ndx += 1
+    P.log.append('도감 새 글 %d종 (dex_texts.json), 빈 칸 도감 자리 %d바이트를 옮길 곳으로' % (ndx, nfree))
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)
