@@ -3,7 +3,8 @@
     python3 lcd2sketch.py tunomon --src x.gif
 결과 (art/sketch/, 저장소에 안 올림):
   <id>.png        실루엣 밑그림: 바깥 테두리 1칸 검정, 안쪽 밝은 회색, 배경 흰
-  <id>_x8.png     같은 그림 ×8 (재미나이 첨부 1장)
+  <id>_x8.png     같은 그림 ×8
+  <id>_lcd_x8.png LCD 원래 칸 ×8 (재미나이 첨부 1장: 실루엣만 있는 것보다 선이 보여서 잘 따라 그림)
   <id>.txt        밑그림 글자 격자 (grid.py 글자)
   <id>_lcd.txt    같은 크기로 키운 LCD 원본 선 (+ = LCD 검은 칸, 무늬 자리 참고용)
   --color: art/grid/<id>-f.txt·-b.txt  LCD 선을 그대로 두고 안쪽에 색(lcdcolor.json), Scale2x 로 2배, 뒷모습은 반전·얼굴 지움·아래 1/4 자름
@@ -225,6 +226,8 @@ def main():
     grid.arr2img(t, grid.GRAY, 1, grid.GRAY[0]).save(os.path.join(OUT, a.id + '.png'))
     grid.arr2img(t, grid.GRAY, 8, grid.GRAY[0]).save(os.path.join(OUT, a.id + '_x8.png'))
     open(os.path.join(OUT, a.id + '.txt'), 'w', encoding='utf-8').write(grid.arr2txt(t))
+    lx = np.where(a0, 3, 0)                                           # 재미나이 첨부 1장: LCD 원래 칸 그대로 ×8 (선이 보여 실루엣보다 잘 따라 그림)
+    grid.arr2img(np.pad(lx, 2, constant_values=0), grid.GRAY, 8).save(os.path.join(OUT, a.id + '_lcd_x8.png'))
     open(os.path.join(OUT, a.id + '_lcd.txt'), 'w', encoding='utf-8').write(grid.arr2txt(d))
     if a.color:
         cfg = json.load(open(COLOR, encoding='utf-8'))[a.id]

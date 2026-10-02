@@ -134,6 +134,9 @@ def main():
     ap.add_argument('--sketch', help='밑그림 png (tools/lcd2sketch.py → art/sketch/<id>.png). 앞모습을 그 실루엣에 맞추고 일치율을 알림')
     a = ap.parse_args()
     sp = specs.by_id(a.id) or {}
+    if not sp:                                                         # 다시 그리기 칸 (order/redraw.py: 등급·몸 색)
+        import redraw
+        sp = next((e for e in redraw.R if e['id'] == a.id), {})
     grade = a.grade or sp.get('grade') or '성숙기'
     pal = [tuple(int(v) for v in x.split(',')) for x in a.pal] if a.pal else sp.get('pal')
     if pal is None: raise SystemExit('specs.py 에 %s 가 없음: --pal 로 몸 색 두 개를 알려 주세요' % a.id)
@@ -146,9 +149,11 @@ def main():
     for part, side in parts:
         maxs = a.size or (FRONT.get(grade, 56) if side == 'f' else 48)
         t, p4 = convert(part, maxs, pal, a.flat, body)
-        if a.sketch and side == 'f':
-            t, rate = fit_sketch(t, a.sketch)
-            print('  실루엣 일치율 %.0f%%%s' % (rate, '' if rate >= 80 else '  → 80% 아래: 다시 받기'))
+        if a.sketch and side == 'f' and not os.path.exists(a.sketch): print('  밑그림 없음(LCD 없는 종) → 맞추기 건너뜀')
+        if a.sketch and side == 'f' and os.path.exists(a.sketch):
+            t2, rate = fit_sketch(t, a.sketch)
+            if rate >= 80: t = t2                                      # 80% 아래면 맞추기가 오히려 망가뜨림(레이디데블몬) → 일치율만 알림
+            print('  실루엣 일치율 %.0f%%%s' % (rate, '' if rate >= 80 else '  → 80% 아래: 맞추기 안 함, 그림이 괜찮으면 그대로 쓰고 아니면 다시 받기'))
         t, nfix = apply_fix(t, os.path.join(WEB, 'art', 'fix', '%s-%s.txt' % (a.id, side)))
         if nfix: print('  손질 %d칸 (art/fix/%s-%s.txt)' % (nfix, a.id, side))
         body = [list(p4[1]), list(p4[2])]                           # 롬은 앞·뒤가 팔레트 하나 → 뒷모습은 앞모습 몸 색으로
