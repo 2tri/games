@@ -831,6 +831,72 @@
     ]
    ],
    "like": "레오몬"
+  },
+  {
+   "id": "fantomon",
+   "slot": "무우마",
+   "name": "팬텀몬",
+   "grade": "완전체",
+   "type": [
+    "GHOST",
+    "DARK"
+   ],
+   "stats": [
+    65,
+    90,
+    65,
+    85,
+    95,
+    70
+   ],
+   "exp": 175,
+   "catch": 30,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "LICK"
+    ],
+    [
+     1,
+     "MEAN_LOOK"
+    ],
+    [
+     1,
+     "NIGHT_SHADE"
+    ],
+    [
+     16,
+     "FAINT_ATTACK"
+    ],
+    [
+     24,
+     "SLASH"
+    ],
+    [
+     32,
+     "SHADOW_BALL"
+    ],
+    [
+     40,
+     "CURSE"
+    ],
+    [
+     48,
+     "DESTINY_BOND"
+    ]
+   ],
+   "dex": [
+    "사신형",
+    20,
+    35,
+    [
+     "큰 낫을 든 사신",
+     "디지몬. 쇠사슬 끝",
+     "구슬로 적을 노린다"
+    ]
+   ],
+   "like": "데블몬"
   }
  ],
  "waiting_art": [
