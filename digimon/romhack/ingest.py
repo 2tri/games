@@ -76,7 +76,8 @@ def convert(part, maxs, pal, flat=False, fixed=None):
     if is_gray(part) or flat:
         t, lv = gray4(part, flat, maxs)
         print('  회색 4톤 밝기', lv)
-        p4 = [(248, 248, 248), tuple(pal[0]), tuple(pal[1]), (24, 24, 24)]
+        body = fixed or pal                                          # 뒷모습만 따로 받으면 이미 넣은 앞모습 색으로
+        p4 = [(248, 248, 248), tuple(body[0]), tuple(body[1]), (24, 24, 24)]
     else:
         t, p4, cell = snapc.snap(part, accent=False, fixed=fixed, mids_only=True)
         print('  색 그림 도트 칸', tuple(round(x, 2) for x in cell))
@@ -89,7 +90,7 @@ def front_colors(did):
     p = os.path.join(WEB, 'art', did + '-f.png')
     if not os.path.exists(p): return None
     a = np.asarray(Image.open(p).convert('RGBA')).reshape(-1, 4)
-    cols = sorted({tuple(x[:3]) for x in a if x[3] > 128 and 40 < max(x[:3]) and min(x[:3]) < 235}, key=lambda c: -sum(c))
+    cols = sorted({tuple(int(v) for v in x[:3]) for x in a if x[3] > 128 and 40 < max(x[:3]) and min(x[:3]) < 235}, key=lambda c: -sum(c))
     return [list(cols[0]), list(cols[-1])] if len(cols) >= 2 else None
 
 
