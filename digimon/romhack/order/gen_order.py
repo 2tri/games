@@ -73,12 +73,19 @@ def prompt(e):
             f"in the style of Pokemon Gold/Silver.\n"
             f"Output ONE wide image (2:1), pure white background, two sprites side by side with empty white space between them:\n"
             f"- LEFT: FRONT sprite on a {F}x{F} pixel grid. The Digimon faces slightly to the left (3/4 view), whole body visible, standing on the bottom edge.\n"
-            f"- RIGHT: BACK sprite on a 48x48 pixel grid. The same Digimon seen from behind and slightly above, facing up-right; the lower body may be cut off by the bottom edge.\n"
+            f"- RIGHT: BACK sprite on a 48x48 pixel grid, like Pokemon Gold/Silver back sprites: the same Digimon seen from behind at a 3/4 angle, turned toward the upper right. "
+            f"We see its back, its right shoulder and arm, and a little of the right side of its head. NOT straight from behind and NOT symmetrical. The lower body is cut off by the bottom edge.\n"
             f"- Real pixel art: every pixel is a crisp square of the same size, enlarged evenly. No anti-aliasing, no blur, no gradients, no dithering, no drop shadow.\n"
             f"- Exactly 4 colors: white, a black 1-pixel outline (around the body and on the main inner lines), {c1} (light) and {c2} (dark). Small details also use only these 4 colors.\n"
             f"- Keep these features from the picture: {feat}.\n"
             f"- No text, no frame, no grid lines, no background scenery.")
 
+REDO = {'metalgreymon': ('뒷모습만 다시 (정면 뒷모습으로 와서 비스듬하게)', 'orange', 'steel blue-gray',
+                        'its back, the right shoulder, the big metal right arm and a little of the right side of the head and helmet, the torn wings')}
+def redo_prompt(c1, c2, see):
+    return ("Redraw only the BACK sprite. Same Digimon, seen from behind at a 3/4 angle, turned toward the upper right, like Pokemon Gold/Silver back sprites: "
+            f"we see {see}. NOT straight from behind and NOT symmetrical. 48x48 pixel grid, crisp square pixels, same 4 colors (white, black outline, {c1}, {c2}). "
+            "The lower body is cut off by the bottom edge. Pure white background, no text.")
 ess = []
 for e in ESS:
     did, ko, en, grade, use, cols, feat, dirn = e
@@ -88,7 +95,8 @@ for e in ESS:
         if os.path.exists(p) and not (did == 'digivice' and side == 'b'): got[side] = b64(p)
     ess.append({'id': did, 'ko': ko, 'en': en, 'grade': grade, 'use': use, 'size': '16×16' if did == 'digivice' else '%d×%d · 48×48' % (front_size(grade), front_size(grade)),
                 'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + dirn) if dirn else 'https://wikimon.net/Digivice',
-                'img': ('https://digimon.net/cimages/digimon/%s.jpg' % dirn) if dirn else '', 'prompt': prompt(e), 'got': got})
+                'img': ('https://digimon.net/cimages/digimon/%s.jpg' % dirn) if dirn else '', 'prompt': prompt(e), 'got': got,
+                'redo': ({'what': REDO[did][0], 'prompt': redo_prompt(*REDO[did][1:])} if did in REDO else None)})
 
 # ── 지금 롬 ──
 REC = {4: '뒷모습이 머리만 남은 덩어리', 7: '뒷모습 모양이 어색함', 16: '뒷모습이 뭉개짐', 6: '색이 빠져 갑옷이 구분 안 됨',

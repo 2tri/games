@@ -59,6 +59,8 @@ a.btn { background: transparent; color: var(--ink); }
 button.copy:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
 details pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); background: var(--paper); border: 1px solid var(--rule); padding: 10px; margin: 8px 0 0; overflow-x: auto; }
+.redo { border-left: 3px solid var(--warn); background: var(--warn-bg); padding: 10px 12px; display: grid; gap: 8px; }
+.redo pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); margin: 0; }
 .got { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
 .got .empty { font-size: 13px; color: var(--muted); border: 1px dashed var(--rule); padding: 8px 12px; }
 .got .pic { background: var(--sprite); border: 1px solid var(--rule); padding: 6px; }
@@ -109,7 +111,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
         <dl class="spec">
           <dt>배경</dt><dd>흰색, 가로로 긴 한 장</dd>
           <dt>왼쪽</dt><dd>앞모습 · 유년기 40, 성장기 48, 성숙기 이상 56칸</dd>
-          <dt>오른쪽</dt><dd>뒷모습 · 48칸, 아래가 잘려도 됨</dd>
+          <dt>오른쪽</dt><dd>뒷모습 · 48칸. <b>오른쪽 위로 살짝 틀어진 비스듬한 뒷모습</b> (정면 뒷모습 X), 아래가 잘려도 됨</dd>
           <dt>색</dt><dd>흰색·검은 테두리 + 몸 색 2가지</dd>
         </dl>
         <div class="sheet" id="example" aria-label="코로몬 예시"></div>
@@ -183,6 +185,12 @@ for (const e of D.ess) {
   if (e.got.f) { const p = el("div", "pic"); p.append(img(e.got.f, e.id === "digivice" ? 4 : 2)); g.append(p); if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 2)); g.append(q); } g.append(el("span", "ok", "받음 · 롬에 넣음")); }
   else g.append(el("span", "empty", "받은 그림: 아직"));
   c.append(g);
+  if (e.redo) {
+    const box = el("div", "redo"); box.append(el("b", "", "다시 받을 것: " + e.redo.what));
+    const rb = el("button", "copy", "다시 주문문 복사"); rb.type = "button"; const rp = el("pre", "", e.redo.prompt);
+    rb.addEventListener("click", () => { try { navigator.clipboard.writeText(e.redo.prompt).then(() => { rb.textContent = "복사했어요"; }, () => {}); } catch (err) {} });
+    box.append(el("p", "note", "Gemini의 같은 대화창에 붙여 넣으면 뒷모습만 다시 그려 줘요."), rb, rp); c.append(box);
+  }
   $("#ess").append(c);
 }
 
