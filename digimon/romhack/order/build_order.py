@@ -16,13 +16,12 @@ NOTES = {
     'pinochimon': ('fb', '앞: 긴 코가 십자 나무에 가려 안 보임 → 다시. 뒤는 받았지만 채팅 그림만 와서 파일이 없음 → 파일로 다시 올려 주세요'),
     'apocalymon': ('fb', '앞 받음(판정 좋음)이지만 채팅 그림만 와서 파일이 없음 → 파일로 다시 올려 주세요'),
     'tyranomon': ('fb', '앞 받음이지만 파일이 없음 → 파일로 다시 올려 주세요. 손발톱이 뭉개짐'),
-    'metalseadramon': ('fb', '「앞 잘 나옴」 체크는 돼 있지만 저장소에 파일이 없음 → 파일로 다시 올려 주세요'),
+    'metalseadramon': ('b', '앞모습 받음 (시드라몬 칸에 잘못 들어가 있던 그림을 옮김) · 뒷모습 필요'),
     'shellmon': ('b', '앞모습 받음 · 뒷모습 필요'),
-    'vamdemon': ('b', '앞모습 받음 · 뒷모습 필요'),
-    'seadramon': ('b', '앞모습 받음 · 뒷모습 필요'),
+    'seadramon': ('fb', '앞모습으로 받은 그림이 메탈시드라몬이었음 → 앞부터 다시'),
     'mugendramon': ('b', '앞모습 받음 · 뒷모습 필요'),
 }
-PRIO = ['kuwagamon', 'vamdemon', 'seadramon', 'shellmon', 'mugendramon']
+PRIO = ['kuwagamon', 'seadramon', 'shellmon', 'mugendramon', 'metalseadramon']
 
 
 def b64(p):
