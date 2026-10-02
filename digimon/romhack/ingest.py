@@ -145,7 +145,8 @@ def main():
     for part, side in parts:
         maxs = FRONT.get(grade, 56) if side == 'f' else 48
         t, p4 = convert(part, maxs, pal, a.flat, body)
-        if a.sketch and side == 'f':
+        if a.sketch and side == 'f' and not os.path.exists(a.sketch): print('  밑그림 없음(LCD 없는 종) → 맞추기 건너뜀')
+        if a.sketch and side == 'f' and os.path.exists(a.sketch):
             t2, rate = fit_sketch(t, a.sketch)
             if rate >= 80: t = t2                                      # 80% 아래면 맞추기가 오히려 망가뜨림(레이디데블몬) → 일치율만 알림
             print('  실루엣 일치율 %.0f%%%s' % (rate, '' if rate >= 80 else '  → 80% 아래: 맞추기 안 함, 그림이 괜찮으면 그대로 쓰고 아니면 다시 받기'))
