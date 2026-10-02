@@ -520,7 +520,9 @@ def build(base, out_rom, out_ips):
     }
     if has('아쿠이라몬'): EV['아쿠이라몬'] = T((ANYCREST, 35, '실피드몬'))
     if has('엔젤우몬'): EV['엔젤우몬'] = T((CREST, 45, '마그나드몬'))
-    if has('쿠가몬'): EV['텐타몬'] = T((BOND_LO, 21, '쿠가몬'), (LV, 21, '캅테리몬'))      # 유대 낮음 갈래 (계획서 칸 배정안)
+    if has('쿠가몬'):                                                # 주말 작업팩 E 연결표: 텐타몬 유대 낮음 Lv16, 쿠가몬 Lv34 아무 문장 → 오쿠와몬
+        EV['텐타몬'] = T((BOND_LO, 16, '쿠가몬'), (LV, 21, '캅테리몬'))
+        EV['쿠가몬'] = T((ANYCREST, 34, '오쿠와몬'))
     for nm, ev in EV.items(): P.evos(S(nm), ev)
     # 잠자는 포켓몬 칸의 진화가 디지몬 칸을 가리키면 지움 (스라크 → 메탈그레몬 칸, 깜지곰 → 워가루몬 칸 같은 것, R14)
     orig = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
@@ -601,7 +603,7 @@ def build(base, out_rom, out_ips):
     P.words(rules.WORDS, (il, ie))
     un, unm = rules.UNOWN
     P.name(un, unm)
-    P.dex(un, '문자형', 5, 50, ['디지털 세계의 옛', '문자. 알프의 유적', '벽에 새겨져 있다'])
+    P.dex(un, '문자형', 5, 50, ['디지털 월드의 문자가', '형체를 얻은 것. 유적', '벽에 새겨진 글자 모양'])   # 주말 작업팩 D-6 (길이에 맞춰 줄임)
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)
