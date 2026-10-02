@@ -46,6 +46,26 @@ def card(e, need, note, lcd_url, img, ref):
             'f': art(e['id'], 'f'), 'b': art(e['id'], 'b'), 'prompt': p, 'sketch_mode': bool(lcd_url) and 'f' in need}
 
 
+# 사람 그림 (포켓몬 박사 자리 → 디지몬 인물). 참고 그림은 art/ref/<id>.jpg (공식 그림이라 저장소에 안 올림)
+PEOPLE = [dict(id='gennai', ko='겐나이', en='Gennai', grade='사람', use='인트로에서 오박사 대신 나오는 그림 (금 인트로 박사 그림 자리, 56칸)',
+               tones=dict(white='the long white mustache, eyebrows and the hair tuft, the boot soles', light='face and bald head skin',
+                          dark='the long navy robe', black='outline, closed eyes'),
+               keep=['A short, bald old man with a long drooping WHITE MUSTACHE hanging down past his chin.', 'One white hair tuft curling up from the top of his head.',
+                     'A long navy robe down to the ankles with a high red collar and two brown belts crossing the chest.', 'Eyes closed, calm face, hands at his sides, big red shoes.'],
+               not_=['No beard, only the mustache.', 'Not a wizard hat, not a staff.'])]
+
+
+def people_prompt(e):
+    t = e['tones']
+    return (f"This is {e['en']}, the old man character from the anime Digimon Adventure (1999). Keep this exact character: same face, mustache, clothes and proportions.\n\n"
+            "Task: convert the attached picture into a late-1990s Game Boy Color RPG portrait sprite of a person, like the professor shown in the game's intro. Change only the art style, never the design.\n\n"
+            "Composition:\n- ONE square image, pure white background, nothing else.\n- Front view, whole body visible, standing on the bottom edge, filling about 90% of the image height.\n\n"
+            "Style:\n- VERY low resolution: about 56 pixels tall. Big chunky pixels, every pixel a crisp square of the same size. No anti-aliasing, no blur, no gradients, no dithering, no shadow.\n"
+            "- Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black.\n"
+            f"  - white = {t['white']}\n  - light gray = {t['light']}\n  - dark gray = {t['dark']}\n  - black = {t['black']}\n\n"
+            f"MUST KEEP (most important first):\n{prompts.lst(e['keep'])}\n\nMUST NOT:\n{prompts.dash(e['not_'])}\n\nNo text, no frame, no grid lines, no background.")
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--rom-json'); ap.add_argument('--out', required=True); a = ap.parse_args()
     lcd = json.load(open(HERE + '/lcd.json'))
@@ -79,7 +99,13 @@ def main():
                  e['lcd'], 'https://digimon.net/cimages/digimon/%s.jpg' % e['id'], 'https://digimon.net/reference_ko/detail.php?directory_name=' + e['id'])
         c.update(no=e['no'], romf=r.get('f', ''), romb=r.get('b', ''))
         red.append(c)
-    D = {'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
+    people = []
+    for e in PEOPLE:
+        ref = WEB + 'art/ref/%s.jpg' % e['id']
+        refpic = 'data:image/jpeg;base64,' + base64.b64encode(open(ref, 'rb').read()).decode() if os.path.exists(ref) else ''
+        people.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e['use'], 'need': '' if os.path.exists(WEB + 'art/%s.png' % e['id']) else 'f',
+                       'note': '참고 그림(첨부): 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': art(e['id'], 'f'), 'b': '', 'prompt': {'f': people_prompt(e)}})
+    D = {'people': people, 'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
     tpl = open(HERE + '/order2_tpl.html', encoding='utf-8').read()
     html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower() and 'pokémon' not in html.lower()

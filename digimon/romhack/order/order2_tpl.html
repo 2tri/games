@@ -99,6 +99,12 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
   </section>
 
   <section>
+    <h2>사람 그림 <small>박사 자리 → 디지몬 인물</small></h2>
+    <p class="note">인트로에 나오는 박사 그림을 겐나이로 바꿉니다. 받은 그림은 "겐나이"라고 파일로 올려 주세요.</p>
+    <div class="cards" id="people"></div>
+  </section>
+
+  <section>
     <h2>받은 그림 <small id="doneCount"></small></h2>
     <p class="note">앞·뒤가 모두 롬에 들어간 디지몬이에요. 다시 받고 싶은 게 있으면 채팅으로 이름만 알려 주세요.</p>
     <div class="grid" id="done"></div>
@@ -173,6 +179,7 @@ function orderCard(e, opts) {
   if (e.f) ps.append(pic(e.f, 2, "받은 앞"));
   if (e.b) ps.append(pic(e.b, 2, "받은 뒤"));
   if (e.lcd8) ps.append(pic(e.lcd8, 0.5, "LCD 도트 · 첨부 1장", "att"));
+  if (e.refpic) ps.append(pic(e.refpic, 1, "참고 그림 · 첨부", "att"));
   if (ps.childElementCount) c.append(ps);
   const r = el("div", "row");
   if (e.img) r.append(linkBtn("공식 그림 열기", e.img));
@@ -195,6 +202,7 @@ function orderCard(e, opts) {
 
 $("#nTodo").textContent = D.todo.length;
 D.todo.forEach((e, i) => $("#todo").append(orderCard(e, { prio: i < 5 })));
+for (const e of D.people) $("#people").append(orderCard(e, {}));
 $("#doneCount").textContent = D.done.length + "종";
 for (const e of D.done) {
   const t = el("div", "tile"); const ps = el("div", "pics");
