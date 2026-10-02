@@ -686,6 +686,29 @@ def build(base, out_rom, out_ips):
     empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
     for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
+    # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
+    sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
+    gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)
+    itab = addr(gm.start() // 0x4000, int.from_bytes(gm.group(1), 'little')); ib = gm.group(2)[0]
+    for cat, (_, iid) in ICN.CATS.items():
+        g = np.asarray(Image.open(os.path.join(WEB, 'art', 'icons', cat + '.png')).convert('L')).astype(int)
+        v = np.select([g > 212, g > 127, g > 42], [0, 1, 2], 3); gfx = bytearray()
+        for ty in range(4):
+            for tx in range(2):
+                for y in range(8):
+                    row = v[ty * 8 + y, tx * 8:tx * 8 + 8]
+                    gfx += bytes([sum((int(c) & 1) << (7 - i) for i, c in enumerate(row)), sum(((int(c) >> 1) & 1) << (7 - i) for i, c in enumerate(row))])
+        P.put(addr(ib, P.d[itab + 2 * iid] | P.d[itab + 2 * iid + 1] << 8), bytes(gfx))
+    IC = json.load(open(os.path.join(HERE, 'icons.json'))); cat_of = {n_: k for k, v in IC.items() if not k.startswith('_') for n_ in v}
+    TYPE_CAT = {20: '공룡', 26: '공룡', 0: '짐승', 2: '새', 7: '벌레', 22: '식물', 21: '바다', 9: '기계', 24: '천사', 8: '악마', 27: '악마', 25: '짐승'}
+    nic, by_type = 0, []
+    for n_ in range(1, dmrom.NUM + 1):
+        nm = r.name(n_)
+        if nm == rules.EMPTY_NAME: continue
+        cat = cat_of.get(nm)
+        if cat is None: cat = TYPE_CAT.get(P.d[r.bs + 0x20 * (n_ - 1) + 7], '짐승'); by_type.append('%s(%s)' % (nm, cat))
+        P.icon(n_, ICN.CATS[cat][1]); nic += 1
+    P.log.append('G단계 메뉴 아이콘 10종: %d칸 배정%s' % (nic, ', 타입으로 정한 칸 ' + ', '.join(by_type) if by_type else ''))
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)

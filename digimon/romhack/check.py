@@ -21,6 +21,9 @@ ORIG_MOVES = [tuple(int(x) for x in (m.group(1), m.group(2))) for m in
               re.finditer(r'^\s*move \w+,\s*\w+,\s*(\d+),\s*\w+,\s*\d+,\s*(\d+),', open(os.path.join(KR, 'data/moves/moves.asm')).read(), re.M)]
 EVK = {1: '레벨', 2: '도구', 3: '통신', 4: '친밀도', 5: '능력치', 6: '유대 높음', 7: '유대 낮음', 8: '자기 문장', 9: '암흑', 10: '아무 문장'}
 LEVELED = {1, 5, 6, 7, 8, 9, 10}
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tools'))
+import icons as _ICN
+G_ICONS = {v[1] for v in _ICN.CATS.values()}                  # G단계 아이콘 10종이 쓰는 금 아이콘 번호
 
 
 class Ctx:
@@ -236,12 +239,7 @@ def rules(c, out):
         if bytes(c.d[ent(c.d):ent(c.d) + 24]) == bytes(b[ent(b):ent(b) + 24]): lack.append('도감')
         m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', c.d, re.S)
         ia = dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + n - 1
-        sl = c.slots.get(c.name(n))
-        if sl:                                  # 새 칸: 닮은 종(like) 아이콘, 유년기는 둥근 아이콘이면 통과 (원래 칸 아이콘과 같아도 됨)
-            lk = next(k for k in range(1, 252) if c.name(k) == sl['like'])
-            want_ic = 2 if sl['grade'].startswith(('유년기', '유아기')) else c.d[ia - n + lk]
-            if c.d[ia] != want_ic: lack.append('아이콘')
-        elif c.d[ia] == b[ia]: lack.append('아이콘')
+        if c.d[ia] not in G_ICONS: lack.append('아이콘')                # G단계 10종 중 하나
         m = re.search(rb'\x3e(.)\xd7\x21(..)\x09\x09\x09\x09\x09\x09\x5e\x23\x56\x23\x2a', c.d, re.S)
         ca = dmrom.addr(m.group(1)[0], int.from_bytes(m.group(2), 'little')) + 6 * (n - 1)
         if bytes(c.d[ca:ca + 6]) == bytes(b[ca:ca + 6]): lack.append('울음')
@@ -262,6 +260,12 @@ def rules(c, out):
     r14 = [(n, e) for n in sorted(c.pk) for e in c.evos(n) if e[-1] not in c.pk]
     rep('R14', r14, '포켓몬 칸 %d개의 진화 결과가 디지몬 칸을 안 가리킴' % len(c.pk),
         lambda b: '%s %s %s → %s' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1])))
+    # R15 남길 종 메뉴 아이콘이 G단계 10종 안에 있음 (포켓몬 아이콘 0)
+    m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', c.d, re.S)
+    ia0 = dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+    r15 = [(c.name(n), c.d[ia0 + n - 1]) for n in dig if c.d[ia0 + n - 1] not in G_ICONS]
+    rep('R15', r15, '남길 종 %d 메뉴 아이콘이 모두 10종(유년기·공룡·짐승·새·벌레·식물·바다·기계·천사·악마) 안에 있음' % len(dig),
+        lambda b: '%s: 아이콘 %d' % b)
 
 
 def full_evo(c, out):

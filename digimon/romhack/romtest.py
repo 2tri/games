@@ -358,6 +358,19 @@ def test_battle_pics(names, pairs=None):
     return bad
 
 
+def test_party_icons(names):
+    """G단계: 파티 화면에 분류가 다른 디지몬 6마리를 넣고 아이콘 찍기 → work/shots/party_icons_*.png"""
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    sets = [['코로몬', '아구몬', '파피몬', '피요몬', '텐타몬', '팔몬'], ['쉬라몬', '안드로몬', '엔젤몬', '데블몬', '가트몬', '쿠가몬']]
+    for k, six in enumerate(sets):
+        p = new('intro.state'); m = p.pb.memory
+        put_party(p, [(N[x], 20, 70) for x in six if x in N], names); p.tick(10)
+        p.press('start', 6, 80); p.press('a', 6, 120); p.tick(40); p.shot('party_icons_%d' % k)
+        p.tick(16); p.shot('party_icons_%d_b' % k); p.stop()
+    print('  파티 화면 2장 (work/shots/party_icons_*.png)')
+    return 0
+
+
 if __name__ == '__main__':
     os.makedirs(SHOTS, exist_ok=True)
     if not os.path.exists(os.path.join(W, 'intro.state')) or '--intro' in sys.argv:
@@ -371,5 +384,6 @@ if __name__ == '__main__':
     print('대사 화면 (시험용 롬)'); bad += test_texts(names)
     print('포획'); bad += test_catch(names)
     print('전투 화면 그림 (시험용 롬)'); bad += test_battle_pics(names)
+    print('파티 화면 아이콘'); bad += test_party_icons(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)
