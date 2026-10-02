@@ -59,6 +59,15 @@ a.btn { background: transparent; color: var(--ink); }
 button.copy:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
 details pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); background: var(--paper); border: 1px solid var(--rule); padding: 10px; margin: 8px 0 0; overflow-x: auto; }
+.tierh { font: 500 13px var(--mono); color: var(--muted); letter-spacing: .04em; margin-top: 8px; }
+.swatch { display: inline-flex; border: 1px solid var(--rule); }
+.swatch i { width: 16px; height: 16px; display: block; }
+button.copy[disabled] { opacity: .35; cursor: not-allowed; }
+button.copy.alt { background: transparent; color: var(--ink); }
+.checks { display: flex; gap: 18px; flex-wrap: wrap; }
+label.ck.good input { accent-color: var(--blue); }
+.hint { font-size: 12.5px; color: var(--muted); }
+.card.done { border-color: var(--blue); }
 .redo { border-left: 3px solid var(--warn); background: var(--warn-bg); padding: 10px 12px; display: grid; gap: 8px; }
 .redo pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); margin: 0; }
 .got { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
@@ -89,9 +98,9 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
 
 <main>
   <header style="display:grid;gap:12px">
-    <div class="eyebrow">디지몬스터 1.4 내 버전 · 그림 주문서와 모음</div>
+    <div class="eyebrow">디지몬스터 1.4 내 버전 · 그림 주문서와 모음 · 주문문 v3</div>
     <h1>디지몬스터 그림 주문서</h1>
-    <p class="lede">디지몬 한 마리당 그림 <b>한 장</b>만 받으면 됩니다. 앞모습과 뒷모습을 나란히 그린 한 장이에요. 받으면 제가 잘라서 롬에 넣고, 이 페이지의 '받은 그림'에 차곡차곡 모아 둡니다.</p>
+    <p class="lede">디지몬마다 <b>앞모습 한 장</b>을 먼저 받고, 마음에 들면 그 앞모습을 같이 붙여 <b>뒷모습 한 장</b>을 따로 받습니다. 색은 회색 4톤으로만 받고, 롬에 넣을 때 제가 색을 입혀요.</p>
   </header>
 
   <section>
@@ -99,32 +108,34 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <div class="how">
       <div class="box">
         <ol class="steps">
-          <li>카드의 <b>그림 열기</b>를 누르면 디지몬 공식 도감(digimon.net)의 그림이 바로 열려요. 길게 눌러 저장하면 됩니다. 따로 검색할 필요 없어요.</li>
-          <li>Gemini에 그 그림과 카드의 <b>주문문 복사</b> 내용을 같이 넣습니다.</li>
-          <li>나온 그림 한 장을 이 채팅에 올리면서 디지몬 이름만 적어 주세요. 파일 이름은 상관없어요.</li>
-          <li>제가 잘라서 4색으로 맞춰 롬에 넣고, 게임 화면으로 확인한 뒤 여기 올립니다.</li>
+          <li>카드의 <b>공식 그림 열기</b>로 그림을 저장합니다. <b>LCD 도트 열기</b>가 있으면 그것도 저장해요(옛 디지바이스 화면 도트 — 모양을 잡아 줘요).</li>
+          <li>Gemini에 공식 그림(+ LCD 도트)과 <b>앞 주문문</b>을 같이 넣습니다. 같은 주문으로 2~3장 뽑아 가장 닮은 것을 고르세요.</li>
+          <li>고른 그림을 이 채팅에 "○○ 앞"이라고 올립니다. 제가 도트로 정리해 롬에 넣고 여기 '받은 그림'에 붙여요.</li>
+          <li>마음에 들면 <b>앞 잘 나옴</b>을 체크하세요. 그러면 <b>뒤 주문문</b> 버튼이 켜집니다.</li>
+          <li>뒷모습: Gemini에 공식 그림 + 확정된 앞모습(카드의 받은 그림을 저장)과 <b>뒤 주문문</b>을 넣고, "○○ 뒤"로 올립니다.</li>
+          <li>몇 번 해도 모양이 틀리면 <b>평면 그림 주문문</b>을 쓰세요. 도트 대신 단순한 만화 그림으로 받아 제가 도트로 바꿉니다.</li>
         </ol>
-        <p class="note">옆모습은 필요 없어요. 게임에 쓰는 건 앞모습(상대로 나올 때)과 뒷모습(내 디지몬일 때) 두 가지예요. 결과가 흐리거나 색이 많으면 Gemini에 "더 선명한 도트, 4색만"이라고 한 번 더 말해 주세요.</p>
+        <p class="note">주문문에는 "포켓몬"이라는 말을 넣지 않았어요. 그 말이 들어가면 Gemini가 디지몬을 포켓몬처럼 새로 디자인해 버립니다(쿠가몬 → 쁘사이저).</p>
       </div>
       <div class="box">
-        <h3>한 장의 모양</h3>
+        <h3>받는 그림의 모양</h3>
         <dl class="spec">
-          <dt>배경</dt><dd>흰색, 가로로 긴 한 장</dd>
-          <dt>왼쪽</dt><dd>앞모습 · 유년기 40, 성장기 48, 성숙기 이상 56칸</dd>
-          <dt>오른쪽</dt><dd>뒷모습 · 48칸. <b>오른쪽 위로 살짝 틀어진 비스듬한 뒷모습</b> (정면 뒷모습 X), 아래가 잘려도 됨</dd>
-          <dt>색</dt><dd>흰색·검은 테두리 + 몸 색 2가지</dd>
+          <dt>앞</dt><dd>정사각 한 장 · 왼쪽을 보는 비스듬한 앞모습 · 유년기 약 30, 성장기 약 40, 성숙기 이상 약 50픽셀 높이</dd>
+          <dt>뒤</dt><dd>정사각 한 장 · <b>오른쪽 위로 돌아선 비스듬한 뒷모습</b> · 상반신만, 폭 약 45픽셀</dd>
+          <dt>색</dt><dd>흰색·밝은 회색·어두운 회색·검정 4톤 (어느 부위가 어느 톤인지 주문문에 적혀 있음)</dd>
+          <dt>롬</dt><dd>앞 40/48/56칸, 뒤 48칸으로 줄여 카드의 색 두 개를 입힘</dd>
         </dl>
         <div class="sheet" id="example" aria-label="코로몬 예시"></div>
-        <p class="note">예시: 받은 코로몬 그림을 이렇게 바꿔 롬에 넣었어요 (지금 롬 그림과 같은 4색).</p>
+        <p class="note">예시: 롬에 들어간 코로몬 (흰색·검정 + 몸 색 2가지).</p>
       </div>
     </div>
   </section>
 
-  <div class="bar" role="status"><span>다시 그리기 <b id="nRedraw">0</b></span><span>먼저 그리기 <b id="nFirst">0</b></span><span class="st" id="dbState">체크 저장 확인 중…</span></div>
+  <div class="bar" role="status"><span>앞 잘 나옴 <b id="nGoodF">0</b></span><span>뒤 잘 나옴 <b id="nGoodB">0</b></span><span>다시 그리기 <b id="nRedraw">0</b></span><span>먼저 그리기 <b id="nFirst">0</b></span><span class="st" id="dbState">체크 저장 확인 중…</span></div>
 
   <section>
-    <h2>필수 <small>지금 막혀 있거나 초반 구간에 바로 보이는 것부터</small></h2>
-    <p>위에서부터 순서대로예요. 디지바이스는 볼 대신 고르는 스타팅 선택 장면에, 메탈그레이몬·워가루몬은 진화 줄에, 나머지는 연두마을부터 첫 체육관까지 나오는 포켓몬과 애니 밖 디지몬을 대신합니다.</p>
+    <h2>주문 <small>위에서부터 순서대로</small></h2>
+    <p>1은 지금 게임에서 막혀 있거나 초반에 바로 보이는 것, 2는 보스·암흑단·암흑 진화, 3은 갈래 진화와 알에서 나오는 아기예요. '후보'는 계획이 정해지면 주문합니다.</p>
     <div class="cards" id="ess"></div>
   </section>
 
@@ -149,7 +160,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
 
   <footer>
     <span>이 페이지에는 디지몬스터 롬의 그림이 들어 있어요. 링크는 다른 사람에게 공유하지 말아 주세요.</span>
-    <span>체크는 이 페이지에 저장되고 제가 바로 읽습니다. 다 고르면 채팅에 "체크 끝"이라고만 보내 주세요.</span>
+    <span>체크(앞·뒤 잘 나옴, 다시 그리기, 먼저 그리기)는 이 페이지에 저장되고 제가 바로 읽습니다. 다 고르면 채팅에 "체크 끝"이라고만 보내 주세요.</span>
   </footer>
 </main>
 
@@ -164,35 +175,56 @@ let db = null;
 // 예시
 if (D.koromon.f) { $("#example").append(img(D.koromon.f, 2), img(D.koromon.b, 2)); }
 
-// 필수
+// 주문 카드
+const backBtns = {};
+function copyBtn(label, text, pre, det, cls) {
+  const b = el("button", "copy" + (cls ? " " + cls : ""), label); b.type = "button";
+  b.addEventListener("click", () => {
+    const done = () => { b.textContent = "복사했어요"; setTimeout(() => (b.textContent = label), 1600); };
+    const fallback = () => { det.open = true; const s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(pre); s.removeAllRanges(); s.addRange(rg); b.textContent = "선택했어요 · 길게 눌러 복사"; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+  });
+  return b;
+}
+function linkBtn(label, href) { const a = el("a", "btn", label); a.href = href; a.target = "_blank"; a.rel = "noopener"; return a; }
+let lastTier = null;
 for (const e of D.ess) {
-  const c = el("article", "card" + (["digivice", "metalgreymon", "weregarurumon"].includes(e.id) ? " top" : ""));
+  if (e.tier !== lastTier) { $("#ess").append(el("div", "tierh", D.tiers[e.tier])); lastTier = e.tier; }
+  const c = el("article", "card" + (e.done ? " done" : ""));
   const h = el("div", "head"); h.append(el("span", "ko", e.ko), el("span", "en", e.en), el("span", "chip", e.grade), el("span", "chip size", e.size));
+  if (e.pal) { const sw = el("span", "swatch"); sw.title = "롬에 입힐 색"; for (const col of [[248, 248, 248], e.pal[0], e.pal[1], [24, 24, 24]]) { const i = el("i"); i.style.background = "rgb(" + col.join(",") + ")"; sw.append(i); } h.append(sw); }
   c.append(h, el("p", "", e.use));
   const r = el("div", "row");
-  const b = el("button", "copy", "주문문 복사"); b.type = "button";
-  const det = el("details"); det.append(el("summary", "", "주문문 보기")); const pre = el("pre", "", e.prompt); det.append(pre);
-  b.addEventListener("click", () => {
-    const done = () => { b.textContent = "복사했어요"; setTimeout(() => (b.textContent = "주문문 복사"), 1600); };
-    const fallback = () => { det.open = true; const s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(pre); s.removeAllRanges(); s.addRange(rg); b.textContent = "선택했어요 · 길게 눌러 복사"; };
-    try { navigator.clipboard.writeText(e.prompt).then(done, fallback); } catch (err) { fallback(); }
-  });
-  r.append(b);
-  if (e.img) { const a = el("a", "btn", "그림 열기"); a.href = e.img; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
-  if (e.ref) { const a = el("a", "btn", e.img ? "공식 도감" : "참고 문서 (위키몬)"); a.href = e.ref; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
-  c.append(r, det);
-  const g = el("div", "got");
-  if (e.got.f) { const p = el("div", "pic"); p.append(img(e.got.f, e.id === "digivice" ? 4 : 2)); g.append(p); if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 2)); g.append(q); } g.append(el("span", "ok", "받음 · 롬에 넣음")); }
-  else g.append(el("span", "empty", "받은 그림: 아직"));
-  c.append(g);
-  if (e.redo) {
-    const box = el("div", "redo"); box.append(el("b", "", "다시 받을 것: " + e.redo.what));
-    const rb = el("button", "copy", "다시 주문문 복사"); rb.type = "button"; const rp = el("pre", "", e.redo.prompt);
-    rb.addEventListener("click", () => { try { navigator.clipboard.writeText(e.redo.prompt).then(() => { rb.textContent = "복사했어요"; }, () => {}); } catch (err) {} });
-    box.append(el("p", "note", "Gemini의 같은 대화창에 붙여 넣으면 뒷모습만 다시 그려 줘요."), rb, rp); c.append(box);
+  if (e.img) r.append(linkBtn("공식 그림 열기", e.img));
+  if (e.lcd) r.append(linkBtn("LCD 도트 열기", e.lcd));
+  if (e.ref) r.append(linkBtn(e.img ? "공식 도감" : "참고 문서 (위키몬)", e.ref));
+  c.append(r);
+  if (e.prompt) {
+    const det = el("details"); det.append(el("summary", "", "주문문 보기 (앞 · 뒤 · 평면 그림)"));
+    const pf = el("pre", "", e.prompt.f), pb = el("pre", "", e.prompt.b), pl = el("pre", "", e.prompt.flat);
+    det.append(el("b", "", "앞"), pf, el("b", "", "뒤 (앞 확정 뒤)"), pb, el("b", "", "평면 그림 (도트가 계속 틀릴 때)"), pl);
+    const bf = copyBtn("앞 주문문 복사", e.prompt.f, pf, det);
+    const bb = copyBtn("뒤 주문문 복사", e.prompt.b, pb, det);
+    const bl = copyBtn("평면 그림 주문문 복사", e.prompt.flat, pl, det, "alt");
+    backBtns[e.id] = { btn: bb, always: e.front_done };
+    const r2 = el("div", "row"); r2.append(bf, bb, bl); c.append(r2);
+    const hint = el("span", "hint", e.front_done ? "앞모습은 롬에 들어가 있어요. 아래 받은 그림(앞)을 저장해 뒤 주문에 같이 붙이세요." : "뒤 주문문은 '앞 잘 나옴'을 체크하면 켜져요.");
+    c.append(hint, det);
+    const ck = el("div", "checks"); ck.append(box("good-f-" + e.id, "good_f", "앞 잘 나옴", "good"), box("good-b-" + e.id, "good_b", "뒤 잘 나옴", "good")); c.append(ck);
   }
+  const g = el("div", "got");
+  if (e.got.f) {
+    const p = el("div", "pic"); p.append(img(e.got.f, e.id === "digivice" ? 4 : 3)); g.append(p);
+    if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 3)); g.append(q); }
+    g.append(el("span", "ok", e.done ? "받음 · 롬에 넣음" : "받은 그림 (롬에 넣음)"));
+  } else g.append(el("span", "empty", "받은 그림: 아직"));
+  c.append(g);
   $("#ess").append(c);
 }
+function syncBack() {
+  for (const [id, v] of Object.entries(backBtns)) v.btn.disabled = !(v.always || (checks["good-f-" + id] || {}).on);
+}
+syncBack();
 
 function links(m) {
   const s = el("span", "lk");
@@ -200,13 +232,17 @@ function links(m) {
   const b = el("a", "", "도감"); b.href = m.ref; b.target = "_blank"; b.rel = "noopener";
   s.append(a, document.createTextNode(" · "), b); return s;
 }
-function box(id, kind, label) {
-  const l = el("label", "ck"); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true;
+const LS = "dm-order-checks";
+function lsLoad() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+function lsSave() { try { localStorage.setItem(LS, JSON.stringify(checks)); } catch (e) {} }
+function box(id, kind, label, cls) {
+  const l = el("label", "ck" + (cls ? " " + cls : "")); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true;
   i.addEventListener("change", async () => {
-    if (!db) return;
+    checks[id] = { on: i.checked, kind }; counts(); syncBack();
+    if (!db) { lsSave(); return; }
     i.disabled = true;
     try { await db.collection("checks").doc(id).set({ on: i.checked, kind }); }
-    catch (err) { i.checked = !i.checked; $("#dbState").textContent = "저장 실패 · 다시 눌러 주세요"; }
+    catch (err) { i.checked = !i.checked; checks[id] = { on: i.checked, kind }; counts(); syncBack(); $("#dbState").textContent = "저장 실패 · 다시 눌러 주세요"; }
     i.disabled = false;
   });
   boxes[id] = i; l.append(i, document.createTextNode(label)); return l;
@@ -245,19 +281,24 @@ for (const [k, v] of Object.entries(D.drop)) {
 }
 
 function counts() {
-  let a = 0, b = 0;
-  for (const [id, v] of Object.entries(checks)) if (v.on) (v.kind === "redraw" ? a++ : b++);
-  $("#nRedraw").textContent = a; $("#nFirst").textContent = b;
+  const n = { redraw: 0, first: 0, good_f: 0, good_b: 0 };
+  for (const v of Object.values(checks)) if (v.on && v.kind in n) n[v.kind]++;
+  $("#nRedraw").textContent = n.redraw; $("#nFirst").textContent = n.first; $("#nGoodF").textContent = n.good_f; $("#nGoodB").textContent = n.good_b;
 }
+function applyChecks() { for (const [id, v] of Object.entries(checks)) if (boxes[id]) boxes[id].checked = !!v.on; counts(); syncBack(); }
 
 (async () => {
   try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
-  if (!db) { $("#dbState").textContent = "이 화면에서는 체크가 저장되지 않아요"; return; }
+  if (!db) {
+    Object.assign(checks, lsLoad()); applyChecks();
+    for (const i of Object.values(boxes)) i.disabled = false;
+    $("#dbState").textContent = "체크는 이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return;
+  }
   for (const i of Object.values(boxes)) i.disabled = false;
-  $("#dbState").textContent = "체크는 바로 저장돼요";
+  $("#dbState").textContent = "체크는 바로 저장되고 Claude가 읽어요";
   db.collection("checks").onSnapshot((snap) => {
-    for (const d of snap.docs) { const v = d.data(); checks[d.id] = v; if (boxes[d.id]) boxes[d.id].checked = !!v.on; }
-    counts();
+    for (const d of snap.docs) checks[d.id] = d.data();
+    applyChecks();
   }, () => { $("#dbState").textContent = "저장소 연결이 끊겼어요 · 새로 고침해 주세요"; });
 })();
 </script>

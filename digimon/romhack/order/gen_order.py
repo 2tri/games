@@ -16,87 +16,71 @@ needs = json.load(open(R + 'needs.json')) if os.path.exists(R + 'needs.json') el
 def b64(p):
     return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').read()).decode() if os.path.exists(p) else ''
 
-# ── 필수 ──
-ESS = [
- # id, 이름, 영문(검색), 등급, 쓰임, 몸 색(밝은, 어두운), 특징, 공식 도감 디렉터리
- ('digivice', '디지바이스', 'Digivice (Digimon Adventure)', '도구', '공박사 연구소에서 볼 대신 탁자 위에 놓고 고르는 스타팅 선택 물건', ('light gray', 'dark gray'),
-  '', ''),
- ('metalgreymon', '메탈그레이몬', 'MetalGreymon', '완전체', '그레이몬 → (용기 문장) → 메탈그레이몬 → 워그레이몬. 지금은 물음표 알', ('orange', 'steel blue-gray'),
-  'orange dinosaur with blue stripes, a silver metal helmet covering the upper face with one horn, a huge silver metal LEFT arm with three long claws, a metal chest plate with a hatch, torn purple bat-like wings on the back', 'metalgreymon-v'),
- ('weregarurumon', '워가루몬', 'WereGarurumon', '완전체', '가루몬 → (우정 문장) → 워가루몬 → 메탈가루몬. 지금은 물음표 알', ('light blue', 'dark blue'),
-  'a muscular werewolf standing upright, white-and-blue striped fur and a blue mane, ripped blue jeans, brown leather belts and a shoulder strap with a spiked shoulder pad, bandaged fists, big claws', 'weregarrumon'),
- ('tunomon', '뿔몬', 'Tsunomon', '유년기Ⅱ', '29~32번 도로의 흔한 야생 (지금 러브리몬 자리) → 파피몬', ('orange-brown', 'dark brown'),
-  'a small round furry blob, orange-brown fur on top and back, a white face, ONE long curved horn on top of the head, red eyes, pink cheeks. No arms, no legs', 'tunomon'),
- ('tokomon', '토코몬', 'Tokomon', '유년기Ⅱ', '29~31번 도로 밤 야생 (지금 팔코몬 자리) → 파닥몬', ('light pink', 'red'),
-  'a tiny white round marshmallow-like creature, two very short stubby feet and two tiny arms, two long thin ear-like feelers on top, small red eyes, a small mouth', 'tokomon'),
- ('pyocomon', '어니몬', 'Yokomon (Pyocomon)', '유년기Ⅱ', '32·33번 도로 야생 (지금 통통코=포켓몬) → 피요몬', ('pink', 'blue'),
-  'a pale pink onion-bulb shaped body, a big blue flower on top of the head with a curly stamen, small eyes, a few tiny root stubs under the body. No arms, no legs', 'pyocomon'),
- ('mochimon', '모티몬', 'Motimon', '유년기Ⅱ', '32번 도로 야생 (지금 메리프=포켓몬) → 텐타몬', ('light pink', 'dark pink'),
-  'a soft pink rice-cake (mochi) creature shaped like a little ghost, two stubby arms with tiny dark claws, wavy bottom edge with NO legs, big round black eyes, an open happy mouth', 'mochimon'),
- ('tanemon', '시드몬', 'Tanemon', '유년기Ⅱ', '너도밤나무 숲 야생 (지금 파라스=포켓몬) → 팔몬', ('light green', 'dark green'),
-  'an onion-bulb body, green on top and a cream face, big eyes, small cat-like mouth, long green leaves sprouting from the top of the head, four tiny root-like feet. No arms', 'tanemon'),
- ('pukamon', '둥실몬', 'Bukamon (Pukamon)', '유년기Ⅱ', '낚시로 만남 (지금 콘치=포켓몬) → 쉬라몬', ('light gray', 'orange-red'),
-  'a small floating seal-like baby, gray body with a white belly, a flame-shaped orange-red tuft of hair on top of the head, two small front flippers, a long fish-like tail with a fin. No legs', 'pukamon'),
- ('gazimon', '가지몬', 'Gazimon', '성장기', '어둠의 동굴 야생 (지금 노고치=포켓몬)', ('light gray', 'dark purple-gray'),
-  'a small gray rabbit-like Digimon standing on two legs, long pointed ears with dark stripes, sharp red eyes, a sly grin, long sharp claws on both hands', 'gazimon'),
- ('bakemon', '고스몬', 'Bakemon', '성숙기', '모다피의 탑·밤 길 트레이너 (지금 임프몬=테이머즈 자리)', ('light gray', 'red'),
-  'a floating ghost wrapped in a white sheet like a hooded cloak, a dark face opening with glowing eyes and a toothy mouth, two clawed hands sticking out of the sheet, the bottom of the sheet ends in a wavy tail. No legs', 'bakemon'),
- ('kuwagamon', '쿠가몬', 'Kuwagamon', '성숙기', '초반 벌레잡이 트레이너·우두머리 (애니 1화의 첫 적)', ('red', 'dark gray'),
-  'a red giant stag beetle standing upright, two huge red pincers on its head with jagged white inner edges, a mouth full of teeth between them, four thin red arms with claws, insect wings', 'kuwagamon'),
- ('shellmon', '쉘몬', 'Shellmon', '성숙기', '낚시꾼·물가 트레이너, 해변 우두머리', ('pink', 'blue-gray'),
-  'a pink dinosaur-like sea creature crawling low on four short legs, green seaweed-like hair, a big gray-blue spiked conch shell carried on its BACK like a hermit crab, small eyes, an open mouth', 'shellmon'),
- ('monochromon', '모노크로몬', 'Monochromon', '성숙기', '등산가 트레이너 (지금 롱스톤=포켓몬)', ('light gray', 'dark gray'),
-  'a gray armored triceratops-like dinosaur on four legs, one long black horn on its nose, gray and black armor plates on its back and head frill', 'monochromon'),
- ('numemon', '워매몬', 'Numemon', '성숙기', '초반 트레이너 (지금 질퍽이=포켓몬), 실패 진화', ('yellow-green', 'purple'),
-  'a green slug with two long eye stalks topped with big bloodshot eyes, a huge open mouth with big white teeth and a pink tongue sticking out, purple spots. No arms, no legs', 'numemon'),
- ('seadramon', '시드라몬', 'Seadramon', '성숙기', '낚시꾼·바다 트레이너 (지금 콘치 진화형=포켓몬)', ('yellow', 'teal'),
-  'a long teal sea serpent with a yellow armored mask over its face, blue eyes, a red fin at the tail tip, the body coils in an S shape. No arms, no legs', 'seadramon'),
- ('centalmon', '켄터스몬', 'Centarumon', '성숙기', '초반 트레이너 (지금 켄타로스=포켓몬)', ('light brown', 'blue'),
-  'a centaur: an armored humanoid upper body with blue armor plates and a helmet with ONE eye, an arm cannon on one arm, a brown horse-like lower body with four legs', 'centalmon'),
-]
+# ── 주문 (v3: 화풍만 바꾸는 「스타일 변환」, 앞·뒤 따로, 회색 4톤) ── 종별 값은 specs.py
+import specs
+LCD = json.load(open(R + 'lcd.json')) if os.path.exists(R + 'lcd.json') else {}
+SERIES = {'qinglongmon': 'Digimon Adventure 02'}
 
-def front_size(grade):
-    return 40 if grade.startswith(('유아기', '유년기')) else 48 if grade == '성장기' else 56
+def lst(xs): return '\n'.join('%d. %s' % (i + 1, x) for i, x in enumerate(xs))
+def dash(xs): return '\n'.join('- ' + x for x in xs)
+def tones(e):
+    t = e['tones']
+    return (f"  - white = {t['white']}\n  - light gray = {t['light']}\n  - dark gray = {t['dark']}\n  - black = outline, {t['black']}")
 
-def prompt(e):
-    did, ko, en, grade, use, (c1, c2), feat, _ = e
-    if did == 'digivice':
-        return ("Use the attached picture of the Digivice from Digimon Adventure (1999) as the reference. "
-                "Redraw it as a tiny Game Boy Color overworld object sprite in the style of Pokemon Gold/Silver "
-                "(like the Poke Ball item lying on the ground): the device lying on a table, seen from slightly above.\n"
-                "- ONE image, square, pure white background. The sprite is a 16x16 pixel grid, enlarged so every pixel is a crisp square of the same size.\n"
-                "- Exactly 4 colors: white, light gray, dark gray, and a black 1-pixel outline.\n"
-                "- Keep the round screen, the white body and the small buttons recognizable at this tiny size.\n"
-                "- No text, no frame, no grid lines, no shadow, no background.")
-    F = front_size(grade)
-    return (f"Use the attached official picture of {en} ({ko}) as the reference. Redraw it as a Game Boy Color battle sprite "
-            f"in the style of Pokemon Gold/Silver.\n"
-            f"Output ONE wide image (2:1), pure white background, two sprites side by side with empty white space between them:\n"
-            f"- LEFT: FRONT sprite on a {F}x{F} pixel grid. The Digimon faces slightly to the left (3/4 view), whole body visible, standing on the bottom edge.\n"
-            f"- RIGHT: BACK sprite on a 48x48 pixel grid, like Pokemon Gold/Silver back sprites: the same Digimon seen from behind at a 3/4 angle, turned toward the upper right. "
-            f"We see its back, its right shoulder and arm, and a little of the right side of its head. NOT straight from behind and NOT symmetrical. The lower body is cut off by the bottom edge.\n"
-            f"- Real pixel art: every pixel is a crisp square of the same size, enlarged evenly. No anti-aliasing, no blur, no gradients, no dithering, no drop shadow.\n"
-            f"- Exactly 4 colors: white, a black 1-pixel outline (around the body and on the main inner lines), {c1} (light) and {c2} (dark). Small details also use only these 4 colors.\n"
-            f"- Keep these features from the picture: {feat}.\n"
-            f"- No text, no frame, no grid lines, no background scenery.")
+def front_prompt(e):
+    lcd = ("The second attached image is its original LCD sprite from the Digimon virtual pet toys. Follow that silhouette and those proportions "
+           "(only the silhouette; the size and facing below still apply).\n") if e['id'] in LCD_OF else ''
+    return (f"This is {e['ko']} ({e['en']}), a Digimon from {SERIES.get(e['id'], 'Digimon Adventure')}. It is NOT any other creature. "
+            f"Keep this exact character: same species, same silhouette, same proportions, same parts.\n{lcd}\n"
+            "Task: convert the attached picture into a late-1990s Game Boy Color monster RPG battle sprite (FRONT view). Change only the art style, never the design.\n\n"
+            "Composition:\n- ONE square image, pure white background, nothing else.\n"
+            "- The character faces slightly to the left (3/4 view), whole body visible, standing on the bottom edge, filling about 90% of the image height.\n\n"
+            f"Style:\n- VERY low resolution: the character is only about {specs.px(e['grade'])} pixels tall. Use big chunky pixels; every pixel is a crisp square of the same size. "
+            "No anti-aliasing, no blur, no gradients, no dithering, no ground shadow.\n"
+            "- Simplify like a real 8-bit sprite: strong silhouette, thick black outline, big flat shapes. Drop small details.\n"
+            "- Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black. No colors.\n" + tones(e) + "\n\n"
+            f"MUST KEEP (most important first):\n{lst(e['keep'])}\n\nMUST NOT:\n{dash(e['not_'])}\n\n"
+            "No text, no frame, no grid lines, no background scenery.")
 
-REDO = {'metalgreymon': ('뒷모습만 다시 (정면 뒷모습으로 와서 비스듬하게)', 'orange', 'steel blue-gray',
-                        'its back, the right shoulder, the big metal right arm and a little of the right side of the head and helmet, the torn wings')}
-def redo_prompt(c1, c2, see):
-    return ("Redraw only the BACK sprite. Same Digimon, seen from behind at a 3/4 angle, turned toward the upper right, like Pokemon Gold/Silver back sprites: "
-            f"we see {see}. NOT straight from behind and NOT symmetrical. 48x48 pixel grid, crisp square pixels, same 4 colors (white, black outline, {c1}, {c2}). "
-            "The lower body is cut off by the bottom edge. Pure white background, no text.")
+def back_prompt(e):
+    return (f"Attached: (1) the official picture of {e['ko']} ({e['en']}), a Digimon, and (2) the FRONT sprite I already accepted. "
+            "Draw the BACK sprite of the SAME character in the SAME pixel style and the SAME 4 gray tones.\n\n"
+            "View: three-quarter REAR view, like a monster standing in front of the player in a Game Boy battle. The camera is behind and a little above it. "
+            "The character faces AWAY toward the upper-right corner, so we see its back, its right shoulder and right arm, and a thin sliver of the right side of its head. "
+            "NOT straight from behind, NOT symmetrical, NOT a mirror of the front.\n\n"
+            "Composition: ONE square image, pure white background. Only the upper body and head; the lower body is cut off by the bottom edge. "
+            "The character fills about 90% of the image width, about 45 pixels wide.\n\n"
+            "Style: same as the front: big chunky pixels, crisp squares, thick black outline, no anti-aliasing, no gradients, no dithering. "
+            "Exactly 4 tones (white, light gray, dark gray, black), same part-to-tone mapping as the front:\n" + tones(e) + "\n\n"
+            f"MUST KEEP from behind:\n{lst(e['keep_back'])}\n\n"
+            f"MUST NOT:\n- Do not show the face from the front.\n- Do not make it symmetrical.\n{dash(e.get('not_back', []) + e['not_'])}\n\n"
+            "No text, no frame, no grid lines, no background.")
+
+def flat_prompt(e):
+    return (f"This is {e['ko']} ({e['en']}), a Digimon. It is NOT any other creature. Keep this exact character.\n"
+            "Redraw the attached picture as a simple flat cartoon illustration: thick black outline, flat fills, no shading gradients, no texture, "
+            "no background, pure white background.\n"
+            "Use only 4 tones, GRAYSCALE: white, light gray, dark gray, black.\n" + tones(e) + "\n"
+            "Front view, 3/4 facing left, whole body, standing on the bottom edge, filling 90% of a square image.\n"
+            "Simplify small details away; keep the big shapes only.\n\n"
+            f"MUST KEEP (most important first):\n{lst(e['keep'])}\n\nMUST NOT:\n{dash(e['not_'])}")
+
+LCD_OF = {s['id']: LCD[s['wiki']]['url'] for s in specs.S if s.get('wiki') in LCD and LCD[s['wiki']].get('url')}
+TIER = {1: '1 · 지금 막힌 것', 2: '2 · 보스·암흑단·암흑 진화', 3: '3 · 갈래·유아기', 0: '후보 · 계획 결정 뒤'}
 ess = []
-for e in ESS:
-    did, ko, en, grade, use, cols, feat, dirn = e
-    got = {}
-    for side in ('f', 'b'):
-        p = WEB + ('art/digivice.png' if did == 'digivice' else 'art/%s-%s.png' % (did, side))
-        if os.path.exists(p) and not (did == 'digivice' and side == 'b'): got[side] = b64(p)
-    ess.append({'id': did, 'ko': ko, 'en': en, 'grade': grade, 'use': use, 'size': '16×16' if did == 'digivice' else '%d×%d · 48×48' % (front_size(grade), front_size(grade)),
-                'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + dirn) if dirn else 'https://wikimon.net/Digivice',
-                'img': ('https://digimon.net/cimages/digimon/%s.jpg' % dirn) if dirn else '', 'prompt': prompt(e), 'got': got,
-                'redo': ({'what': REDO[did][0], 'prompt': redo_prompt(*REDO[did][1:])} if did in REDO else None)})
+dv = specs.DIGIVICE
+ess.append({'id': 'digivice', 'ko': dv['ko'], 'en': dv['en'], 'grade': dv['grade'], 'tier': 1, 'use': dv['use'], 'size': '16×16', 'done': True,
+            'got': {'f': b64(WEB + 'art/digivice.png')}, 'img': '', 'ref': 'https://wikimon.net/Digivice', 'lcd': ''})
+for e in specs.S:
+    p = {'f': front_prompt(e), 'b': back_prompt(e), 'flat': flat_prompt(e)}
+    for k, v in p.items():
+        assert 'pokemon' not in v.lower() and 'pokémon' not in v.lower(), (e['id'], k)
+    got = {s: b64(WEB + 'art/%s-%s.png' % (e['id'], s)) for s in ('f', 'b') if os.path.exists(WEB + 'art/%s-%s.png' % (e['id'], s))}
+    ess.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'tier': e['tier'], 'use': e['use'],
+                'size': '앞 약 %dpx · 뒤 약 45px' % specs.px(e['grade']), 'pal': [list(c) for c in e['pal']],
+                'img': 'https://digimon.net/cimages/digimon/%s.jpg' % e['dir'], 'ref': 'https://digimon.net/reference_ko/detail.php?directory_name=' + e['dir'],
+                'lcd': LCD_OF.get(e['id'], ''), 'prompt': p, 'got': got, 'front_done': bool(e.get('front_done'))})
+TIERS = TIER
 
 # ── 지금 롬 ──
 REC = {4: '뒷모습이 머리만 남은 덩어리', 7: '뒷모습 모양이 어색함', 16: '뒷모습이 뭉개짐', 6: '색이 빠져 갑옷이 구분 안 됨',
@@ -121,7 +105,7 @@ for k, v in S.items():
     if key: drop[key].append(v['name'])
 
 # ── 나중에 ──
-essen = {e[7] for e in ESS}
+essen = {e['dir'] for e in specs.S}
 later = []
 for k, v in needs.items():
     if not v.get('name') or v.get('dir') in essen: continue
@@ -132,12 +116,12 @@ ORDER = ['유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ', '성장
 later.sort(key=lambda x: (ORDER.index(x['grade']) if x['grade'] in ORDER else 8, -x['n']))
 unnamed = [k for k, v in needs.items() if not v.get('name')]
 
-DATA = {'ess': ess, 'rom': romlist, 'drop': drop, 'later': later, 'unnamed': unnamed,
+DATA = {'tiers': TIERS, 'ess': ess, 'rom': romlist, 'drop': drop, 'later': later, 'unnamed': unnamed,
         'koromon': {'f': b64(WEB + 'art/koromon-f.png'), 'b': b64(WEB + 'art/koromon-b.png')}}
 tpl = open(R + 'order_tpl.html').read()
 html = tpl.replace('/*DATA*/null', json.dumps(DATA, ensure_ascii=False))
 # 제목 글꼴: 페이지에 쓰인 글자만
-text = re.sub(r'<[^>]+>', '', re.sub(r'<style>.*?</style>|<script>.*?</script>', '', tpl, flags=re.S)) + json.dumps([e['ko'] for e in ess] + ['필수', '지금 롬에 있는 디지몬', '나중에', '빠지는 디지몬', '모음'], ensure_ascii=False)
+text = re.sub(r'<[^>]+>', '', re.sub(r'<style>.*?</style>|<script>.*?</script>', '', tpl, flags=re.S)) + json.dumps([e['ko'] for e in ess] + list(TIERS.values()) + ['필수', '지금 롬에 있는 디지몬', '나중에', '빠지는 디지몬', '모음', '그림 주문서'], ensure_ascii=False)
 open(SP + 'chars.txt', 'w').write(''.join(sorted(set(text) | set('0123456789/ ·()×'))))
 subprocess.run(['pyftsubset', WEB + 'Galmuri9.woff2', '--text-file=' + SP + 'chars.txt', '--flavor=woff2', '--output-file=' + SP + 'g.woff2'], check=True)
 html = html.replace('__GALMURI__', base64.b64encode(open(SP + 'g.woff2', 'rb').read()).decode())
