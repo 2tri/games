@@ -260,6 +260,25 @@ class Patch:
             i = d.find(b'\x54\x07\x0a', i + 1)
         assert n == 1, '연구소 볼 셋을 못 찾음 (%d)' % n
         self.log.append('스타팅 고르는 물건 → 디지바이스 (%s)' % os.path.basename(png))
+    # 사람 필드 그림 (걷기 6장: 16×96 = 앞·뒤·옆 서기, 앞·뒤·옆 걷기, 금 순서) — 투명 = 색 0, 옅은 회색 1, 짙은 회색 2, 검정 3
+    def walker(self, png, sprite_id, pal):
+        d = bytes(self.d)
+        m = re.search(rb'\xe5\x21(..)\x3d\x4f\x06\x00\x3e\x06\xcd..\x2a\x5f\x2a\x57', d, re.S)       # GetSprite: ld hl, OverworldSprites
+        tab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+        a = np.asarray(Image.open(png).convert('RGBA')).astype(int)
+        assert a.shape[:2] == (96, 16), a.shape
+        idx = np.zeros((96, 16), int); op = a[..., 3] > 128; L = a[..., :3] @ np.array([.299, .587, .114])
+        idx[op & (L >= 128)] = 1; idx[op & (L < 128) & (L >= 40)] = 2; idx[op & (L < 40)] = 3
+        gfx = bytearray()
+        for f in range(6):
+            for ty, tx in ((0, 0), (0, 1), (1, 0), (1, 1)):                # 좌상·우상·좌하·우하
+                for y in range(8):
+                    row = idx[f * 16 + ty * 8 + y, tx * 8:tx * 8 + 8]
+                    gfx += bytes([sum(((v & 1) << (7 - i)) for i, v in enumerate(row)), sum((((v >> 1) & 1) << (7 - i)) for i, v in enumerate(row))])
+        b, p = self.sp.take(len(gfx), banks=[0x77, 0x7c, 0x7d, 0x76, 0x75]); self.put(addr(b, p), bytes(gfx))
+        # 표의 크기 칸 = 12칸(192바이트): 걷기 그림은 그 두 배를 이어서 읽음 (서기 3장 → VRAM 0, 걷기 3장 → VRAM 1)
+        e = tab + 6 * (sprite_id - 1); assert d[e + 2] == len(gfx) // 2 and d[e + 4] == 1, d[e:e + 6].hex()
+        self.put(e, bytes([p & 255, p >> 8, len(gfx) // 2, b, 1, pal]))
     # 트레이너가 데리고 있는 종 바꾸기 {옛 종: 새 종}
     def trainer_species(self, mapping):
         n = 0
@@ -502,6 +521,8 @@ def build(base, out_rom, out_ips):
     P.log.append('스타팅 → 아구몬·파피몬·브이몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
     dv = os.path.join(WEB, 'art', 'digivice.png')                     # 받은 그림 (16×16), 없으면 임시 그림
     P.digivice(dv if os.path.exists(dv) else os.path.join(WEB, 'art', 'digivice_temp.png'))
+    gw = os.path.join(WEB, 'art', 'gennai_ow.png')                    # 연구소 박사 필드 그림 → 겐나이 (src/people/gennai_ai.png 보고 16×16 로 찍음)
+    if os.path.exists(gw): P.walker(gw, 0x10, 1); P.log.append('연구소 박사 필드 그림 → 겐나이 (파란 팔레트)')   # SPRITE_ELM = 0x10 (연구소 화면 OAM으로 확인), PAL_OW_BLUE
     # 10 브이몬 줄: 디지몬스터는 엑스브이몬·황제드라몬을 우파·누오 칸 능력치·기술(물대포·지진) 그대로 둠 → 스타팅답게 다시 잡음
     #   아머 진화(디지멘탈 도구)는 그대로, 애니에 안 나온 브이드라몬 갈래만 뺌. 레벨 진화는 다른 스타팅처럼 16
     P.evos(VM, [(ITEM, 23, S('번개드라몬')), (ITEM, 24, S('매그너몬')), (ITEM, 22, S('화염드라몬')), (LV, 16, XV)])
@@ -739,6 +760,10 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
+        if src in nrd:
+            P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))
+            P.stats(slot, pic_size=P.d[r.bs + 0x20 * (N[src] - 1) + 17]); P.log.append('  %s 그림 → %s 새 그림' % (nm, src))
     # 노래 (rules.MUSIC): gbc/music 곡을 금 음악 엔진 형식으로 (music.py) 빈 뱅크에 넣고 음악 포인터 표(Music, 3바이트 dba)를 바꿈
     import music
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)
