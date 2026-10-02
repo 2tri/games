@@ -133,6 +133,9 @@ def main():
     ap.add_argument('--sketch', help='밑그림 png (tools/lcd2sketch.py → art/sketch/<id>.png). 앞모습을 그 실루엣에 맞추고 일치율을 알림')
     a = ap.parse_args()
     sp = specs.by_id(a.id) or {}
+    if not sp:                                                         # 다시 그리기 칸 (order/redraw.py: 등급·몸 색)
+        import redraw
+        sp = next((e for e in redraw.R if e['id'] == a.id), {})
     grade = a.grade or sp.get('grade') or '성숙기'
     pal = [tuple(int(v) for v in x.split(',')) for x in a.pal] if a.pal else sp.get('pal')
     if pal is None: raise SystemExit('specs.py 에 %s 가 없음: --pal 로 몸 색 두 개를 알려 주세요' % a.id)

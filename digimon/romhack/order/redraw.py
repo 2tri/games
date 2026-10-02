@@ -13,7 +13,8 @@ def d(no, id, ko, en, grade, lcd, white, light, dark, black, keep, not_=()):
 
 # 롬에 넣을 때 입힐 몸 색 두 개 (밝은·어두운). 받은 그림이 생긴 종부터 채움
 PAL = {'piemon': ((216, 200, 160), (88, 64, 112)), 'meramon': ((248, 168, 72), (200, 48, 32)), 'omegamon': ((216, 216, 224), (184, 48, 48)),
-       'imperialdramondragonmode': ((88, 88, 104), (200, 48, 48))}
+       'imperialdramondragonmode': ((88, 88, 104), (200, 48, 48)), 'diablomon': ((160, 160, 176), (176, 40, 48)),
+       'gekomon': ((120, 184, 96), (216, 168, 64))}
 
 
 R = [
