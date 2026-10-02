@@ -515,14 +515,16 @@ def build(base, out_rom, out_ips):
            S('레나몬'): S('파피몬'), S('구미호몬'): S('가루몬'), S('샤크라몬'): WGR,
            S('테리어몬'): VM, S('가르고몬'): XV, S('래피드몬'): IM}
     T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('파피몬'), S('테리어몬'): VM})
-    P.text_at(T[S('아구몬')], '공박사『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
-    P.text_at(T[S('파피몬')], '공박사『물디지몬<LINE>파피몬이 마음에 드느냐!?')
-    P.text_at(T[VM], '공박사『소룡디지몬<LINE>브이몬이 마음에 들었느냐!?')
+    P.text_at(T[S('아구몬')], '겐나이『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
+    P.text_at(T[S('파피몬')], '겐나이『물디지몬<LINE>파피몬이 마음에 드느냐!?')
+    P.text_at(T[VM], '겐나이『소룡디지몬<LINE>브이몬이 마음에 들었느냐!?')
     P.log.append('스타팅 → 아구몬·파피몬·브이몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
     dv = os.path.join(WEB, 'art', 'digivice.png')                     # 받은 그림 (16×16), 없으면 임시 그림
     P.digivice(dv if os.path.exists(dv) else os.path.join(WEB, 'art', 'digivice_temp.png'))
     gw = os.path.join(WEB, 'art', 'gennai_ow.png')                    # 연구소 박사 필드 그림 → 겐나이 (src/people/gennai_ai.png 보고 16×16 로 찍음)
-    if os.path.exists(gw): P.walker(gw, 0x10, 1); P.log.append('연구소 박사 필드 그림 → 겐나이 (파란 팔레트)')   # SPRITE_ELM = 0x10 (연구소 화면 OAM으로 확인), PAL_OW_BLUE
+    if os.path.exists(gw):                                            # SPRITE_ELM = 0x10 (연구소 화면 OAM으로 확인), SPRITE_OAK = 0x05 (오박사 연구소·이상한 할아버지 집·목호 방), PAL_OW_BLUE
+        for sid in (0x10, 0x05): P.walker(gw, sid, 1)
+        P.log.append('박사 필드 그림(공박사·오박사) → 겐나이 (파란 팔레트)')
     # 10 브이몬 줄: 디지몬스터는 엑스브이몬·황제드라몬을 우파·누오 칸 능력치·기술(물대포·지진) 그대로 둠 → 스타팅답게 다시 잡음
     #   아머 진화(디지멘탈 도구)는 그대로, 애니에 안 나온 브이드라몬 갈래만 뺌. 레벨 진화는 다른 스타팅처럼 16
     P.evos(VM, [(ITEM, 23, S('번개드라몬')), (ITEM, 24, S('매그너몬')), (ITEM, 22, S('화염드라몬')), (LV, 16, XV)])
