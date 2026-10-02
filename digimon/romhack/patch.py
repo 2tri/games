@@ -18,7 +18,7 @@
 import os, re, sys, json, struct
 import numpy as np
 from PIL import Image
-import dmrom, gblz, krtext
+import dmrom, gblz, krtext, encounters, remap
 from dmrom import addr, bankptr
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
@@ -444,6 +444,9 @@ def build(base, out_rom, out_ips):
         installed[no] = m
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
+    # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
+    P.r.d = P.d
+    remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))
