@@ -138,6 +138,19 @@ class Patch:
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11)
         self.palette(no, *pal)
+    # 트레이너 그림 (GetTrainerPic: ld hl, TrainerPicPointers / ld a,[wTrainerClass] / dec a / ld bc,3 …, 팔레트는 TrainerPalettes 직업×4바이트, 0 = 주인공)
+    def trainer_pic(self, cls, png):
+        d = bytes(self.d)
+        m = re.search(rb'\x21(..)\xfa..\x3d\x01\x03\x00\xcd..\x3e(.)\xcd', d, re.S)
+        tab = addr(m.group(2)[0], int.from_bytes(m.group(1), 'little'))
+        idx, pal = png_to_idx(png, 56, 56)
+        dat = gblz.compress(to_gb_pic(idx, 7, 7))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)     # 13·14·1F 뱅크는 FixPicBank 가 바꿔 읽어서 피함
+        self.put(tab + 3 * (cls - 1), bytes([bank, p & 255, p >> 8]))
+        m = re.search(rb'\x6f\x26\x00\x29\x29\x01(..)\x09\xc9', d, re.S)
+        pt = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+        self.put(pt + 4 * cls, struct.pack('<2H', rgb555(pal[0]), rgb555(pal[1])))
+        return pal
     # 메뉴 아이콘 (ReadMonMenuIcon: cp EGG / jr z / dec a / ld hl, MonMenuIcons …)
     def icon(self, no, icon_id):
         d = bytes(self.d); m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', d, re.S)
@@ -736,6 +749,9 @@ def build(base, out_rom, out_ips):
         b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop))
         for i in ids: P.put(mtab + 3 * i, bytes([b]) + struct.pack('<H', p))
     P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab))
+    # 인트로 박사 그림 → 겐나이 (사용자: 「이름만 겐나이로 나와서 아쉽다」, 그림 세션 art/gennai_portrait.png). 직업 POKEMON_PROF = 10
+    gp = os.path.join(WEB, 'art', 'gennai_portrait.png')
+    if os.path.exists(gp): P.log.append('인트로 박사 그림 → 겐나이 (색 %s)' % (P.trainer_pic(10, gp),))
     # 제목 화면: 한글 로고(art/title/logo.png, title_logo.py) + 칠색조 자리에 디지몬 (title.py)
     import title
     mon = os.path.join(WEB, 'art', rules.TITLE_MON[0] + ('.png' if '/' in rules.TITLE_MON[0] else '-f.png'))

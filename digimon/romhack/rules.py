@@ -98,7 +98,7 @@ PLACE_ADD = [  # (종, 종류, 지역 앞부분, 칸 번호, (최저, 최고) �
 REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '그레이몬': 'greymon', '피요몬': 'piyomon',
           '쉬라몬': 'gomamon', '파닥몬': 'patamon', '엔젤몬': 'angemon', '가트몬': 'gatomon', '레오몬': 'leomon',
           '플롯트몬': 'salamon', '니드몬': 'togemon',
-          '오메가몬': 'omegamon', '디아블로몬': 'diablomon'}         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
+          '오메가몬': 'omegamon', '디아블로몬': 'diablomon', '돌핀몬': 'rukamon'}         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
 
 # 노래 (사용자 지시 2026-10-02): 예전 GBC 판 곡(gbc/music/<곡>.json) → 금 음악 번호 (constants/music_constants.asm)
 MUSIC = {'title':   [0x01],                          # 제목
