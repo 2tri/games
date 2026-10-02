@@ -1189,6 +1189,270 @@
     ]
    ],
    "like": "플롯트몬"
+  },
+  {
+   "id": "vamdemon",
+   "slot": 169,
+   "name": "묘티스몬",
+   "grade": "완전체",
+   "type": [
+    "GHOST",
+    "DARK"
+   ],
+   "stats": [
+    80,
+    95,
+    75,
+    95,
+    100,
+    75
+   ],
+   "exp": 180,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "BITE"
+    ],
+    [
+     1,
+     "LEECH_LIFE"
+    ],
+    [
+     1,
+     "CONFUSE_RAY"
+    ],
+    [
+     1,
+     "NIGHT_SHADE"
+    ],
+    [
+     30,
+     "FAINT_ATTACK"
+    ],
+    [
+     36,
+     "MEAN_LOOK"
+    ],
+    [
+     42,
+     "SHADOW_BALL"
+    ],
+    [
+     48,
+     "CRUNCH"
+    ]
+   ],
+   "dex": [
+    "언데드형",
+    18,
+    650,
+    [
+     "밤의 어둠을 다스리는",
+     "흡혈귀 디지몬. 박쥐",
+     "떼로 적을 덮친다"
+    ]
+   ],
+   "like": "데블몬"
+  },
+  {
+   "id": "ladydevimon",
+   "slot": 229,
+   "name": "레이디데블",
+   "grade": "완전체",
+   "type": [
+    "GHOST",
+    "DARK"
+   ],
+   "stats": [
+    70,
+    100,
+    70,
+    100,
+    80,
+    80
+   ],
+   "exp": 175,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "FURY_SWIPES"
+    ],
+    [
+     1,
+     "NIGHT_SHADE"
+    ],
+    [
+     1,
+     "CONFUSE_RAY"
+    ],
+    [
+     1,
+     "FAINT_ATTACK"
+    ],
+    [
+     32,
+     "SLASH"
+    ],
+    [
+     38,
+     "SHADOW_BALL"
+    ],
+    [
+     44,
+     "CRUNCH"
+    ],
+    [
+     50,
+     "HYPER_BEAM"
+    ]
+   ],
+   "dex": [
+    "타천사형",
+    17,
+    500,
+    [
+     "어둠에 떨어진 여성형",
+     "천사. 검은 날개와",
+     "박쥐 떼로 적을 태운다"
+    ]
+   ],
+   "like": "데블몬"
+  },
+  {
+   "id": "pinochimon",
+   "slot": 170,
+   "name": "피노키몬",
+   "grade": "궁극체",
+   "type": [
+    "GRASS",
+    "DARK"
+   ],
+   "stats": [
+    90,
+    120,
+    90,
+    100,
+    90,
+    90
+   ],
+   "exp": 220,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "ABSORB"
+    ],
+    [
+     1,
+     "LEECH_SEED"
+    ],
+    [
+     1,
+     "STRING_SHOT"
+    ],
+    [
+     1,
+     "SLAM"
+    ],
+    [
+     40,
+     "RAZOR_LEAF"
+    ],
+    [
+     46,
+     "GIGA_DRAIN"
+    ],
+    [
+     52,
+     "SOLARBEAM"
+    ],
+    [
+     58,
+     "HYPER_BEAM"
+    ]
+   ],
+   "dex": [
+    "퍼펫형",
+    14,
+    300,
+    [
+     "나무 인형 모습의",
+     "디지몬. 거짓말을 잘하고",
+     "큰 망치로 장난친다"
+    ]
+   ],
+   "like": "니드몬"
+  },
+  {
+   "id": "apocalymon",
+   "slot": 171,
+   "name": "아포카리몬",
+   "grade": "궁극체",
+   "type": [
+    "DARK",
+    "GHOST"
+   ],
+   "stats": [
+    110,
+    110,
+    110,
+    70,
+    110,
+    90
+   ],
+   "exp": 255,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "NIGHT_SHADE"
+    ],
+    [
+     1,
+     "CONFUSE_RAY"
+    ],
+    [
+     1,
+     "MEAN_LOOK"
+    ],
+    [
+     1,
+     "CURSE"
+    ],
+    [
+     44,
+     "SHADOW_BALL"
+    ],
+    [
+     50,
+     "PSYCHIC_M"
+    ],
+    [
+     56,
+     "DESTINY_BOND"
+    ],
+    [
+     62,
+     "HYPER_BEAM"
+    ]
+   ],
+   "dex": [
+    "종족불명",
+    99,
+    9999,
+    [
+     "어둠에 모인 원한이",
+     "모습을 얻은 디지몬.",
+     "모든 것을 무로 돌린다"
+    ]
+   ],
+   "like": "데블몬"
   }
  ],
  "waiting_art": [

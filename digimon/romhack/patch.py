@@ -174,9 +174,23 @@ class Patch:
             self.put(ent(no), e + bytes(room - len(e))); self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room)); return
         # 원래 자리가 모자라면 같은 뱅크의 빈 곳으로 옮기고 포인터를 바꿈 (도감 뱅크는 종 번호로 정해짐: 1~128 / 129~251)
         bank = ent(no) // 0x4000
-        b, p = self.sp.take(len(e), bank=bank)
+        for k, (fb, fs, fe) in enumerate(getattr(self, 'dexfree', [])):     # 빈 칸 도감 자리 (dex_pool)
+            if fb == bank and fe - fs >= len(e):
+                self.dexfree[k] = (fb, fs + len(e), fe); b, p = fb, 0x4000 + fs % 0x4000; break
+        else:
+            b, p = self.sp.take(len(e), bank=bank)
         self.put(addr(b, p), e); self.put(tab + 2 * (no - 1), struct.pack('<H', p))
         self.log.append('도감 %d번 %d바이트 → 빈 곳 %02X:%04X' % (no, len(e), b, p))
+    def dex_pool(self, empty_nos):
+        """빈 칸(-----) 도감 글은 게임에서 안 보임 → 5바이트(분류@ 키·몸무게 0 글@)로 줄이고 남는 자리를 dex_bytes 가 옮길 곳으로 씀"""
+        d, tab, ent = self._dex_tab(); self.dexfree = []
+        for no in empty_nos:
+            a = ent(no)
+            room = min((ent(s) - a for s in range(1, NUM_SP + 1) if ent(s) > a and ent(s) // 0x4000 == a // 0x4000), default=0)
+            if room < 5: continue
+            self.put(a, bytes([0x50, 0, 0, 0, 0x50]))
+            if room > 5: self.dexfree.append((a // 0x4000, a + 5, a + room))
+        return sum(fe - fs for _, fs, fe in self.dexfree)
     # 글 한 덩이 바꾸기: a = 글자 시작(text 명령 0x00 다음). <DONE>/<PROMPT> 앞까지를 새 글로, 남는 자리는 빈칸(0x7f)
     def text_at(self, a, new):
         d = self.d; end = a
@@ -494,7 +508,7 @@ def build(base, out_rom, out_ips):
         if not (os.path.exists(f) and os.path.exists(b)):
             if os.environ.get('PLACEHOLDER') != '1': continue
             f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
-        no = N.get(m['name']) or S(m['slot'])
+        no = N.get(m['name']) or (m['slot'] if isinstance(m['slot'], int) else S(m['slot']))      # 빈 칸(-----)은 번호로
         st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
         P.name(no, m['name']); N[m['name']] = no                        # 새 칸끼리 진화(푸니몬 → 뿔몬)도 찾게
         P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
@@ -518,7 +532,7 @@ def build(base, out_rom, out_ips):
         '플라이몬': T((ANYCREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
         '스나이몬': T((ANYCREST, 34, '아라크네몬')),
         '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((ANYCREST, 35, '실피드몬')),
-        '가트몬': T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else [],     # 달맞이 돌 → 오파니몬 삭제
+        '가트몬': (T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else []) + (T((DARK, 30, '레이디데블')) if has('레이디데블') else []),     # 달맞이 돌 → 오파니몬 삭제. 자기 문장 → 암흑 순서
         '홀리엔젤몬': T((CREST, 45, '세라피몬')),
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
@@ -706,6 +720,35 @@ def build(base, out_rom, out_ips):
     empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
     for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
+    # 1.4 그림 다시 그리기 (rules.REDRAW): 우리 그림이 앞·뒤 다 있는 종. 팔레트도 그림 색으로
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; nrd = []
+    for nm, art in rules.REDRAW.items():
+        f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
+        if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
+    P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    # 노래 (rules.MUSIC): gbc/music 곡을 금 음악 엔진 형식으로 (music.py) 빈 뱅크에 넣고 음악 포인터 표(Music, 3바이트 dba)를 바꿈
+    import music
+    m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)
+    mtab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+    for nm, ids in rules.MUSIC.items():
+        js = music.load(nm); loop = True if nm == 'evolve' else None
+        size = len(music.song_bytes(js, 0x4000, loop))
+        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop))
+        for i in ids: P.put(mtab + 3 * i, bytes([b]) + struct.pack('<H', p))
+    P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab))
+    # 제목 화면: 한글 로고(art/title/logo.png, title_logo.py) + 칠색조 자리에 디지몬 (title.py)
+    import title
+    npc = title.apply(P, os.path.join(WEB, 'art', 'title', 'logo.png'), os.path.join(WEB, 'art', rules.TITLE_MON[0] + '-f.png'), rules.TITLE_MON[1])
+    P.log.append('제목 화면: 로고 「디지몬스터」, 칠색조 → %s (스프라이트 %d조각)' % (rules.TITLE_MON[0], npc))
+    # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
+    DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
+    nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
+    for nm, v in DX.items():
+        if nm.startswith('_') or nm not in N: continue
+        e = P.dex_entry(N[nm]); i = 0
+        while e[i] != 0x50: i += 2 if 1 <= e[i] <= 0x0b else 1          # 분류 끝 '@'
+        P.dex(N[nm], v[0], e[i + 1], e[i + 2] | e[i + 3] << 8, v[1:]); ndx += 1
+    P.log.append('도감 새 글 %d종 (dex_texts.json), 빈 칸 도감 자리 %d바이트를 옮길 곳으로' % (ndx, nfree))
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)
