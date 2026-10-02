@@ -268,6 +268,25 @@ class Patch:
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
         self.put(tab + 2 * groups.index(gname), struct.pack('<H', p))
         self.log.append('트레이너 무리 %s %d → %d바이트, 뱅크 %02X:%04X 로 옮김' % (gname, e - s, len(blob), b, p))
+    # D단계 같은 길이 치환. 대사: 새 말 + 그 줄 나머지 + 빈칸(줄어든 바이트만큼, 줄 끝이라 안 보임) → 길이가 같아 포인터를 안 건드림
+    #   도구 이름표(item_list = 시작, 끝): 이름을 세어 읽는 목록이라 뒤 이름을 당기고 목록 끝에 '@'
+    def words(self, pairs, item_list):
+        CTRL = (0x50, 0x59, 0x5a, 0x5c, 0x5d, 0x5e, 0x5f)
+        out = []
+        for old, new in pairs:
+            ob, nb = krtext.encode(old), krtext.encode(new); gap = len(ob) - len(nb); assert gap >= 0, (old, new)
+            n = 0; i = bytes(self.d).find(ob)
+            while i >= 0:
+                if gap and item_list[0] <= i < item_list[1]:
+                    e = item_list[1]; self.put(i, nb + bytes(self.d[i + len(ob):e]) + b'\x50' * gap)
+                elif gap:
+                    j = i + len(ob)
+                    while self.d[j] not in CTRL: j += 2 if 1 <= self.d[j] <= 0x0b else 1
+                    self.put(i, nb + bytes(self.d[i + len(ob):j]) + krtext.encode(' ') * gap)
+                else: self.put(i, nb)
+                n += 1; i = bytes(self.d).find(ob, i + len(nb))
+            out.append('%s→%s %d곳' % (old, new, n))
+        self.log.append('D단계 낱말 바꾸기: ' + ', '.join(out))
     def evos(self, no, evos, moves=None):
         """진화·기술 목록을 새로 써서 뱅크 0x10 빈 곳에 두고 포인터를 바꿈. moves=None 이면 원래 기술 목록 유지"""
         old_ev, old_mv = self.r.evos_attacks(no)
@@ -574,6 +593,15 @@ def build(base, out_rom, out_ips):
         if pw is not None: P.d[mt + 7 * (no - 1) + 2] = pw
         if pp is not None: P.d[mt + 7 * (no - 1) + 5] = pp
     P.log.append('기술 고침 %d개' % len(rules.MOVE_FIX))
+    # D단계 1차: 겐나이·암흑단·디지볼 (rules.WORDS), 안농 → 디지문자 (이름·도감만). A단계 바꾸기 뒤라 안농 칸 자리는 그대로
+    il = bytes(P.d).find(krtext.encode('마스터볼') + b'\x50' + krtext.encode('하이퍼볼') + b'\x50')
+    assert il > 0, '도구 이름표를 못 찾음'
+    ie = il
+    for _ in range(256): ie = P.d.index(0x50, ie) + 1                 # 도구 이름 256개 (pokegold-kr data/items/names.asm)
+    P.words(rules.WORDS, (il, ie))
+    un, unm = rules.UNOWN
+    P.name(un, unm)
+    P.dex(un, '문자형', 5, 50, ['디지털 세계의 옛', '문자. 알프의 유적', '벽에 새겨져 있다'])
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)

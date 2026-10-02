@@ -40,6 +40,7 @@ class Ctx:
             elif n in G and G[n]['name'] == nm and G[n]['grade']: self.grade[n] = G[n]['grade']
         self.grade.update({161: '유년기Ⅱ', 212: '완전체', 217: '완전체'})
         self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed
+        if self.name(RU.UNOWN[0]) == RU.UNOWN[1]: self.keep.add(RU.UNOWN[0])      # 안농 칸 → 디지문자 (D단계)
         self.drop = {n for n in range(1, 252) if n not in self.pk and n not in self.keep}
         self.sites = E.find_all(self.base)
         for s in self.sites: s['cur'] = self.d[s['addr']]
@@ -117,6 +118,8 @@ def summary(c, out):
         if t and t[1] >= 2:
             for w in ('포켓몬', '몬스터볼', '로켓단', '오박사'): cnt[w] += t[2].count(w)
     out.append('대사 속 「포켓몬」「몬스터볼」「로켓단」「오박사」 남은 수: %d / %d / %d / %d' % tuple(cnt[w] for w in ('포켓몬', '몬스터볼', '로켓단', '오박사')))
+    allc = [c.d.count(krtext.encode(w)) for w in ('포켓몬', '몬스터볼', '로켓단', '오박사')]
+    out.append('롬 전체(이름표·메뉴 포함) 같은 낱말 남은 수: %d / %d / %d / %d' % tuple(allc))
 
 
 def rules(c, out):
