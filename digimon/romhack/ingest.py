@@ -28,19 +28,21 @@ def split(im):
     return im.crop((0, 0, cut, h)), im.crop((cut, 0, w, h))
 
 
-def convert(part, maxs):
-    t, pal, cell = snapc.snap(part, accent=False)
+def convert(part, maxs, fixed=None):
+    t, pal, cell = snapc.snap(part, accent=False, fixed=fixed)
     t = snapc.drop_small(t, 8); t = snapc.shrink2(t, maxs, maxs); t = snapc.drop_small(t, 3)
     return t, pal, cell
 
 
 def main(src, did, grade):
     im = Image.open(src)
-    shutil.copy(src, os.path.join(WEB, 'art', 'src', did + '_ai' + os.path.splitext(src)[1]))
+    keep = os.path.join(WEB, 'art', 'src', did + '_ai' + os.path.splitext(src)[1])
+    if os.path.abspath(src) != keep: shutil.copy(src, keep)
     f, b = split(im)
-    out = []
+    out = []; body = None
     for part, side, maxs in ((f, 'f', FRONT.get(grade, 56)), (b, 'b', 48)):
-        t, pal, cell = convert(part, maxs)
+        t, pal, cell = convert(part, maxs, body)          # 롬은 앞·뒤가 팔레트 하나를 같이 쓰므로 뒷모습도 앞모습의 몸 색 두 개로
+        body = [list(pal[1]), list(pal[2])]
         snapc.to_image(t, pal).save(os.path.join(WEB, 'art', '%s-%s.png' % (did, side)))
         out.append(snapc.to_image(t, pal, 4, (248, 248, 248)))
         print(side, '칸', tuple(round(x, 2) for x in cell), '→', t.shape[::-1], '색', pal[:4])

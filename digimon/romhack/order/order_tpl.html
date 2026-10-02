@@ -180,7 +180,7 @@ for (const e of D.ess) {
   if (e.ref) { const a = el("a", "btn", e.img ? "공식 도감" : "참고 문서 (위키몬)"); a.href = e.ref; a.target = "_blank"; a.rel = "noopener"; r.append(a); }
   c.append(r, det);
   const g = el("div", "got");
-  if (e.got.f) { const p = el("div", "pic"); p.append(img(e.got.f, 2)); g.append(p); if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 2)); g.append(q); } g.append(el("span", "ok", "받음 · 롬에 넣음")); }
+  if (e.got.f) { const p = el("div", "pic"); p.append(img(e.got.f, e.id === "digivice" ? 4 : 2)); g.append(p); if (e.got.b) { const q = el("div", "pic"); q.append(img(e.got.b, 2)); g.append(q); } g.append(el("span", "ok", "받음 · 롬에 넣음")); }
   else g.append(el("span", "empty", "받은 그림: 아직"));
   c.append(g);
   $("#ess").append(c);

@@ -84,8 +84,8 @@ for e in ESS:
     did, ko, en, grade, use, cols, feat, dirn = e
     got = {}
     for side in ('f', 'b'):
-        p = WEB + 'art/%s-%s.png' % (did, side)
-        if os.path.exists(p): got[side] = b64(p)
+        p = WEB + ('art/digivice.png' if did == 'digivice' else 'art/%s-%s.png' % (did, side))
+        if os.path.exists(p) and not (did == 'digivice' and side == 'b'): got[side] = b64(p)
     ess.append({'id': did, 'ko': ko, 'en': en, 'grade': grade, 'use': use, 'size': '16×16' if did == 'digivice' else '%d×%d · 48×48' % (front_size(grade), front_size(grade)),
                 'ref': ('https://digimon.net/reference_ko/detail.php?directory_name=' + dirn) if dirn else 'https://wikimon.net/Digivice',
                 'img': ('https://digimon.net/cimages/digimon/%s.jpg' % dirn) if dirn else '', 'prompt': prompt(e), 'got': got})
@@ -95,7 +95,7 @@ REC = {4: '뒷모습이 머리만 남은 덩어리', 7: '뒷모습 모양이 어
        10: '색이 실제(노란 몸·빨강 검정 줄무늬)와 다름', 12: '회색 (실제는 검정·빨강)', 25: '뒷모습이 잘림', 74: '너무 작고 흐림',
        102: '뒷모습이 알 껍질만', 116: '뒷모습이 너무 작음', 126: '뒷모습이 노란 덩어리', 135: '뒷모습이 깨져 보임',
        172: '뒷모습이 잘림', 173: '너무 작고 흐림', 175: '너무 크고 얼굴이 잘림', 186: '뒷모습이 너무 작음'}
-NEW = {161: '받은 그림으로 넣음', 212: '물음표 알 (필수 목록에서 주문)', 217: '물음표 알 (필수 목록에서 주문)'}
+NEW = {161: '받은 그림으로 넣음', 212: '받은 그림으로 넣음', 217: '물음표 알 (필수 목록에서 주문)'}
 romlist = []
 for n in keep:
     g = (G.get(str(n)) or {}).get('grade') or {161: '유년기Ⅱ', 212: '완전체', 217: '완전체'}.get(n, '')

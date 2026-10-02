@@ -171,6 +171,20 @@ class Patch:
         e = krtext.encode_text(new)
         assert len(e) <= end - a, '글이 원래보다 김 (%d > %d): %s' % (len(e), end - a, new)
         self.put(a, e + b'\x7f' * (end - a - len(e)))
+    # 대사 한 덩어리를 통째로 바꾸기 (texts.py 의 addr = text 명령 0x00 자리). new 는 <LINE>·<PARA>·<DONE> 등을 포함한 전체 글
+    #   원래 자리에 들어가면 그대로 쓰고, 길면 빈 뱅크에 새로 쓴 뒤 원래 자리에 'text_far 새 주소 / text_end' 를 남김
+    #   (금 대사가 원래 쓰는 방식이라 같은 뱅크 2바이트 주소로 가리키던 스크립트도 그대로 동작)
+    def retext(self, a, new):
+        d = self.d; assert d[a] == 0x00, '대사 시작이 아님 %X' % a
+        end = a + 1
+        while d[end] not in (0x5e, 0x5f, 0x50): end += 2 if 1 <= d[end] <= 0x0b else 1
+        e = krtext.encode_text(new)
+        assert e and e[-1] in (0x5e, 0x5f, 0x50), '끝 표시(<DONE>/<PROMPT>/@)로 끝나야 함'
+        if len(e) <= end - a:
+            self.put(a + 1, e + b'\x50' * (end - a - len(e))); return 'in'
+        b, p = self.sp.take(len(e) + 1, banks=[0x7c, 0x7d, 0x77, 0x76, 0x75])
+        self.put(addr(b, p), b'\x00' + e)
+        self.put(a, bytes([0x16, p & 255, p >> 8, b, 0x50])); return 'far'
     # 스타팅: 공박사 연구소의 세 볼 스크립트 (pokepic X / cry X / … getmonname X / … givepoke X, 5) 종 바꾸기 → {새 종: 묻는 글 주소}
     def starters(self, mapping):
         d = bytes(self.d); texts = {}
