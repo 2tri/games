@@ -75,10 +75,11 @@ def apply(P, logo_png, mon_png, mon_cols):
     """P = patch.Patch. mon_cols = 스프라이트 색 3개 (밝은 → 어두운), 그림 색은 가장 가까운 것으로"""
     d = bytes(P.d)
     (p1, b1), a1, (p3, b3), a3 = find(d)
-    g = gblz.decompress(d, a1); g = bytearray(g[0] if isinstance(g, tuple) else g)
-    data = gblz.compress(bytes(logo_tiles(g, logo_png)))
-    bank, p = P.sp.take(len(data), banks=[0x13, 0x11, 0x0b]); P.put(dmrom.addr(bank, p), data)
-    P.put(p1, struct.pack('<H', p)); P.put(b1, bytes([bank]))
+    if logo_png:                                                          # None 이면 1.4 로고(デジモンアドベンチャー) 그대로
+        g = gblz.decompress(d, a1); g = bytearray(g[0] if isinstance(g, tuple) else g)
+        data = gblz.compress(bytes(logo_tiles(g, logo_png)))
+        bank, p = P.sp.take(len(data), banks=[0x13, 0x11, 0x0b]); P.put(dmrom.addr(bank, p), data)
+        P.put(p1, struct.pack('<H', p)); P.put(b1, bytes([bank]))
     # 칠색조 → 디지몬: 타일
     pieces, tiles = sprite_layout(mon_png, mon_cols)
     assert len(pieces) <= 30, '조각이 너무 많음 %d' % len(pieces)

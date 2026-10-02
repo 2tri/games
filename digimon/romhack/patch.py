@@ -738,8 +738,8 @@ def build(base, out_rom, out_ips):
     P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab))
     # 제목 화면: 한글 로고(art/title/logo.png, title_logo.py) + 칠색조 자리에 디지몬 (title.py)
     import title
-    npc = title.apply(P, os.path.join(WEB, 'art', 'title', 'logo.png'), os.path.join(WEB, 'art', rules.TITLE_MON[0] + '-f.png'), rules.TITLE_MON[1])
-    P.log.append('제목 화면: 로고 「디지몬스터」, 칠색조 → %s (스프라이트 %d조각)' % (rules.TITLE_MON[0], npc))
+    npc = title.apply(P, rules.TITLE_LOGO and os.path.join(WEB, 'art', 'title', rules.TITLE_LOGO), os.path.join(WEB, 'art', rules.TITLE_MON[0] + '-f.png'), rules.TITLE_MON[1])
+    P.log.append('제목 화면: 로고 %s, 칠색조 → %s (스프라이트 %d조각)' % (rules.TITLE_LOGO or '1.4 그대로', rules.TITLE_MON[0], npc))
     # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
     DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
     nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
