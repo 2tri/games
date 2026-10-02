@@ -4,5 +4,15 @@
 "pukamon": {"shade": 0, "front": {"ops": []}, "back": {"ops": [["boxall", 5, 7, 12, 10, 1], ["boxall", 6, 13, 14, 14, 1], ["boxall", 14, 7, 19, 10, 1], ["boxall", 5, 13, 19, 14, 1], ["boxall", 12, 15, 19, 16, 1]]}},
 "botamon": {"shade": 0, "front": {"ops": [["rows", 0, 16, 2], ["ink", 2], ["px", 1, [[4, 7], [3, 8], [4, 8], [5, 8], [3, 9], [4, 9], [5, 9], [4, 10], [11, 7], [12, 7], [10, 8], [11, 8], [12, 8], [13, 8], [10, 9], [11, 9], [12, 9], [13, 9], [11, 10], [12, 10]]], ["px", 3, [[4, 8], [4, 9], [12, 8], [12, 9]]]]}, "back": {"ops": [["boxall", 4, 6, 16, 11, 2]]}},
 "punimon": {"shade": 2, "front": {"ops": [["seed", 2, 9, 0], ["seed", 10, 9, 0]]}, "back": {"ops": [["boxall", 4, 8, 18, 12, 1]]}},
-"nyaromon": {"shade": 0, "front": {"ops": [["px", 2, [[5, 5], [4, 6], [5, 6], [4, 7], [5, 7]]]]}, "back": {"ops": [["boxall", 8, 11, 22, 20, 1]]}}
+"nyaromon": {"shade": 0, "front": {"ops": [["px", 2, [[5, 5], [4, 6], [5, 6], [4, 7], [5, 7]]]]}, "back": {"ops": [["boxall", 8, 11, 22, 20, 1]]}},
+"gazimon": {"shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 5, 6, 22, 13, 1]]}},
+"bakemon": {"shade": 2, "shade_on": [0], "shade_tone": 1, "front": {"ops": [["clear", 23, 27], ["rows", 0, 22, 0]]}, "back": {"ops": [["boxall", 8, 3, 17, 13, 0]]}},
+"shellmon": {"scale": 1.5, "shade": 0, "front": {"ops": [["rows", 0, 11, 2]]}, "back": {"ops": []}},
+"monochromon": {"scale": 1.5, "shade": 0, "front": {"ops": [["ink", 2]]}, "back": {"ops": []}},
+"seadramon": {"scale": 3, "shade": 0, "front": {"ops": [["rows", 0, 15, 2], ["rows", 1, 4, 1], ["px", 0, [[5, 3]]]]}, "back": {"ops": [["boxall", 8, 2, 12, 4, 1]]}},
+"tyranomon": {"scale": 3, "shade": 0, "front": {"ops": []}, "back": {"ops": [["boxall", 6, 1, 12, 4, 1]]}},
+"vegimon": {"scale": 3, "shade": 0, "front": {"ops": [["rows", 0, 4, 2]]}, "back": {"ops": [["boxall", 3, 5, 13, 9, 1]]}},
+"kiwimon": {"scale": 3, "shade": 0, "front": {"ops": [["ink", 0], ["rows", 4, 15, 0], ["map", 0, 0, 15, 4, 0, 1], ["map", 0, 13, 15, 15, 0, 2], ["px", 3, [[9, 2], [8, 3]]]]}, "back": {"ops": [["boxall", 5, 2, 9, 3, 1]]}},
+"monzaemon": {"scale": 3, "shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 3, 3, 12, 7, 1]]}},
+"whamon": {"scale": 3, "shade": 0, "front": {"ops": [["ink", 2], ["map", 0, 10, 14, 15, 2, 1], ["rows", 13, 13, 0]]}, "back": {"ops": []}}
 }

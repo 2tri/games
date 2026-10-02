@@ -99,7 +99,9 @@ def apply_ops(t, ops):
       ["box", x0, y0, x1, y1, 톤]    네모 안 안쪽 칸(선 제외)
       ["boxall", x0, y0, x1, y1, 톤] 네모 안 몸 칸 전부(선 포함, 바깥 테두리 제외) — 뒷모습 얼굴 지우기
       ["ink", 톤]                    바깥 테두리가 아닌 검은 칸 전부
-      ["px", 톤, [[x, y], ...]]      칸 하나씩"""
+      ["px", 톤, [[x, y], ...]]      칸 하나씩
+      ["clear", y0, y1]              그 행들을 지움(바닥 그림자 등)
+      ["map", x0, y0, x1, y1, 톤a, 톤b] 네모 안 톤a 를 톤b 로"""
     for op in ops:
         k = op[0]; edge = edge_of(t); body = t >= 0
         if k == 'seed': flood(t, op[1], op[2], op[3])
@@ -110,6 +112,9 @@ def apply_ops(t, ops):
             m &= body & ((~edge) if k == 'boxall' else (t != 3))
             t[m] = v
         elif k == 'ink': t[(t == 3) & ~edge] = op[1]
+        elif k == 'clear': t[op[1]:op[2] + 1] = -1
+        elif k == 'map':
+            m = np.zeros_like(body); m[op[2]:op[4] + 1, op[1]:op[3] + 1] = True; t[m & (t == op[5])] = op[6]
         elif k == 'px':
             for x, y in op[2]: t[y, x] = op[1]
     return t
@@ -137,7 +142,34 @@ def scale2x(t):
     return o
 
 
-def finish(t, shade=0, shade_on=(1,), ring=True):
+def scale3x(t):
+    """Scale3x(AdvMAME3x): 3배로 키우며 모서리 다듬음 (16칸 LCD 용)"""
+    h, w = t.shape; p = np.pad(t, 1, constant_values=-1); o = np.zeros((h * 3, w * 3), int)
+    for y in range(h):
+        for x in range(w):
+            A, B, C = p[y, x], p[y, x + 1], p[y, x + 2]; D, E, F = p[y + 1, x], p[y + 1, x + 1], p[y + 1, x + 2]
+            G, H, I = p[y + 2, x], p[y + 2, x + 1], p[y + 2, x + 2]
+            e = [E] * 9
+            if D == B and B != F and D != H: e[0] = D
+            if (D == B and B != F and D != H and E != C) or (B == F and B != D and F != H and E != A): e[1] = B
+            if B == F and B != D and F != H: e[2] = F
+            if (D == B and B != F and D != H and E != G) or (D == H and D != B and H != F and E != A): e[3] = D
+            if (B == F and B != D and F != H and E != I) or (H == F and D != H and B != F and E != C): e[5] = F
+            if D == H and D != B and H != F: e[6] = D
+            if (D == H and D != B and H != F and E != I) or (H == F and D != H and B != F and E != G): e[7] = H
+            if H == F and D != H and B != F: e[8] = F
+            o[3 * y:3 * y + 3, 3 * x:3 * x + 3] = np.array(e).reshape(3, 3)
+    return o
+
+
+def upscale(t, k):
+    """k = 2(Scale2x) · 3(Scale3x) · 1.5(Scale3x 뒤 한 칸 걸러 뽑기, 큰 LCD 가 56 칸을 넘을 때)"""
+    if k == 3: return scale3x(t)
+    if k == 1.5: return scale3x(t)[1::2, 1::2]
+    return scale2x(t)
+
+
+def finish(t, shade=0, shade_on=(1,), ring=True, tone=2):
     """키운 뒤: 바깥에 닿은 색 칸에 검은 테두리 1칸, 오른쪽 아래 그늘 띠"""
     b = t >= 0; h, w = t.shape
     if shade:
@@ -148,7 +180,7 @@ def finish(t, shade=0, shade_on=(1,), ring=True):
                     for dx, dy in [(k, k) for k in range(1, shade + 1)] + [(k, 0) for k in range(1, shade + 1)] + [(0, k) for k in range(1, shade + 1)]:
                         X, Y = x + dx, y + dy
                         if not (0 <= X < w and 0 <= Y < h) or not b[Y, X]:
-                            out[y, x] = 2; break
+                            out[y, x] = tone; break
         t = out
     if ring:
         p = np.pad(b, 1); e = b & ~(p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:]); t[e] = 3
@@ -160,7 +192,8 @@ def colored(a, cfg, side):
     t = paint(a, cfg.get('front', {}).get('ops', []))
     c = cfg.get(side, {})
     if side == 'back': t = apply_ops(t[:, ::-1].copy(), c.get('ops', []))
-    big = finish(scale2x(t), c.get('shade', cfg.get('shade', 0)), tuple(c.get('shade_on', cfg.get('shade_on', [1]))))
+    big = finish(upscale(t, cfg.get('scale', 2)), c.get('shade', cfg.get('shade', 0)), tuple(c.get('shade_on', cfg.get('shade_on', [1]))),
+                 tone=cfg.get('shade_tone', 2))
     if side == 'back':
         ys = np.where((big >= 0).any(1))[0]; hh = ys.max() - ys.min() + 1
         big = big[:ys.max() + 1 - hh // 4]
