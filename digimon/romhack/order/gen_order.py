@@ -56,6 +56,31 @@ def back_prompt(e):
             f"MUST NOT:\n- Do not show the face from the front.\n- Do not make it symmetrical.\n{dash(e.get('not_back', []) + e['not_'])}\n\n"
             "No text, no frame, no grid lines, no background.")
 
+def sketch_prompt(e):
+    """밑그림 주문문 (주말 그림 지시 3장). 첨부 1장 = 밑그림 ×8 (art/sketch/<id>_x8.png), 2장 = 공식 그림"""
+    t = e['tones']
+    return (f"Image 1 is a low-resolution pixel SILHOUETTE of {e['ko']} ({e['en']}), a Digimon from {SERIES.get(e['id'], 'Digimon Adventure')}. Image 2 is its official picture.\n"
+            "Task: produce a cleaner 4-tone pixel sprite of the SAME character, keeping the exact silhouette, pose and proportions of Image 1. "
+            "Use Image 2 only to decide what details go INSIDE that silhouette. Do not change the outline shape. Do not turn it into any other creature.\n"
+            "- ONE square image, pure white background. The sprite fills about 90% of the image, standing on the bottom edge.\n"
+            "- Same orientation as Image 1 (facing left). Whole body visible.\n"
+            f"- VERY low resolution: about {specs.px(e['grade'])} pixels tall. Big chunky pixels, every pixel a crisp square of the same size. "
+            "No anti-aliasing, no blur, no gradients, no dithering, no shadow.\n"
+            "- Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black.\n"
+            f"  - white = {t['white']}\n  - light gray = {t['light']}\n  - dark gray = {t['dark']}\n  - black = outline, {t['black']}\n"
+            f"MUST KEEP (most important first):\n{lst(e['keep'])}\n"
+            f"MUST NOT:\n- Do not change the silhouette of Image 1.\n{dash(e['not_'])}\n"
+            "No text, no frame, no grid lines, no background.")
+
+
+def sketch_img(e):
+    """LCD 밑그림 ×8 (없으면 tools/lcd2sketch.py 로 만듦). LCD 가 없는 종은 ''"""
+    if e['id'] not in LCD_OF: return ''
+    p = WEB + 'art/sketch/%s_x8.png' % e['id']
+    if not os.path.exists(p): subprocess.run([sys.executable, WEB + 'tools/lcd2sketch.py', e['id']], capture_output=True)
+    return b64(p)
+
+
 def flat_prompt(e):
     return (f"This is {e['ko']} ({e['en']}), a Digimon. It is NOT any other creature. Keep this exact character.\n"
             "Redraw the attached picture as a simple flat cartoon illustration: thick black outline, flat fills, no shading gradients, no texture, "
@@ -73,13 +98,15 @@ ess.append({'id': 'digivice', 'ko': dv['ko'], 'en': dv['en'], 'grade': dv['grade
             'got': {'f': b64(WEB + 'art/digivice.png')}, 'img': '', 'ref': 'https://wikimon.net/Digivice', 'lcd': ''})
 for e in specs.S:
     p = {'f': front_prompt(e), 'b': back_prompt(e), 'flat': flat_prompt(e)}
+    sk = sketch_img(e)
+    if sk: p['sketch'] = sketch_prompt(e)
     for k, v in p.items():
         assert 'pokemon' not in v.lower() and 'pokémon' not in v.lower(), (e['id'], k)
     got = {s: b64(WEB + 'art/%s-%s.png' % (e['id'], s)) for s in ('f', 'b') if os.path.exists(WEB + 'art/%s-%s.png' % (e['id'], s))}
     ess.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'tier': e['tier'], 'use': e['use'],
                 'size': '앞 약 %dpx · 뒤 약 45px' % specs.px(e['grade']), 'pal': [list(c) for c in e['pal']],
                 'img': 'https://digimon.net/cimages/digimon/%s.jpg' % e['dir'], 'ref': 'https://digimon.net/reference_ko/detail.php?directory_name=' + e['dir'],
-                'lcd': LCD_OF.get(e['id'], ''), 'prompt': p, 'got': got, 'front_done': bool(e.get('front_done'))})
+                'lcd': LCD_OF.get(e['id'], ''), 'sketch': sk, 'prompt': p, 'got': got, 'front_done': bool(e.get('front_done'))})
 TIERS = TIER
 
 # ── 지금 롬 ──

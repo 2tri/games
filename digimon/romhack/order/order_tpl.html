@@ -207,11 +207,19 @@ for (const e of D.ess) {
     const bb = copyBtn("뒤 주문문 복사", e.prompt.b, pb, det);
     const bl = copyBtn("평면 그림 주문문 복사", e.prompt.flat, pl, det, "alt");
     backBtns[e.id] = { btn: bb, always: e.front_done };
-    const r2 = el("div", "row"); r2.append(bf, bb, bl); c.append(r2);
+    const r2 = el("div", "row"); r2.append(bf, bb, bl);
+    if (e.prompt.sketch) {
+      const ps = el("pre", "", e.prompt.sketch);
+      det.append(el("b", "", "밑그림 주문문 (첨부 1장 = 아래 밑그림, 2장 = 공식 그림)"), ps);
+      r2.prepend(copyBtn("밑그림 주문문 복사", e.prompt.sketch, ps, det));
+      const a = el("a", "btn", "밑그림 저장 (첨부 1장)"); a.href = e.sketch; a.download = e.id + "_밑그림.png"; r2.append(a);
+    }
+    c.append(r2);
     const hint = el("span", "hint", e.front_done ? "앞모습은 롬에 들어가 있어요. 아래 받은 그림(앞)을 저장해 뒤 주문에 같이 붙이세요." : "뒤 주문문은 '앞 잘 나옴'을 체크하면 켜져요.");
     c.append(hint, det);
     const ck = el("div", "checks"); ck.append(box("good-f-" + e.id, "good_f", "앞 잘 나옴", "good"), box("good-b-" + e.id, "good_b", "뒤 잘 나옴", "good")); c.append(ck);
   }
+  if (e.sketch) { const s = el("div", "pic"); const im = img(e.sketch, 0.5); s.append(im, el("span", "hint", "LCD 밑그림")); c.append(s); }
   const g = el("div", "got");
   if (e.got.f) {
     const p = el("div", "pic"); p.append(img(e.got.f, e.id === "digivice" ? 4 : 3)); g.append(p);
