@@ -897,6 +897,142 @@
     ]
    ],
    "like": "데블몬"
+  },
+  {
+   "id": "skullgreymon",
+   "slot": "암스타",
+   "name": "스컬그레몬",
+   "grade": "완전체",
+   "type": [
+    "DARK",
+    "DRAGON"
+   ],
+   "stats": [
+    70,
+    120,
+    60,
+    80,
+    85,
+    55
+   ],
+   "exp": 175,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "LEER"
+    ],
+    [
+     1,
+     "BITE"
+    ],
+    [
+     1,
+     "BONE_CLUB"
+    ],
+    [
+     1,
+     "SCARY_FACE"
+    ],
+    [
+     32,
+     "BONEMERANG"
+    ],
+    [
+     38,
+     "CRUNCH"
+    ],
+    [
+     44,
+     "OUTRAGE"
+    ],
+    [
+     50,
+     "HYPER_BEAM"
+    ]
+   ],
+   "dex": [
+    "해골형",
+    90,
+    2500,
+    [
+     "잘못된 진화로 뼈만",
+     "남은 디지몬. 등의",
+     "미사일로 모두 부순다"
+    ]
+   ],
+   "like": "그레이몬"
+  },
+  {
+   "id": "angewomon",
+   "slot": "해피너스",
+   "name": "엔젤우몬",
+   "grade": "완전체",
+   "type": [
+    "NORMAL",
+    "FLYING"
+   ],
+   "stats": [
+    65,
+    75,
+    65,
+    90,
+    95,
+    80
+   ],
+   "exp": 175,
+   "catch": 30,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "GUST"
+    ],
+    [
+     1,
+     "CHARM"
+    ],
+    [
+     1,
+     "CONFUSION"
+    ],
+    [
+     1,
+     "SWIFT"
+    ],
+    [
+     30,
+     "PSYBEAM"
+    ],
+    [
+     36,
+     "WING_ATTACK"
+    ],
+    [
+     42,
+     "PSYCHIC_M"
+    ],
+    [
+     48,
+     "MOONLIGHT"
+    ],
+    [
+     54,
+     "HYPER_BEAM"
+    ]
+   ],
+   "dex": [
+    "대천사형",
+    18,
+    500,
+    [
+     "날개 8장을 가진",
+     "여천사 디지몬. 빛의",
+     "화살로 악을 쏜다"
+    ]
+   ],
+   "like": "엔젤몬"
   }
  ],
  "waiting_art": [

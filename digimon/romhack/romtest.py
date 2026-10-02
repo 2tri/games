@@ -96,7 +96,8 @@ def test_evo(names):
         ('가루몬 + 우정 배지 Lv33 → 워가루몬', 5, 1 << 4, None, N['워가루몬']),
         ('코로몬 Lv11 → 아구몬', 3, 0, None, N['아구몬']),
     ]
-    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)[, 배지]
+    SK = '스컬그레몬' if '스컬그레몬' in N else '그레이몬'      # 스컬그레몬 그림 전에는 암흑 갈래가 없어 그대로
+    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)[, 배지, 누르는 수]
         ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬', 70),
         ('뿔몬 Lv11 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 10, '파피몬', 70),
         ('토코몬 Lv10 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 9, '파닥몬', 70),
@@ -105,8 +106,12 @@ def test_evo(names):
         ('파닥몬 유대 보통(100) → 엔젤몬', '파닥몬', 15, '엔젤몬', 100),
         ('파피몬 유대 140 (150 미만) → 우가몬', '파피몬', 15, '우가몬', 140),
         ('파피몬 유대 150 (기준값) → 가루몬', '파피몬', 15, '가루몬', 150),
-        ('그레이몬 다른 배지 + 유대 40 Lv32 → 그대로 (스컬그레몬 그림 전)', '그레이몬', 31, '그레이몬', 40, 1, 16),
-        ('그레이몬 다른 배지 + 유대 40 Lv36 → 메탈그레이몬 (아무 문장)', '그레이몬', 35, '메탈그레몬', 40, 1, 30),
+        ('그레이몬 다른 배지 + 유대 40 Lv32 → %s' % SK, '그레이몬', 31, SK, 40, 1, 30 if SK != '그레이몬' else 16),
+        ('그레이몬 다른 배지 + 유대 40 Lv36 → %s' % (SK if SK != '그레이몬' else '메탈그레몬 (아무 문장)'), '그레이몬', 35,
+         SK if SK != '그레이몬' else '메탈그레몬', 40, 1, 30),
+        ('가트몬 + 빛 배지 Lv30 → 엔젤우몬', '가트몬', 29, '엔젤우몬', 70, 1 << 3, 30),
+        ('가트몬 다른 배지 Lv30 → 그대로', '가트몬', 29, '가트몬', 70, 1, 16),
+        ('엔젤우몬 + 빛 배지 Lv45 → 마그나드몬', '엔젤우몬', 44, '마그나드몬', 70, 1 << 3, 30),
         ('쉬라몬 Lv18 → 원뿔몬', '쉬라몬', 17, '원뿔몬', 70),
         ('텐타몬 유대 낮음(40) Lv21 → 쿠가몬', '텐타몬', 20, '쿠가몬', 40),
         ('텐타몬 유대 보통(100) Lv21 → 캅테리몬', '텐타몬', 20, '캅테리몬', 100),
@@ -114,7 +119,7 @@ def test_evo(names):
     ]
     bad = 0
     for name, sp_name, lv, want_name, hap, *bg in extra:
-        if sp_name not in N: print('  %-36s → 건너뜀 (아직 롬에 없음)' % name); continue
+        if sp_name not in N or want_name not in N: print('  %-36s → 건너뜀 (아직 롬에 없음)' % name); continue
         sp, got_lv = candy(0, [(N[sp_name], lv, hap)], names, bg[0] if bg else 0, bg[1] if len(bg) > 1 else 30)
         ok = sp == N[want_name]; bad += not ok
         print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % N[want_name]))
@@ -212,11 +217,30 @@ def test_trainers():
     return bad + (not ok)
 
 
+def test_dark_real(names, N):
+    """스컬그레몬이 들어온 롬: 그레이몬 자기 문장 32 메탈그레몬 → 암흑 32 스컬그레몬 → 아무 문장 36 메탈그레몬"""
+    g = N['그레이몬']; bad = 0
+    cases = [  # 이름, 유대, 배지, 기대 종
+        ('암흑: 유대 40 + 다른 배지 Lv32 → 스컬그레몬', 40, 1, N['스컬그레몬']),
+        ('암흑: 유대 64(사탕 +5 → 69) + 다른 배지 → 스컬그레몬', 64, 1, N['스컬그레몬']),   # 이상한사탕 레벨업 때 유대 +5 뒤에 진화 판정
+        ('암흑: 유대 65(사탕 +5 → 70) + 다른 배지 → 그대로', 65, 1, g),
+        ('암흑: 유대 40 + 배지 없음 Lv32 → 그대로', 40, 0, g),
+        ('암흑: 유대 40 + 용기 배지 Lv32 → 메탈그레이몬', 40, 1 << 5, N['메탈그레몬']),
+    ]
+    for name, hap, badge, want in cases:
+        # 진화하는 경우는 진화 직후 새 기술 배우기 창까지 넘기도록 30번, 그대로인 경우는 Lv36(아무 문장)에 닿지 않게 16번
+        sp, got_lv = candy(0, [(g, 31, hap)], names, badge, 30 if want != g else 16)
+        ok = sp == want; bad += not ok
+        print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % want))
+    return bad
+
+
 def test_dark(names):
     """암흑 진화(종류 9) 코드 시험: 아직 쓰는 종이 없으므로 시험용 롬을 따로 만들어
     그레이몬 목록의 둘째(아무 문장 Lv36)를 「암흑 Lv32 → 데블몬」으로 바꿔 넣고 확인 (myver.gbc 는 그대로)"""
     global ROM
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    if '스컬그레몬' in N: return test_dark_real(names, N)
     d = bytearray(r.d); g = N['그레이몬']
     p = d[r.evos + 2 * (g - 1)] | d[r.evos + 2 * (g - 1) + 1] << 8; a = dmrom.addr(r.evos // 0x4000, p)
     assert d[a] == 8 and d[a + 3] == 10, '그레이몬 목록 모양이 예상과 다름'
@@ -247,7 +271,7 @@ if __name__ == '__main__':
     names = {n: bytes(r.d[r.names + 10 * (n - 1):r.names + 10 * n]) for n in range(1, dmrom.NUM + 1)}
     print('트레이너 표'); bad = test_trainers()
     print('진화'); bad += test_evo(names)
-    print('암흑 진화 (시험용 롬)'); bad += test_dark(names)
+    print('암흑 진화'); bad += test_dark(names)
     print('포획'); bad += test_catch(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)
