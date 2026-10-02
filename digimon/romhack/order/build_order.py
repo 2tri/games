@@ -47,12 +47,20 @@ def card(e, need, note, lcd_url, img, ref):
 
 
 # 사람 그림 (포켓몬 박사 자리 → 디지몬 인물). 참고 그림은 art/ref/<id>.jpg (공식 그림이라 저장소에 안 올림)
-PEOPLE = [dict(id='gennai', ko='겐나이', en='Gennai', grade='사람', use='인트로에서 오박사 대신 나오는 그림 (금 인트로 박사 그림 자리, 56칸)',
+PEOPLE = [dict(id='gennai', ko='겐나이', en='Gennai', grade='사람', use='공박사 자리 캐릭터: 연구소 안을 걸어 다니는 필드 그림(16×16, 앞·뒤·옆 걷기) + 인트로 박사 그림(56칸)',
                tones=dict(white='the long white mustache, eyebrows and the hair tuft, the boot soles', light='face and bald head skin',
                           dark='the long navy robe', black='outline, closed eyes'),
                keep=['A short, bald old man with a long drooping WHITE MUSTACHE hanging down past his chin.', 'One white hair tuft curling up from the top of his head.',
                      'A long navy robe down to the ankles with a high red collar and two brown belts crossing the chest.', 'Eyes closed, calm face, hands at his sides, big red shoes.'],
                not_=['No beard, only the mustache.', 'Not a wizard hat, not a staff.'])]
+
+
+def walk_prompt(e):
+    """필드 걷기 그림 시트 (그림프롬프트.md B 꼬리말 형식. 「포켓몬」이라는 말은 뺌: 재미나이가 포켓몬처럼 바꿔 그림)"""
+    return (f"{e['en']}, the short bald old man from Digimon Adventure (1999): a long drooping white mustache, one white hair tuft on top of the head, "
+            "a long navy robe with a red collar, brown belts crossing the chest, red shoes, eyes closed. "
+            "late-1990s Game Boy Color RPG overworld walking sprite sheet of a person (top-down town map character), chibi proportions, three rows (walking down, walking up, walking left) with two frames each, "
+            "each frame 16x16 pixels on a strict grid, Game Boy Color, only 4 colors (white, black, skin tone and one clothing color), plain white background, no text")
 
 
 def people_prompt(e):
@@ -104,7 +112,9 @@ def main():
         ref = WEB + 'art/ref/%s.jpg' % e['id']
         refpic = 'data:image/jpeg;base64,' + base64.b64encode(open(ref, 'rb').read()).decode() if os.path.exists(ref) else ''
         people.append({'id': e['id'], 'ko': e['ko'], 'en': e['en'], 'grade': e['grade'], 'use': e['use'], 'need': '' if os.path.exists(WEB + 'art/%s.png' % e['id']) else 'f',
-                       'note': '참고 그림(첨부): 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': art(e['id'], 'f'), 'b': '', 'prompt': {'f': people_prompt(e)}})
+                       'note': '전투 그림(앞·뒤)이 아니라 캐릭터 그림 두 가지예요. 참고 그림(첨부)은 오른쪽 그림을 길게 눌러 저장', 'refpic': refpic, 'f': '', 'b': '',
+                       'prompt': {}, 'plist': [['필드 걷기 그림 시트 주문문 복사', '필드 걷기 그림 (3줄 × 2칸, 칸마다 16×16)', walk_prompt(e)],
+                                               ['인트로 박사 그림 주문문 복사', '인트로 박사 그림 (56칸, 전신)', people_prompt(e)]]})
     D = {'people': people, 'todo': todo, 'done': done, 'redraw': red, 'redraw_done': red_done}
     tpl = open(HERE + '/order2_tpl.html', encoding='utf-8').read()
     html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
