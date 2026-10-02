@@ -7,7 +7,9 @@
     python3 ingest.py 받은그림.png metalgreymon --side sheet --grade 완전체
 등급·색은 order/specs.py 에서 읽는다 (--grade, --pal 로 바꿀 수 있음).
 앞모습 크기는 등급으로: 유아기·유년기 40, 성장기 48, 성숙기 이상 56 (디지몬스터 칸 크기 5·6·7). 뒷모습은 48.
-회색 그림이면 밝기로 4톤(흰·밝은·어두운·검정)을 나누고, specs 의 몸 색 두 개를 입힌다 (앞·뒤가 팔레트 하나를 같이 쓰므로 같은 색)."""
+회색 그림이면 밝기로 4톤(흰·밝은·어두운·검정)을 나누고, specs 의 몸 색 두 개를 입힌다 (앞·뒤가 팔레트 하나를 같이 쓰므로 같은 색).
+손으로 고칠 칸은 art/fix/<id>-<f|b>.txt 에 적어 두면 변환 뒤에 덮어씀 (다시 변환해도 유지):
+  첫 줄 「x y」(고칠 곳 왼쪽 위), 다음 줄부터 한 칸에 한 글자 — 빈칸 그대로, . 배경, W 흰, l 밝은, d 어두운, # 검정"""
 import argparse, os, sys, shutil
 import numpy as np
 from PIL import Image
@@ -85,6 +87,19 @@ def convert(part, maxs, pal, flat=False, fixed=None):
     return t, p4
 
 
+def apply_fix(t, path):
+    """art/fix 의 손질 글을 칸 배열에 덮어씀"""
+    if not os.path.exists(path): return t, 0
+    lines = open(path, encoding='utf-8').read().split('\n')
+    x0, y0 = map(int, lines[0].split()); t = t.copy(); n = 0
+    code = {'.': -1, 'W': 0, 'l': 1, 'd': 2, '#': 3}
+    for j, row in enumerate(lines[1:]):
+        for i, ch in enumerate(row):
+            if ch in code and 0 <= y0 + j < t.shape[0] and 0 <= x0 + i < t.shape[1]:
+                n += t[y0 + j, x0 + i] != code[ch]; t[y0 + j, x0 + i] = code[ch]
+    return t, n
+
+
 def front_colors(did):
     """이미 넣은 앞모습의 몸 색 두 개 (뒷모습만 따로 받을 때 같은 팔레트로)"""
     p = os.path.join(WEB, 'art', did + '-f.png')
@@ -114,6 +129,8 @@ def main():
     for part, side in parts:
         maxs = FRONT.get(grade, 56) if side == 'f' else 48
         t, p4 = convert(part, maxs, pal, a.flat, body)
+        t, nfix = apply_fix(t, os.path.join(WEB, 'art', 'fix', '%s-%s.txt' % (a.id, side)))
+        if nfix: print('  손질 %d칸 (art/fix/%s-%s.txt)' % (nfix, a.id, side))
         body = [list(p4[1]), list(p4[2])]                           # 롬은 앞·뒤가 팔레트 하나 → 뒷모습은 앞모습 몸 색으로
         snapc.to_image(t, p4).save(os.path.join(WEB, 'art', '%s-%s.png' % (a.id, side)))
         snapc.to_image(t, p4, 6, (248, 248, 248)).save(os.path.join(WEB, 'art', '_%s-%s_x6.png' % (a.id, side)))

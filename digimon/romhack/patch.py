@@ -243,24 +243,31 @@ class Patch:
         self.icon(no, d[addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + prev - 1])
         idx, pitch, length = self.cry_of(prev); self.cry(no, idx, max(0, pitch - 32), length + 32)
         self.dex(no, kind, height, weight, dex_lines)
-    # 상대 파티 한 사람 바꾸기 (같은 마릿수). 기술이 있는 트레이너는 그 레벨까지 배운 마지막 4개로
-    def party(self, group, mons, N, groups, n=0):
-        ts = [t for t in self.r.trainers(len(groups)) if groups[t['group']] == group]
-        t = ts[n]; assert len(t['mons']) == len(mons), (group, len(t['mons']), len(mons))
-        out = []
-        for (lv0, sp0, a), m in zip(t['mons'], mons):
-            nm = m['sp']
-            if m.get('art') and not os.path.exists(os.path.join(WEB, 'art', m['art'] + '-f.png')): nm = m['until']
-            sp = N[nm]; self.d[a - 1] = m['lv']; self.d[a] = sp
+    # 상대 파티: 무리(트레이너 그룹) 하나를 통째로 다시 씀. 이름·종류(기술/도구 유무)는 그대로, 마릿수는 바뀌어도 됨
+    #   기술이 있는 트레이너는 그 레벨까지 배운 마지막 4개, 도구가 있는 트레이너는 같은 자리 도구(새 자리는 없음)
+    def team_bytes(self, t, mons):
+        d = self.d; j = d.index(0x50, t['start']); out = bytearray(d[t['start']:j + 2])
+        for i, (lv, sp) in enumerate(mons):
+            out += bytes([lv, sp])
+            if t['kind'] in (2, 3): out.append(d[t['mons'][i][2] + 1] if i < len(t['mons']) else 0)
             if t['kind'] in (1, 3):
                 ms = []
                 for l, mv in self.r.evos_attacks(sp)[1]:
-                    if l <= m['lv'] and mv not in ms:
+                    if l <= lv and mv not in ms:
                         ms.append(mv)
                         if len(ms) > 4: ms.pop(0)
-                o = a + (2 if t['kind'] == 3 else 1); self.put(o, bytes(ms + [0] * (4 - len(ms))))
-            out.append('%s Lv%d' % (nm, m['lv']))
-        self.log.append('파티 %s %s: %s' % (group, t['name'], ', '.join(out)))
+                out += bytes(ms + [0] * (4 - len(ms)))
+        return bytes(out + b'\xff')
+    def group(self, gname, groups, new):
+        """new = {무리 안 순서(0부터): [(레벨, 종 번호)]}. 원래 자리에 들어가면 그 자리(남는 곳은 FF), 넘치면 같은 뱅크 빈 곳으로 옮김"""
+        ts = [t for t in self.r.trainers(len(groups)) if groups[t['group']] == gname]
+        blob = b''.join(self.team_bytes(t, new[t['idx']]) if t['idx'] in new else bytes(self.d[t['start']:t['end']]) for t in ts)
+        s, e = ts[0]['start'], ts[-1]['end']
+        if len(blob) <= e - s: self.put(s, blob + b'\xff' * (e - s - len(blob))); return
+        bank, tab = self.r.trainer_table()
+        b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
+        self.put(tab + 2 * groups.index(gname), struct.pack('<H', p))
+        self.log.append('트레이너 무리 %s %d → %d바이트, 뱅크 %02X:%04X 로 옮김' % (gname, e - s, len(blob), b, p))
     def evos(self, no, evos, moves=None):
         """진화·기술 목록을 새로 써서 뱅크 0x10 빈 곳에 두고 포인터를 바꿈. moves=None 이면 원래 기술 목록 유지"""
         old_ev, old_mv = self.r.evos_attacks(no)
@@ -494,6 +501,7 @@ def build(base, out_rom, out_ips):
     }
     if has('아쿠이라몬'): EV['아쿠이라몬'] = T((ANYCREST, 35, '실피드몬'))
     if has('엔젤우몬'): EV['엔젤우몬'] = T((CREST, 45, '마그나드몬'))
+    if has('쿠가몬'): EV['텐타몬'] = T((BOND_LO, 21, '쿠가몬'), (LV, 21, '캅테리몬'))      # 유대 낮음 갈래 (계획서 칸 배정안)
     for nm, ev in EV.items(): P.evos(S(nm), ev)
     # 잠자는 포켓몬 칸의 진화가 디지몬 칸을 가리키면 지움 (스라크 → 메탈그레몬 칸, 깜지곰 → 워가루몬 칸 같은 것, R14)
     orig = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
@@ -511,19 +519,47 @@ def build(base, out_rom, out_ips):
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
     remap.apply(P, encounters.find_all(P.r), installed, set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))))
-    # C단계 상대 파티 (parties.json) — A단계 바꾸기 뒤에
-    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
-    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
-    for g, mons in json.load(open(os.path.join(HERE, 'parties.json'))).items():
-        if not g.startswith('_'): P.party(g, mons, N, groups)
-    # 3 포획 규칙
-    P.catch_engine()
-    # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
+    # 종 번호 → 단계 (grades.json + 새로 넣은 칸). C단계 파티와 포획률이 같이 씀
     G = json.load(open(os.path.join(HERE, 'grades.json')))
-    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     grade = {int(k): v['grade'] for k, v in G.items() if v['grade'] and v['name'] == r.name(int(k))}
     grade.update({KORO: '유년기Ⅱ', MGR: '완전체', WGR: '완전체'})
     for no, m in installed.items(): grade[no] = m['grade']
+    # C단계 상대 파티 — A단계 바꾸기 뒤에
+    #   1) parties.json: 「무리」 = 그 무리 첫 사람, 「무리#n」 = n번째 사람. 종(sp)이 아직 롬에 없으면(그림·색 바꾸기 전) until 종
+    #   2) 암흑단 조직원(rules.GRUNT_GROUPS): parties.json 에 없는 사람은 레벨대별 종으로 (레벨은 그대로)
+    #   3) 그 밖의 트레이너 파티에 궁극체가 있으면 한 단계 아래로 (rules.R13_DOWN). 사천왕·챔피언·레드·라이벌 마지막은 빼고
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    plan = {}; waiting = set()
+    for key, mons in json.load(open(os.path.join(HERE, 'parties.json'))).items():
+        if key.startswith('_'): continue
+        g, _, k = key.partition('#'); new = []
+        for m in mons:
+            if m['sp'] not in N: waiting.add('%s→%s' % (m['sp'], m['until']))
+            new.append((m['lv'], N[m['sp']] if m['sp'] in N else N[m['until']]))
+        plan.setdefault(g, {})[int(k) - 1 if k else 0] = new
+    TS = P.r.trainers(len(groups)); ngrunt = nr13 = 0
+    for t in TS:
+        g = groups[t['group']]
+        if g not in rules.GRUNT_GROUPS or t['idx'] in plan.get(g, {}): continue
+        last = len(t['mons']) - 1; new = []
+        for i, (lv, _, _) in enumerate(t['mons']):
+            pool = rules.GRUNT_LOW if lv < rules.GRUNT_LV else rules.GRUNT_HIGH
+            new.append((lv, N[pool[1] if i == last else pool[i % 2]]))
+        plan.setdefault(g, {})[t['idx']] = new; ngrunt += 1
+    for t in TS:
+        g = groups[t['group']]
+        if g in rules.ULTIMATE_OK or (g == rules.RIVAL_FINAL[0] and t['idx'] >= rules.RIVAL_FINAL[1]) or t['idx'] in plan.get(g, {}): continue
+        if not any(grade.get(sp) == '궁극체' for _, sp, _ in t['mons']): continue
+        plan.setdefault(g, {})[t['idx']] = [(lv, N[rules.R13_DOWN[r.name(sp)]] if grade.get(sp) == '궁극체' else sp) for lv, sp, _ in t['mons']]
+        nr13 += 1
+    for g, new in plan.items(): P.group(g, groups, new)
+    P.r.d = P.d
+    P.log.append('C단계 파티: 지정 %d명, 암흑단 조직원 %d명, 궁극체 낮춤 %d명. 임시 종: %s' % (
+        sum(len(v) for v in plan.values()) - ngrunt - nr13, ngrunt, nr13, ', '.join(sorted(waiting)) or '없음'))
+    # 3 포획 규칙
+    P.catch_engine()
+    # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
     zero = []
     for no, g in sorted(grade.items()):
         rate = rules.CATCH_BY_NAME.get(r.name(no), rules.CATCH_BY_GRADE.get(g))

@@ -1,9 +1,9 @@
 """고친 롬(work/myver.gbc) 자동 시험 — PyBoy
-  python3 romtest.py            진화 7가지 + 포획 막기
+  python3 romtest.py            트레이너 표 + 진화(유대·문장·암흑) + 포획률
 처음 한 번은 인트로를 지나가서 work/intro.state 를 만든다 (롬이 바뀌면 지우고 다시).
 램 주소는 pokegold-kr 디스어셈블리 기준 (한글판 금)."""
-import os, sys
-import dmrom, krtext
+import os, re, sys
+import dmrom, krtext, wild
 from play import Play
 
 W = dmrom.WORK
@@ -90,13 +90,13 @@ def test_evo(names):
         ('그레이몬 + 용기 배지 Lv32 → 메탈그레이몬', 2, 1 << 5, None, N['메탈그레몬']),
         ('그레이몬 배지 없음 Lv32 → 그대로', 2, 0, None, N['그레이몬']),
         ('그레이몬 다른 배지 Lv32 → 그대로', 2, 1, None, N['그레이몬']),
-        ('그레이몬 다른 배지 Lv36 → 메탈그레이몬', 2, 1, 35, N['메탈그레몬'], 30),
+        ('그레이몬 다른 배지 + 유대 70 Lv36 → 메탈그레이몬', 2, 1, 35, N['메탈그레몬'], 30),
         ('메탈그레이몬 + 용기 Lv45 → 워그레이몬', 4, 1 << 5, None, N['워그레이몬'], 30),
         ('메탈그레이몬 다른 배지 Lv45 → 그대로', 4, 1, None, N['메탈그레몬']),
         ('가루몬 + 우정 배지 Lv33 → 워가루몬', 5, 1 << 4, None, N['워가루몬']),
         ('코로몬 Lv11 → 아구몬', 3, 0, None, N['아구몬']),
     ]
-    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)
+    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)[, 배지]
         ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬', 70),
         ('뿔몬 Lv11 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 10, '파피몬', 70),
         ('토코몬 Lv10 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 9, '파닥몬', 70),
@@ -104,13 +104,18 @@ def test_evo(names):
         ('파닥몬 유대 낮음(40) → 데블몬', '파닥몬', 15, '데블몬', 40),
         ('파닥몬 유대 보통(100) → 엔젤몬', '파닥몬', 15, '엔젤몬', 100),
         ('파피몬 유대 140 (150 미만) → 우가몬', '파피몬', 15, '우가몬', 140),
+        ('파피몬 유대 150 (기준값) → 가루몬', '파피몬', 15, '가루몬', 150),
+        ('그레이몬 다른 배지 + 유대 40 Lv32 → 그대로 (스컬그레몬 그림 전)', '그레이몬', 31, '그레이몬', 40, 1, 16),
+        ('그레이몬 다른 배지 + 유대 40 Lv36 → 메탈그레이몬 (아무 문장)', '그레이몬', 35, '메탈그레몬', 40, 1, 30),
         ('쉬라몬 Lv18 → 원뿔몬', '쉬라몬', 17, '원뿔몬', 70),
+        ('텐타몬 유대 낮음(40) Lv21 → 쿠가몬', '텐타몬', 20, '쿠가몬', 40),
+        ('텐타몬 유대 보통(100) Lv21 → 캅테리몬', '텐타몬', 20, '캅테리몬', 100),
         ('피코데블몬 Lv20 → 데블몬', '피코데블몬', 19, '데블몬', 70),
     ]
     bad = 0
-    for name, sp_name, lv, want_name, hap in extra:
+    for name, sp_name, lv, want_name, hap, *bg in extra:
         if sp_name not in N: print('  %-36s → 건너뜀 (아직 롬에 없음)' % name); continue
-        sp, got_lv = candy(0, [(N[sp_name], lv, hap)], names, 0, 30)
+        sp, got_lv = candy(0, [(N[sp_name], lv, hap)], names, bg[0] if bg else 0, bg[1] if len(bg) > 1 else 30)
         ok = sp == N[want_name]; bad += not ok
         print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % N[want_name]))
     for name, slot, badge, lv, want, *more in cases:
@@ -168,8 +173,10 @@ def test_catch(names, trials=10):
             p.press('a', 6, 70); got |= m[PARTY_COUNT] == 2     # 별명 화면에선 램 뱅크가 바뀌어 0으로 읽히므로 매번 확인
         p.stop(); return got
     c0 = sum(throw(0, k) for k in range(trials))
+    c90 = sum(throw(90, k) for k in range(trials))
     c255 = sum(throw(255, k) for k in range(trials))
-    print('  상대 %d번, 포획률 0: %d/%d 잡힘 (0이어야 함) / 포획률 255: %d/%d 잡힘 (0보다 커야 함)' % (sp, c0, trials, c255, trials))
+    print('  상대 %d번 체력 가득, 몬스터볼 %d번씩 — 포획률 0: %d 잡힘 (0이어야 함) / 포획률 90(성숙기·아머체): %d 잡힘 (기록) / 포획률 255: %d 잡힘 (0보다 커야 함)'
+          % (sp, trials, c0, c90, c255))
     # 실제 풀숲 만남에서 잡을 수 없는 종이 포획률 0으로 들어오는지
     seen = {}
     for t in range(12):
@@ -183,6 +190,26 @@ def test_catch(names, trials=10):
     bad = (c0 != 0) + (c255 == 0)
     bad += sum(c != r.base_stats(s)['catch'] for s, c in seen.items() if s)
     return bad
+
+
+def test_trainers():
+    """트레이너 표를 게임과 같은 방식으로 읽기 (ReadTrainerParty: 무리 포인터 → FF 를 세며 n-1명 건너뜀 → 이름 @ → 종류 → FF 까지)
+    파서(dmrom.trainers) 결과와 495명 모두 같은지 + 옮긴 라이벌 무리 첫 대결"""
+    r = dmrom.Rom(ROM); d = bytes(r.d); bank, tab = r.trainer_table(); ts = r.trainers(66)
+    EXTRA = {0: 0, 1: 4, 2: 1, 3: 5}; bad = 0
+    for t in ts:
+        a = dmrom.addr(bank, d[tab + 2 * t['group']] | d[tab + 2 * t['group'] + 1] << 8)
+        for _ in range(t['idx']): a = d.index(0xff, a) + 1
+        a = d.index(0x50, a) + 1; kind = d[a]; a += 1; mons = []
+        while d[a] != 0xff: mons.append((d[a], d[a + 1])); a += 2 + EXTRA[kind]
+        bad += mons != [(lv, sp) for lv, sp, _ in t['mons']]
+    print('  게임 방식으로 읽은 트레이너 %d명 중 파서와 다른 사람: %d' % (len(ts), bad))
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(wild.KR, 'data/trainers/party_pointers.asm')).read())
+    r1 = [t for t in ts if groups[t['group']] == 'Rival1'][:3]
+    show = ' / '.join(', '.join('%s Lv%d' % (r.name(sp), lv) for lv, sp, _ in t['mons']) for t in r1)
+    ok = all([r.name(sp) for _, sp, _ in t['mons']][0] == '추추몬' and len(t['mons']) == 2 for t in r1)
+    print('  라이벌 1차 (옮긴 무리, 2마리): %s %s' % (show, 'OK' if ok else '틀림'))
+    return bad + (not ok)
 
 
 def test_dark(names):
@@ -218,7 +245,8 @@ if __name__ == '__main__':
         print('인트로 지나가는 중…'); intro()
     r = dmrom.Rom(ROM)
     names = {n: bytes(r.d[r.names + 10 * (n - 1):r.names + 10 * n]) for n in range(1, dmrom.NUM + 1)}
-    print('진화'); bad = test_evo(names)
+    print('트레이너 표'); bad = test_trainers()
+    print('진화'); bad += test_evo(names)
     print('암흑 진화 (시험용 롬)'); bad += test_dark(names)
     print('포획'); bad += test_catch(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)

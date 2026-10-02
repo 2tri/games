@@ -121,26 +121,31 @@ class Rom:
         return ev, mv
 
     # ── 트레이너 ──
-    def trainers(self, ngroups=66):
-        """트레이너 무리 표(ReadTrainerParty 코드 모양으로 찾음) → [{group, name, kind, mons:[(레벨, 종, 종 바이트 주소)]}]"""
-        d = bytes(self.d); EXTRA = {0: 0, 1: 4, 2: 1, 3: 5}
+    def trainer_table(self):
+        """트레이너 무리 포인터 표 (뱅크, 주소) — ReadTrainerParty 코드 모양으로 찾음"""
+        d = bytes(self.d)
         for m in re.finditer(rb'\x3d\x4f\x06\x00\x21(..)\x09\x09\x2a\x66\x6f', d, re.S):
             bank = m.start() // 0x4000; tab = addr(bank, int.from_bytes(m.group(1), 'little'))
             a = addr(bank, d[tab] | d[tab + 1] << 8); j = d.find(0x50, a, a + 12)
-            if j > a and d[j + 1] in EXTRA and '{' not in krtext.decode(d, a, j): break
+            if j > a and d[j + 1] in (0, 1, 2, 3) and '{' not in krtext.decode(d, a, j): return bank, tab
+
+    def trainers(self, ngroups=66):
+        """트레이너 무리 표 → [{group, idx(무리 안 순서), name, kind, start, end, mons:[(레벨, 종, 종 바이트 주소)]}]
+        무리마다 트레이너 수는 금 원본(pokegold-kr parties.asm) 수를 씀 — 무리 길이가 바뀌어도 뒤 빈 곳을 트레이너로 읽지 않게"""
+        d = bytes(self.d); EXTRA = {0: 0, 1: 4, 2: 1, 3: 5}
+        bank, tab = self.trainer_table(); counts = trainer_counts()
         ptrs = [addr(bank, d[tab + 2 * i] | d[tab + 2 * i + 1] << 8) for i in range(ngroups)]
-        ends = sorted(set(ptrs)); out = []
+        out = []
         for gi, a in enumerate(ptrs):
-            end = next((e for e in ends if e > a), a + 0x400)
-            while a < end:
-                j = d.index(0x50, a); name = krtext.decode(d, a, j); a = j + 1
+            for k in range(counts[gi] if gi < len(counts) else 0):
+                s = a; j = d.index(0x50, a); name = krtext.decode(d, a, j); a = j + 1
                 kind = d[a]; a += 1
                 if kind not in EXTRA: break
                 mons = []
                 while d[a] != 0xff:
                     mons.append((d[a], d[a + 1], a + 1)); a += 2 + EXTRA[kind]
                 a += 1
-                out.append({'group': gi, 'name': name, 'kind': kind, 'mons': mons})
+                out.append({'group': gi, 'idx': k, 'name': name, 'kind': kind, 'start': s, 'end': a, 'mons': mons})
         return out
 
     def free_runs(self, minlen=0x200):
@@ -160,3 +165,15 @@ def default_rom():
               '/tmp/claude-0/-home-user-games/6383e336-0dcf-5b3b-862b-dcfdcb19a4bd/scratchpad/rom/dm.gbc']:
         if p and os.path.exists(p): return p
     raise SystemExit('디지몬스터 롬이 없음: romhack/work/base.gbc 에 두거나 DMROM=경로')
+
+
+def trainer_counts():
+    """금 원본 무리별 트레이너 수 (pokegold-kr data/trainers/parties.asm 의 이름 줄 수)"""
+    import wild; kr = wild.KR
+    src = open(os.path.join(kr, 'data/trainers/parties.asm')).read()
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(kr, 'data/trainers/party_pointers.asm')).read())
+    out = []
+    for g in groups:
+        m = re.search(r'^%sGroup:\n(.*?)(?=^\w+Group:|\Z)' % g, src, re.S | re.M)
+        out.append(len(re.findall(r'^\s*db "', m.group(1), re.M)) if m else 0)
+    return out

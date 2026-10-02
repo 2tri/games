@@ -143,7 +143,7 @@ def rules(c, out):
     f = lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2])
     rep('R1', r1, '완전체 ≥%d, 궁극체 ≥%d (남길 종 %d)' % (RU.COMPLETE_LV, RU.ULTIMATE_LV, len(dig)), f)
     rep('R2', r2, '성숙기 진화 Lv%d~%d' % RU.CHAMPION_LV, f)
-    for b in r2x: out.append('[?] R2 예외(rules.R2_EXCEPT, 확인 필요): ' + f(b))
+    for b in r2x: out.append('     (예외 인정 rules.R2_EXCEPT 초반 벌레 줄: %s)' % f(b))
     # R3 순서
     r3 = []
     for n in dig:
@@ -228,7 +228,12 @@ def rules(c, out):
         if bytes(c.d[ent(c.d):ent(c.d) + 24]) == bytes(b[ent(b):ent(b) + 24]): lack.append('도감')
         m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', c.d, re.S)
         ia = dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little')) + n - 1
-        if c.d[ia] == b[ia]: lack.append('아이콘')
+        sl = c.slots.get(c.name(n))
+        if sl:                                  # 새 칸: 닮은 종(like) 아이콘, 유년기는 둥근 아이콘이면 통과 (원래 칸 아이콘과 같아도 됨)
+            lk = next(k for k in range(1, 252) if c.name(k) == sl['like'])
+            want_ic = 2 if sl['grade'].startswith(('유년기', '유아기')) else c.d[ia - n + lk]
+            if c.d[ia] != want_ic: lack.append('아이콘')
+        elif c.d[ia] == b[ia]: lack.append('아이콘')
         m = re.search(rb'\x3e(.)\xd7\x21(..)\x09\x09\x09\x09\x09\x09\x5e\x23\x56\x23\x2a', c.d, re.S)
         ca = dmrom.addr(m.group(1)[0], int.from_bytes(m.group(2), 'little')) + 6 * (n - 1)
         if bytes(c.d[ca:ca + 6]) == bytes(b[ca:ca + 6]): lack.append('울음')
