@@ -52,7 +52,7 @@ def flat_prompt(e):
             f"MUST KEEP (most important first):\n{lst(e['keep'])}\n\nMUST NOT:\n{dash(e['not_'])}")
 
 def sketch_prompt(e):
-    """밑그림 주문문 (주말 그림 지시 3장). 첨부 1장 = 밑그림 ×8 (art/sketch/<id>_x8.png), 2장 = 공식 그림"""
+    """앞모습 주문문 (LCD 첨부판, 주말 그림 지시 3장의 「밑그림 주문문」). 첨부 1장 = LCD 원래 칸 ×8 (art/sketch/<id>_lcd_x8.png), 2장 = 공식 그림"""
     t = e['tones']
     return (f"Image 1 is the original low-resolution LCD pixel sprite (black dots on white) of {e['ko']} ({e['en']}), a Digimon from {SERIES.get(e['id'], 'Digimon Adventure')}. Image 2 is its official picture.\n"
             "Task: produce a cleaner 4-tone pixel sprite of the SAME character, keeping the exact silhouette, pose and proportions of Image 1. "
