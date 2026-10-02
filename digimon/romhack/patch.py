@@ -25,6 +25,9 @@ HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 HIGH_BOND, LOW_BOND = 100, 40
 CREST_BIT = {'사랑': 0, '지식': 1, '순수': 2, '빛': 3, '우정': 4, '용기': 5, '성실': 6, '희망': 7}
 NUM_SP = dmrom.NUM
+MOVES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'moves.json')))      # 금판 기술 이름 → 번호
+TYPES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'slots.json')))['types']
+def moves_by_name(lst): return [(lv, MOVES[nm]) for lv, nm in lst]
 ICON_JIGGLYPUFF = 2                      # 둥근 분홍 아이콘 (constants/icon_constants.asm)
 LV, ITEM, TRADE, HAPPY, STAT, BOND_HI, BOND_LO, CREST, DARK, ANYCREST = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 
@@ -153,9 +156,13 @@ class Patch:
         assert len(lines) == 3 and all(len(l) <= 16 for l in lines), '도감 글은 3줄, 줄마다 16자까지'
         e = krtext.encode(kind) + b'\x50' + bytes([height]) + struct.pack('<H', weight) + b'\x59'.join(krtext.encode(l) for l in lines) + b'\x50'
         room = min((ent(s) - ent(no) for s in range(1, NUM_SP + 1) if ent(s) > ent(no) and ent(s) // 0x4000 == ent(no) // 0x4000), default=0)
-        assert len(e) <= room, '도감 글이 원래 자리보다 김: %d > %d' % (len(e), room)
-        self.put(ent(no), e + bytes(room - len(e)))
-        self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room))
+        if len(e) <= room:
+            self.put(ent(no), e + bytes(room - len(e))); self.log.append('도감 %d번 %d/%d바이트' % (no, len(e), room)); return
+        # 원래 자리가 모자라면 같은 뱅크의 빈 곳으로 옮기고 포인터를 바꿈 (도감 뱅크는 종 번호로 정해짐: 1~128 / 129~251)
+        bank = ent(no) // 0x4000
+        b, p = self.sp.take(len(e), bank=bank)
+        self.put(addr(b, p), e); self.put(tab + 2 * (no - 1), struct.pack('<H', p))
+        self.log.append('도감 %d번 %d바이트 → 빈 곳 %02X:%04X' % (no, len(e), b, p))
     # 글 한 덩이 바꾸기: a = 글자 시작(text 명령 0x00 다음). <DONE>/<PROMPT> 앞까지를 새 글로, 남는 자리는 빈칸(0x7f)
     def text_at(self, a, new):
         d = self.d; end = a
@@ -355,17 +362,48 @@ def build(base, out_rom, out_ips):
         idx, _, _ = P.cry_of(S('아구몬')); P.cry(KORO, idx, 160, 150)          # 아구몬 울음을 높고 짧게
         # 공식 도감(digimon.net): 유년기Ⅱ, 렛서형, 필살기 거품. 키·몸무게는 공식 값이 없어 임시
         P.dex(KORO, '렛서형', 3, 30, ['솜털이 빠지고 몸이 커진', '소형 디지몬. 아직 싸울 수', '없지만 거품으로 위협한다'])
-    # 7 스타팅을 어드벤처 파트너로: 불꽃 볼 → 아구몬, 물 볼 → 파피몬, 셋째 볼 → 파닥몬 (원래 길몬·레나몬·테리어몬)
-    #   라이벌은 금처럼 내 것에 강한 쪽을 가져가므로, 트레이너 표의 세 줄을 그대로 어드벤처 세 줄로 바꿈 (3단계는 완전체)
-    if True:
-        TAM = {S('길몬'): S('아구몬'), S('그라우몬'): S('그레이몬'), S('듀크몬'): MGR,
-               S('레나몬'): S('파피몬'), S('구미호몬'): S('가루몬'), S('샤크라몬'): WGR,
-               S('테리어몬'): S('파닥몬'), S('가르고몬'): S('엔젤몬'), S('래피드몬'): S('홀리엔젤몬')}
-        T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('파피몬'), S('테리어몬'): S('파닥몬')})
-        P.text_at(T[S('아구몬')], '공박사『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
-        P.text_at(T[S('파피몬')], '공박사『물디지몬<LINE>파피몬이 마음에 드느냐!?')
-        P.text_at(T[S('파닥몬')], '공박사『천사디지몬<LINE>파닥몬이 마음에 들었느냐!?')
-        P.log.append('스타팅 → 아구몬·파피몬·파닥몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
+    # 7 스타팅: 불꽃 볼 → 아구몬, 물 볼 → 파피몬, 셋째 볼 → 브이몬(파워디지몬 주인공) (원래 길몬·레나몬·테리어몬)
+    #   라이벌은 금처럼 내 것에 강한 쪽을 가져가므로, 트레이너 표의 세 줄을 그대로 바꿈 (3단계: 메탈그레이몬·워가루몬·황제드라몬)
+    #   파닥몬은 공박사 조수가 주는 알 칸(원래 토게피)이라 알에서 나옴 — 토코몬 그림이 오면 알을 토코몬으로
+    VM, XV, IM = S('브이몬'), S('엑스브이몬'), S('황제드라몬')
+    TAM = {S('길몬'): S('아구몬'), S('그라우몬'): S('그레이몬'), S('듀크몬'): MGR,
+           S('레나몬'): S('파피몬'), S('구미호몬'): S('가루몬'), S('샤크라몬'): WGR,
+           S('테리어몬'): VM, S('가르고몬'): XV, S('래피드몬'): IM}
+    T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('파피몬'), S('테리어몬'): VM})
+    P.text_at(T[S('아구몬')], '공박사『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
+    P.text_at(T[S('파피몬')], '공박사『물디지몬<LINE>파피몬이 마음에 드느냐!?')
+    P.text_at(T[VM], '공박사『소룡디지몬<LINE>브이몬이 마음에 들었느냐!?')
+    P.log.append('스타팅 → 아구몬·파피몬·브이몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
+    # 10 브이몬 줄: 디지몬스터는 엑스브이몬·황제드라몬을 우파·누오 칸 능력치·기술(물대포·지진) 그대로 둠 → 스타팅답게 다시 잡음
+    #   아머 진화(디지멘탈 도구)는 그대로, 애니에 안 나온 브이드라몬 갈래만 뺌. 레벨 진화는 다른 스타팅처럼 16
+    P.evos(VM, [(ITEM, 23, S('번개드라몬')), (ITEM, 24, S('매그너몬')), (ITEM, 22, S('화염드라몬')), (LV, 16, XV)])
+    P.stats(XV, hp=65, atk=85, **{'def': 70}, spd=80, sat=60, sdf=65, type1=TYPES['DRAGON'], type2=TYPES['FLYING'])
+    P.evos(XV, [(LV, 40, IM)], moves_by_name([(1, 'TACKLE'), (1, 'LEER'), (1, 'QUICK_ATTACK'), (16, 'WING_ATTACK'), (22, 'DOUBLE_KICK'),
+                                             (28, 'SLASH'), (34, 'OUTRAGE'), (40, 'HYPER_BEAM')]))
+    P.stats(IM, hp=95, atk=115, **{'def': 90}, spd=90, sat=100, sdf=90, type1=TYPES['DRAGON'], type2=TYPES['FLYING'])
+    P.evos(IM, [(ITEM, 8, S('황제팔라딘'))], moves_by_name([(1, 'WING_ATTACK'), (1, 'SLASH'), (1, 'OUTRAGE'), (40, 'ZAP_CANNON'),
+                                                          (46, 'HYPER_BEAM'), (52, 'FLY')]))
+    # 9 새 디지몬 칸 (slots.json): 그림(art/<id>-f.png·-b.png)이 있는 것만 넣음. PLACEHOLDER=1 이면 그림 없어도 물음표 알로 넣어 시험
+    SL = json.load(open(os.path.join(HERE, 'slots.json')))
+    egg = bytes(P.d).find(bytes([0x2e, S('파닥몬'), 5]))            # 공박사 조수의 알 (giveegg 종, 레벨)
+    installed = {}
+    for m in SL['mons']:
+        f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
+        if not (os.path.exists(f) and os.path.exists(b)):
+            if os.environ.get('PLACEHOLDER') != '1': continue
+            f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
+        no = N.get(m['name']) or S(m['slot'])
+        st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
+        P.name(no, m['name'])
+        P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
+        P.pic(no, f, b)
+        P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], moves_by_name(m['moves']))
+        P.dex(no, *m['dex'])
+        if m['grade'].startswith(('유년기', '유아기')): P.icon(no, ICON_JIGGLYPUFF)
+        if m['id'] == 'tokomon' and egg > 0: P.put(egg + 1, bytes([no])); P.log.append('조수의 알 → 토코몬')
+        installed[no] = m
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
     # 3 포획 규칙
     P.catch_engine()
     G = json.load(open(os.path.join(HERE, 'grades.json')))
@@ -385,6 +423,10 @@ def build(base, out_rom, out_ips):
             P.stats(no, catch=0); blocked.append(no)
     for no in (MGR, WGR):
         P.stats(no, catch=0); blocked.append(no)
+    for no, m in installed.items():
+        P.stats(no, catch=m['catch'])
+        if m['catch'] == 0 and no not in blocked: blocked.append(no)
+        if m['catch'] and no in blocked: blocked.remove(no)
     P.log.append('포획 불가 %d종 (성숙기 이상)' % len(blocked))
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))

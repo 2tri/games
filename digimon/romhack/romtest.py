@@ -96,7 +96,17 @@ def test_evo(names):
         ('가루몬 + 우정 배지 Lv33 → 워가루몬', 5, 1 << 4, None, N['워가루몬']),
         ('코로몬 Lv11 → 아구몬', 3, 0, None, N['아구몬']),
     ]
+    extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종
+        ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬'),
+        ('뿔몬 Lv11 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 10, '파피몬'),
+        ('토코몬 Lv10 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 9, '파닥몬'),
+    ]
     bad = 0
+    for name, sp_name, lv, want_name in extra:
+        if sp_name not in N: print('  %-36s → 건너뜀 (아직 롬에 없음)' % name); continue
+        sp, got_lv = candy(0, [(N[sp_name], lv, 70)], names, 0, 30)
+        ok = sp == N[want_name]; bad += not ok
+        print('  %-36s → %3d Lv%-3d %s' % (name, sp, got_lv, 'OK' if ok else '틀림(기대 %d)' % N[want_name]))
     for name, slot, badge, lv, want, *more in cases:
         mons = [list(x) for x in PARTY]
         if lv: mons[slot][1] = lv
