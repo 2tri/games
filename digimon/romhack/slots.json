@@ -1453,6 +1453,72 @@
     ]
    ],
    "like": "데블몬"
+  },
+  {
+   "id": "devidramon",
+   "slot": 165,
+   "name": "데블드라몬",
+   "grade": "성숙기",
+   "type": [
+    "DARK",
+    "DRAGON"
+   ],
+   "stats": [
+    70,
+    95,
+    70,
+    85,
+    60,
+    65
+   ],
+   "exp": 150,
+   "catch": 45,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "BITE"
+    ],
+    [
+     1,
+     "LEER"
+    ],
+    [
+     1,
+     "SCARY_FACE"
+    ],
+    [
+     12,
+     "FURY_SWIPES"
+    ],
+    [
+     18,
+     "FAINT_ATTACK"
+    ],
+    [
+     22,
+     "MEAN_LOOK"
+    ],
+    [
+     28,
+     "SLASH"
+    ],
+    [
+     34,
+     "CRUNCH"
+    ]
+   ],
+   "dex": [
+    "마룡형",
+    18,
+    600,
+    [
+     "네 개의 붉은 눈으로",
+     "노려본 상대를 얼어",
+     "붙게 만드는 마룡"
+    ]
+   ],
+   "like": "데블몬"
   }
  ],
  "waiting_art": [
