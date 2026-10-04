@@ -218,7 +218,7 @@ def test_trainers():
     groups = re.findall(r'dw (\w+)Group', open(os.path.join(wild.KR, 'data/trainers/party_pointers.asm')).read())
     r1 = [t for t in ts if groups[t['group']] == 'Rival1'][:3]
     show = ' / '.join(', '.join('%s Lv%d' % (r.name(sp), lv) for lv, sp, _ in t['mons']) for t in r1)
-    ok = all([r.name(sp) for _, sp, _ in t['mons']][0] == '추추몬' and len(t['mons']) == 2 for t in r1)
+    ok = all([r.name(sp) for _, sp, _ in t['mons']][0] in ('추추몬', '데롱몬') and len(t['mons']) == 2 for t in r1)   # 데롱몬 = 추추몬 유년기 (그림 오면)
     print('  라이벌 1차 (옮긴 무리, 2마리): %s %s' % (show, 'OK' if ok else '틀림'))
     return bad + (not ok)
 
