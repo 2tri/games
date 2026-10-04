@@ -53,6 +53,9 @@ def palette(did):
     if not did: return GRAY
     sys.path.insert(0, os.path.join(WEB, 'romhack', 'order')); import specs
     sp = specs.by_id(did)
+    if not sp or not sp.get('pal'):                                   # specs 에 없으면 다시 그리기·새 유년기 몸 색 (order/redraw.py PAL)
+        import redraw
+        if redraw.PAL.get(did): return [GRAY[0], tuple(redraw.PAL[did][0]), tuple(redraw.PAL[did][1]), GRAY[3]]
     if not sp or not sp.get('pal'): raise SystemExit('specs.py 에 %s 의 pal 이 없음' % did)
     return [GRAY[0], tuple(sp['pal'][0]), tuple(sp['pal'][1]), GRAY[3]]
 

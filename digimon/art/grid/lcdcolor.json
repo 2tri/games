@@ -14,5 +14,9 @@
 "vegimon": {"scale": 3, "shade": 0, "front": {"ops": [["rows", 0, 4, 2]]}, "back": {"ops": [["boxall", 3, 5, 13, 9, 1]]}},
 "kiwimon": {"scale": 3, "shade": 0, "front": {"ops": [["ink", 0], ["rows", 4, 15, 0], ["map", 0, 0, 15, 4, 0, 1], ["map", 0, 13, 15, 15, 0, 2], ["px", 3, [[9, 2], [8, 3]]]]}, "back": {"ops": [["boxall", 5, 2, 9, 3, 1]]}},
 "monzaemon": {"scale": 3, "shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 3, 3, 12, 7, 1]]}},
-"whamon": {"scale": 3, "shade": 0, "front": {"ops": [["ink", 2], ["map", 0, 10, 14, 15, 2, 1], ["rows", 13, 13, 0]]}, "back": {"ops": []}}
+"whamon": {"scale": 3, "shade": 0, "front": {"ops": [["ink", 2], ["map", 0, 10, 14, 15, 2, 1], ["rows", 13, 13, 0]]}, "back": {"ops": []}},
+"chibimon": {"shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 10, 9, 21, 15, 1]]}},
+"minomon": {"scale": 3, "shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 2, 5, 10, 11, 1]]}},
+"pagumon": {"scale": 3, "shade": 2, "front": {"ops": []}, "back": {"ops": [["boxall", 3, 3, 13, 7, 1]]}},
+"poromon": {"shade": 2, "front": {"ops": [["clear", 26, 29]]}, "back": {"ops": [["boxall", 7, 13, 19, 20, 1]]}}
 }
