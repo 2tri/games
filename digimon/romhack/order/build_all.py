@@ -32,13 +32,11 @@ BABY_SPEC = {   # 새 유년기 4종 주문문용 (specs.py 형식). 몸 색은 
                     not_=['No legs.']),
 }
 ALIAS = {'tailmon': 'gatomon', 'plotmon': 'salamon'}
-# 게임 도트 후보 (rip2art.py LIST 이름, 색 나누기 방식, 판정). 판정 '애매' 는 써도 되는지 사용자 확인 필요. 못 쓴 것(모노크로몬·데블몬·황제드라몬)은 넣지 않음
-RIP = {'chibimon': ('chibimon', 'color', ''), 'poromon': ('poromon~d1', 'color', ''), 'minomon': ('minomon', 'color', ''), 'pagumon': ('pagumon', 'color', ''),
-       'kunemon': ('kunemon', 'color', ''), 'gottsumon': ('gottsumon', 'color', ''), 'kiwimon': ('kiwimon', 'color', ''), 'vegimon': ('vegimon', 'color', '종 판정 확신 중간'),
-       'meramon': ('meramon', 'color', ''), 'whamon': ('whamon', 'color', ''), 'digmon': ('digmon', 'lum', ''), 'monzaemon': ('monzaemon', 'lum', ''),
-       'andromon': ('andromon', 'color', ''), 'flymon': ('flymon', 'color', '애매'), 'drimogemon': ('drimogemon', 'color', '애매'),
-       'mamemon': ('mamemon', 'color', '애매'), 'okuwamon': ('okuwamon', 'color', '애매 · 종 판정 확신 중간'), 'mammon': ('mammon', 'color', '애매')}
-NO_SRC = {'monochromon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'devimon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐',
+# 게임 도트 후보 — 2026-10-04 사용자 판정으로 7종만 씀(art/ 에 넣음, decisions.md). 나머지는 안 씀
+# (rip2art.py LIST 이름, 색 나누기 방식, 판정). 판정 '애매' 는 써도 되는지 사용자 확인 필요. 못 쓴 것(모노크로몬·데블몬·황제드라몬)은 넣지 않음
+RIP = {}
+NO_SRC = {'gottsumon': '게임 도트 후보 안 씀(사용자 판정)', 'flymon': '게임 도트 후보 안 씀(사용자 판정)', 'drimogemon': '게임 도트 후보 안 씀(사용자 판정)', 'mamemon': '게임 도트 후보 안 씀(사용자 판정)', 'okuwamon': '게임 도트 후보 안 씀(사용자 판정)', 'mammon': '게임 도트 후보 안 씀(사용자 판정)', 'kiwimon': '게임 도트 후보 안 씀(사용자 판정)', 'vegimon': '게임 도트 후보 안 씀(사용자 판정)', 'meramon': '게임 도트 후보 안 씀(사용자 판정)', 'whamon': '게임 도트 후보 안 씀(사용자 판정)', 'digmon': '게임 도트 후보 안 씀(사용자 판정)', 'andromon': '게임 도트 후보 안 씀(사용자 판정)',
+          'devimon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐',
           'imperialdramondragonmode': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'snimon': '원더스완·GBA·NDS 에서 못 찾음', 'hanumon': '원더스완·GBA·NDS 에서 못 찾음'}
 
 
