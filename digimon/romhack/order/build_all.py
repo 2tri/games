@@ -91,6 +91,16 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         d = sp.get('dir') or sp['id']
         k = BO.card(sp, need, '', lu, 'https://digimon.net/cimages/digimon/%s.jpg' % d, 'https://digimon.net/reference_ko/detail.php?directory_name=' + d)
         c.update(prompt=k['prompt'], lcd8=k['lcd8'], img=k['img'], ref=k['ref'], sketch_mode=k['sketch_mode'], en=sp.get('en', ''))
+    # 뒷모습이 필요하고 앞모습이 확정된 종: 첨부용 앞모습(×8, 흰 바탕) + 앞모습 기준 뒷모습 주문문
+    front = WEB + 'art/%s-f.png' % aid if has_f else ''
+    if side['b'] in ('need', 'rip') and (front or f):
+        from PIL import Image
+        if front: im = Image.open(front).convert('RGBA')
+        else: im = Image.open(io.BytesIO(base64.b64decode(f.split(',', 1)[1]))).convert('RGBA')
+        bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im)
+        c['attf'] = b64png(bg.convert('RGB').resize((im.width * 8, im.height * 8), Image.NEAREST))
+        c['prompt']['b'] = prompts.back_from_front(dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', '')))
+        if not c['img'] and did: c['img'] = 'https://digimon.net/cimages/digimon/%s.jpg' % ((sp or {}).get('dir') or did)
     return c
 
 

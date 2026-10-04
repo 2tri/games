@@ -67,3 +67,22 @@ def sketch_prompt(e):
             f"MUST NOT:\n- Do not change the silhouette of Image 1.\n{dash(e['not_'])}\n"
             "No text, no frame, no grid lines, no background.")
 
+
+def back_from_front(e):
+    """뒷모습 주문문 (2026-10-04 방식: 앞모습은 게임 도트·받은 그림으로 확정 → 그 앞모습을 첨부 1장으로 붙여 뒷모습만 받음).
+    첨부 1장 = 확정된 앞모습 크게(주문서의 「첨부용 앞모습」), 2장 = 공식 그림(있으면). e 에 keep_back 이 없으면 일반 문장"""
+    name = f"{e['ko']} ({e['en']})" if e.get('en') else e['ko']
+    keep = e.get('keep_back') or e.get('keep') or []
+    keep_txt = f"MUST KEEP from behind:\n{lst(keep)}\n\n" if keep else ''
+    return (f"Image 1 is the FRONT battle sprite of {name}, a Digimon, already finished for my Game Boy Color game. "
+            "Image 2 (if attached) is its official picture, only to understand what the back looks like.\n\n"
+            "Task: draw the BACK battle sprite of the SAME character, matching Image 1 exactly: same pixel size, same chunky pixels, same thick black outline, "
+            "same 4 colors as Image 1 (white, its two body colors, black) used for the same body parts. Do not add new colors.\n\n"
+            "View: three-quarter REAR view, like the player's own monster in a Game Boy battle. The camera is behind and a little above it. "
+            "The character faces AWAY toward the upper-right corner, so we see its back, its right shoulder and right arm, and a thin sliver of the right side of its head. "
+            "NOT straight from behind, NOT symmetrical, NOT a mirror of the front, NOT the face.\n\n"
+            "Composition: ONE square image, pure white background. Only the upper body and head; the lower body is cut off by the bottom edge. "
+            "The character fills about 90% of the image width.\n\n"
+            "Style: big chunky pixels, every pixel a crisp square of the same size. No anti-aliasing, no gradients, no dithering, no shadow.\n\n"
+            f"{keep_txt}MUST NOT:\n- Do not show the face from the front.\n- Do not make it symmetrical.\n- Do not change the colors of Image 1.\n\n"
+            "No text, no frame, no grid lines, no background.")
