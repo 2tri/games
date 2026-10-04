@@ -276,14 +276,21 @@ def rules(c, out):
         if frm not in N: continue
         left = [s['where'] for s in wild if s['cur'] == N[frm] and (not area or s['where'].startswith(area))]
         if left: r16.append(('%s 가 %s 에 남음' % (frm, area or '야생'), len(left)))
+    babies = {n for n, g in c.grade.items() if g.startswith('유년기')}
+    baby_of = {e[-1]: b for b in babies for e in c.evos(b) if e[0] == 1 and e[-1] not in babies}
     for nm, kd, area, slots, (lo, hi), cond in RU.PLACE_ADD:
         if nm not in N: continue
         here = [s for s in wild if s['kind'] == kd and s['where'].startswith(area) and s['cur'] == N[nm]]
+        # 초반 야생 유년기(R17)로 그 종의 유년기가 된 Lv 낮은 칸도 넣은 것으로 침
+        here_b = [s for s in wild if s['kind'] == kd and s['where'].startswith(area) and s['cur'] == baby_of.get(N[nm]) and c.d[s['addr'] - 1] <= RU.BABY_WILD_LV]
         bad_lv = [s for s in here if not lo <= c.d[s['addr'] - 1] <= hi]
-        if not here: r16.append(('%s 가 %s %s 에 없음' % (nm, area, kd), 0))
+        if not here and not here_b: r16.append(('%s 가 %s %s 에 없음' % (nm, area, kd), 0))
         elif bad_lv: r16.append(('%s 의 %s 레벨이 %d~%d 밖' % (nm, area, lo, hi), len(bad_lv)))
     rep('R16', r16, '출현 연결표 %d줄 (없앨 종 %d, 넣을 곳 %d) 모두 맞음' % (len(RU.PLACE_SWAP) + len(RU.PLACE_ADD), len(RU.PLACE_SWAP), len(RU.PLACE_ADD)),
         lambda b: '%s (%d곳)' % b)
+    # R17 초반 야생 유년기 (rules.BABY_WILD_LV, 사용자 2026-10-03): 그 레벨 이하 야생 칸에, 유년기가 롬에 있는 성장기가 없음
+    r17 = collections.Counter(c.name(s['cur']) for s in wild if s['cur'] in baby_of and c.d[s['addr'] - 1] <= RU.BABY_WILD_LV)
+    rep('R17', sorted(r17.items()), 'Lv%d 이하 야생에 유년기가 있는 성장기 없음 (유년기 %d종)' % (RU.BABY_WILD_LV, len(babies)), lambda b: '%s (%d곳)' % b)
 
 
 def full_evo(c, out):

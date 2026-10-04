@@ -228,13 +228,23 @@ class Patch:
         self.put(a, bytes([0x16, p & 255, p >> 8, b, 0x50])); return 'far'
     # 스타팅: 공박사 연구소의 세 볼 스크립트 (pokepic X / cry X / … getmonname X / … givepoke X, 5) 종 바꾸기 → {새 종: 묻는 글 주소}
     def starters(self, mapping):
-        d = bytes(self.d); texts = {}
+        d = bytes(self.d); texts = {}; self.starter_at = getattr(self, 'starter_at', {})
         for old, new in mapping.items():
             a = re.search(bytes([0x56, old, 0x84, old, 0x00]), d).start(); seg = d[a:a + 80]
             for k in (1, 3, seg.index(bytes([0x40, old])) + 1, seg.index(bytes([0x2d, old, 5])) + 1):
                 self.put(a + k, bytes([new]))
             k = seg.index(0x4d, 5)                                    # 첫 writetext = '…로 하겠니?' 글
             texts[new] = addr(a // 0x4000, seg[k + 1] | seg[k + 2] << 8) + 1
+            self.starter_at[new] = (a, texts[new])
+        return texts
+    # 이미 바꾼 스타팅을 한 번 더 바꾸기 (starters 가 기억한 스크립트 자리를 그대로 씀) → {새 종: 묻는 글 주소}
+    def restarter(self, mapping):
+        texts = {}
+        for old, new in mapping.items():
+            a, t = self.starter_at.pop(old); seg = bytes(self.d[a:a + 80])
+            for k in (1, 3, seg.index(bytes([0x40, old])) + 1, seg.index(bytes([0x2d, old, 5])) + 1):
+                assert self.d[a + k] == old; self.put(a + k, bytes([new]))
+            self.starter_at[new] = (a, t); texts[new] = t
         return texts
     # 스타팅 고르는 물건: 공박사 연구소의 볼 3개만 '금 트로피' 필드 그림 칸(방 꾸미기에만 쓰임)으로 바꾸고 그 그림을 디지바이스로
     #   (볼 그림을 바꾸면 땅에 떨어진 아이템 볼까지 바뀌므로). png: 16×16, 투명 + 밝은·어두운 색 + 검정
@@ -525,6 +535,10 @@ def build(base, out_rom, out_ips):
     if os.path.exists(gw):                                            # SPRITE_ELM = 0x10 (연구소 화면 OAM으로 확인), SPRITE_OAK = 0x05 (오박사 연구소·이상한 할아버지 집·목호 방), PAL_OW_BLUE
         for sid in (0x10, 0x05): P.walker(gw, sid, 1)
         P.log.append('박사 필드 그림(공박사·오박사) → 겐나이 (파란 팔레트)')
+    tw = os.path.join(WEB, 'art', 'taichi_ow.png')                    # 주인공 필드 그림 → 태일 (src/people/taichi_ai.png 보고 16×16 로 찍음, 사용자 2026-10-04)
+    if os.path.exists(tw):                                            # SPRITE_CHRIS 0x01 걷기, 0x02 자전거(자전거 그림 없이 같은 그림), PAL_OW_BLUE
+        for sid in (0x01, 0x02): P.walker(tw, sid, 1)
+        P.log.append('주인공 필드 그림 → 태일 (걷기·자전거, 파란 팔레트)')
     # 10 브이몬 줄: 디지몬스터는 엑스브이몬·황제드라몬을 우파·누오 칸 능력치·기술(물대포·지진) 그대로 둠 → 스타팅답게 다시 잡음
     #   아머 진화(디지멘탈 도구)는 그대로, 애니에 안 나온 브이드라몬 갈래만 뺌. 레벨 진화는 다른 스타팅처럼 16
     P.evos(VM, [(ITEM, 23, S('번개드라몬')), (ITEM, 24, S('매그너몬')), (ITEM, 22, S('화염드라몬')), (LV, 16, XV)])
@@ -560,6 +574,11 @@ def build(base, out_rom, out_ips):
         installed[no] = m
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
+    # 스타팅 → 유년기 (사용자 2026-10-03 「스타팅도 성장기 말고 유년기」). 유년기 칸이 아직 없으면(그림 대기) 성장기 그대로
+    bs = {N[rk]: (N[bb], txt) for rk, bb, txt in rules.BABY_STARTERS if bb in N}
+    for k_, t_ in P.restarter({rk: v[0] for rk, v in bs.items()}).items():
+        P.text_at(t_, next(v[1] for v in bs.values() if v[0] == k_))
+    P.log.append('스타팅 유년기: %s' % ', '.join('%s → %s' % (rk, bb) for rk, bb, _ in rules.BABY_STARTERS if bb in N))
     # B단계 진화 표 (2026-10-02 자문 판정). 갈래체·중간체 그림이 들어오면(그 이름이 롬에 있으면) 그 칸으로
     has = lambda nm: nm in N
     def T(*ev): return [(k, lv, S(nm)) for k, lv, nm in ev]
@@ -624,6 +643,20 @@ def build(base, out_rom, out_ips):
                 if i % per in slots: P.d[s['addr']] = N[nm]; nadd += 1
                 if P.d[s['addr']] == N[nm]: P.d[s['addr'] - 1] = min(max(lv, lo), hi)    # 그 지역에 원래 있던 같은 종도 레벨 맞춤
     P.log.append('E단계 출현 연결: 바꿈 %d자리, 넣음 %d자리' % (nsw, nadd))
+    # 초반 야생 유년기 (rules.BABY_WILD_LV): 그 레벨 이하 야생 칸의 성장기 → 레벨로 그 성장기가 되는 유년기 (롬에 있을 때만)
+    P.r.d = P.d
+    babies = {N[m['name']] for m in SL['mons'] if m['grade'].startswith('유년기') and m['name'] in N} | {N['코로몬']}
+    baby_of = {}
+    for b_ in babies:
+        for e_ in P.r.evos_attacks(b_)[0]:
+            if e_[0] == LV and e_[-1] not in babies: baby_of.setdefault(e_[-1], b_)
+    nb_ = collections.Counter()
+    for (kd, wh), ss in groups_.items():
+        for s in ss:
+            sp_ = P.d[s['addr']]
+            if sp_ in baby_of and P.d[s['addr'] - 1] <= rules.BABY_WILD_LV:
+                P.d[s['addr']] = baby_of[sp_]; nb_['%s→%s' % (r.name(sp_), r.name(baby_of[sp_]))] += 1
+    P.log.append('초반 야생 유년기 (Lv%d 이하): %s' % (rules.BABY_WILD_LV, ', '.join('%s %d자리' % kv for kv in nb_.items()) or '없음'))
     # F단계 색만 바꾼 종 (rules.PALSWAP): 원본의 기본 정보·그림·기술·울음·아이콘·도감을 그대로 가리키고, 팔레트와 공격 +10·방어 −10 만 다르게
     P.r.d = P.d; N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     dm = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', bytes(P.d), re.S)
