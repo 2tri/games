@@ -811,12 +811,15 @@ def build(base, out_rom, out_ips):
     import music
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)
     mtab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+    ff = float(os.environ.get('MUSIC_FF', '1'))                         # 델타 빨리감기용 판: 그 배수로 들을 때 원래 곡이 되게 (사용자 2026-10-04)
     for nm, ids in rules.MUSIC.items():
         js = music.load(nm); loop = True if nm == 'evolve' else None
-        size = len(music.song_bytes(js, 0x4000, loop))
-        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop))
+        slow = 1 if nm == 'heal' else None                              # 디지몬센터 회복은 정해진 프레임만 기다림 → 템포는 그대로, 음만 낮춤
+        size = len(music.song_bytes(js, 0x4000, loop, ff, slow))
+        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop, ff, slow))
         for i in ids: P.put(mtab + 3 * i, bytes([b]) + struct.pack('<H', p))
-    P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab))
+    P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)%s' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab,
+                                                       ' — 빨리감기 %g배용 (템포 ×%g, 음 낮춤)' % (ff, ff) if ff != 1 else ''))
     # 인트로 박사 그림 → 겐나이 (사용자: 「이름만 겐나이로 나와서 아쉽다」, 그림 세션 art/gennai_portrait.png). 직업 POKEMON_PROF = 10
     gp = os.path.join(WEB, 'art', 'gennai_portrait.png')
     if os.path.exists(gp): P.log.append('인트로 박사 그림 → 겐나이 (색 %s)' % (P.trainer_pic(10, gp),))
