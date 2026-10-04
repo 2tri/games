@@ -643,9 +643,17 @@ def build(base, out_rom, out_ips):
                 if i % per in slots: P.d[s['addr']] = N[nm]; nadd += 1
                 if P.d[s['addr']] == N[nm]: P.d[s['addr'] - 1] = min(max(lv, lo), hi)    # 그 지역에 원래 있던 같은 종도 레벨 맞춤
     P.log.append('E단계 출현 연결: 바꿈 %d자리, 넣음 %d자리' % (nsw, nadd))
-    # 초반 야생 유년기 (rules.BABY_WILD_LV): 그 레벨 이하 야생 칸의 성장기 → 레벨로 그 성장기가 되는 유년기 (롬에 있을 때만)
+    # 유년기 → 성장기 진화 레벨 (rules.BABY_EVO_LV): 그보다 늦게 진화하는 레벨 진화를 그 레벨로
     P.r.d = P.d
     babies = {N[m['name']] for m in SL['mons'] if m['grade'].startswith('유년기') and m['name'] in N} | {N['코로몬']}
+    nlv = []
+    for b_ in sorted(babies):
+        ev_ = [tuple(e_) for e_ in P.r.evos_attacks(b_)[0]]
+        new_ = [(LV, rules.BABY_EVO_LV, e_[-1]) if e_[0] == LV and e_[1] > rules.BABY_EVO_LV and e_[-1] not in babies else e_ for e_ in ev_]
+        if new_ != ev_: P.evos(b_, new_); nlv.append('%s %d' % (r.name(b_), ev_[0][1]))
+    P.log.append('유년기 → 성장기 Lv%d: %s (원래 레벨)' % (rules.BABY_EVO_LV, ', '.join(nlv)))
+    # 초반 야생 유년기 (rules.BABY_WILD_LV): 그 레벨 이하 야생 칸의 성장기 → 레벨로 그 성장기가 되는 유년기 (롬에 있을 때만)
+    P.r.d = P.d
     baby_of = {}
     for b_ in babies:
         for e_ in P.r.evos_attacks(b_)[0]:
