@@ -1,0 +1,124 @@
+"""전체 종 주문서 (2026-10-04 사용자 지시: 「총 200몇 종 다 넣고 유년기부터, 게임에서 어떻게 보이는지 앞·뒤로, 그림 필요·검색 필요 표시」)
+    python3 build_all.py --out <html> [--allmons allmons.json]
+ 자료: allmons.json (롬 쪽 세션이 패치 롬에서 뽑음 — 251칸, 게임 그대로 앞·뒤 그림)
+       + specs.py·redraw.py 의 종 중 아직 롬 칸이 없는 것(그림이 오면 칸이 생김)
+       + art/<id>-f/-b.png (받은 그림) + tools/rip2art.py 의 게임 도트 후보 (art/src/rip 에 시트가 있을 때)
+ 상태: 완료(앞·뒤 우리 그림이 롬에) / 받음·롬 반영 대기 / 1.4 그림 사용 중(다시 그리기 체크하면 할 일로) / 게임 도트 후보 있음 / 검색·재미나이 필요"""
+import argparse, base64, io, json, os, sys
+HERE = os.path.dirname(os.path.abspath(__file__)); ROMHACK = os.path.dirname(HERE); WEB = os.path.dirname(ROMHACK) + '/'
+sys.path.insert(0, HERE); sys.path.insert(0, WEB + 'tools')
+import specs, redraw, prompts, build_order as BO
+
+GRADES = ['유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ', '성장기', '아머체', '성숙기', '완전체', '궁극체']
+NEW_BABY = [('chibimon', '꼬마몬', 'Chibimon', '유년기Ⅱ', '브이몬 줄 · 세 번째 스타팅'), ('minomon', '데롱몬', 'Minomon', '유년기Ⅱ', '추추몬 줄'),
+            ('pagumon', '퍼그몬', 'Pagumon', '유년기Ⅱ', '가지몬 줄 · 초반 야생'), ('poromon', '포로몬', 'Poromon', '유년기Ⅱ', '호크몬 줄 · 초반 야생')]
+T = lambda w, l, d, b: dict(white=w, light=l, dark=d, black=b)
+BABY_SPEC = {   # 새 유년기 4종 주문문용 (specs.py 형식). 몸 색은 redraw.PAL
+    'chibimon': dict(id='chibimon', ko='꼬마몬', en='Chibimon (DemiVeemon)', grade='유년기Ⅱ', dir='chibimon', wiki='Chibimon',
+                     tones=T('belly, the V mark on the forehead', 'blue body', 'shadow on the ears and back', 'eyes'),
+                     keep=['A tiny blue creature with two long floppy ear-like horns pointing backwards.', 'A white belly and a small white muzzle.', 'Short arms and legs, big round eyes, a cheerful smile.'],
+                     not_=['Not Veemon: no long legs, no V-shaped horn on the nose.']),
+    'minomon': dict(id='minomon', ko='데롱몬', en='Minomon', grade='유년기Ⅱ', dir='minomon', wiki='Minomon',
+                    tones=T('eye whites', 'green head', 'the brown leaf bag around the body', 'eyes'),
+                    keep=['A small green larva head poking out of a bag made of dried leaves (a bagworm).', 'Two small antennae on top of the head.', 'Big round eyes.'],
+                    not_=['No legs, no arms.']),
+    'pagumon': dict(id='pagumon', ko='퍼그몬', en='Pagumon', grade='유년기Ⅱ', dir='pagumon', wiki='Pagumon',
+                    tones=T('eye whites', 'purple-gray round body', 'the long ears and shadow under the body', 'red eyes'),
+                    keep=['A flat round blob with two long floppy ears sticking out sideways.', 'Mischievous narrow eyes and a grin.'],
+                    not_=['No legs, no arms, no tail.']),
+    'poromon': dict(id='poromon', ko='포로몬', en='Poromon', grade='유년기Ⅱ', dir='poromon', wiki='Poromon',
+                    tones=T('eye whites, beak tip', 'pink round body', 'the small wings and the red feather on the head', 'eyes'),
+                    keep=['A round pink bird ball with two small wings on the sides.', 'One long red feather on top of the head.', 'A small yellow beak and big round eyes.'],
+                    not_=['No legs.']),
+}
+ALIAS = {'tailmon': 'gatomon', 'plotmon': 'salamon'}
+# 게임 도트 후보 (rip2art.py LIST 이름, 색 나누기 방식, 판정). 판정 '애매' 는 써도 되는지 사용자 확인 필요. 못 쓴 것(모노크로몬·데블몬·황제드라몬)은 넣지 않음
+RIP = {'chibimon': ('chibimon', 'color', ''), 'poromon': ('poromon~d1', 'color', ''), 'minomon': ('minomon', 'color', ''), 'pagumon': ('pagumon', 'color', ''),
+       'kunemon': ('kunemon', 'color', ''), 'gottsumon': ('gottsumon', 'color', ''), 'kiwimon': ('kiwimon', 'color', ''), 'vegimon': ('vegimon', 'color', '종 판정 확신 중간'),
+       'meramon': ('meramon', 'color', ''), 'whamon': ('whamon', 'color', ''), 'digmon': ('digmon', 'lum', ''), 'monzaemon': ('monzaemon', 'lum', ''),
+       'andromon': ('andromon', 'color', ''), 'flymon': ('flymon', 'color', '애매'), 'drimogemon': ('drimogemon', 'color', '애매'),
+       'mamemon': ('mamemon', 'color', '애매'), 'okuwamon': ('okuwamon', 'color', '애매 · 종 판정 확신 중간'), 'mammon': ('mammon', 'color', '애매')}
+NO_SRC = {'monochromon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'devimon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐',
+          'imperialdramondragonmode': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'snimon': '원더스완·GBA·NDS 에서 못 찾음', 'hanumon': '원더스완·GBA·NDS 에서 못 찾음'}
+
+
+def b64png(im):
+    buf = io.BytesIO(); im.save(buf, 'PNG'); return 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode()
+
+
+def rip_pic(name, split):
+    try:
+        import rip2art as R
+    except Exception: return ''
+    e = next((x for x in R.LIST if x[0] == name), None)
+    if not e or not os.path.exists(os.path.join(R.RIP, e[1] + '.png')): return ''
+    R.SPLIT = split; t, pal = R.convert(e, R.back_pal(name.split('~')[0]))
+    return b64png(R.to_rgba(t, pal))
+
+
+def spec_of(did, no):
+    s = specs.by_id(did) if did else None
+    if s: return s
+    if did in BABY_SPEC: return BABY_SPEC[did]
+    for e in redraw.R:
+        if (did and e['id'] == did) or (no and e['no'] == no): return e
+    return None
+
+
+def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
+    aid = ALIAS.get(did, did)
+    has_f = bool(aid) and os.path.exists(WEB + 'art/%s-f.png' % aid); has_b = bool(aid) and os.path.exists(WEB + 'art/%s-b.png' % aid)
+    sp = spec_of(did, no); rd = any(e['no'] == no for e in redraw.R) if no else False
+    rip = RIP.get(did)
+    side = {}
+    for s, has, src in (('f', has_f, src_f), ('b', has_b, src_b)):
+        if src == 'art': side[s] = 'done'
+        elif has: side[s] = 'got'                                         # 받았는데 롬에 아직 (칸 대기·롬 세션 반영 대기)
+        elif src == '1.4' and not rd and not sp: side[s] = 'keep14'
+        elif s == 'f' and rip: side[s] = 'rip'
+        else: side[s] = 'need'
+    st = 'done' if side['f'] == side['b'] == 'done' else ('keep14' if side['f'] == side['b'] == 'keep14' else
+          ('got' if {side['f'], side['b']} <= {'done', 'got'} else 'todo'))
+    need = ''.join(s for s in 'fb' if side[s] in ('need', 'rip'))
+    c = {'no': no, 'ko': ko, 'grade': grade or '기타', 'id': did, 'en': (sp or {}).get('en', ''), 'where': where, 'next': nxt, 'line': line, 'order': order,
+         'gf': f, 'gb': b, 'src_f': src_f, 'src_b': src_b, 'side': side, 'st': st,
+         'af': BO.art(aid, 'f') if has_f and src_f != 'art' else '', 'ab': BO.art(aid, 'b') if has_b and src_b != 'art' else '',
+         'rip': rip_pic(rip[0], rip[1]) if rip and side['f'] == 'rip' else '', 'rip_name': rip[0] if rip else '', 'rip_note': rip[2] if rip else '',
+         'nosrc': NO_SRC.get(did, ''), 'prompt': {}, 'lcd8': '', 'img': '', 'ref': '', 'sketch_mode': False}
+    if sp and need:
+        lu = sp.get('lcd') or ''
+        if not lu:
+            try: lu = json.load(open(HERE + '/lcd.json')).get(sp.get('wiki'), {}).get('url', '')
+            except Exception: lu = ''
+        d = sp.get('dir') or sp['id']
+        k = BO.card(sp, need, '', lu, 'https://digimon.net/cimages/digimon/%s.jpg' % d, 'https://digimon.net/reference_ko/detail.php?directory_name=' + d)
+        c.update(prompt=k['prompt'], lcd8=k['lcd8'], img=k['img'], ref=k['ref'], sketch_mode=k['sketch_mode'], en=sp.get('en', ''))
+    return c
+
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--allmons', default=HERE + '/allmons.json'); a = ap.parse_args()
+    L = json.load(open(a.allmons)); rows = []; empty = 0; seen = set()
+    for x in L:
+        if x['src_f'] == 'egg': empty += 1; continue
+        seen.add(x['id'])
+        rows.append(row(x['no'], x['ko'], x['grade'], x['id'], x.get('f', ''), x.get('b', ''), x['src_f'], x['src_b'], x.get('where', ''),
+                        ', '.join(x.get('next') or []), x.get('line', ''), x.get('order', 999)))
+    extra = [(i, ko, en, g, use) for i, ko, en, g, use in NEW_BABY] + [(e['id'], e['ko'], e['en'], e['grade'], e.get('use', '')) for e in specs.S if e['id'] not in seen]
+    for i, ko, en, g, use in extra:
+        if i in seen: continue
+        seen.add(i); r = row(0, ko, g, i, '', '', 'none', 'none', '', '', '', 900); r['en'] = r['en'] or en; r['use'] = '아직 롬 칸 없음 — 앞·뒤 그림이 다 오면 칸이 생김' + (' · ' + use if use else '')
+        rows.append(r)
+    gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
+    rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
+    D = {'rows': rows, 'grades': GRADES + ['기타'], 'empty': empty, 'people': [{'ko': '겐나이', 'portrait': BO.b64(WEB + 'art/gennai_portrait.png'), 'walk': BO.b64(WEB + 'art/gennai_ow.png')}]}
+    tpl = open(HERE + '/allorder_tpl.html', encoding='utf-8').read()
+    html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
+    assert 'pokemon' not in html.lower() and 'pokémon' not in html.lower()
+    open(a.out, 'w', encoding='utf-8').write(html)
+    from collections import Counter
+    print(a.out, '%d종 + 빈 칸 %d' % (len(rows), empty), dict(Counter(r['st'] for r in rows)), '%.0fKB' % (len(html) / 1024))
+
+
+if __name__ == '__main__':
+    main()
