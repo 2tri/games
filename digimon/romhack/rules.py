@@ -110,7 +110,7 @@ REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '�
           '플롯트몬': 'salamon', '니드몬': 'togemon',
           '오메가몬': 'omegamon', '디아블로몬': 'diablomon', '돌핀몬': 'rukamon', '워그레이몬': 'wargreymon',
           '피에몬': 'piemon', '메탈가루몬': 'metalgarurumon',
-          '원뿔몬': 'ikkakumon'}                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
+          '원뿔몬': 'ikkakumon', '텐타몬': 'tentomon', '플라이몬': 'flymon', '두리몬': 'drimogemon', '울퉁몬': 'gottsumon'}                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
 
 # 노래 (사용자 지시 2026-10-02): 예전 GBC 판 곡(gbc/music/<곡>.json) → 금 음악 번호 (constants/music_constants.asm)
 # 금 음악 번호 (pokegold-kr constants/music_constants.asm) → 곡. 2026-10-04 사용자 「게임 곳곳 디지몬 노래 배치 점검」: 남은 포켓몬 곡을 거의 다 바꿈
