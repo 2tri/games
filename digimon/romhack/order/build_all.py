@@ -40,6 +40,33 @@ NO_SRC = {'gottsumon': '게임 도트 후보 안 씀(사용자 판정)', 'flymon
           'imperialdramondragonmode': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'snimon': '원더스완·GBA·NDS 에서 못 찾음', 'hanumon': '원더스완·GBA·NDS 에서 못 찾음'}
 
 
+TAI = ("Taichi \"Tai\" Yagami, the boy hero of the anime Digimon Adventure (1999): spiky messy brown hair, blue goggles worn on the forehead with a blue strap, "
+       "blue short-sleeved shirt with a yellow star, white gloves, brown shorts, brown shoes")
+STYLE = ("Style: late-1990s Game Boy Color RPG sprite. VERY low resolution, big chunky pixels, every pixel a crisp square of the same size, thick black outline. "
+         "No anti-aliasing, no blur, no gradients, no dithering, no shadow.\n"
+         "Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black.\n"
+         "  - white = goggle lenses, gloves, highlights\n  - light gray = skin\n  - dark gray = hair, shirt, shorts (all clothes and hair)\n  - black = outline, eyes")
+PEOPLE_ORDER = [
+    dict(id='taichi_back', ko='태일 · 전투 시작 뒷모습', size='48칸', file='taichi_back.png',
+         use='전투가 시작될 때 화면 왼쪽 아래에 나오는 주인공 뒷모습 (지금은 금 주인공 그대로)',
+         prompt=(f"This is {TAI}. Keep this exact character.\n\nTask: draw him as the PLAYER'S BACK sprite shown at the start of a battle in a Game Boy Color monster RPG.\n\n"
+                 "View: from BEHIND and a little ABOVE, upper body only (head, shoulders, back, arms), cut off at the waist by the bottom edge. "
+                 "We see the back of his spiky brown hair and the goggle strap around the back of his head. "
+                 "His right arm is raised a little to the side holding a small handheld Digivice (a small white device with a screen). "
+                 "Turned slightly toward the upper-right, NOT a mirror of a front view, no face visible.\n\n"
+                 "Composition: ONE square image, pure white background, the figure fills about 90% of the image. About 48 pixels wide and tall.\n\n" + STYLE +
+                 "\n\nNo text, no frame, no grid lines, no background.")),
+    dict(id='taichi_front', ko='태일 · 인트로 앞모습', size='56칸 (폭 40칸 이하면 트레이너 카드에도)', file='taichi_front.png',
+         use='이름 정하기·겐나이 대화 화면의 주인공 앞모습. 폭이 40칸 이하면 트레이너 카드에도 그대로 씀',
+         prompt=(f"This is {TAI}. Keep this exact character: same face, hair, goggles and clothes as the attached picture.\n\n"
+                 "Task: redraw the attached picture as a Game Boy Color RPG portrait sprite of the player, like the hero shown in the game's intro.\n\n"
+                 "Composition: ONE square image, pure white background. Front view, whole body, standing on the bottom edge, hands on hips. "
+                 "About 56 pixels tall and NARROW: the body at most about 40 pixels wide (keep the hair spikes close to the head).\n\n" + STYLE +
+                 "\n\nMUST KEEP: 1. The big spiky brown hair. 2. The goggles on the forehead (two round lenses). 3. The star on the shirt.\n"
+                 "MUST NOT: no Digimon, no extra people, no text, no frame, no grid lines, no background.")),
+]
+
+
 def b64png(im):
     buf = io.BytesIO(); im.save(buf, 'PNG'); return 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode()
 
@@ -78,7 +105,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
     st = 'done' if side['f'] == side['b'] == 'done' else ('keep14' if side['f'] == side['b'] == 'keep14' else
           ('got' if {side['f'], side['b']} <= {'done', 'got'} else 'todo'))
     need = ''.join(s for s in 'fb' if side[s] in ('need', 'rip'))
-    c = {'no': no, 'ko': ko, 'grade': grade or '기타', 'id': did, 'en': (sp or {}).get('en', ''), 'where': where, 'next': nxt, 'line': line, 'order': order,
+    c = {'no': no, 'ko': ko, 'grade': grade if grade in GRADES else '기타', 'id': did, 'en': (sp or {}).get('en', ''), 'where': where, 'next': nxt, 'line': line, 'order': order,
          'gf': f, 'gb': b, 'src_f': src_f, 'src_b': src_b, 'side': side, 'st': st,
          'af': BO.art(aid, 'f') if has_f and src_f != 'art' else '', 'ab': BO.art(aid, 'b') if has_b and src_b != 'art' else '',
          'rip': rip_pic(rip[0], rip[1]) if rip and side['f'] == 'rip' else '', 'rip_name': rip[0] if rip else '', 'rip_note': rip[2] if rip else '',
@@ -119,7 +146,13 @@ def main():
         rows.append(r)
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
-    D = {'rows': rows, 'grades': GRADES + ['기타'], 'empty': empty, 'people': [{'ko': '겐나이', 'portrait': BO.b64(WEB + 'art/gennai_portrait.png'), 'walk': BO.b64(WEB + 'art/gennai_ow.png')}]}
+    people = [{'ko': '겐나이', 'done': True, 'portrait': BO.b64(WEB + 'art/gennai_portrait.png'), 'walk': BO.b64(WEB + 'art/gennai_ow.png')}]
+    from PIL import Image
+    ref = Image.open(WEB + 'art/src/people/taichi_portrait_ai.png').convert('RGB'); ref.thumbnail((256, 256))
+    for e in PEOPLE_ORDER:
+        got = BO.b64(WEB + 'art/' + e['file'])
+        people.append(dict(e, done=bool(got), got=got, ref=b64png(ref) if e['id'] == 'taichi_front' and not got else ''))
+    D = {'rows': rows, 'grades': GRADES + ['기타'], 'empty': empty, 'people': people}
     tpl = open(HERE + '/allorder_tpl.html', encoding='utf-8').read()
     html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower() and 'pokémon' not in html.lower()

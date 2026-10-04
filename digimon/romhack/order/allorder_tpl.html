@@ -119,12 +119,13 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <span class="st" id="dbState">체크 저장 확인 중…</span>
   </div>
 
-  <div id="secs" style="display:grid;gap:40px"></div>
-
   <section>
-    <h2>사람 그림</h2>
+    <h2>사람 그림 <small>주인공 태일 · 겐나이</small></h2>
     <div class="cards" id="people"></div>
   </section>
+
+  <div id="secs" style="display:grid;gap:40px"></div>
+
 
   <footer>
     <span id="emptyNote"></span>
@@ -231,8 +232,21 @@ for (const g of D.grades) {
   secs[g] = [s, rs, cnt]; $("#secs").append(s);
 }
 for (const p of D.people) {
-  const c = el("article", "card"); c.append(el("div", "head")); c.firstChild.append(el("span", "ko", p.ko), el("span", "chip no", "두 가지 다 받음"));
-  const ps = el("div", "pics"); if (p.portrait) ps.append(pic(p.portrait, 2, "인트로 박사 그림")); if (p.walk) ps.append(pic(p.walk, 2, "필드 걷기 그림")); c.append(ps); $("#people").append(c);
+  const c = el("article", "card"); const h = el("div", "head"); h.append(el("span", "ko", p.ko));
+  if (p.size) h.append(el("span", "chip", p.size));
+  h.append(p.done ? el("span", "chip no", "받음") : el("span", "chip need", "재미나이로 받아 주세요")); c.append(h);
+  if (p.use) c.append(el("p", "use", p.use));
+  const ps = el("div", "pics");
+  if (p.portrait) ps.append(pic(p.portrait, 2, "인트로 박사 그림")); if (p.walk) ps.append(pic(p.walk, 2, "필드 걷기 그림"));
+  if (p.got) ps.append(pic(p.got, 2, "받은 그림"));
+  if (p.ref) ps.append(pic(p.ref, 0.5, "참고 그림 · 첨부 (길게 눌러 저장)", "att"));
+  if (ps.childElementCount) c.append(ps);
+  if (p.prompt && !p.done) {
+    const det = el("details"); det.append(el("summary", "", "주문문 보기")); const pre = el("pre", "", p.prompt); det.append(pre);
+    const r2 = el("div", "row"); r2.append(copyBtn("주문문 복사", p.prompt, pre, det)); c.append(r2, det);
+    c.append(el("p", "note", "받은 그림은 \"" + p.ko.split(" · ")[0] + " " + (p.id.endsWith("back") ? "뒷모습" : "앞모습") + "\"으로 보내 주세요."));
+  }
+  $("#people").append(c);
 }
 $("#emptyNote").textContent = "이 밖에 이름이 「-----」인 빈 칸 " + D.empty + "개는 게임에 나오지 않아 뺐어요.";
 function refresh() {
