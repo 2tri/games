@@ -105,11 +105,11 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <h2>표시 보는 법</h2>
     <div class="box legend">
       <div class="sides"><span class="side done">완료</span> 우리 그림이 롬에 들어감</div>
-      <div class="sides"><span class="side got">받음 · 롬 반영 대기</span> 그림은 받았고 롬 세션이 넣을 차례 (새 칸은 앞·뒤가 다 와야 생김)</div>
+      <div class="sides"><span class="side got">그림 있음 · 롬에 넣을 차례</span> 이 그림(「롬에 넣을 앞/뒤」)이 롬에 들어갑니다. 할 일 없음. 단, 새 칸은 앞·뒤가 다 있어야 생겨요</div>
       <div class="sides"><span class="side rip">게임 도트 후보</span> 다른 디지몬 게임(원더스완·GBA·NDS)의 도트를 4색으로 바꾼 후보가 있음 → 「후보 쓰기」 체크하면 그걸로 넣음</div>
-      <div class="sides"><span class="side need">검색·재미나이 필요</span> 쓸 만한 원본이 없음 → 재미나이 주문(주문문 복사) 또는 더 찾아보기</div>
+      <div class="sides"><span class="side need">재미나이로 받아 주세요</span> 쓸 만한 원본이 없음 → 카드의 주문문을 복사해 재미나이로 받아서 보내 주세요</div>
       <div class="sides"><span class="side keep14">1.4 그림 사용 중</span> 디지몬스터 원래 그림 그대로. 바꾸고 싶으면 「다시 그리기」 체크</div>
-      <p class="note">뒷모습은 게임 도트에 없어서(다른 게임들은 앞모습만 있음) 재미나이로 받아야 해요. 주문 방법은 예전과 같습니다: 첨부 1장 LCD 도트(파란 테두리) · 2장 공식 그림 → 앞모습 주문문 / 뒷모습은 공식 그림 + 받은 앞모습 → 뒷모습 주문문.</p>
+      <p class="note"><b>뒷모습은 자동으로 못 만들어요.</b> 다른 게임 도트는 전부 앞모습뿐이고, 앞모습을 좌우로 뒤집어도 등이 아니라 얼굴이 보여서 뒷모습이 안 돼요. 그래서 뒷모습은 재미나이로 받아야 해요 — 첨부 = 공식 그림 + 「롬에 넣을 앞」 그림, 「뒷모습 주문문 복사」. 주문 방법은 예전과 같습니다: 첨부 1장 LCD 도트(파란 테두리) · 2장 공식 그림 → 앞모습 주문문 / 뒷모습은 공식 그림 + 받은 앞모습 → 뒷모습 주문문.</p>
     </div>
   </section>
 
@@ -139,7 +139,7 @@ const $ = (s) => document.querySelector(s);
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const img = (src, scale) => { const i = new Image(); i.src = src; i.alt = ""; i.onload = () => { i.width = i.naturalWidth * scale; i.height = i.naturalHeight * scale; }; return i; };
 const checks = {}; const boxes = {}; let db = null; const LS = "dmorder3"; let FILTER = "todo";
-const SIDE = { done: "완료", got: "받음 · 롬 반영 대기", rip: "게임 도트 후보", need: "검색·재미나이 필요", keep14: "1.4 그림 사용 중" };
+const SIDE = { done: "완료", got: "그림 있음 · 롬에 넣을 차례", rip: "게임 도트 후보", need: "재미나이로 받아 주세요", keep14: "1.4 그림 사용 중" };
 function lsLoad() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
 function lsSave() { try { localStorage.setItem(LS, JSON.stringify(checks)); } catch (e) {} }
 function box(id, kind, label, cls) {
@@ -197,8 +197,8 @@ function card(r) {
   if (r.nosrc && (r.side.f === "need" || r.side.b === "need")) c.append(el("p", "why", r.nosrc));
   const ps = el("div", "pics");
   ps.append(gamePic(r.gf, r.src_f, "게임 앞"), gamePic(r.gb, r.src_b, "게임 뒤"));
-  if (r.af) ps.append(pic(r.af, 1, "받은 앞"));
-  if (r.ab) ps.append(pic(r.ab, 1, "받은 뒤"));
+  if (r.af) ps.append(pic(r.af, 1, "롬에 넣을 앞"));
+  if (r.ab) ps.append(pic(r.ab, 1, "롬에 넣을 뒤"));
   if (r.rip) ps.append(pic(r.rip, 1, "게임 도트 후보" + (r.rip_note ? " · " + r.rip_note : ""), "att"));
   if (r.lcd8) ps.append(pic(r.lcd8, 0.5, "LCD 도트 · 첨부 1장", "att"));
   c.append(ps);
