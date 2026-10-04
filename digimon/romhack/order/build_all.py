@@ -31,13 +31,14 @@ BABY_SPEC = {   # 새 유년기 4종 주문문용 (specs.py 형식). 몸 색은 
                     keep=['A round pink bird ball with two small wings on the sides.', 'One long red feather on top of the head.', 'A small yellow beak and big round eyes.'],
                     not_=['No legs.']),
 }
+REDO = {'mugendramon': ('f', '앞모습 다시 받기 (사용자 판정 2026-10-04) — 받아 둔 앞모습은 아래 「롬에 넣을 앞」')}   # 받은 그림이 있어도 다시 받을 것
 ALIAS = {'tailmon': 'gatomon', 'plotmon': 'salamon'}
 # 게임 도트 후보 — 2026-10-04 사용자 판정으로 7종만 씀(art/ 에 넣음, decisions.md). 나머지는 안 씀
 # (rip2art.py LIST 이름, 색 나누기 방식, 판정). 판정 '애매' 는 써도 되는지 사용자 확인 필요. 못 쓴 것(모노크로몬·데블몬·황제드라몬)은 넣지 않음
 RIP = {}
 NO_SRC = {'gottsumon': '게임 도트 후보 안 씀(사용자 판정)', 'flymon': '게임 도트 후보 안 씀(사용자 판정)', 'drimogemon': '게임 도트 후보 안 씀(사용자 판정)', 'mamemon': '게임 도트 후보 안 씀(사용자 판정)', 'okuwamon': '게임 도트 후보 안 씀(사용자 판정)', 'mammon': '게임 도트 후보 안 씀(사용자 판정)', 'kiwimon': '게임 도트 후보 안 씀(사용자 판정)', 'vegimon': '게임 도트 후보 안 씀(사용자 판정)', 'meramon': '게임 도트 후보 안 씀(사용자 판정)', 'whamon': '게임 도트 후보 안 씀(사용자 판정)', 'digmon': '게임 도트 후보 안 씀(사용자 판정)', 'andromon': '게임 도트 후보 안 씀(사용자 판정)',
           'devimon': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐',
-          'imperialdramondragonmode': '게임 도트를 찾았지만 4색으로 줄이면 뭉개짐', 'snimon': '원더스완·GBA·NDS 에서 못 찾음', 'hanumon': '원더스완·GBA·NDS 에서 못 찾음'}
+          'snimon': '원더스완·GBA·NDS 에서 못 찾음', 'hanumon': '원더스완·GBA·NDS 에서 못 찾음'}
 
 
 TAI = ("Taichi \"Tai\" Yagami, the boy hero of the anime Digimon Adventure (1999): spiky messy brown hair, blue goggles worn on the forehead with a blue strap, "
@@ -102,6 +103,8 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         elif src == '1.4' and not rd and not sp: side[s] = 'keep14'
         elif s == 'f' and rip: side[s] = 'rip'
         else: side[s] = 'need'
+    if did in REDO:
+        for x in REDO[did][0]: side[x] = 'need'
     st = 'done' if side['f'] == side['b'] == 'done' else ('keep14' if side['f'] == side['b'] == 'keep14' else
           ('got' if {side['f'], side['b']} <= {'done', 'got'} else 'todo'))
     need = ''.join(s for s in 'fb' if side[s] in ('need', 'rip'))
@@ -109,7 +112,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
          'gf': f, 'gb': b, 'src_f': src_f, 'src_b': src_b, 'side': side, 'st': st,
          'af': BO.art(aid, 'f') if has_f and src_f != 'art' else '', 'ab': BO.art(aid, 'b') if has_b and src_b != 'art' else '',
          'rip': rip_pic(rip[0], rip[1]) if rip and side['f'] == 'rip' else '', 'rip_name': rip[0] if rip else '', 'rip_note': rip[2] if rip else '',
-         'nosrc': NO_SRC.get(did, ''), 'prompt': {}, 'lcd8': '', 'img': '', 'ref': '', 'sketch_mode': False}
+         'nosrc': REDO[did][1] if did in REDO else NO_SRC.get(did, ''), 'prompt': {}, 'lcd8': '', 'img': '', 'ref': '', 'sketch_mode': False}
     if sp and need:
         lu = sp.get('lcd') or ''
         if not lu:
