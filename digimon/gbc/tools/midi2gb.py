@@ -41,6 +41,15 @@ SONGS = {
                    lead=[('t', 7, 'top')], harm=[('t', 1, 'top')], bass=[('t', 8, 'bottom')],
                    drums=[('t', 2), ('t', 10)], drummap={34: KICK, 35: KICK, 36: KICK, 40: SNARE, 38: SNARE, 41: HAT, 46: OHAT, 44: HAT, 30: 0}),
 }
+# 롬판 추가 곡 (2026-10-04, 사용자 「게임 곳곳 디지몬 노래 배치」): 같은 MIDI 의 아직 안 쓴 구간 — 16박(4마디) 단위로 자름
+SONGS.update({
+    'town2': dict(SONGS['town'], start=128, end=224),                          # 내일은 나의 바람이 분다 뒷부분 → 관동 도시
+    'field2': dict(SONGS['field'], start=96, end=192),                         # Target 뒷부분 → 관동 도로
+    'cave': dict(SONGS['village'], start=96, end=192, bpm=84, drums='none'),    # Butterfly 피아노판 뒷부분, 느리게·드럼 없이 → 동굴·탑·유적
+    'gym': dict(SONGS['boss'], start=112, end=208),                            # Brave Heart 뒷부분 → 체육관·아지트 걷기
+    'encounter': dict(SONGS['battle'], start=0, end=32),                       # digimon 록 앞 2블록 → 트레이너·라이벌 눈 마주침
+    'victory': dict(SONGS['title'], start=128, end=160),                       # Butter-Fly 뒷부분 8마디 → 승리
+})
 # 회복 징글 (직접 작곡, 포켓몬 센터 느낌의 짧은 아르페지오) — [음(MIDI), 길이(칸)]
 HEAL = dict(bpm=120, grid=12, once=True, ch=[
     [[72, 3], [76, 3], [79, 3], [84, 6], [0, 3], [79, 3], [84, 12], [0, 3]],
@@ -168,11 +177,14 @@ def convert(name, sp):
 
 
 if __name__ == '__main__':
+    only = set(sys.argv[1:])                    # 곡 이름을 주면 그 곡만 (예: python3 tools/midi2gb.py cave gym)
     for name, sp in SONGS.items():
+        if only and name not in only: continue
         if not os.path.exists(os.path.join(SRC, sp['mid'])): print('없음', sp['mid']); continue
         d = convert(name, sp)
         json.dump(d, open(os.path.join(MUS, name + '.json'), 'w'), separators=(',', ':'))
         print('%-8s %s bpm %.0f %d칸 이벤트 %s' % (name, sp['mid'], d['bpm'], d['units'], [len(c) for c in d['ch']]))
+    if only: sys.exit()
     h = dict(HEAL); h['units'] = sum(n for _, n in h['ch'][0])
     json.dump(h, open(os.path.join(MUS, 'heal.json'), 'w'), separators=(',', ':'))
     for jn, j in JINGLES.items():

@@ -4,7 +4,7 @@ json: {"bpm", "grid"(한 박 칸 수), "units", "once", "ch": [[[음, 길이], .
   음 길이(프레임) = 길이(1~16) × note_type 단위 × 템포 / 256  (단위×길이 ≤ 255) → 칸 하나 = 단위 1, 템포 = 256 × 프레임/칸
   octave n 의 도 = MIDI (n+2)×12 (네모파), 파형 채널은 같은 값이 한 옥타브 낮게 남 → (n+1)×12
   명령: octave d0+8-n · note_type d8 단위 [볼륨<<4|감쇠] · tempo da 높은 낮은 · duty db · volume e5 · toggle_noise e3 · sound_loop fd 횟수 주소 · sound_ret ff"""
-import json, os
+import json, math, os
 
 FPS = 59.7275
 DRUM = {1: 4, 2: 1, 3: 5, 4: 3, 5: 12, 6: 11}         # 우리 드럼 → 금 드럼 모음 3 (Kick1·Snare12·Triangle5·Snare14·Crash2·Kick2)
@@ -12,12 +12,14 @@ ENV = {0: 0xb2, 1: 0x82, 2: 0x25}                     # 채널별 note_type 둘�
 DUTY = {0: 2, 1: 1}
 
 
-def tempo_of(js):
-    return max(1, round(256 * FPS * 60 / (js['bpm'] * js['grid'])))
+def tempo_of(js, ff=1):
+    return max(1, round(256 * FPS * 60 * ff / (js['bpm'] * js['grid'])))
 
 
-def chan_bytes(ch, notes, base, loop):
-    """한 채널. base = 이 채널 바이트가 놓일 주소(뱅크 안 0x4000~), loop=True 면 처음으로 되돌아감"""
+def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1):
+    """한 채널. base = 이 채널 바이트가 놓일 주소(뱅크 안 0x4000~), loop=True 면 처음으로 되돌아감
+    cap = 명령 하나의 최대 칸 수 (엔진의 음 길이 = 칸×템포/256 프레임이 한 바이트라 255프레임을 넘으면 돌아감 → 나눠 씀)
+    shift = 음높이 이동(반음, 드럼 채널 제외)"""
     out = bytearray()
     if ch == 0: out += bytes([0xda]) + 0 .to_bytes(2, 'big') + bytes([0xe5, 0x77])   # 템포는 song_bytes 에서 채움
     if ch in DUTY: out += bytes([0xdb, DUTY[ch]])
@@ -25,23 +27,28 @@ def chan_bytes(ch, notes, base, loop):
     start = base + len(out)
     speed = None; octv = None
 
+    env = ENV.get(ch, 0)
+    if ff != 1 and ch in (0, 1): env = (env & 0xf0) | min(7, round((env & 7) * ff))    # 소리 줄어드는 빠르기(실제 시간)도 ff배 느리게
     def note_type(s):
         nonlocal speed
         if s != speed:
-            out.extend([0xd8, s] if ch == 3 else [0xd8, s, ENV[ch]]); speed = s
+            out.extend([0xd8, s] if ch == 3 else [0xd8, s, env]); speed = s
 
     def emit(code, L):
-        """code = 음높이 칸(1~12) 또는 드럼 번호, 0 = 쉼. L 칸"""
+        """code = 음높이 칸(1~12) 또는 드럼 번호, 0 = 쉼. L 칸. cap 보다 긴 음은 나눠 쓰고, 네모파(소리가 줄어드는 채널)는 이어지는 조각을 쉼으로 (다시 치지 않게)"""
+        first = True
         while L > 0:
-            n = min(L, 255)
+            n = min(L, cap)
             s = 1 if n <= 16 else next(s for s in range(1, 256) if n % s == 0 and n // s <= 16)
-            note_type(s); out.append((code << 4) | (n // s - 1)); L -= n
+            c = code if first or ch not in (0, 1) else 0
+            note_type(s); out.append((c << 4) | (n // s - 1)); L -= n; first = False
 
     for p, L in notes:
         if L <= 0: continue
         if p == 0: emit(0, L); continue
         if ch == 3:
             emit(DRUM.get(p, 1), L); continue
+        p += shift
         n = p // 12 - (1 if ch == 2 else 2); q = p
         while n < 1: n += 1; q += 12
         while n > 8: n -= 1; q -= 12
@@ -52,13 +59,26 @@ def chan_bytes(ch, notes, base, loop):
     return bytes(out)
 
 
-def song_bytes(js, base, loop=None):
-    """곡 하나 → (머리 + 채널 4개) 바이트. base = 놓일 주소 (뱅크 안 0x4000~)"""
+def ff_shift(js, ch, ff):
+    """빨리감기 ff배로 들으면 음이 ff배 높아짐 → 그만큼 내림 (반음). 채널이 소리 범위 밑으로 가면 채널 전체를 옥타브 올림"""
+    if ff == 1 or ch == 3: return 0
+    s = -round(12 * math.log2(ff)); lo, hi = (24, 119) if ch == 2 else (36, 131)
+    ps = [p for p, L in js['ch'][ch] if p and L > 0]
+    # 절반 넘게 범위 밑이면 채널 전체를 옥타브 올림, 아니면 밑으로 간 음만 그 음에서 옥타브 올림 (chan_bytes)
+    while ps and sum(p + s < lo for p in ps) * 2 > len(ps) and max(ps) + s + 12 <= hi: s += 12
+    return s
+
+
+def song_bytes(js, base, loop=None, ff=1, slow=None):
+    """곡 하나 → (머리 + 채널 4개) 바이트. base = 놓일 주소 (뱅크 안 0x4000~)
+    ff = 델타 빨리감기 배수: 템포를 ff배 느리게, 음을 12·log2(ff) 반음 낮게 (빨리감기로 들으면 원래 곡)
+    slow = 템포만 따로 (회복 징글은 게임이 정해진 프레임만 기다려서 늘이면 잘림 → 1)"""
     loop = (not js.get('once')) if loop is None else loop
+    t = tempo_of(js, ff if slow is None else slow); cap = min(255, (65535 - 255) // t)
     head = 12; chans = []; p = base + head
     for ch in range(4):
-        b = chan_bytes(ch, js['ch'][ch], p, loop); chans.append((p, b)); p += len(b)
-    t = tempo_of(js); c0 = bytearray(chans[0][1]); c0[1:3] = t.to_bytes(2, 'big'); chans[0] = (chans[0][0], bytes(c0))
+        b = chan_bytes(ch, js['ch'][ch], p, loop, cap, ff_shift(js, ch, ff), ff); chans.append((p, b)); p += len(b)
+    c0 = bytearray(chans[0][1]); c0[1:3] = t.to_bytes(2, 'big'); chans[0] = (chans[0][0], bytes(c0))
     out = bytearray()
     for i, (a, _) in enumerate(chans):
         out += bytes([(3 << 6 | i) if i == 0 else i]) + a.to_bytes(2, 'little')
@@ -72,5 +92,6 @@ def load(name):
 
 
 if __name__ == '__main__':
-    for nm in ('title', 'town', 'field', 'village', 'battle', 'boss', 'evolve', 'heal', 'capture'):
+    import rules
+    for nm in rules.MUSIC:
         js = load(nm); print('%-8s bpm %5.1f grid %d 템포 %d → %d바이트' % (nm, js['bpm'], js['grid'], tempo_of(js), len(song_bytes(js, 0x4000))))
