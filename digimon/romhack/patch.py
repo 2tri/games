@@ -151,6 +151,39 @@ class Patch:
         pt = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
         self.put(pt + 4 * cls, struct.pack('<2H', rgb555(pal[0]), rgb555(pal[1])))
         return pal
+    # 주인공 그림 (사용자 2026-10-04 「주인공은 태일」): front = 인트로(트레이너 직업 CAL 그림, 56×56), card = 트레이너 카드(40×56, 압축 없음, 가로 순서),
+    #   back = 전투 시작 뒷모습 ChrisBackpic(48×48, 압축, GetTrainerBackpic·명예의 전당이 같은 주소·뱅크를 읽음). 팔레트 = 표 0번(주인공)·CAL
+    def player_pics(self, front=None, card=None, back=None):
+        d = bytes(self.d); done = []; pal = None
+        m = re.search(rb'\x6f\x26\x00\x29\x29\x01(..)\x09\xc9', d, re.S)
+        pt = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
+        if front:
+            pal = self.trainer_pic(0x0c, front); done.append('인트로 앞모습')
+        if card:
+            idx, cp = png_to_idx(card, 40, 56, pal) if pal else png_to_idx(card, 40, 56)
+            cv = np.zeros((56, 40), int); h, w = idx.shape; cv[56 - h:, (40 - w) // 2:(40 - w) // 2 + w] = idx
+            gfx = bytearray()
+            for ty in range(7):
+                for tx in range(5):
+                    for y in range(8):
+                        row = cv[ty * 8 + y, tx * 8:tx * 8 + 8]
+                        gfx += bytes([sum(((v & 1) << (7 - i)) for i, v in enumerate(row)), sum((((v >> 1) & 1) << (7 - i)) for i, v in enumerate(row))])
+            KR_CARD = 0x25507                                                  # 1.4 롬에서 금 chris_card.2bpp 와 바이트가 같은 곳 (확인함)
+            assert d[KR_CARD:KR_CARD + 4] == bytes(self.r.d[KR_CARD:KR_CARD + 4]); self.put(KR_CARD, bytes(gfx)); done.append('트레이너 카드')
+        if back:
+            m = re.search(rb'\x21(..)\xfa..\xfe.\x20\x03\x21(..)\x11\x10\x93\x06(.)\x0e\x31', d, re.S)
+            old = int.from_bytes(m.group(1), 'little'); bank = m.group(3)[0]
+            idx, bp = png_to_idx(back, 48, 48, pal) if pal else png_to_idx(back, 48, 48)
+            dat = gblz.compress(to_gb_pic(idx, 6, 6))
+            try: b_, p_ = self.sp.take(len(dat), banks=[bank])
+            except MemoryError:
+                _, end = gblz.decompress(d, addr(bank, old)); assert len(dat) <= end - addr(bank, old), '뒷모습이 원래 자리보다 큼'; p_ = old
+            self.put(addr(bank, p_), dat); n = 0
+            for i in [x.start() for x in re.finditer(re.escape(b'\x21' + old.to_bytes(2, 'little')), d)]:
+                if bytes([0x06, bank]) in d[i + 3:i + 16] or i == m.start(): self.put(i + 1, p_.to_bytes(2, 'little')); n += 1
+            assert n >= 1; pal = pal or bp; done.append('전투 뒷모습(%d곳)' % n)
+        if pal: self.put(pt, struct.pack('<2H', rgb555(pal[0]), rgb555(pal[1])))     # 표 0번 = 주인공(PlayerPalette)
+        return done
     # 메뉴 아이콘 (ReadMonMenuIcon: cp EGG / jr z / dec a / ld hl, MonMenuIcons …)
     def icon(self, no, icon_id):
         d = bytes(self.d); m = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', d, re.S)
@@ -285,10 +318,11 @@ class Patch:
                 for y in range(8):
                     row = idx[f * 16 + ty * 8 + y, tx * 8:tx * 8 + 8]
                     gfx += bytes([sum(((v & 1) << (7 - i)) for i, v in enumerate(row)), sum((((v >> 1) & 1) << (7 - i)) for i, v in enumerate(row))])
-        b, p = self.sp.take(len(gfx), banks=[0x77, 0x7c, 0x7d, 0x76, 0x75]); self.put(addr(b, p), bytes(gfx))
         # 표의 크기 칸 = 12칸(192바이트): 걷기 그림은 그 두 배를 이어서 읽음 (서기 3장 → VRAM 0, 걷기 3장 → VRAM 1)
         e = tab + 6 * (sprite_id - 1); assert d[e + 2] == len(gfx) // 2 and d[e + 4] == 1, d[e:e + 6].hex()
-        self.put(e, bytes([p & 255, p >> 8, len(gfx) // 2, b, 1, pal]))
+        # 원래 자리에 덮어씀 (크기가 같음): 이름 정하기·인트로처럼 표를 안 거치고 주인공 그림 주소(30:4000)를 바로 읽는 곳도 바뀌게
+        self.put(addr(d[e + 3], d[e] | d[e + 1] << 8), bytes(gfx))
+        self.put(e + 5, bytes([pal]))
     # 트레이너가 데리고 있는 종 바꾸기 {옛 종: 새 종}
     def trainer_species(self, mapping):
         n = 0
@@ -823,6 +857,11 @@ def build(base, out_rom, out_ips):
     # 인트로 박사 그림 → 겐나이 (사용자: 「이름만 겐나이로 나와서 아쉽다」, 그림 세션 art/gennai_portrait.png). 직업 POKEMON_PROF = 10
     gp = os.path.join(WEB, 'art', 'gennai_portrait.png')
     if os.path.exists(gp): P.log.append('인트로 박사 그림 → 겐나이 (색 %s)' % (P.trainer_pic(10, gp),))
+    # 주인공 그림 → 태일 (주문서: art/taichi_front.png 56×56 · taichi_back.png 48×48, 카드는 taichi_card.png 또는 폭 40 이하인 앞모습)
+    tf, tc, tb = (os.path.join(WEB, 'art', 'taichi_%s.png' % s) for s in ('front', 'card', 'back'))
+    tf = tf if os.path.exists(tf) else None; tb = tb if os.path.exists(tb) else None
+    tc = tc if os.path.exists(tc) else (tf if tf and Image.open(tf).width <= 40 else None)
+    if tf or tb: P.log.append('주인공 그림 → 태일: ' + ', '.join(P.player_pics(tf, tc, tb)))
     # 제목 화면: 한글 로고(art/title/logo.png, title_logo.py) + 칠색조 자리에 디지몬 (title.py)
     import title
     mon = os.path.join(WEB, 'art', rules.TITLE_MON[0] + ('.png' if '/' in rules.TITLE_MON[0] else '-f.png'))
