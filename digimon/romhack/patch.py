@@ -138,6 +138,46 @@ class Patch:
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11)
         self.palette(no, *pal)
+    def flip_back(self, no):
+        """롬의 지금 뒷모습(48×48)을 좌우로 뒤집어 다시 넣음 — 1.4 그림처럼 우리 그림 파일이 없는 종용 (사용자 2026-10-05 「에렉몬 뒤 바라보는 방향」)"""
+        self.r.d = self.d
+        idx = np.fliplr(self.r.pic(no, back=True)).copy()
+        dat = gblz.compress(to_gb_pic(idx, 6, 6))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
+    def back_only(self, no, back_png):
+        """앞은 그대로(1.4 그림) 두고 뒷모습만 우리 그림으로. 색은 롬의 지금 팔레트 두 색에 가까운 쪽으로 나눔 (팔레트는 안 바꿈)"""
+        self.r.d = self.d
+        bi, _ = png_to_idx(back_png, 48, 48, self.r.palette(no))
+        dat = gblz.compress(to_gb_pic(bi, 6, 6))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
+    def front_art_big_back(self, no, front_png, mode='smooth'):
+        """앞은 우리 그림, 뒤는 롬의 1.4 뒷모습을 키운 것 (색번호 그대로라 새 앞 팔레트로 칠해짐) — 뒷모습을 새로 못 받은 종 (사용자 2026-10-05 피코데블몬)"""
+        sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
+        self.r.d = self.d
+        r_ = EN.enlarge(self.r.pic(no, back=True).astype(int), 48, mode); bi = np.where(r_ < 0, 0, r_).astype(np.uint8)
+        fi, pal = png_to_idx(front_png, 56, 56)
+        size = 7 if max(fi.shape) > 48 else 6 if max(fi.shape) > 40 else 5
+        ents = []
+        for dat in (gblz.compress(to_gb_pic(fi, size, size)), gblz.compress(to_gb_pic(bi, 6, 6))):
+            bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat); ents += [bank, p & 255, p >> 8]
+        self.put(self.r.pics + 6 * (no - 1), bytes(ents))
+        self.stats(no, pic_size=size * 0x11); self.palette(no, *pal)
+    def enlarge14(self, no, back, mode='smooth'):
+        """롬의 지금 그림(1.4 그림)을 칸을 꽉 채우게 키워 다시 넣음 (그림 세션 tools/enlarge14.py, 사용자 메모 「확대」 2026-10-05).
+        롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀. 색 4개 그대로(색번호 그대로 키움)"""
+        sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
+        self.r.d = self.d
+        t = self.r.pic(no, back=back).astype(int)
+        r_ = EN.enlarge(t, 48 if back else 56, mode); idx = np.where(r_ < 0, 0, r_).astype(np.uint8)
+        if back: dat = gblz.compress(to_gb_pic(idx, 6, 6)); off = 3
+        else:
+            size = 7 if max(idx.shape) > 48 else 6 if max(idx.shape) > 40 else 5
+            dat = gblz.compress(to_gb_pic(idx, size, size)); off = 0; self.stats(no, pic_size=size * 0x11)
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1) + off, bytes([bank, p & 255, p >> 8]))
+        return idx.shape
     # 트레이너 그림 (GetTrainerPic: ld hl, TrainerPicPointers / ld a,[wTrainerClass] / dec a / ld bc,3 …, 팔레트는 TrainerPalettes 직업×4바이트, 0 = 주인공)
     def trainer_pic(self, cls, png):
         d = bytes(self.d)
@@ -845,6 +885,22 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    for nm, art in rules.FRONT_ART_BIG_BACK.items():                         # 앞은 우리 그림, 뒤는 1.4 뒷모습 확대
+        fp = os.path.join(WEB, 'art', art + '-f.png')
+        if nm in N and nm not in nrd and os.path.exists(fp): P.front_art_big_back(N[nm], fp); nrd.append(nm); P.log.append('  %s 앞 새 그림 + 1.4 뒷모습 확대' % nm)
+    for nm, art in rules.BACK_ONLY.items():                                  # 앞은 1.4 그대로, 뒤만 우리 그림 (그림 세션이 뒤만 새로 그린 종)
+        bp = os.path.join(WEB, 'art', art + '-b.png')
+        if nm in N and nm not in nrd and os.path.exists(bp) and not os.path.exists(os.path.join(WEB, 'art', art + '-f.png')):
+            P.back_only(N[nm], bp); P.log.append('  %s 뒷모습만 새 그림 (앞은 1.4)' % nm)
+    for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
+        if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
+    big = []
+    for back, names in ((False, rules.ENLARGE14_FRONT), (True, rules.ENLARGE14_BACK)):   # 1.4 그림 확대 (우리 그림으로 바뀐 종은 건너뜀)
+        for nm in names:
+            if nm in N and nm not in nrd:
+                md = rules.ENLARGE14_MODE.get((nm, '뒤' if back else '앞'), 'smooth')
+                h_, w_ = P.enlarge14(N[nm], back, md); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
+    P.log.append('1.4 그림 확대 %d장: %s' % (len(big), ', '.join(big)))
     for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
         if src in nrd:
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))

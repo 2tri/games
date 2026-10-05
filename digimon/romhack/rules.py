@@ -116,7 +116,19 @@ REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '�
           '피에몬': 'piemon', '메탈가루몬': 'metalgarurumon',
           '원뿔몬': 'ikkakumon', '텐타몬': 'tentomon', '플라이몬': 'flymon', '두리몬': 'drimogemon', '울퉁몬': 'gottsumon',
           '디그몬': 'digmon', '메라몬': 'meramon', '안드로몬': 'andromon',
-          '황제드라몬': 'imperialdramondragonmode', '쿠네몬': 'kunemon'}                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
+          '황제드라몬': 'imperialdramondragonmode', '쿠네몬': 'kunemon',
+          # 2026-10-05 사용자 「받아 둔 앞모습 씀」 (전투 그림 다시 뽑기 체크): 뒤가 오면 자동으로 들어감
+          '아라크네몬': 'archnemon', '캅테리몬': 'kabuterimon', '에이프몬': 'hanumon', '개굴몬': 'gekomon'}
+# 1.4 뒷모습만 좌우 뒤집을 종. 에렉몬은 「바라보는 방향」 메모가 뒤집기가 아니라 새로 받기로 정정됨(그림 세션 0c7f0ce) → 지금은 없음
+FLIP_BACK = []
+# 앞은 1.4 그림 그대로, 뒷모습만 우리 그림 (art/<id>-b.png 만 있을 때. 앞까지 오면 REDRAW 로 옮김) — 사용자 체크 「뒷모습 새로」
+BACK_ONLY = {'에렉몬': 'elecmon'}
+# 앞은 우리 그림, 뒤는 1.4 뒷모습을 enlarge14 로 키운 것 (사용자 2026-10-05 「새 뒷모습이 도저히 안 나옴 → 기존 것 확대」)
+FRONT_ART_BIG_BACK = {'피코데블몬': 'picodevimon'}
+# 1.4 그림을 칸 꽉 차게 키울 칸 (사용자 메모 「확대」, 그림 세션이 시험해 본 뒤 괜찮은 17장, 2026-10-05). 호크몬·우가몬 뒤는 뭉개져서 새로 받음
+ENLARGE14_FRONT = ['호크몬', '홀리엔젤몬', '에테몬', '메탈에테몬', '디지타마몬', '우가몬', '원뿔몬', '브이몬', '엑스브이몬', '황제팔라딘', '에렉몬']
+ENLARGE14_BACK = ['릴리몬', '에테몬', '메탈에테몬', '맘몬', '원뿔몬', '베타몬', '브이몬']
+ENLARGE14_MODE = {('브이몬', '앞'): 'nearest', ('에렉몬', '앞'): 'nearest'}   # 기본 smooth(scale3x)에서 눈알이 없어짐 → 정수배 키우기 (사용자 2026-10-05, 그림 세션 1a8e32c)                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
 
 # 노래 (사용자 지시 2026-10-02): 예전 GBC 판 곡(gbc/music/<곡>.json) → 금 음악 번호 (constants/music_constants.asm)
 # 금 음악 번호 (pokegold-kr constants/music_constants.asm) → 곡. 2026-10-04 사용자 「게임 곳곳 디지몬 노래 배치 점검」: 남은 포켓몬 곡을 거의 다 바꿈
