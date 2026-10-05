@@ -306,6 +306,25 @@ def rules(c, out):
     r20 = [(n, c.name(n)) for n in range(1, 252) if SER.get(c.name(n)) in RU.LATE_SERIES or c.name(n) in RU.LATE_EXTRA]
     rep('R20', r20, '파워디지몬 이후 디지몬 이름 0 (테이머즈·그 뒤 작품·애니 미등장 %d종 분류)' % sum(1 for v in SER.values() if v in RU.LATE_SERIES),
         lambda b: '%d %s' % b)
+    # R21 기술 0개로 나오는 디지몬 없음: 트레이너 파티·야생 칸 종이 그 레벨에 아는 기술이 1개 이상 (트레이너 AI 는 기술 0개면 무한 반복 → 전투 멈춤, 2026-10-05)
+    #     + 진화·기술 목록이 다음 종 자료를 덮지 않음 (끝 0 까지 읽은 길이가 다음 종 시작을 넘지 않음)
+    r21 = []; bank = c.r.evos // 0x4000
+    ptr = lambda n: dmrom.addr(bank, c.d[c.r.evos + 2 * (n - 1)] | c.d[c.r.evos + 2 * (n - 1) + 1] << 8)
+    starts = sorted({ptr(n) for n in range(1, 252)})
+    for n in sorted(c.keep):
+        a = ptr(n); e = a
+        while c.d[e]: e += 4 if c.d[e] == 5 else 3
+        e += 1
+        while c.d[e]: e += 2
+        nxt = next((s for s in starts if s > a), None)
+        if nxt is not None and e >= nxt: r21.append(('%s 목록이 다음 종 자료를 덮음' % c.name(n), 0))
+    knows = lambda sp, lv: any(l <= lv for l, _ in c.r.evos_attacks(sp)[1])
+    for t in c.trainers:
+        for lv, sp, *_ in t['mons']:
+            if not knows(sp, lv): r21.append(('트레이너 %s의 %s' % (t['name'], c.name(sp)), lv))
+    for s in c.sites:
+        if s['kind'] in remap.WILD and c.d[s['addr']] and not knows(c.d[s['addr']], c.d[s['addr'] - 1]): r21.append(('야생 %s %s' % (s['where'], c.name(c.d[s['addr']])), c.d[s['addr'] - 1]))
+    rep('R21', sorted(set(r21)), '트레이너·야생 디지몬 모두 그 레벨에 기술 1개 이상, 진화·기술 목록 겹침 없음', lambda b: '%s Lv%d' % b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():

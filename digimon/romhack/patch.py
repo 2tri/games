@@ -442,6 +442,9 @@ class Patch:
         bank = self.r.evos // 0x4000
         p0 = self.d[self.r.evos + 2 * (no - 1)] | self.d[self.r.evos + 2 * (no - 1) + 1] << 8
         a0 = addr(bank, p0); n0 = sum(4 if e[0] == STAT else 3 for e in old_ev) + 1 + 2 * len(old_mv) + 1
+        # 끝 표시가 빠진 목록(메탈가루몬)은 다음 종 자료까지 읽어 n0 가 커짐 → 다음 종 시작에서 자름 (안 그러면 쿠네몬 첫 바이트를 덮어 기술 0개 → 트레이너 전투 멈춤, 2026-10-05)
+        starts = [addr(bank, self.d[self.r.evos + 2 * k] | self.d[self.r.evos + 2 * k + 1] << 8) for k in range(dmrom.NUM) if k != no - 1]
+        n0 = min([n0] + [s - a0 for s in starts if s > a0])
         if len(blob) <= n0 and 0x4000 <= p0 < 0x8000:                   # 원래 자리에 들어가면 그 자리에 (뱅크 빈 곳 아낌)
             self.put(a0, blob); return
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
@@ -513,6 +516,25 @@ class Patch:
         self.put(addr(b, org), a.build())
         self.put(site + 4, bytes([0xCD, org & 255, org >> 8]))
         self.log.append('포획 막기 코드 뱅크 %02X:%04X' % (b, org))
+
+    # ── 트레이너 AI 안전장치: 상대 기술이 0개면 AIChooseMove 를 건너뜀 (원래는 점수 깎기를 끝없이 돌아 전투가 멈춤 → ParseEnemyAction 이 발버둥으로) ──
+    def ai_guard(self):
+        d = bytes(self.d)
+        m = re.search(rb'\x21..\x11(..)\x0e\x04\x1a\x13\xa7\x28.\x35\x28', d, re.S)      # .DecrementScores (engine/battle/ai/move.asm)
+        assert m and not re.search(rb'\x21..\x11(..)\x0e\x04\x1a\x13\xa7\x28.\x35\x28', d[m.end():], re.S), 'AIChooseMove 자리를 하나로 못 찾음'
+        MOVES = int.from_bytes(m.group(1), 'little')                                   # wEnemyMonMoves
+        site = d.rfind(b'\x3d\xc8\xfa', m.start() - 200, m.start()) + 2                # ld a,[wLinkMode] / and a / ret nz
+        assert d[site] == 0xFA and d[site + 3:site + 5] == b'\xa7\xc0', '링크 확인 자리 다름'
+        LINK = d[site + 1] | d[site + 2] << 8
+        b, org = self.sp.take(14, bank=site // 0x4000)
+        a = Asm(org)
+        a.ld_a_mem(LINK); a.db(0xA7, 0xC0)                       # 링크면 nz 로 돌아감 (원래대로)
+        a.ld_a_mem(MOVES); a.db(0xA7); a.jr('none', 'z')         # 첫 기술 0 = 기술 없음
+        a.db(0xAF, 0xC9)                                         # z → 원래 길로
+        a.L('none'); a.db(0x3C, 0xC9)                            # nz → AIChooseMove 끝
+        self.put(addr(b, org), a.build())
+        self.put(site, bytes([0xCD, org & 255, org >> 8, 0xC0, 0x00]))                # call 안전장치 / ret nz / nop
+        self.log.append('트레이너 AI 기술 0개 안전장치 뱅크 %02X:%04X' % (b, org))
 
     def ips(self, path):
         base, new = self.r.base, bytes(self.d); out = bytearray(b'PATCH'); i = 0; n = len(new)
@@ -819,6 +841,7 @@ def build(base, out_rom, out_ips):
         sum(len(v) for v in plan.values()) - ngrunt - nr13, ngrunt, nr13, ', '.join(sorted(waiting)) or '없음'))
     # 3 포획 규칙
     P.catch_engine()
+    P.ai_guard()
     # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
     zero = []
     for no, g in sorted(grade.items()):
