@@ -64,6 +64,15 @@ HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude�
 def b64(p): return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').read()).decode() if p and os.path.exists(p) else ''
 
 
+def game_art(did, side):
+    """지금 롬에 들어간 우리 그림 = allmons.json 을 만든 커밋 때의 art (그 뒤에 바뀐 건 아직 롬에 없음)"""
+    p = WEB + 'art/%s-%s.png' % (did, side)
+    if recv_time(p) <= SYNC: return b64(p)
+    c = subprocess.run(['git', 'log', '-1', '--format=%H', '--', HERE + '/allmons.json'], cwd=WEB, capture_output=True, text=True).stdout.strip()
+    r = subprocess.run(['git', 'show', '%s:./%s' % (c, os.path.relpath(p, WEB))], cwd=WEB, capture_output=True)
+    return 'data:image/png;base64,' + base64.b64encode(r.stdout).decode() if r.returncode == 0 and r.stdout else ''
+
+
 def recv_time(path):
     """받은 날짜 = 그 그림을 마지막으로 커밋한 때 (아직 커밋 전이면 파일 시각)"""
     if not os.path.exists(path): return 0
@@ -109,8 +118,8 @@ def main():
         if x['src_f'] == 'egg' or x['ko'] in ('디지문자',): continue
         no, did = x['no'], x['id']
         g = r14.get(str(no)) or [None, None]
-        gf = (b64(WEB + 'art/%s-f.png' % did) if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
-        gb = (b64(WEB + 'art/%s-b.png' % did) if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
+        gf = (game_art(did, 'f') if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
+        gb = (game_art(did, 'b') if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
         # 받은 그림 = art/<id>-f/-b.png 전부 (롬에 들어갔든 아니든 늘 보임 — 2026-10-05 사용자: 주문서는 받은 걸 확인하는 곳)
         newf = b64(WEB + 'art/%s-f.png' % did) if did else ''
         newb = b64(WEB + 'art/%s-b.png' % did) if did else ''
