@@ -34,7 +34,7 @@ PLAN = {
     117: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
     129: {'f': ('gemini', '새로 — 작고 생김새가 까다로워 설명을 넣은 주문문'), 'b': ('gemini', '새로 — 같은 설명')},
     130: {'b': ('gemini', '새로')},
-    133: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
+    133: {'f': ('gemini', '새로 그리기 (사용자: 확대본 말고 새로)'), 'b': ('gemini', '새로 그리기')},
     134: {'f': ('gemini', '새로'), 'b': ('gemini', '새로')},
     135: {'f': ('gemini', '새로'), 'b': ('gemini', '새로')},
     139: {'f': ('claude', '미사일만 주황으로 고침 (뼈 그늘 회색은 뼈색으로 합침)'), 'b': ('claude', '같게 고침')},
@@ -44,14 +44,16 @@ PLAN = {
     197: {'f': ('claude', '확대 — 됨, 롬 세션이 키움')},
 }
 # 메모를 주문문에 넣을 말 (영어)
-EXTRA = {(129, 'f'): 'Betamon is a small green amphibian: a big round head with a very wide mouth, a single tall red fin running from the top of its head down its back, four short legs, a pale belly. Draw it BIG so the head and fin fill the square; keep the red fin clearly visible.',
+EXTRA = {(133, 'f'): 'Veemon: small blue dragon with a white muzzle and belly, a yellow V mark on the forehead, one small horn on the nose, big eyes. Draw it BIG so it fills the square.',
+         (133, 'b'): 'Veemon: blue back, the tips of its pointed ears, small tail.',
+         (129, 'f'): 'Betamon is a small green amphibian: a big round head with a very wide mouth, a single tall red fin running from the top of its head down its back, four short legs, a pale belly. Draw it BIG so the head and fin fill the square; keep the red fin clearly visible.',
          (129, 'b'): 'Betamon: green amphibian seen from behind; the tall red fin along its head and back is the main shape, big and clear.',
          (5, 'b'): 'Turn it more to the side: a three-quarter rear view, not straight from behind.',
          (112, 'b'): 'Show only from the head down to the middle of the body, very big.',
          (109, 'f'): 'BlackWarGreymon: black armor (not orange). Keep the armor details readable at this size.',
          (109, 'b'): 'BlackWarGreymon: black armor.',
          (21, 'f'): 'Draw it larger than usual; it must fill the square.', (21, 'b'): 'Draw it larger than usual.',
-         (133, 'f'): 'Draw it larger than usual; it must fill the square.', (133, 'b'): 'Draw it larger than usual.'}
+         }
 HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude가 고침', 'ask': '확인 필요'}
 
 

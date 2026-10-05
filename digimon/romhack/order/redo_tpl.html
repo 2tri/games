@@ -104,7 +104,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
 
   <div class="bar" role="status">
     <span>체크 <b id="nChk">0</b></span><span>재미나이 <b id="nGem">0</b></span><span>전체 <b id="nAll">0</b></span>
-    <span class="filters"><button type="button" data-f="chk" aria-pressed="true">체크한 것</button><button type="button" data-f="all" aria-pressed="false">전체</button></span>
+    <span class="st" id="dbState" style="font-size:12px;opacity:.8">체크 저장 확인 중…</span><span class="filters"><button type="button" data-f="chk" aria-pressed="true">체크한 것</button><button type="button" data-f="all" aria-pressed="false">전체</button></span>
   </div>
 
   <div id="secs" style="display:grid;gap:40px"></div>
@@ -125,7 +125,21 @@ function copyBtn(label, text, cls) {
   return b;
 }
 function pic(src, scale, cap, cls) { const p = el("div", "pic" + (cls ? " " + cls : "")); p.append(src ? img(src, scale) : el("div", "ph", "그림 없음"), el("span", "", cap)); return p; }
-let FILTER = "chk"; const cards = [];
+let FILTER = "chk"; const cards = []; const boxes = {}; const useState = {}; let db = null; const LS = "dmorder4";
+function lsLoad() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+function lsSave() { try { localStorage.setItem(LS, JSON.stringify(useState)); } catch (e) {} }
+function box(id, label) {
+  const l = el("label", "ck"); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true;
+  i.addEventListener("change", async () => {
+    useState[id] = { on: i.checked };
+    if (!db) { lsSave(); return; }
+    i.disabled = true;
+    try { await db.collection("use").doc(id).set({ on: i.checked, at: new Date().toISOString() }); }
+    catch (e) { i.checked = !i.checked; useState[id] = { on: i.checked }; $("#dbState").textContent = "저장 실패 · 다시 눌러 주세요"; }
+    i.disabled = false;
+  });
+  boxes[id] = i; l.append(i, document.createTextNode(label)); return l;
+}
 const SIDE = { f: "앞", b: "뒤" };
 function card(r) {
   const on = r.chk_f || r.chk_b;
@@ -139,6 +153,12 @@ function card(r) {
   if (r.newf) ps.append(pic(r.newf, 1, "받아 둔 앞 (아직 롬 전)", "att"));
   if (r.newb) ps.append(pic(r.newb, 1, "받아 둔 뒤 (아직 롬 전)", "att"));
   c.append(ps);
+  if (r.newf || r.newb) {
+    const ck = el("div", "checks");
+    if (r.newf) ck.append(box(r.no + "-f", "받아 둔 앞 쓰기"));
+    if (r.newb) ck.append(box(r.no + "-b", "받아 둔 뒤 쓰기"));
+    c.append(ck);
+  }
   const keys = Object.keys(r.plan);
   if (keys.length) {
     const pl = el("div", "plan");
@@ -170,4 +190,12 @@ $("#nAll").textContent = D.rows.length; $("#nChk").textContent = D.rows.filter((
 $("#nGem").textContent = D.rows.reduce((n, r) => n + Object.values(r.plan).filter((p) => p[2] === "gemini").length, 0) + "장";
 for (const b of document.querySelectorAll(".filters button")) b.addEventListener("click", () => { FILTER = b.dataset.f; for (const x of document.querySelectorAll(".filters button")) x.setAttribute("aria-pressed", String(x === b)); refresh(); });
 refresh();
+function applyUse() { for (const [id, v] of Object.entries(useState)) if (boxes[id]) boxes[id].checked = !!v.on; }
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
+  for (const i of Object.values(boxes)) i.disabled = false;
+  if (!db) { Object.assign(useState, lsLoad()); applyUse(); $("#dbState").textContent = "체크는 이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return; }
+  $("#dbState").textContent = "체크는 바로 저장되고 Claude가 읽어요";
+  db.collection("use").onSnapshot((snap) => { for (const d of snap.docs) useState[d.id] = d.data(); applyUse(); }, () => { $("#dbState").textContent = "연결이 끊겼어요 · 새로 고침"; });
+})();
 </script>
