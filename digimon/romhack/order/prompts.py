@@ -86,3 +86,29 @@ def back_from_front(e):
             "Style: big chunky pixels, every pixel a crisp square of the same size. No anti-aliasing, no gradients, no dithering, no shadow.\n\n"
             f"{keep_txt}MUST NOT:\n- Do not show the face from the front.\n- Do not make it symmetrical.\n- Do not change the colors of Image 1.\n\n"
             "No text, no frame, no grid lines, no background.")
+
+
+def body_type(e):
+    """PixelLab 캐릭터 유형 추천: 휴머노이드 / 네 발 걷기 / 관습(그 외)"""
+    t = ' '.join([e.get('en', '')] + list(e.get('keep') or [])).lower()
+    if any(w in t for w in ('four legs', 'four-legged', 'quadruped', 'on all fours', 'dragon mode', 'mammoth', 'wolf', 'dog', 'rhino', 'dinosaur on four')):
+        return '네 발 걷기'
+    if any(w in t for w in ('serpent', 'snake', 'whale', 'fish', 'blob', 'ball', 'larva', 'worm', 'egg', 'bag', 'shell', 'plant', 'flower', 'bird', 'insect', 'beetle', 'bee', 'wasp')):
+        return '관습'
+    return '휴머노이드'
+
+
+def pixellab_prompt(e):
+    """PixelLab 「등장인물 소개」(2000자 안). 롬 세션 「B형태」 조건: 56칸을 꽉 채우는 짧고 넓은 몸·큰 머리·특징 3~5개 굵게"""
+    name = f"{e['en']} from Digimon" if e.get('en') else e['ko']
+    keep = (e.get('keep') or [])[:5]
+    t = e.get('tones') or {}
+    col = ', '.join(x for x in (t.get('light') and 'light: ' + t['light'], t.get('dark') and 'dark: ' + t['dark']) if x)
+    s = (f"{name}. Chunky retro monster RPG battle sprite (Game Boy Color era). "
+         + ("Compact, bold shape that fills the whole square: big head about one third of the height, short wide body, short legs, arms close to the body; "
+            if body_type(e) != '관습' else "Compact, bold shape that fills the whole square: big head and a short, wide, rounded body; ") +
+         "wings, tail, horns or weapons spread out sideways so the sprite is almost as wide as it is tall. "
+         "Keep only the most recognizable features, each drawn big and bold:\n" + '\n'.join('- ' + k for k in keep) + "\n"
+         + (f"Colors: few flat colors, {col}. " if col else "Few flat colors. ")
+         + "Thick black outline, no tiny details, no gradients, no background. Standing on the ground, three-quarter view facing left.")
+    return s[:2000]

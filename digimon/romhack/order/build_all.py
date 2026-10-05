@@ -31,6 +31,7 @@ BABY_SPEC = {   # 새 유년기 4종 주문문용 (specs.py 형식). 몸 색은 
                     keep=['A round pink bird ball with two small wings on the sides.', 'One long red feather on top of the head.', 'A small yellow beak and big round eyes.'],
                     not_=['No legs.']),
 }
+KEEP14 = {'devimon': '지금 게임 그림(1.4, 날개를 펴서 칸을 꽉 채운 「B형태」)을 그대로 씀 — 사용자 판정 2026-10-05'}
 REDO = {'mugendramon': ('f', '앞모습 다시 받기 (사용자 판정 2026-10-04) — 받아 둔 앞모습은 아래 「롬에 넣을 앞」')}   # 받은 그림이 있어도 다시 받을 것
 ALIAS = {'tailmon': 'gatomon', 'plotmon': 'salamon'}
 # 게임 도트 후보 — 2026-10-04 사용자 판정으로 7종만 씀(art/ 에 넣음, decisions.md). 나머지는 안 씀
@@ -105,6 +106,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         else: side[s] = 'need'
     if did in REDO:
         for x in REDO[did][0]: side[x] = 'need'
+    if did in KEEP14: side = {'f': 'keep14', 'b': 'keep14'}
     st = 'done' if side['f'] == side['b'] == 'done' else ('keep14' if side['f'] == side['b'] == 'keep14' else
           ('got' if {side['f'], side['b']} <= {'done', 'got'} else 'todo'))
     need = ''.join(s for s in 'fb' if side[s] in ('need', 'rip'))
@@ -112,7 +114,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
          'gf': f, 'gb': b, 'src_f': src_f, 'src_b': src_b, 'side': side, 'st': st,
          'af': BO.art(aid, 'f') if has_f and src_f != 'art' else '', 'ab': BO.art(aid, 'b') if has_b and src_b != 'art' else '',
          'rip': rip_pic(rip[0], rip[1]) if rip and side['f'] == 'rip' else '', 'rip_name': rip[0] if rip else '', 'rip_note': rip[2] if rip else '',
-         'nosrc': REDO[did][1] if did in REDO else NO_SRC.get(did, ''), 'prompt': {}, 'lcd8': '', 'img': '', 'ref': '', 'sketch_mode': False}
+         'nosrc': REDO[did][1] if did in REDO else NO_SRC.get(did, ''), 'use': KEEP14.get(did, ''), 'prompt': {}, 'lcd8': '', 'img': '', 'ref': '', 'sketch_mode': False}
     if sp and need:
         lu = sp.get('lcd') or ''
         if not lu:
@@ -131,7 +133,31 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         c['attf'] = b64png(bg.convert('RGB').resize((im.width * 8, im.height * 8), Image.NEAREST))
         c['prompt']['b'] = prompts.back_from_front(dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', '')))
         if not c['img'] and did: c['img'] = 'https://digimon.net/cimages/digimon/%s.jpg' % ((sp or {}).get('dir') or did)
+    # PixelLab (2026-10-05): 「B형태」 설명 + 참조 그림(256칸 이하, 투명 바탕). 앞모습이 있으면 그 앞모습 ×4, 없으면 공식 그림을 256 안으로
+    if need and (sp or did):
+        e = dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', ''))
+        c['pl'] = prompts.pixellab_prompt(e); c['pl_type'] = prompts.body_type(e)
+        c['plref'] = pl_ref(front, (sp or {}).get('dir') or did)
     return c
+
+
+def pl_ref(front, d):
+    from PIL import Image
+    import numpy as np
+    if front:
+        im = Image.open(front).convert('RGBA'); return b64png(im.resize((im.width * 4, im.height * 4), Image.NEAREST))
+    cache = WEB + 'art/ref/%s_256.png' % d                                # 공식 그림이라 저장소에 안 올림 (art/ref/.gitignore)
+    if not os.path.exists(cache):
+        try:
+            import urllib.request
+            raw = urllib.request.urlopen('https://digimon.net/cimages/digimon/%s.jpg' % d, timeout=20).read()
+            a = np.asarray(Image.open(io.BytesIO(raw)).convert('RGB')).astype(int); bg = a.min(2) > 235
+            ys, xs = np.where(~bg)
+            im = Image.fromarray(np.dstack([a, np.where(bg, 0, 255)]).astype('uint8'), 'RGBA').crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
+            im.thumbnail((240, 240), Image.LANCZOS); out = Image.new('RGBA', (256, 256), (0, 0, 0, 0)); out.alpha_composite(im, ((256 - im.width) // 2, 248 - im.height))
+            out.save(cache)
+        except Exception: return ''
+    return BO.b64(cache)
 
 
 def main():

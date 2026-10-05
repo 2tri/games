@@ -208,6 +208,13 @@ function card(r) {
   if (r.img) rw.append(linkBtn("공식 그림 열기", r.img));
   if (r.ref) rw.append(linkBtn("공식 도감", r.ref));
   if (rw.childElementCount) c.append(rw);
+  if (r.pl) {
+    const det = el("details"); det.append(el("summary", "", "PixelLab 주문 (참조에서 생성하기 · 캐릭터 유형: " + r.pl_type + ")"));
+    if (r.plref) { const pp = el("div", "pics"); pp.append(pic(r.plref, 0.5, "PixelLab 참조 그림 · 256칸 이하 (길게 눌러 저장)", "att")); det.append(pp); }
+    const pre = el("pre", "", r.pl); det.append(el("b", "", "등장인물 소개에 붙여 넣기"), pre);
+    det.append(el("p", "note", "결과 GIF를 그대로 보내 주세요 — 8방향 중 왼쪽 아래 보는 것 = 앞, 오른쪽 위로 등 보이는 것 = 뒤로 잘라 넣어요."));
+    const r3 = el("div", "row"); r3.append(copyBtn("PixelLab 설명 복사", r.pl, pre, det, "alt")); c.append(r3, det);
+  }
   if (r.prompt.f || r.prompt.b) {
     const det = el("details"); det.append(el("summary", "", "주문문 보기")); const r2 = el("div", "row");
     if (r.prompt.f) { const p = el("pre", "", r.prompt.f); det.append(el("b", "", r.sketch_mode ? "앞모습 주문문 (첨부 1장 = LCD 도트, 2장 = 공식 그림)" : "앞모습 주문문 (첨부 = 공식 그림)"), p); r2.append(copyBtn(r.sketch_mode ? "앞모습 주문문 복사 (LCD 첨부)" : "앞모습 주문문 복사", r.prompt.f, p, det)); }
