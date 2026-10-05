@@ -18,7 +18,7 @@ GM_DRUM = {35: KICK, 36: KICK, 37: SNARE, 38: SNARE, 39: SNARE, 40: SNARE, 42: H
 DRUM_PRIO = {CRASH: 6, SNARE: 5, KICK: 4, TOM: 3, OHAT: 2, HAT: 1}
 
 # 곡 목록. 고르는 법: ('t', 트랙) 또는 ('c', 채널), 방식 top(가장 높은 음)·bottom(가장 낮은 음)·second(두 번째 높은 음)
-# lo/hi: 그 음 범위만, shift: 옥타브 이동(반음), 구간 start/end 는 박 단위
+# lo/hi: 그 음 범위만, 여섯째 값: 그 소스만 옮김(반음), <채널>_shift: 채널 전체 옮김(반음), 구간 start/end 는 박 단위
 SONGS = {
     'title': dict(mid='butterfly.mid', start=0, end=96, grid=12,
                   lead=[('t', 1, 'top', 60, 127)], harm=[('t', 1, 'second', 48, 127)], bass=[('t', 1, 'bottom', 0, 57)],
@@ -49,6 +49,10 @@ SONGS.update({
     'gym': dict(SONGS['boss'], start=112, end=208),                            # Brave Heart 뒷부분 → 체육관·아지트 걷기
     'encounter': dict(SONGS['battle'], start=0, end=32),                       # digimon 록 앞 2블록 → 트레이너·라이벌 눈 마주침
     'victory': dict(SONGS['title'], start=128, end=160),                       # Butter-Fly 뒷부분 8마디 → 승리
+    # 2026-10-05 사용자 「안녕 디지몬 같은 노래는 잔잔하게 배경음으로」: 장숙희 「안녕 디지몬」(KBS 엔딩, 마장조) 피아노 MIDI 의 앞 12마디
+    #   (전주 4 + 1절 8, midiex 공개 미리듣기 30초 — 전체 파일은 로그인·댓글이 있어야 받음). 오른손 = 멜로디(한 옥타브 내림), 왼손 위 = 펼침화음, 왼손 아래 = 베이스, 드럼 없음
+    'annyeong': dict(mid='annyeong.mid', start=0, end=48, grid=12, bpm=100,
+                     lead=[('t', 1, 'top')], lead_shift=-12, harm=[('t', 2, 'top', 50, 127), ('t', 1, 'second', 0, 127, -12)], bass=[('t', 2, 'bottom', 0, 49)], drums='none'),
 })
 # 회복 징글 (직접 작곡, 포켓몬 센터 느낌의 짧은 아르페지오) — [음(MIDI), 길이(칸)]
 HEAL = dict(bpm=120, grid=12, once=True, ch=[
@@ -96,7 +100,8 @@ def voice(notes, sels, start, end, grid, ch, shift=0):
     pitch = [0] * U; onset = [False] * U; owner = [-1] * U
     for si, sel in enumerate(sels):
         mode = sel[2]; lo = sel[3] if len(sel) > 3 else 0; hi = sel[4] if len(sel) > 4 else 127
-        src = [x for x in pick(notes, sel) if lo <= x[4] <= hi]
+        sh = sel[5] if len(sel) > 5 else 0                                  # 이 소스만 옮김 (반음)
+        src = [x[:4] + (x[4] + sh,) for x in pick(notes, sel) if lo <= x[4] <= hi]
         # 칸마다 그 소스에서 울리는 음들
         active = [[] for _ in range(U)]
         for (_, _, s, e, p) in src:

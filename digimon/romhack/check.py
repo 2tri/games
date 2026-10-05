@@ -332,6 +332,7 @@ def music_sim(d, mid):
             elif b == 0xd8: speed = d[dmrom.addr(bank, a + 1)]; a += 2 if cid == 3 else 3
             elif b == 0xda: tempo = d[dmrom.addr(bank, a + 1)] << 8 | d[dmrom.addr(bank, a + 2)]; a += 3
             elif b in (0xdb, 0xe5, 0xe3): a += 2
+            elif b == 0xe1: a += 3                                                     # vibrato
             elif b == 0xfd:
                 cnt = d[dmrom.addr(bank, a + 1)]; tgt = d[dmrom.addr(bank, a + 2)] | d[dmrom.addr(bank, a + 3)] << 8
                 if cnt == 0:

@@ -10,24 +10,31 @@ FPS = 59.7275
 DRUM = {1: 4, 2: 1, 3: 5, 4: 3, 5: 12, 6: 11}         # 우리 드럼 → 금 드럼 모음 3 (Kick1·Snare12·Triangle5·Snare14·Crash2·Kick2)
 ENV = {0: 0xb2, 1: 0x82, 2: 0x25}                     # 채널별 note_type 둘째 바이트 (네모파 볼륨·감쇠, 파형 볼륨·파형)
 DUTY = {0: 2, 1: 1}
+# 곡 느낌 (rules.MUSIC_STYLE). calm = 잔잔한 배경음 (금 연두마을 newbarktown.asm 을 본뜸): 멜로디 볼륨 8·천천히 줄어듦(6)·떨림(vibrato 18,2,3),
+#   화음 볼륨 5·얇은 네모파(duty 0), 베이스 파형 볼륨 1/4 (소리 크기는 파형 채널이 가장 큼 → 이것만 낮춰도 전체가 약 2/3).
+#   2026-10-05 사용자 「노래는 배경음으로 깔리게, 안녕 디지몬 같은 노래는 잔잔하게」
+STYLES = {'calm': dict(env={0: 0x86, 1: 0x55, 2: 0x35}, duty={0: 2, 1: 0}, vib={0: (18, 2, 3)})}
 
 
 def tempo_of(js, ff=1):
     return max(1, round(256 * FPS * 60 * ff / (js['bpm'] * js['grid'])))
 
 
-def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1):
+def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1, style=None):
     """한 채널. base = 이 채널 바이트가 놓일 주소(뱅크 안 0x4000~), loop=True 면 처음으로 되돌아감
     cap = 명령 하나의 최대 칸 수 (엔진의 음 길이 = 칸×템포/256 프레임이 한 바이트라 255프레임을 넘으면 돌아감 → 나눠 씀)
-    shift = 음높이 이동(반음, 드럼 채널 제외)"""
+    shift = 음높이 이동(반음, 드럼 채널 제외), style = STYLES 항목 (없으면 기본 ENV·DUTY)"""
+    st = style or {}; duty = st.get('duty', DUTY)
     out = bytearray()
     if ch == 0: out += bytes([0xda]) + 0 .to_bytes(2, 'big') + bytes([0xe5, 0x77])   # 템포는 song_bytes 에서 채움
-    if ch in DUTY: out += bytes([0xdb, DUTY[ch]])
+    if ch in duty: out += bytes([0xdb, duty[ch]])
+    if ch in st.get('vib', {}):                                                        # vibrato 지연(프레임)·폭·빠르기: 빨리감기면 ff배로 늘림
+        dl, ex, rt = st['vib'][ch]; out += bytes([0xe1, min(255, round(dl * ff)), ex << 4 | min(15, round(rt * ff))])
     if ch == 3: out += bytes([0xe3, 3])                                               # 드럼 모음 3
     start = base + len(out)
     speed = None; octv = None
 
-    env = ENV.get(ch, 0)
+    env = st.get('env', ENV).get(ch, ENV.get(ch, 0))
     if ff != 1 and ch in (0, 1): env = (env & 0xf0) | min(7, round((env & 7) * ff))    # 소리 줄어드는 빠르기(실제 시간)도 ff배 느리게
     def note_type(s):
         nonlocal speed
@@ -69,7 +76,7 @@ def ff_shift(js, ch, ff):
     return s
 
 
-def song_bytes(js, base, loop=None, ff=1, slow=None):
+def song_bytes(js, base, loop=None, ff=1, slow=None, style=None):
     """곡 하나 → (머리 + 채널 4개) 바이트. base = 놓일 주소 (뱅크 안 0x4000~)
     ff = 델타 빨리감기 배수: 템포를 ff배 느리게, 음을 12·log2(ff) 반음 낮게 (빨리감기로 들으면 원래 곡)
     slow = 템포만 따로 (회복 징글은 게임이 정해진 프레임만 기다려서 늘이면 잘림 → 1)"""
@@ -77,7 +84,7 @@ def song_bytes(js, base, loop=None, ff=1, slow=None):
     t = tempo_of(js, ff if slow is None else slow); cap = min(255, (65535 - 255) // t)
     head = 12; chans = []; p = base + head
     for ch in range(4):
-        b = chan_bytes(ch, js['ch'][ch], p, loop, cap, ff_shift(js, ch, ff), ff); chans.append((p, b)); p += len(b)
+        b = chan_bytes(ch, js['ch'][ch], p, loop, cap, ff_shift(js, ch, ff), ff, style); chans.append((p, b)); p += len(b)
     c0 = bytearray(chans[0][1]); c0[1:3] = t.to_bytes(2, 'big'); chans[0] = (chans[0][0], bytes(c0))
     out = bytearray()
     for i, (a, _) in enumerate(chans):
@@ -94,4 +101,5 @@ def load(name):
 if __name__ == '__main__':
     import rules
     for nm in rules.MUSIC:
-        js = load(nm); print('%-8s bpm %5.1f grid %d 템포 %d → %d바이트' % (nm, js['bpm'], js['grid'], tempo_of(js), len(song_bytes(js, 0x4000))))
+        js = load(nm); st = rules.MUSIC_STYLE.get(nm)
+        print('%-8s bpm %5.1f grid %d 템포 %d → %d바이트 %s' % (nm, js['bpm'], js['grid'], tempo_of(js), len(song_bytes(js, 0x4000, style=STYLES.get(st))), st or ''))

@@ -849,8 +849,9 @@ def build(base, out_rom, out_ips):
     for nm, ids in rules.MUSIC.items():
         js = music.load(nm); loop = True if nm == 'evolve' else None
         slow = 1 if nm == 'heal' else None                              # 디지몬센터 회복은 정해진 프레임만 기다림 → 템포는 그대로, 음만 낮춤
-        size = len(music.song_bytes(js, 0x4000, loop, ff, slow))
-        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop, ff, slow))
+        st = music.STYLES.get(rules.MUSIC_STYLE.get(nm))                  # 잔잔한 배경음 등 곡 느낌 (rules.MUSIC_STYLE)
+        size = len(music.song_bytes(js, 0x4000, loop, ff, slow, st))
+        b, p = P.sp.take(size, banks=[0x13, 0x11, 0x0b]); P.put(addr(b, p), music.song_bytes(js, p, loop, ff, slow, st))
         for i in ids: P.put(mtab + 3 * i, bytes([b]) + struct.pack('<H', p))
     P.log.append('노래 %d곡 → 금 음악 %d번호 (표 %06X)%s' % (len(rules.MUSIC), sum(len(v) for v in rules.MUSIC.values()), mtab,
                                                        ' — 빨리감기 %g배용 (템포 ×%g, 음 낮춤)' % (ff, ff) if ff != 1 else ''))
