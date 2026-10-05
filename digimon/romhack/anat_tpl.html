@@ -1,0 +1,135 @@
+<title>디지몬스터 2.0 해부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f3f4ee;--card:#fbfcf7;--ink:#1d211b;--muted:#5d6458;--line:#d6dacd;--soft:#e7ebdc;--accent:#2f6b4f;--accent-ink:#ffffff;--warn:#9a4b16;--chg:#fff1c9;--chg-ink:#5a4300;--new:#dcefe3;--pix:#ffffff;
+--f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151813;--card:#1c201a;--ink:#e6e9df;--muted:#a3ab9a;--line:#343a2f;--soft:#262b22;--accent:#7cc39d;--accent-ink:#0f1a13;--warn:#e3a06f;--chg:#3b3315;--chg-ink:#f3dc93;--new:#1f3427;--pix:#f4f6ef;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151813;--card:#1c201a;--ink:#e6e9df;--muted:#a3ab9a;--line:#343a2f;--soft:#262b22;--accent:#7cc39d;--accent-ink:#0f1a13;--warn:#e3a06f;--chg:#3b3315;--chg-ink:#f3dc93;--new:#1f3427;--pix:#f4f6ef;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body)}
+main{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 60px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:6px}
+h1{font-size:1.65rem;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.2rem;margin:0;text-wrap:balance}h3{font-size:1rem;margin:10px 0 4px}
+.lede{margin:0;color:var(--muted);max-width:72ch}.meta{font:12px var(--f-mono);color:var(--muted)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;gap:6px;padding-block:8px;border-bottom:1px solid var(--line)}
+nav.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:.86rem;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+section{display:flex;flex-direction:column;gap:10px}
+.facts{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);border-top:1px solid var(--line)}
+.facts>div{overflow-wrap:anywhere;padding:8px 10px;border-bottom:1px solid var(--line)}.facts>div:nth-child(odd){font-weight:700;color:var(--accent)}
+@media (max-width:560px){.facts{grid-template-columns:1fr}.facts>div:nth-child(odd){border-bottom:0;padding-bottom:0}}
+ol.how,ul.plain{overflow-wrap:anywhere;margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;max-width:80ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar input[type=search],.bar select{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;min-width:0}
+.bar input[type=search]{flex:1 1 220px}
+label.chk{display:flex;gap:6px;align-items:center;font-size:.88rem;color:var(--muted)}
+.count{font:12px var(--f-mono);color:var(--muted)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{position:sticky;top:0;background:var(--soft);white-space:nowrap;font-weight:500}
+td.nw{white-space:nowrap}td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.wrap{min-width:16ch;max-width:52ch}
+tr.chg td.mark{background:var(--chg);color:var(--chg-ink)}
+.tag{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.tag.in{background:var(--new);border-color:transparent}.tag.warn{color:var(--warn);border-color:var(--warn)}
+img.px{image-rendering:pixelated;background:var(--pix);border-radius:3px;display:block}
+.pics{display:flex;gap:4px;align-items:flex-end}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card .t{font-weight:700}.card .s{font-size:.8rem;color:var(--muted)}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;text-align:center;font-size:.75rem;color:var(--muted)}
+.trio img{margin:0 auto;max-width:100%}
+.verdict{font-weight:700;color:var(--accent)}
+.judge{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.jrow{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:10px;display:grid;grid-template-columns:9em repeat(3,minmax(0,1fr));gap:10px;align-items:end}
+.jrow .who{align-self:start}.jrow .col{display:flex;flex-direction:column;gap:4px;align-items:center;font-size:.75rem;color:var(--muted)}
+.jrow .why{grid-column:1/-1;font-size:.86rem}
+@media (max-width:640px){.jrow{grid-template-columns:minmax(0,1fr)}.jrow .col{flex-direction:row;justify-content:flex-start;gap:10px}}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.pair div{white-space:pre-wrap;word-break:break-word}
+.old{color:var(--muted)}
+button.more{align-self:flex-start;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
+.note{border-left:3px solid var(--accent);padding:6px 10px;background:var(--soft);border-radius:0 6px 6px 0;font-size:.88rem;max-width:90ch}
+</style>
+<main>
+<header>
+<h1>디지몬스터 2.0 해부</h1>
+<p class="lede">사용자가 구한 디지몬스터 2.0 롬을 통째로 뜯어 어떻게 만들었는지, 1.4·원본 금과 무엇이 다르고 무엇이 더해졌는지를 한곳에 모았습니다. 이름·대사·그림이 원작 것이라 비공개 페이지입니다.</p>
+<p class="meta">기준: 금 한글판 디스어셈블리(pokegold-kr) 빌드 심볼 41,275개 · 1.4 원본 · 우리 판 1005z · 2.0 · 2026-10-05 밤</p>
+</header>
+<nav class="tabs" id="tabs" aria-label="영역"></nav>
+<div id="body"></div>
+</main>
+<script>
+const D=/*DATA*/null;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tx=s=>esc(s).replace(/&lt;(LINE|CONT|NEXT)&gt;/g,'\n').replace(/&lt;PARA&gt;/g,'\n\n').replace(/&lt;(DONE|PROMPT)&gt;/g,'');
+const img=(u,s=1)=>u?'<img class="px" src="'+u+'" width="'+56*s+'" height="'+56*s+'" alt="">':'<span class="count">없음</span>';
+const SECTIONS=[
+ ['overview','한눈에'],['how','어떻게 만들었나'],['species','디지몬 251'],['moves','기술 251'],['tables','타입·도구·트레이너'],
+ ['wild','야생'],['events','이벤트·새 대사'],['texts','바뀐 대사'],['gfx','그 밖 그림'],['judge','그림 판정'],['cands','가져올 후보'],['traces','포켓몬 흔적']];
+let cur='overview';try{const h=location.hash.slice(1);if(SECTIONS.some(s=>s[0]===h))cur=h}catch(e){}
+function tabs(){document.getElementById('tabs').innerHTML=SECTIONS.map(([k,t])=>'<button role="tab" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+t+'</button>').join('')}
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.k;tabs();show()});
+function filt(id,rows,fn,render,opts={}){
+ const box=document.getElementById(id);let lim=opts.limit||150;
+ const go=()=>{const q=(box.querySelector('input[type=search]')||{}).value||'';const only=box.querySelector('.onlychg');const sel=box.querySelector('select');
+  const r=rows.filter(x=>(!q||fn(x).includes(q))&&(!only||!only.checked||x.__chg)&&(!sel||!sel.value||opts.sel(x,sel.value)));
+  box.querySelector('.count').textContent=r.length+'줄';box.querySelector('.out').innerHTML=render(r.slice(0,lim));
+  const m=box.querySelector('.more');m.hidden=r.length<=lim;};
+ box.addEventListener('input',()=>{lim=opts.limit||150;go()});box.addEventListener('change',()=>{lim=opts.limit||150;go()});
+ box.querySelector('.more').addEventListener('click',()=>{lim+=300;go()});go();
+}
+function bar(id,ph,extra=''){return '<div id="'+id+'" class="sec"><div class="bar"><input type="search" placeholder="'+ph+'" aria-label="찾기">'+extra+'<span class="count"></span></div><div class="out"></div><button class="more" hidden>더 보기</button></div>'}
+const R={};
+R.overview=()=>'<h2>한눈에</h2><div class="facts">'+D.overview.map(([k,v])=>'<div>'+esc(k)+'</div><div>'+esc(v)+'</div>').join('')+'</div>'+
+ '<p class="note">「원본」 = 원본 포켓몬 금 한글판. 원본 값을 아는 구역은 롬의 54.5%(디스어셈블리가 소스를 가진 곳)이고, 나머지는 1.4·2.0끼리만 비교했습니다. 디지몬 시리즈 분류는 위키몬 문서의 애니 등장 기록 기준이라, 짧게 스친 등장도 「어드벤처」로 셉니다.</p>';
+R.how=()=>'<h2>어떻게 만들었나</h2><ol class="how">'+D.how.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'+
+ '<h3>원본 금 대비 고친 바이트 (원본 값을 아는 구역)</h3><div class="scroll"><table><thead><tr><th>무엇</th><th>1.4</th><th>2.0</th></tr></thead><tbody>'+
+ D.regtab.map(r=>'<tr><td>'+esc(r[0])+'</td><td class="n">'+r[1].toLocaleString()+'</td><td class="n">'+r[2].toLocaleString()+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h3>원본 코드 파일 안에서 바뀐 곳 (2.0) — 전부 글자·그림·색 데이터</h3><div class="scroll"><table><thead><tr><th>라벨</th><th>파일</th><th>바이트</th></tr></thead><tbody>'+
+ D.engine.map(r=>'<tr><td class="n">'+esc(r[0])+'</td><td class="n">'+esc(r[1])+'</td><td class="n">'+r[2]+'</td></tr>').join('')+'</tbody></table></div>';
+R.species=()=>{const sers=[...new Set(D.species.map(s=>s.ser))];
+ return '<h2>디지몬 251칸</h2><p class="lede">2.0의 칸 순서 그대로. 「원래 칸」은 원본 금에서 그 칸의 포켓몬, 「1.4」는 1.4에서 그 칸의 이름. 노란 칸 = 1.4에서 바뀜. <span class="tag in">우리에게 있음</span> = 우리 판에 같은 이름.</p>'+
+ bar('sp','이름·타입·진화 찾기','<select aria-label="시리즈"><option value="">모든 시리즈</option>'+sers.map(s=>'<option>'+esc(s)+'</option>').join('')+'</select>')}
+R.moves=()=>'<h2>기술 251개</h2><p class="lede">원본 기술 이름 → 2.0 이름. 노란 칸 = 원본에서 바뀐 값. 명중·추가효과는 %로 바꿈.</p>'+bar('mv','기술 이름·효과 찾기','<label class="chk"><input type="checkbox" class="onlychg"> 원본에서 수치가 바뀐 것만</label>');
+R.tables=()=>'<h2>타입</h2><div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>2.0</th></tr></thead><tbody>'+D.types.names.map(r=>'<tr class="'+(r[1]!==r[2]?'chg':'')+'"><td class="n">'+r[0]+'</td><td>'+esc(r[1])+'</td><td class="mark">'+esc(r[2])+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<p>상성 더함: '+esc(D.types.add.join(' · '))+'<br>상성 뺌: '+esc(D.types.rem.join(' · '))+'</p>'+
+ '<h2>도구 (원본에서 바뀐 것)</h2><div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>1.4</th><th>2.0</th><th>값</th><th>설명</th></tr></thead><tbody>'+
+ D.items.map(i=>'<tr class="'+(i.vs14?'chg':'')+'"><td class="n">'+i.no+'</td><td>'+esc(i.gold)+'</td><td>'+esc(i.n14)+'</td><td class="mark">'+esc(i.name)+'</td><td class="n">'+(i.price??'')+'</td><td class="wrap">'+tx(i.desc)+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h2>기술머신</h2><div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>2.0</th></tr></thead><tbody>'+D.tm.map(r=>'<tr class="'+(r[3]?'chg':'')+'"><td class="n">'+(r[0]<=50?'TM'+String(r[0]).padStart(2,'0'):'HM'+String(r[0]-50).padStart(2,'0'))+'</td><td>'+esc(r[1])+'</td><td class="mark">'+esc(r[2])+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h2>트레이너 직업</h2><div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>1.4</th><th>2.0</th></tr></thead><tbody>'+D.classes.map(r=>'<tr class="'+(r[2]!==r[3]?'chg':'')+'"><td class="n">'+r[0]+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td class="mark">'+esc(r[3])+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h2>지명</h2><div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>1.4</th><th>2.0</th></tr></thead><tbody>'+D.landmarks.map(r=>'<tr class="'+(r[2]!==r[3]?'chg':'')+'"><td class="n">'+r[0]+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td class="mark">'+esc(r[3])+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h2>트레이너 파티 (2.0)</h2>'+bar('pt','직업·이름·디지몬 찾기','<label class="chk"><input type="checkbox" class="onlychg"> 1.4에서 바뀐 것만</label>');
+R.wild=()=>'<h2>야생 출현 (2.0)</h2>'+bar('wl','지역·디지몬 찾기','<label class="chk"><input type="checkbox" class="onlychg"> 1.4에서 바뀐 것만</label>');
+R.events=()=>'<h2>이벤트 — 맵별 핵심 명령 (1.4 → 2.0)</h2><p class="lede">스크립트 해독기로 사람·표지판·발판 스크립트를 따라가 선물·전투·도구 명령만 모음. + = 2.0에서 생김, − = 1.4에 있던 것이 없어짐. 해독기가 데이터를 명령으로 잘못 읽은 줄이 섞일 수 있음(불확실).</p>'+
+ '<div class="scroll"><table><thead><tr><th>맵</th><th>2.0에서 생김</th><th>없어짐</th></tr></thead><tbody>'+D.events.map(e=>'<tr><td>'+esc(e.map)+'<div class="count">'+esc(e.lab)+'</div></td><td class="wrap">'+e.add.map(esc).join('<br>')+'</td><td class="wrap old">'+e.rem.map(esc).join('<br>')+'</td></tr>').join('')+'</tbody></table></div>'+
+ '<h2>2.0에서 새로 생긴 대사</h2>'+bar('nt','대사 찾기');
+R.texts=()=>'<h2>1.4에서 바뀐 대사</h2><p class="lede">같은 스크립트 자리가 가리키는 대사를 1.4와 2.0에서 짝지음.</p>'+bar('ct','대사 찾기');
+R.gfx=()=>'<h2>그 밖 그림 (원본 → 1.4 → 2.0)</h2><p class="lede">트레이너 '+D.gstat.trainers.n+'종 중 원본 그대로 '+D.gstat.trainers.samev+' · 필드 인물 '+D.gstat.sprites.n+'종 중 1.4와 같음 '+D.gstat.sprites.same14+' · 메뉴 아이콘 '+D.gstat.icons.n+'종 모두 원본 포켓몬 아이콘 · 타일셋 '+D.gstat.tilesets.n+'개 중 바뀐 것 '+(D.gstat.tilesets.n-D.gstat.tilesets.same14)+'</p>'+
+ '<div class="grid">'+D.gfx.map(g=>'<div class="card"><div class="t">'+esc(g.cat)+' · '+esc(g.key)+'</div><div class="trio"><div>'+(g.v?'<img class="px" src="'+g.v+'" alt="">':'')+'원본</div><div><img class="px" src="'+g.o+'" alt="">1.4</div><div><img class="px" src="'+g.n+'" alt="">2.0</div></div></div>').join('')+'</div>';
+R.judge=()=>'<h2>그림 판정 — 1.4 · 우리 판 · 2.0</h2><p class="lede">2.0이 1.4와 다른 그림을 가진 25종만(나머지 44종은 2.0 그림이 1.4와 똑같아 고를 것이 없음). 사용자가 새로 올릴 그림이 들어오면 같은 기준으로 다시 비교.</p><p class="note">'+esc(D.judgeinfo.기준)+'</p><p>'+Object.entries(D.judgeinfo.요약).map(([k,v])=>'<span class="tag">'+esc(k)+' '+v+'</span>').join(' ')+'</p><div class="judge">'+
+ D.judge.map(j=>'<div class="jrow"><div class="who"><div class="t"><b>'+j.no+' '+esc(j.ko)+'</b></div><div class="verdict">앞: '+esc(j['앞'])+'<br>뒤: '+esc(j['뒤'])+'</div></div>'+
+  [['1.4',j.i14],['우리 판',j.io],['2.0',j.i20]].map(([t,p])=>'<div class="col"><div class="pics">'+img(p[0])+img(p[1])+'</div>'+t+'</div>').join('')+'<div class="why">'+esc(j['이유'])+'</div></div>').join('')+'</div>';
+R.cands=()=>'<h2>2.0에 있고 우리에게 없는 어드벤처·02 시기 디지몬 '+D.cands.length+'종</h2><p class="lede">2.0에 그림이 이미 있음. 시리즈 판정은 위키몬 문서의 애니 등장 기록(짧은 등장 포함). 주작몬·현무몬·백호몬은 10/1 에피소드 기록 점검에서는 02에 안 나온다고 봤던 종 — 근거가 엇갈림.</p><div class="grid">'+
+ D.cands.map(c=>'<div class="card"><div class="t">'+c.no+' '+esc(c.name)+' <span class="tag in">'+esc(c.ser)+'</span></div><div class="pics">'+img(c.f)+img(c.b)+'</div><div class="s">'+esc(c.types)+' · 능력치 합 '+c.bst+'</div><div class="s">'+esc(c.anime)+'</div></div>').join('')+'</div>'+
+ '<h3>2.0 250종 시리즈 분포</h3><p>'+Object.entries(D.sercount).map(([k,v])=>'<span class="tag">'+esc(k)+' '+v+'</span>').join(' ')+'</p>';
+R.traces=()=>'<h2>포켓몬 흔적 (2.0)</h2><ul class="plain"><li>이름: '+D.traces.names.map(r=>r[0]+' '+esc(r[1])).join(', ')+'</li><li>메뉴 아이콘 '+D.traces.icons.n+'종 전부 원본 포켓몬 아이콘</li><li>트레이너 그림 66종 중 '+D.traces.trainers_gold+'종 원본 그대로 (사람 그림이라 문제 적음)</li>'+
+ D.traces.words.map(w=>'<li>대사 속 「'+esc(w[0])+'」 '+w[1]+'곳 — 예: '+w[2].map(t=>esc(t.replace(/<[A-Z]+>/g,' '))).join(' / ')+'</li>').join('')+'</ul>';
+const AFTER={
+ species:()=>filt('sp',D.species,s=>s.name+s.types+s.evos.join(' ')+s.ser+(s.gold||''),r=>'<div class="scroll"><table><thead><tr><th>칸</th><th>그림</th><th>이름</th><th>원래 칸</th><th>1.4</th><th>타입</th><th>능력치 (합)</th><th>포획·경험</th><th>진화</th><th>배우는 기술</th><th>도감</th></tr></thead><tbody>'+
+  r.map(s=>'<tr><td class="n">'+s.no+'</td><td><div class="pics">'+img(s.f)+img(s.b)+'</div>'+(s.same14[0]&&s.same14[1]?'<span class="count">1.4와 같음</span>':'')+'</td><td><b>'+esc(s.name)+'</b><br><span class="tag '+(s.ser.startsWith('어드벤처')?'in':'')+'">'+esc(s.ser)+'</span>'+(s.ours?' <span class="tag in">우리에게 있음</span>':'')+'</td><td class="nw">'+esc(s.gold)+'</td><td class="nw">'+esc(s.n14)+'</td><td class="nw">'+esc(s.types)+'</td><td class="n'+(s.stat14?'':' mark')+'">'+s.stats.join(' ')+'<br>('+s.bst+')</td><td class="n">'+s.catch+' · '+s.exp+'</td><td class="wrap'+(s.evo14?'':' mark')+'">'+s.evos.map(esc).join('<br>')+'</td><td class="wrap'+(s.learn14?'':' mark')+'">'+esc(s.learn)+'</td><td class="wrap">'+(s.dex?esc(s.dex.cat)+' · '+tx(s.dex.text):'')+'</td></tr>').join('').replace(/<tr>/g,'<tr class="chg">')+'</tbody></table></div>',{sel:(s,v)=>s.ser===v,limit:60}),
+ moves:()=>{D.moves.forEach(m=>m.__chg=m.numchg);filt('mv',D.moves,m=>m.name+m.gold+m.eff+m.desc,r=>'<div class="scroll"><table><thead><tr><th>번호</th><th>원본</th><th>2.0</th><th>타입</th><th>위력</th><th>명중%</th><th>PP</th><th>효과</th><th>추가%</th><th>연출</th><th>설명</th></tr></thead><tbody>'+
+  r.map(m=>'<tr class="chg"><td class="n">'+m.no+'</td><td class="old">'+esc(m.gold)+'</td><td class="'+(m.nmchg?'mark':'')+'"><b>'+esc(m.name)+'</b></td><td>'+esc(m.type)+'</td><td class="n'+(m.numchg?' mark':'')+'">'+m.power+'</td><td class="n">'+m.acc+'</td><td class="n">'+m.pp+'</td><td class="n'+(m.effchg?' mark':'')+'">'+esc(m.eff)+'</td><td class="n">'+m.ch+'</td><td class="n'+(m.animchg?' mark':'')+'">'+m.anim+'</td><td class="wrap">'+tx(m.desc)+'</td></tr>').join('')+'</tbody></table></div>',{limit:251})},
+ tables:()=>{D.parties.forEach(p=>p.__chg=p.chg);filt('pt',D.parties,p=>p.cls+p.name+p.mons,r=>'<div class="scroll"><table><thead><tr><th>직업</th><th>이름</th><th>디지몬 레벨</th></tr></thead><tbody>'+r.map(p=>'<tr class="'+(p.chg?'chg':'')+'"><td>'+esc(p.cls)+'</td><td>'+esc(p.name)+'</td><td class="wrap mark">'+esc(p.mons)+'</td></tr>').join('')+'</tbody></table></div>',{limit:120})},
+ wild:()=>{D.wild.forEach(w=>w.__chg=w.chg);filt('wl',D.wild,w=>w.map+w.lab+(w.morn||'')+(w.day||'')+(w.nite||'')+(w.mons||''),r=>'<div class="scroll"><table><thead><tr><th>지역</th><th>종류</th><th>레벨</th><th>아침</th><th>낮</th><th>밤 / 물</th></tr></thead><tbody>'+
+  r.map(w=>'<tr class="'+(w.chg?'chg':'')+'"><td>'+esc(w.map)+'<div class="count">'+esc(w.lab)+'</div></td><td>'+w.kind+'</td><td class="n">'+w.lv+'</td>'+(w.kind==='물'?'<td colspan="2"></td><td class="wrap mark">'+esc(w.mons)+'</td>':'<td class="wrap mark">'+esc(w.morn)+'</td><td class="wrap mark">'+esc(w.day)+'</td><td class="wrap mark">'+esc(w.nite)+'</td>')+'</tr>').join('')+'</tbody></table></div>',{limit:160})},
+ events:()=>filt('nt',D.newtext,t=>t.text+t.map,r=>'<div class="scroll"><table><thead><tr><th>근처 맵(추정)</th><th>대사</th></tr></thead><tbody>'+r.map(t=>'<tr><td>'+esc(t.map)+'</td><td class="wrap" style="white-space:pre-wrap">'+tx(t.text)+'</td></tr>').join('')+'</tbody></table></div>',{limit:200}),
+ texts:()=>filt('ct',D.chtext,t=>t.old+t.new+t.scene,r=>'<div class="scroll"><table><thead><tr><th>맵</th><th>1.4</th><th>2.0</th></tr></thead><tbody>'+r.map(t=>'<tr><td>'+esc(t.scene)+'</td><td class="wrap old" style="white-space:pre-wrap">'+tx(t.old)+'</td><td class="wrap" style="white-space:pre-wrap">'+tx(t.new)+'</td></tr>').join('')+'</tbody></table></div>',{limit:120}),
+};
+function show(){const b=document.getElementById('body');b.innerHTML='<section>'+R[cur]()+'</section>';if(AFTER[cur])AFTER[cur]();}
+tabs();show();
+</script>
