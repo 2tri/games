@@ -175,12 +175,15 @@ def pl_ref(front, d):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--allmons', default=HERE + '/allmons.json'); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--allmons', default=HERE + '/allmons.json')
+    ap.add_argument('--r14', help='1.4 원래 그림 {칸: [앞, 뒤]} — 롬 세션이 비공개 아티팩트로 줌. 저장소에 안 올림(공개 저장소)'); a = ap.parse_args()
+    r14 = json.load(open(a.r14)) if a.r14 and os.path.exists(a.r14) else {}
     L = json.load(open(a.allmons)); rows = []; empty = 0; seen = set()
     for x in L:
         if x['src_f'] == 'egg': empty += 1; continue
         seen.add(x['id'])
-        rows.append(row(x['no'], x['ko'], x['grade'], x['id'], x.get('f', ''), x.get('b', ''), x['src_f'], x['src_b'], x.get('where', ''),
+        g = r14.get(str(x['no'])) or [None, None]
+        rows.append(row(x['no'], x['ko'], x['grade'], x['id'], x.get('f', '') or (g[0] or ''), x.get('b', '') or (g[1] or ''), x['src_f'], x['src_b'], x.get('where', ''),
                         ', '.join(x.get('next') or []), x.get('line', ''), x.get('order', 999)))
     extra = [(i, ko, en, g, use) for i, ko, en, g, use in NEW_BABY] + [(e['id'], e['ko'], e['en'], e['grade'], e.get('use', '')) for e in specs.S if e['id'] not in seen]
     for i, ko, en, g, use in extra:
