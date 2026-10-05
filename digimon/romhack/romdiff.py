@@ -1,6 +1,7 @@
 """롬 2~3개를 영역별로 비교 (1.4 / 2.0 / 우리 판) → work/romdiff.json  — 원작 내용이 들어가므로 work/ 와 비공개 페이지에만 (저장소에 안 올림)
   python3 romdiff.py 1.4.gbc 2.0.gbc work/myver.gbc --labels 1.4 2.0 우리판
   python3 romdiff.py 2.0.gbc --pics-json work/r20.json        2.0 전투 그림을 r14.json 처럼 {칸: [앞, 뒤]} (롬 팔레트 PNG data URL)
+  python3 romdiff.py 2.0.gbc --pics-json work/r20.json --by-ours   칸 번호를 우리 판(allmons no)에 이름으로 맞춤 (그림 세션 비교표 build_cmp20.py 용)
 영역: 종(이름·능력치·타입·포획·경험치·성장) · 진화 · 레벨업 기술 · 기술(이름·위력 등) · 야생 출현 · 트레이너 편성 · 도구 이름 · 음악 · 전투 그림 · 대사
   디지몬 단위 영역(종·진화·기술 배우기·그림)은 이름으로 맞춤 (판마다 칸이 달라도 같은 디지몬끼리 비교, 칸 번호는 값에 같이 적음)
   맵 배치·이벤트·제목·UI 는 아직 안 함 — 대사·야생·트레이너로 간접 비교 (2.0 을 받은 뒤 구조를 보고 추가)"""
@@ -122,6 +123,27 @@ def collect(path, with_pics=False):
     return A, tx, pics
 
 
+def pics_by_ours(path):
+    """그 롬의 전투 그림을 우리 판 칸 번호(order/allmons.json 의 no)로 맞춰 {칸: [앞, 뒤]} — 이름으로 매칭 (판마다 칸이 달라도)"""
+    r = dmrom.Rom(path); by = {}
+    for n in range(1, dmrom.NUM + 1):
+        if n != 201: by.setdefault(r.name(n).strip(), n)
+    ours = json.load(open(os.path.join(HERE, 'order', 'allmons.json')))
+    out = {}; miss = []
+    for row in ours:
+        if row['ko'] in ('-----', '') or row.get('pokemon'): continue
+        n = by.get(row['ko'])
+        if not n: miss.append(row['ko']); continue
+        pal = r.palette(n); ent = [None, None]
+        for back in (False, True):
+            try:
+                t = r.pic(n, back=back)
+                if t is not None: ent[back] = png_url(t.astype(np.uint8), pal, 48 if back else 56)
+            except Exception: pass
+        out[str(row['no'])] = ent
+    return out, miss
+
+
 def compare(paths, labels):
     data = [collect(p) for p in paths]
     out = {'labels': labels, 'areas': {}}
@@ -153,7 +175,12 @@ def compare(paths, labels):
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('roms', nargs='+'); ap.add_argument('--labels', nargs='*')
     ap.add_argument('--out', default=os.path.join(dmrom.WORK, 'romdiff.json')); ap.add_argument('--pics-json')
+    ap.add_argument('--by-ours', action='store_true', help='--pics-json 을 우리 판 칸 번호(이름 매칭)로')
     a = ap.parse_args()
+    if a.pics_json and a.by_ours:
+        pics, miss = pics_by_ours(a.roms[0])
+        json.dump(pics, open(a.pics_json, 'w'), separators=(',', ':'))
+        print('전투 그림 %d종 (우리 판 칸 번호) → %s, 그 롬에 없는 이름 %d: %s' % (len(pics), a.pics_json, len(miss), ', '.join(miss))); sys.exit()
     if a.pics_json:
         _, _, pics = collect(a.roms[0], with_pics=True)
         json.dump(pics, open(a.pics_json, 'w'), separators=(',', ':')); print('전투 그림 %d칸 → %s' % (len(pics), a.pics_json)); sys.exit()
