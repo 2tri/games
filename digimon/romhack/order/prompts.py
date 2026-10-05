@@ -162,3 +162,21 @@ def full_back(en, extra=''):
             "Fill the whole square; wing or tail tips may go outside the frame.\n"
             "Same parts in the same tones as the front sprite.\n"
             + _STYLE + (f"\nAlso: {extra}" if extra else ''))
+
+
+# 공통 주문문 (2026-10-05 롬 세션이 사용자에게 준 것 — 종 이름 없이 「이 사진을 그대로 도트로」. 뒷모습 사진이면 뒷모습 그대로).
+# 받은 그림은 그림 세션이 상반신 자르기(backcrop)·방향(오른쪽 위 보게)·4색 정리
+COMMON_CONVERT = ("Convert the attached picture into a pixel-art battle sprite for a Game Boy Color monster game.\n"
+                  "Keep the picture EXACTLY: same character, same pose, same viewing angle (if it shows the back, keep the back; do not turn it around or add a face), "
+                  "same facing direction, same proportions, same parts. Change only the art style. Do not redesign it or turn it into another creature.\n"
+                  "Make it BIG: the character fills the square as much as possible (about 95% of the height or width) and touches the bottom edge.\n"
+                  "If a second image is attached, it is our finished sprite of the same character: copy its pixel size, outline thickness and which parts are light or dark.\n"
+                  + _STYLE)
+
+COMMON_BACK = ("The attached image is our finished FRONT battle sprite of a Digimon. Draw the BACK battle sprite of the SAME character in the same pixel style.\n"
+               "View: like the player's own monster in a classic Game Boy battle screen. Camera behind and a little above it; the character faces AWAY toward the upper-right, "
+               "so we see its back, one shoulder and a thin sliver of the side of its head. NOT straight from behind, NOT a mirror of the front, no face.\n"
+               "Show only the UPPER BODY, big: head, shoulders, back, arms and the start of wings or tail. The lower body is cut off by the bottom edge. "
+               "Fill the whole square; wing or tail tips may go outside the frame.\n"
+               "Same parts in the same tones as the front sprite. Do not redesign it.\n"
+               + _STYLE)

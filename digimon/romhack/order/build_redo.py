@@ -16,11 +16,11 @@ PLAN = {
     8: {'b': ('gemini', '새로')},
     12: {'b': ('gemini', '새로')},
     15: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '받아 둔 앞모습에 맞춰 새로 (색이 같아야 함)')},
-    21: {'f': ('claude', '확대 — 시험해 보니 됨, 롬 세션이 키움'), 'b': ('gemini', '확대하면 흰 몸이 뭉개짐 → 크게 새로')},
+    21: {'f': ('gemini', '새로 (사용자: 호크몬도 주문)'), 'b': ('gemini', '새로')},
     27: {'b': ('claude', '모양은 그대로, 색칠만 고침')},
     35: {'b': ('claude', '좌우 뒤집어 반대쪽 보기')},
     39: {'f': ('claude', '확대 — 시험해 보니 됨, 롬 세션이 키움')},
-    41: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '새로')},
+    41: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '뒷모습 사진을 찾아 「공통 주문문」으로 (지금 롬은 앞·뒤 1.4)')},
     44: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '받아 둔 앞모습에 맞춰 새로 (색이 같아야 함)')},
     56: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
     57: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
@@ -32,9 +32,9 @@ PLAN = {
     111: {'f': ('have', '받아 둔 앞모습 씀')},
     112: {'b': ('claude', '확대 — 됨, 롬 세션이 키움 (얼굴~몸 중간이 크게 보임)')},
     117: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
-    129: {'f': ('ask', '보내 준 앞모습을 이 세션에서 못 찾음 — 다시 보내 주세요'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
+    129: {'f': ('gemini', '새로 — 작고 생김새가 까다로워 설명을 넣은 주문문'), 'b': ('gemini', '새로 — 같은 설명')},
     130: {'b': ('gemini', '새로')},
-    133: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
+    133: {'f': ('gemini', '새로 그리기 (사용자: 확대본 말고 새로)'), 'b': ('gemini', '새로 그리기')},
     134: {'f': ('gemini', '새로'), 'b': ('gemini', '새로')},
     135: {'f': ('gemini', '새로'), 'b': ('gemini', '새로')},
     139: {'f': ('claude', '미사일만 주황으로 고침 (뼈 그늘 회색은 뼈색으로 합침)'), 'b': ('claude', '같게 고침')},
@@ -44,12 +44,16 @@ PLAN = {
     197: {'f': ('claude', '확대 — 됨, 롬 세션이 키움')},
 }
 # 메모를 주문문에 넣을 말 (영어)
-EXTRA = {(5, 'b'): 'Turn it more to the side: a three-quarter rear view, not straight from behind.',
+EXTRA = {(133, 'f'): 'Veemon: small blue dragon with a white muzzle and belly, a yellow V mark on the forehead, one small horn on the nose, big eyes. Draw it BIG so it fills the square.',
+         (133, 'b'): 'Veemon: blue back, the tips of its pointed ears, small tail.',
+         (129, 'f'): 'Betamon is a small green amphibian: a big round head with a very wide mouth, a single tall red fin running from the top of its head down its back, four short legs, a pale belly. Draw it BIG so the head and fin fill the square; keep the red fin clearly visible.',
+         (129, 'b'): 'Betamon: green amphibian seen from behind; the tall red fin along its head and back is the main shape, big and clear.',
+         (5, 'b'): 'Turn it more to the side: a three-quarter rear view, not straight from behind.',
          (112, 'b'): 'Show only from the head down to the middle of the body, very big.',
          (109, 'f'): 'BlackWarGreymon: black armor (not orange). Keep the armor details readable at this size.',
          (109, 'b'): 'BlackWarGreymon: black armor.',
          (21, 'f'): 'Draw it larger than usual; it must fill the square.', (21, 'b'): 'Draw it larger than usual.',
-         (133, 'f'): 'Draw it larger than usual; it must fill the square.', (133, 'b'): 'Draw it larger than usual.'}
+         }
 HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude가 고침', 'ask': '확인 필요'}
 
 
@@ -83,11 +87,11 @@ def main():
         rows.append(dict(no=no, ko=x['ko'], en=en, grade=x['grade'] if x['grade'] in GRADES else '기타', order=x.get('order', 999), src=x['src_f'],
                          gf=gf, gb=gb, newf=newf, newb=newb, chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''),
                          plan={k: [HOW[v[0]], v[1], v[0]] for k, v in plan.items()},
-                         g_front=prompts.full_front(en, EXTRA.get((no, 'f'), '')), g_back=prompts.full_back(en, EXTRA.get((no, 'b'), '')),
+                         g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
                          img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else ''))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
-    D = {'rows': rows, 'grades': GRADES + ['기타']}
+    D = {'common': prompts.COMMON_CONVERT, 'common_b': prompts.COMMON_BACK, 'rows': rows, 'grades': GRADES + ['기타']}
     html = open(HERE + '/redo_tpl.html', encoding='utf-8').read().replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower()
     open(a.out, 'w', encoding='utf-8').write(html)
