@@ -63,6 +63,16 @@ SONGS.update({
     'road1': dict(SONGS['title'], start=0, end=160, drums='soft'),
     # 2026-10-05 사용자 「(트레이너 전투) Butter-Fly 는 자주 들리는 게 좋아, 아주 유명하고 감성 있으니까」 (Target·Brave Heart 는 모름): Butter-Fly 한 곡 전체, 드럼 그대로
     'trainer': dict(SONGS['title'], start=0, end=160),
+    # 2026-10-05 사용자가 좋아하는 노래 — 「샘플링해 두고 나중에 쓸 수 있게」 (아직 게임 배치 안 함, 설계자와 정함)
+    #   breakup = Break Up! (02 2기 오프닝, 한국판 파워디지몬 진화 테마) animezen 공개 미디: 박이 어긋나 있어 실제 박(0.94, 약 133bpm)으로 맞춤.
+    #     멜로디 = 보컬(채널 5) → 전주 오보에(0) → 기타 리프(2), 화음 = 기타(4·8) → 전자피아노 둘째 음(3), 베이스 = 1
+    'breakup': dict(mid='breakup.mid', start=0, end=208, grid=12, beat=0.94, phase=-0.117,
+                    lead=[('c', 5, 'top'), ('c', 0, 'top'), ('c', 2, 'top')], harm=[('c', 4, 'top'), ('c', 8, 'top'), ('c', 3, 'second')],
+                    bass=[('c', 1, 'bottom')], drums=[('c', 9)]),
+    #   bolero = 라벨 「볼레로」 (애니 「우리들의 워 게임!」 오메가몬 장면) bitmidi 오케스트라 미디, 3/4·72bpm: 작은북 2마디 한 번 → 플루트 주제(15~63박) 되풀이.
+    #     작은북(43번 = 이 미디의 작은북)·현악 피치카토 반주
+    'bolero': dict(mid='bolero.mid', intro=(9, 15), start=15, end=63, grid=12,
+                   lead=[('t', 1, 'top')], harm=[('t', 26, 'top')], bass=[('t', 26, 'bottom')], drums=[('t', 23)], drummap={43: SNARE}),
     'road2': dict(mid='bigdreamer.mid', intro=(0, 16), start=48, end=144, grid=12,
                   lead=[('t', 1, 'top')], harm=[('t', 2, 'top')], bass=[('t', 3, 'bottom')], bass_shift=-12, drums='soft'),
     'annyeong': dict(mid='annyeong.mid', intro=(12, 16), start=16, end=48, grid=12, bpm=100,
