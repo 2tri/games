@@ -138,6 +138,13 @@ class Patch:
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11)
         self.palette(no, *pal)
+    def flip_back(self, no):
+        """롬의 지금 뒷모습(48×48)을 좌우로 뒤집어 다시 넣음 — 1.4 그림처럼 우리 그림 파일이 없는 종용 (사용자 2026-10-05 「에렉몬 뒤 바라보는 방향」)"""
+        self.r.d = self.d
+        idx = np.fliplr(self.r.pic(no, back=True)).copy()
+        dat = gblz.compress(to_gb_pic(idx, 6, 6))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
     # 트레이너 그림 (GetTrainerPic: ld hl, TrainerPicPointers / ld a,[wTrainerClass] / dec a / ld bc,3 …, 팔레트는 TrainerPalettes 직업×4바이트, 0 = 주인공)
     def trainer_pic(self, cls, png):
         d = bytes(self.d)
@@ -845,6 +852,8 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
+        if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
     for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
         if src in nrd:
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))

@@ -116,7 +116,11 @@ REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '�
           '피에몬': 'piemon', '메탈가루몬': 'metalgarurumon',
           '원뿔몬': 'ikkakumon', '텐타몬': 'tentomon', '플라이몬': 'flymon', '두리몬': 'drimogemon', '울퉁몬': 'gottsumon',
           '디그몬': 'digmon', '메라몬': 'meramon', '안드로몬': 'andromon',
-          '황제드라몬': 'imperialdramondragonmode', '쿠네몬': 'kunemon'}                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
+          '황제드라몬': 'imperialdramondragonmode', '쿠네몬': 'kunemon',
+          # 2026-10-05 사용자 「받아 둔 앞모습 씀」 (전투 그림 다시 뽑기 체크): 뒤가 오면 자동으로 들어감
+          '아라크네몬': 'archnemon', '피코데블몬': 'picodevimon', '캅테리몬': 'kabuterimon', '에이프몬': 'hanumon', '개굴몬': 'gekomon'}
+# 1.4 뒷모습만 좌우 뒤집을 종 (사용자 2026-10-05 체크 메모 「바라보는 방향이 문제」)
+FLIP_BACK = ['에렉몬']                                                     # 원뿔몬은 뒤 그림이 오면 자동으로 들어감         # 그림 세션 다시 그리기 칸 (앞·뒤 다 온 것)
 
 # 노래 (사용자 지시 2026-10-02): 예전 GBC 판 곡(gbc/music/<곡>.json) → 금 음악 번호 (constants/music_constants.asm)
 # 금 음악 번호 (pokegold-kr constants/music_constants.asm) → 곡. 2026-10-04 사용자 「게임 곳곳 디지몬 노래 배치 점검」: 남은 포켓몬 곡을 거의 다 바꿈
