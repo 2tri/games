@@ -10,6 +10,7 @@
 .pick button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .pick button.take[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); }
 .pick button.ref[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); }
+.rec { margin: 0; font-size: 13px; color: var(--muted); }
 .chip.diff { background: var(--blue-bg); color: var(--blue); }
 .memo textarea { font: 14px/1.4 var(--body); padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); width: 100%; box-sizing: border-box; }
 .hide { display: none !important; }
@@ -24,7 +25,7 @@
     <p>종마다 앞·뒤를 <b>1.4 원본 | 2.0 | 지금 게임</b>으로 나란히 보여 줘요. 칸마다 <b>2.0 가져옴</b>(2.0 그림으로 바꿈) · <b>지금 유지</b>(버림) · <b>2.0 참고</b>(색·자세만 참고해서 다시 그림) 중 고르고, 필요하면 비고를 적어 주세요. 고른 건 바로 저장되고 Claude가 읽어요.</p>
   </header>
   <div class="bar" role="status">
-    <span>달라진 그림 <b id="nDiff">0</b></span><span>고름 <b id="nPick">0</b></span>
+    <span>달라진 그림 <b id="nDiff">0</b></span><span>고름 <b id="nPick">0</b></span><span>롬 세션 추천 <b id="nRec">0</b>종</span>
     <input id="q" type="search" placeholder="검색: 이름·칸 번호" aria-label="검색" style="font:15px var(--body);padding:5px 8px;min-width:0;flex:1 1 160px;max-width:260px">
     <span class="filters"><button type="button" data-f="diff" aria-pressed="true">2.0 에서 달라진 것</button><button type="button" data-f="all" aria-pressed="false">전체</button><button type="button" data-f="todo" aria-pressed="false">아직 안 고른 것</button></span>
     <span class="st" id="dbState" style="font-size:12px;opacity:.8">저장 확인 중…</span>
@@ -58,6 +59,7 @@ function card(r) {
     const v = r.s[s]; const id = r.no + "-" + s;
     const t = el("div", "trio"); t.append(el("b", "", s === "f" ? "앞" : "뒤"), pic(v.o, "1.4 원본"), pic(v.t, "2.0" + (v.t && !v.diff ? " (1.4와 같음)" : "")), pic(v.c, "지금 게임" + (v.ours ? " · 우리 그림" : "")));
     const pk = el("div", "pick"); btns[id] = [];
+    if (v.rec && v.rec[0]) { const lab = { take: "2.0 가져옴", keep: "지금 유지", ref: "2.0 참고" }[v.rec[0]]; const rr = el("p", "rec", "롬 세션 추천: " + lab + (v.rec[1] ? " — " + v.rec[1] : "")); rr.style.gridColumn = "2 / -1"; t.append(rr); }
     for (const [k, lab] of CH) { const b = el("button", k, lab); b.type = "button"; b.dataset.v = k; b.addEventListener("click", () => save(id, { pick: (picks[id] || {}).pick === k ? "" : k })); btns[id].push(b); pk.append(b); }
     t.append(pk); c.append(t);
   }
@@ -72,6 +74,7 @@ const done = (r) => ["f", "b"].every((s) => !r.s[s].t || (picks[r.no + "-" + s] 
 const on = (r) => (!Q || (r.ko + " " + r.en + " " + r.no).toLowerCase().includes(Q)) && (FILTER === "all" || (FILTER === "diff" ? (r.s.f.diff || r.s.b.diff) : !done(r)));
 function refresh() { for (const [r, c] of cards) c.classList.toggle("hide", !on(r)); for (const [s, rs] of secs) s.classList.toggle("hide", !rs.some(on)); }
 function count() { $("#nPick").textContent = Object.entries(picks).filter(([k, v]) => !k.endsWith("-m") && v.pick).length; }
+$("#nRec").textContent = D.rows.filter((r) => r.s.f.rec[0] || r.s.b.rec[0]).length;
 $("#nDiff").textContent = D.rows.reduce((n, r) => n + r.s.f.diff + r.s.b.diff, 0);
 for (const b of document.querySelectorAll(".filters button")) b.addEventListener("click", () => { FILTER = b.dataset.f; for (const x of document.querySelectorAll(".filters button")) x.setAttribute("aria-pressed", String(x === b)); refresh(); });
 $("#q").addEventListener("input", (e) => { Q = e.target.value.trim().toLowerCase(); refresh(); });
