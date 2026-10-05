@@ -41,7 +41,7 @@ BABY = {'chibimon', 'koromon', 'poromon'}   # 유년기: 자르지 않음 — �
 ROOKIE = {'agumon', 'gabumon', 'gazimon', 'gottsumon', 'palmon', 'patamon', 'piyomon', 'tentomon'}   # 성장기: 조금만 (위 80%, 창 1.6배)
 
 
-def make(did, frac=None, ref=None):
+def make(did, frac=None, ref=None, pal=None):
     if did in SKIP or did in BABY: return None
     src = next(iter(glob.glob(os.path.join(WEB, 'art', 'src', did + '-b_ai.*'))), None)
     cur = ref or os.path.join(WEB, 'art', did + '-b.png')
@@ -56,7 +56,7 @@ def make(did, frac=None, ref=None):
     ww = max(int(hh * (1.6 if did in ROOKIE else 1.3)), 1)                                           # 1.0 이면 너무 확대(두리몬·포로몬), 1.3 = 어깨·날개 시작까지
     xa, xb = (max(0, cx - ww // 2), min(im.width, cx + ww // 2)) if (x1 - x0) > ww else (0, im.width)
     part = im.crop((xa, 0, xb, yc))
-    pal = body_cols(cur) or ingest.front_colors(did) or [[200, 200, 200], [120, 120, 120]]
+    pal = pal or body_cols(cur) or ingest.front_colors(did) or [[200, 200, 200], [120, 120, 120]]
     t, p4 = ingest.convert(part, 48, pal, False, pal)
     if max(t.shape) < 44: t, p4 = ingest.convert(part, 48, pal, True, pal)          # 원본 도트 칸이 작으면(포로몬 등) 격자 없이 48칸으로
     # 잘린 아래 줄: 검정 테두리 → 바로 위 칸 색
