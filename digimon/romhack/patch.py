@@ -152,6 +152,18 @@ class Patch:
         dat = gblz.compress(to_gb_pic(bi, 6, 6))
         bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
         self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
+    def front_art_big_back(self, no, front_png, mode='smooth'):
+        """앞은 우리 그림, 뒤는 롬의 1.4 뒷모습을 키운 것 (색번호 그대로라 새 앞 팔레트로 칠해짐) — 뒷모습을 새로 못 받은 종 (사용자 2026-10-05 피코데블몬)"""
+        sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
+        self.r.d = self.d
+        r_ = EN.enlarge(self.r.pic(no, back=True).astype(int), 48, mode); bi = np.where(r_ < 0, 0, r_).astype(np.uint8)
+        fi, pal = png_to_idx(front_png, 56, 56)
+        size = 7 if max(fi.shape) > 48 else 6 if max(fi.shape) > 40 else 5
+        ents = []
+        for dat in (gblz.compress(to_gb_pic(fi, size, size)), gblz.compress(to_gb_pic(bi, 6, 6))):
+            bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat); ents += [bank, p & 255, p >> 8]
+        self.put(self.r.pics + 6 * (no - 1), bytes(ents))
+        self.stats(no, pic_size=size * 0x11); self.palette(no, *pal)
     def enlarge14(self, no, back, mode='smooth'):
         """롬의 지금 그림(1.4 그림)을 칸을 꽉 채우게 키워 다시 넣음 (그림 세션 tools/enlarge14.py, 사용자 메모 「확대」 2026-10-05).
         롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀. 색 4개 그대로(색번호 그대로 키움)"""
@@ -873,6 +885,9 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    for nm, art in rules.FRONT_ART_BIG_BACK.items():                         # 앞은 우리 그림, 뒤는 1.4 뒷모습 확대
+        fp = os.path.join(WEB, 'art', art + '-f.png')
+        if nm in N and nm not in nrd and os.path.exists(fp): P.front_art_big_back(N[nm], fp); nrd.append(nm); P.log.append('  %s 앞 새 그림 + 1.4 뒷모습 확대' % nm)
     for nm, art in rules.BACK_ONLY.items():                                  # 앞은 1.4 그대로, 뒤만 우리 그림 (그림 세션이 뒤만 새로 그린 종)
         bp = os.path.join(WEB, 'art', art + '-b.png')
         if nm in N and nm not in nrd and os.path.exists(bp) and not os.path.exists(os.path.join(WEB, 'art', art + '-f.png')):
