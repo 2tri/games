@@ -106,6 +106,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         else: side[s] = 'need'
     if did in REDO:
         for x in REDO[did][0]: side[x] = 'need'
+    if side['f'] in ('got', 'done') and side['b'] == 'keep14': side['b'] = 'need'   # 앞을 새로 받았으면 뒤도 새로(롬은 앞·뒤가 색 하나) — 원뿔몬
     if did in KEEP14: side = {'f': 'keep14', 'b': 'keep14'}
     st = 'done' if side['f'] == side['b'] == 'done' else ('keep14' if side['f'] == side['b'] == 'keep14' else
           ('got' if {side['f'], side['b']} <= {'done', 'got'} else 'todo'))
@@ -135,7 +136,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
         if not c['img'] and did: c['img'] = 'https://digimon.net/cimages/digimon/%s.jpg' % ((sp or {}).get('dir') or did)
     # PixelLab (2026-10-05): 「B형태」 설명 + 참조 그림(256칸 이하, 투명 바탕). 앞모습이 있으면 그 앞모습 ×4, 없으면 공식 그림을 256 안으로
     if need and (sp or did):
-        e = dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', ''))
+        e = dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', '') or (did or '').capitalize())
         d = (sp or {}).get('dir') or did
         c['off256'] = off256(d)                                           # 공식 그림 256×256 (재미나이·PixelLab 첨부용)
         c['g_front'] = prompts.gemini_front(e) if side['f'] in ('need', 'rip') else ''
@@ -147,7 +148,7 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
 
 
 PL_GRADES = {'궁극체'}
-PL_HARD = {'metalseadramon', 'imperialdramondragonmode', 'qinglongmon', 'mugendramon', 'archnemon', 'whamon'}   # 재미나이가 여러 번 틀린 것
+PL_HARD = {'lighdramon', 'metalseadramon', 'imperialdramondragonmode', 'qinglongmon', 'mugendramon', 'archnemon', 'whamon'}   # 재미나이가 여러 번 틀린 것
 
 
 def off256(d):

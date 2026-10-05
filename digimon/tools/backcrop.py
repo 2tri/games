@@ -37,19 +37,23 @@ SKIP = {'bakemon', 'salamon', 'tokomon', 'gomamon', 'metalgarurumon'}   # 다시
 UPPER = {'metalseadramon', 'imperialdramondragonmode', 'andromon'}   # 이미 상반신으로 받은 것 → 자르지 않고 48칸에 맞춤만
 
 
-def make(did, frac=None):
-    if did in SKIP: return None
+BABY = {'chibimon', 'koromon', 'poromon'}   # 유년기: 자르지 않음 — 몸 전체 그대로(예전 그림, 2026-10-05 사용자 「작은 애들은 크기에 맞게」)
+ROOKIE = {'agumon', 'gabumon', 'gazimon', 'gottsumon', 'palmon', 'patamon', 'piyomon', 'tentomon'}   # 성장기: 조금만 (위 80%, 창 1.6배)
+
+
+def make(did, frac=None, ref=None):
+    if did in SKIP or did in BABY: return None
     src = next(iter(glob.glob(os.path.join(WEB, 'art', 'src', did + '-b_ai.*'))), None)
-    cur = os.path.join(WEB, 'art', did + '-b.png')
+    cur = ref or os.path.join(WEB, 'art', did + '-b.png')
     if not src or not os.path.exists(cur): return None
     im = Image.open(src).convert('RGB'); a = np.asarray(im.convert('L')).astype(int)
     ys, xs = np.where(a < 235); y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-    if frac is None: frac = 1.0 if did in UPPER else (0.8 if (y1 - y0) / (x1 - x0) < 0.9 else 0.6)
+    if frac is None: frac = 1.0 if did in UPPER else (0.8 if did in ROOKIE or (y1 - y0) / (x1 - x0) < 0.9 else 0.6)
     yc = im.height if frac >= 1 else y0 + int((y1 - y0) * frac)
     # 가로도 정사각형 창으로 (금판 뒷모습처럼 크게 — 날개·꼬리 끝은 칸 밖으로 잘려도 됨). 창 가운데 = 잘린 부분의 무게중심
     hh = yc - y0; fgc = (a[y0:yc] < 235)
     cx = int(np.average(np.arange(a.shape[1]), weights=fgc.sum(0) + 1e-6)) if fgc.any() else (x0 + x1) // 2
-    ww = max(int(hh * 1.3), 1)                                           # 1.0 이면 너무 확대(두리몬·포로몬), 1.3 = 어깨·날개 시작까지
+    ww = max(int(hh * (1.6 if did in ROOKIE else 1.3)), 1)                                           # 1.0 이면 너무 확대(두리몬·포로몬), 1.3 = 어깨·날개 시작까지
     xa, xb = (max(0, cx - ww // 2), min(im.width, cx + ww // 2)) if (x1 - x0) > ww else (0, im.width)
     part = im.crop((xa, 0, xb, yc))
     pal = body_cols(cur) or ingest.front_colors(did) or [[200, 200, 200], [120, 120, 120]]
