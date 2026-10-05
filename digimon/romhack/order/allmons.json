@@ -805,9 +805,9 @@
 "쥬드몬 Lv38"
 ],
 "id": "ikkakumon",
-"src_f": "art",
+"src_f": "1.4",
 "src_b": "1.4",
-"f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAADs0lEQVR4nM2aO7biMAyGpXsooIMtZBvpyBZYJrME6JhlMEsgHek8hYgiZFmxndwDqoLjxxf5t/wCQwgAgIgAQM/faT/yByIS8RfaC5R8edlvQwg42kfBtE0eDSF0/XA97EIIl/0WvszBG/mD3Hk57Pjn9bD7Evlu1G9ijVM48VPEaDaMiNT7ZF0/vJy933b9QImqYEoka32Y9ijXrljJjo8nCaPrh0z5rqUcGxQi1usoXBhx2bVk59vdaWY5bhIUhF5j3OPjCaNH6W3XNg4upS/BtTX6lmOUplICe5TTpY8dB5/apgJ3HhSisaWwqIbrYdf1A/ERikNcwZoFGrOSg4mV0o+PJyIqLCaOcU9tUwTqaVSa1KuUgTna2Jjv1DaK9Xy7I+a6qQCUWU3KWTvf7rN68K0AVAZO2emZJuHIwUVOLQDlxrq2McdWSqCyLCfGYlgBVE1C59tdspJ3/QjKcPHbTKcWyFkNamdES1PZTuO8ID2aEwEKwlMOVozoR36mn8UoCE8AgIhKW6bUJKLj0cymyQq6/lWgZM0fs5pBas2u18UQqVUKrmq5HUL48/cfpP0dx4ffAoV31zJozJ2a60tZf5x3vnG9l/2WVgL0oL7B1OLvzkyx8aRaVCozrimr9yibbI8mxvjZL5Vji0BVBMhcOFf0OywBjSmlL/2yFXG0GJQPfGQUBIAQAj3IZUeqktIViQ2KrkFCfPRKRZkUa4VH9aiPtxO+pYidDJxeP9eXUqYIzHRzN5KvganrV6F0zOzufA28QHnuLm0+s8ipbRy9QsZaZ/KoGrP55kCoCpf02Nuop91FKSsFgbgUfQC/WjgFTKBEKXdt1JIiUGFScpj5wQpnqc2TIwBUp3ZqGjTXY/w2VWm1OUc9G/oI8wxRfrckXojohCRyjbkv/QkhyJVlihKqxlmFpb5Bz0yX/fYxPsu7MnkISlYxX2eaudmfQF8o/QCRUKZXa/R7HetbeCIUKQa/rlIxFB01Eiv/nDzKlGax+GipFHFhkQ1kHK07lLNKVdGe96izpeRV0Qt0tjv8aOLwqbKUmIrqctXHsw8rdWZfzytl1XbpJpjypwalROREzjwPqq7qZDMwnpFDdCtpHo3ImY8KMln8YLIm9/XmjJXawktW09myoKpEqVzick5E9G7uJLT0HwidcbayuxjENzFY6x6ukNrKPSlhrTBW0Z2GstQdNj2r8U6tZG2XzSlg4T1saYUrHOlUG/3nQqVAYiTUd99aZkooTvykRx2L0f8D8sNEvz+tgUkAAAAASUVORK5CYII=",
+"f": "",
 "b": "",
 "where": "교환(받는 종): NPC 교환 4 / 야생: 30번 도로, 31번 도로, 41번 도로, 42번 도로 외 13곳 / 트레이너: Boarder, CooltrainerF, CooltrainerM, Fisher 외 8",
 "family": 118,
@@ -890,9 +890,9 @@
 "황제드라몬 Lv45"
 ],
 "id": "xv-mon",
-"src_f": "1.4",
+"src_f": "art",
 "src_b": "1.4",
-"f": "",
+"f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAD+0lEQVR4nLVZ27HrIAwUd9JE3GJcTtJiUgb3Axuk1QucnP3IeAIWi97gUmslC6UUb8ic3B7mX1nFv5nl4zmlFHq+yWFZTlymeKA6iEfHnOe7sdSTjwXOPYg/J4SjtIBETLeTcHHuwZQcC9eITB9Q6eYGpeKL+1b9GICHGLd8yvMNgTVY7tt4ILWr9meIJnYmcBOi9XEvr487DHQVRXP5Wmtj1nTZn2Ourum7oEYoslTsqRm618Y+kPmoxJC1b65lm4JX2DexMddI4d0ch/X3jZhXCSraR9lkTzI391jL8YFIo94WNUsUPRFGJLeRBlPiwqZSiYieb/EMCIMJ1Flen/q4U6bUxEcNpap8VB/3thLOUfWzPc/EuLG9XOcs9o8HaVlX5XQGllSwyRLaGj1nOuq5fc2I5vEE+VUqOGAZIK9M3PrDxA8nZl8fexvMGvAiX6iL0u4xrdF96y5P0vH7P2In8l1grPmlmKj1PHeqAijCv01+3HHI0vFqPC1UJk73AHNBqN21VqMHkNJ4APGuz3bZyXYQIIi2PTzfY/R8FrW0Pzt9KhfefzumTA/AygSj0G3FreA0DNMvnHJO7zyM/vpwloanyhy3dJBCovzl4kBoiIh05O6b0bX0+ezFea6qdfcQJHlZnHqGEj5gVqxzCPZpHr5vYthzIOiG2DIj2IODAN9M6N96vkEUaTXfgpLI5tRae31KWfLlkas6k5lQwcQ9SXchPB+xKkWshzKift9oxR3JKleKaGz9s28faUHOHw7aRuWxRMSiRFpUb3w4dqDKi7vDj3oJlX3T9/BNL6NS7BKWlxnxYAnx9zVj/7jclCRzh6tyzpVHoTXzB0SRE2Ppulf33ecbKpMxLf4nBKYn05HNuMGWPlg4OAZOY6Up0VTm7esVNrbDOJvmRPNaIu8aMF+a/rpvVfajbZWA65U2r5PryyzMP13FONyGmD7cmRd35wEo5lof97Krf5kcTtqTNntmMuKJte5c+thYHNfQR2d6nTV9haNMnCxJ6N7YZNDtO0pd8FFbr5701PMWU9Xa/ehBxdQHi4/ajqAAq8MfnX+W/6989erMNBUjSTk3Vg1ivt/zU2x6o4MMndLeM3fl7FNJAJuocctwAco3LsohIk0UGtjR/8brTTZZp4Qo9Tr6FkT5pdKY/d3Fwa9gn+t7Mz+uWcLmaEGdDbrXtkRxCI1WfrUeF0an1rsnOKgOrX+FJcIgM4IJFrPvEeJeRNGChgHrXCowyKOmbtK0wu9QIRnB/YeYOSHZzaMXUh28np5pzasbD8ufURJxMhY5D01r5oKkY63W/wRLVyYdVzv8DMX6ZkIrH+gBf6LRCzxymb+X6H/ygoy7tPR/CIaX6q1v0YMAAAAASUVORK5CYII=",
 "b": "",
 "where": "트레이너: Clair, CooltrainerM, KimonoGirl, Misty 외 8",
 "family": 166,

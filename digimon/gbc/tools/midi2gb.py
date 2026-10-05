@@ -34,11 +34,16 @@ SONGS = {
     'battle': dict(mid='digimon_rock.mid', start=0, end=112, grid=12,
                    lead=[('c', 5, 'top'), ('c', 3, 'top'), ('c', 0, 'top')], harm=[('c', 1, 'top')], bass=[('c', 0, 'bottom')], bass_shift=-12,
                    drums=[('c', 9)], drummap={55: HAT, 59: HAT, 51: HAT, 53: HAT, 54: HAT, 31: KICK, 57: CRASH, 49: CRASH}, addkick=True),
+    # 2026-10-05 사용자 「브레이브 하트 맞는데 느낌이 없었네」: 전에는 멜로디 채널을 반짝이 반복음(7번 트랙, C7-B6-A6-G6)이 차지해 노래 선율이 안 들림
+    #   → 멜로디 = 보컬(12번, 옥타브 겹침 중 C6 아래 맨 위) + 전주는 피아노(1번), 반짝이 반복음은 화음 채널로 한 옥타브 내림, 베이스 = 11번 → 8번
+    #   사용자 「기타 소리 초반부가 핵심, 그게 나오면서 진화하니까 그 부분 살려」: 전주(0~48박) = 9번 기타 파워코드(F·G·Em·Am, 4박씩)를 화음 채널, 그 위 긴 선율(1번 A-E-D-G-B-C, 19번 C-B-C-G 받는 음)을 멜로디로
     'boss': dict(mid='braveheart.mid', start=0, end=112, grid=12,
-                 lead=[('t', 12, 'top'), ('t', 7, 'top')], harm=[('t', 1, 'top')], bass=[('t', 8, 'bottom')],
+                 lead=[('t', 12, 'top', 0, 83), ('t', 1, 'top'), ('t', 19, 'top')], harm=[('t', 9, 'top'), ('t', 7, 'top', 0, 127, -12), ('t', 18, 'top')], bass=[('t', 8, 'bottom'), ('t', 11, 'bottom')],
                  drums=[('t', 2), ('t', 3), ('t', 10)], drummap={34: KICK, 35: KICK, 36: KICK, 40: SNARE, 38: SNARE, 41: HAT, 46: OHAT, 44: HAT, 30: 0}),
-    'evolve': dict(mid='braveheart.mid', start=0, end=24, grid=12, once=True,
-                   lead=[('t', 7, 'top')], harm=[('t', 1, 'top')], bass=[('t', 8, 'bottom')],
+    # 진화 = 애니 진화 장면 노래(사용자가 준 영상 「Digimon Adventure 01 Evolution Song」 = Brave Heart)
+    #   진화 = 기타 전주(0~48박) 한 번 → 후렴(112~176박) 되풀이. 진화 장면 길이는 설계자 결정(기획.md 다음 작업 3)
+    'evolve': dict(mid='braveheart.mid', intro=(0, 48), start=112, end=176, grid=12,
+                   lead=[('t', 12, 'top', 0, 83), ('t', 1, 'top'), ('t', 19, 'top')], harm=[('t', 9, 'top'), ('t', 7, 'top', 0, 127, -12), ('t', 8, 'second')], bass=[('t', 8, 'bottom'), ('t', 11, 'bottom')],
                    drums=[('t', 2), ('t', 10)], drummap={34: KICK, 35: KICK, 36: KICK, 40: SNARE, 38: SNARE, 41: HAT, 46: OHAT, 44: HAT, 30: 0}),
 }
 # 롬판 추가 곡 (2026-10-04, 사용자 「게임 곳곳 디지몬 노래 배치」): 같은 MIDI 의 아직 안 쓴 구간 — 16박(4마디) 단위로 자름
