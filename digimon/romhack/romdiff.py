@@ -14,7 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 GROUPS = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
 TYPE = {0: '노말', 1: '격투', 2: '비행', 3: '독', 4: '땅', 5: '바위', 6: '새', 7: '벌레', 8: '고스트', 9: '강철', 19: '???',
         20: '불꽃', 21: '물', 22: '풀', 23: '전기', 24: '에스퍼', 25: '얼음', 26: '드래곤', 27: '악'}
-EVK = {1: '레벨', 2: '도구', 3: '교환', 4: '친밀도', 5: '능력치'}
+EVK = {1: '레벨', 2: '도구', 3: '교환', 4: '친밀도', 5: '능력치', 6: '유대 높음', 7: '유대 낮음', 8: '자기 문장', 9: '암흑', 10: '아무 문장'}   # 6~10 = 우리 판 진화 확장 (patch.py)
 
 
 def png_url(idx, pal, size):
@@ -35,11 +35,24 @@ def names_list(d, first, count, maxlen=20):
     return out
 
 
+def move_names(r, d):
+    """기술 이름표: NamesPointers 에서 디지몬 이름표 칸 바로 다음 칸 (판마다 기술 이름을 바꿔도 찾음, 2.0 은 디지몬 필살기 이름)"""
+    b, p = dmrom.bankptr(r.names); pat = bytes([b, p & 255, p >> 8]); h = d.find(pat)
+    if h < 0: return None
+    a = dmrom.addr(d[h + 3], d[h + 4] | d[h + 5] << 8); out = []
+    for _ in range(251):
+        j = d.index(0x50, a); out.append(krtext.decode(d, a, j)); a = j + 1
+    return out
+
+
 def move_table(d):
-    for m in re.finditer(rb'\x01..', d, re.S):
-        a = m.start()
-        if a + 7 * 251 < len(d) and all(d[a + 7 * k] == k + 1 for k in range(1, 80)): return a
-    return None
+    """기술 표 (7바이트 × 251, 첫 바이트 = 연출 번호 ≈ 기술 번호). 판마다 연출을 바꾼 기술이 있어(2.0 은 29개) 대부분 맞으면 표로 봄"""
+    best = None
+    for a in range(0, len(d) - 7 * 251):
+        if d[a] != 1 or d[a + 7] != 2 or d[a + 14] != 3: continue
+        sc = sum(1 for k in range(251) if d[a + 7 * k] == k + 1)
+        if sc > 180 and (best is None or sc > best[0]): best = (sc, a)
+    return best[1] if best else None
 
 
 def music_table(d):
@@ -56,7 +69,7 @@ def collect(path, with_pics=False):
         if k in ('-----', '(빈 이름)') or list(nm.values()).count(nm[n]) > 1: k = '%s #%03d' % (k, n)
         return k
     keys = {n: key(n) for n in range(1, dmrom.NUM + 1)}
-    mv_names = names_list(d, '막치기', 251) or ['기술%d' % i for i in range(1, 252)]
+    mv_names = move_names(r, d) or names_list(d, '막치기', 251) or ['기술%d' % i for i in range(1, 252)]
     # 종
     A['종'] = {}
     for n in range(1, dmrom.NUM + 1):
