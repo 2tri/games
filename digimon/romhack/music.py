@@ -93,14 +93,15 @@ def under_lead(js, s, lo=36):
     return out
 
 
-def song_bytes(js, base, loop=None, ff=1, slow=None, style=None):
+def song_bytes(js, base, loop=None, ff=1, slow=None, style=None, pitch=False):
     """곡 하나 → (머리 + 채널 4개) 바이트. base = 놓일 주소 (뱅크 안 0x4000~)
-    ff = 델타 빨리감기 배수: 템포를 ff배 느리게, 음을 12·log2(ff) 반음 낮게 (빨리감기로 들으면 원래 곡)
+    ff = 델타 빨리감기 배수: 템포를 ff배 느리게 (빨리감기로 들으면 원래 곡). pitch=True 면 음도 12·log2(ff) 반음 낮춤 —
+      델타는 빨리감기 때 AVAudioUnitTimePitch(rate) 로 음높이는 두고 빠르기만 바꿔서 기본은 False (DeltaCore AudioManager.swift)
     slow = 템포만 따로 (회복 징글은 게임이 정해진 프레임만 기다려서 늘이면 잘림 → 1)"""
     loop = (not js.get('once')) if loop is None else loop
     t = tempo_of(js, ff if slow is None else slow); cap = min(255, (65535 - 255) // t)
     head = 12; chans = []; p = base + head
-    sh = [ff_shift(js, ch, ff) for ch in range(4)]; notes = [js['ch'][ch] for ch in range(4)]
+    sh = [ff_shift(js, ch, ff) if pitch else 0 for ch in range(4)]; notes = [js['ch'][ch] for ch in range(4)]
     if sh[1] > sh[0]: notes[1], sh[1] = under_lead(js, sh[0]), 0
     for ch in range(4):
         b = chan_bytes(ch, notes[ch], p, loop, cap, sh[ch], ff, style); chans.append((p, b)); p += len(b)
