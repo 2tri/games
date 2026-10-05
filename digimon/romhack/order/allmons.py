@@ -45,11 +45,11 @@ def from14(nm, back):
     if back:
         a = rules.BACK_ONLY.get(nm)
         if a and art(a, 'b') and not art(a, 'f'): return False
-        return nm in rules.ENLARGE14_BACK or nm in rules.FLIP_BACK or nm in rules.FRONT_ART_BIG_BACK
+        return nm in rules.ENLARGE14_BACK or nm in rules.FLIP_BACK or nm in rules.FRONT_ART_BIG_BACK or (nm, '뒤') in rules.SHRINK14
     a = rules.FRONT_ONLY.get(nm)
     if a and art(a, 'f') and not art(a, 'b'): return False
     if nm in rules.FRONT_ART_BIG_BACK: return False
-    return nm in rules.ENLARGE14_FRONT
+    return nm in rules.ENLARGE14_FRONT or (nm, '앞') in rules.SHRINK14
 
 
 def main(out, with14=False):

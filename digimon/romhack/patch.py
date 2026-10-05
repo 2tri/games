@@ -173,13 +173,16 @@ class Patch:
             bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat); ents += [bank, p & 255, p >> 8]
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11); self.palette(no, *pal)
-    def enlarge14(self, no, back, mode='smooth'):
+    def enlarge14(self, no, back, mode='smooth', scale=None):
         """롬의 지금 그림(1.4 그림)을 칸을 꽉 채우게 키워 다시 넣음 (그림 세션 tools/enlarge14.py, 사용자 메모 「확대」 2026-10-05).
         롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀. 색 4개 그대로(색번호 그대로 키움)"""
         sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
         self.r.d = self.d
         t = self.r.pic(no, back=back).astype(int)
-        r_ = EN.enlarge(t, 48 if back else 56, mode); idx = np.where(r_ < 0, 0, r_).astype(np.uint8)
+        size = 48 if back else 56
+        if scale:                                                   # 줄이기 (사용자 비고 「축소」): 지금 그림 긴 변 × scale
+            ys, xs = np.where(t > 0); size = max(8, round(max(np.ptp(ys) + 1, np.ptp(xs) + 1) * scale))
+        r_ = EN.enlarge(t, size, mode); idx = np.where(r_ < 0, 0, r_).astype(np.uint8)
         if back: dat = gblz.compress(to_gb_pic(idx, 6, 6)); off = 3
         else:
             size = 7 if max(idx.shape) > 48 else 6 if max(idx.shape) > 40 else 5
@@ -938,6 +941,11 @@ def build(base, out_rom, out_ips):
                 md = rules.ENLARGE14_MODE.get((nm, '뒤' if back else '앞'), 'smooth')
                 h_, w_ = P.enlarge14(N[nm], back, md); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
     P.log.append('1.4 그림 확대 %d장: %s' % (len(big), ', '.join(big)))
+    small = []
+    for (nm, side), k in rules.SHRINK14.items():                            # 1.4 그림 줄이기 (우리 그림으로 바뀐 종은 건너뜀)
+        if nm in N and nm not in nrd:
+            h_, w_ = P.enlarge14(N[nm], side == '뒤', 'smooth', scale=k); small.append('%s %s %d×%d' % (nm, side, w_, h_))
+    P.log.append('1.4 그림 줄이기 %d장: %s' % (len(small), ', '.join(small) or '없음'))
     for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
         if src in nrd:
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))
