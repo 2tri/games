@@ -138,6 +138,37 @@ class Patch:
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11)
         self.palette(no, *pal)
+    def pic_from_rom(self, no, src, src_no):
+        """다른 롬(src = dmrom.Rom)의 그 종 그림(압축 그대로)·크기·팔레트를 이 칸으로 — 2.0 그림 쓰기 (허락 받음, 2026-10-06 판정 1-10).
+        롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀"""
+        ents = []
+        for back in (False, True):
+            a = src.pic_ptr(src_no, back); _, end = gblz.decompress(src.d, a)
+            dat = bytes(src.d[a:end]); bank, p = self.sp.take(len(dat), banks=PIC_BANKS)
+            self.put(addr(bank, p), dat); ents += [bank, p & 255, p >> 8]
+        self.put(self.r.pics + 6 * (no - 1), bytes(ents))
+        self.stats(no, pic_size=src.d[src.bs + 0x20 * (src_no - 1) + 17])
+        self.put(self.r.pal + 8 * no, bytes(src.d[src.pal + 8 * src_no:src.pal + 8 * src_no + 8]))
+    def item_rename(self, no, new):
+        """도구 이름 하나를 바꿈 (길이 상관없이): 이름표 전체를 같은 뱅크 빈 곳에 다시 쓰고 NamesPointers(ITEM_NAME)·InitList 의 ld de 를 옮김"""
+        d = bytes(self.d)
+        npos = re.search(rb'\x6c(..)\x6c(..)\x00\x00\x00\x6c(..)', d, re.S)          # NamesPointers: 디지몬·기술·없음·도구 (뱅크 6c)
+        assert npos, 'NamesPointers'
+        ip = npos.start() + 10; old = d[ip] | d[ip + 1] << 8; bank = d[ip - 1]
+        a = addr(bank, old); names = []
+        for _ in range(256):
+            j = d.index(0x50, a); names.append(d[a:j]); a = j + 1
+        names[no - 1] = krtext.encode(new)
+        blob = b''.join(x + b'\x50' for x in names)
+        b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
+        self.put(ip, struct.pack('<H', p))
+        n = 0                                                                           # InitList(교환·통신 목록): ld de, ItemNames 2곳 — 원본 금 심볼 지도로 함수 자리를 찾음
+        try:
+            import romanat; il = romanat.Sym()['InitList']
+            for m in re.finditer(re.escape(b'\x11' + struct.pack('<H', old)), d[il:il + 0x80]):
+                self.put(il + m.start() + 1, struct.pack('<H', p)); n += 1
+        except (FileNotFoundError, KeyError): pass
+        return n
     def flip_back(self, no):
         """롬의 지금 뒷모습(48×48)을 좌우로 뒤집어 다시 넣음 — 1.4 그림처럼 우리 그림 파일이 없는 종용 (사용자 2026-10-05 「에렉몬 뒤 바라보는 방향」)"""
         self.r.d = self.d
@@ -657,7 +688,7 @@ def build(base, out_rom, out_ips):
     P.evos(XV, [(LV, 40, IM)], moves_by_name([(1, 'TACKLE'), (1, 'LEER'), (1, 'QUICK_ATTACK'), (16, 'WING_ATTACK'), (22, 'DOUBLE_KICK'),
                                              (28, 'SLASH'), (34, 'OUTRAGE'), (40, 'HYPER_BEAM')]))
     P.stats(IM, hp=95, atk=115, **{'def': 90}, spd=90, sat=100, sdf=90, type1=TYPES['DRAGON'], type2=TYPES['FLYING'])
-    P.evos(IM, [(ITEM, 8, S('황제팔라딘'))], moves_by_name([(1, 'WING_ATTACK'), (1, 'SLASH'), (1, 'OUTRAGE'), (40, 'ZAP_CANNON'),
+    P.evos(IM, [], moves_by_name([(1, 'WING_ATTACK'), (1, 'SLASH'), (1, 'OUTRAGE'), (40, 'ZAP_CANNON'),
                                                           (46, 'HYPER_BEAM'), (52, 'FLY')]))
     # 9 새 디지몬 칸 (slots.json): 그림(art/<id>-f.png·-b.png)이 있는 것만 넣음. PLACEHOLDER=1 이면 그림 없어도 물음표 알로 넣어 시험
     SL = json.load(open(os.path.join(HERE, 'slots.json')))
@@ -685,6 +716,23 @@ def build(base, out_rom, out_ips):
         installed[no] = m
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
+    # 작업팩 10/6 S1-8 떠돌이 셋 = 사성수 (243~245, mapping.csv 도 이 칸 그대로): 자료(능력치·기술·울음)는 임시로 피에몬,
+    #   그림·색·도감 글은 2.0 (허락 받음, 사용자 10/6 「일단 있는 거 쓰고」 — 그림주문서에서 사용자가 확인). 2.0 롬이 없으면 피에몬 그림
+    v20p = os.path.join(dmrom.WORK, rules.V20); src = dmrom.Rom(v20p) if os.path.exists(v20p) else None
+    PI = S(rules.ROAMER_TEMP); rmlog = []; roam_dex = []        # 도감 글은 빈 칸 도감 자리를 모은 뒤(dex_pool)에 씀
+    for no, nm in rules.ROAMERS:
+        P.put(r.bs + 0x20 * (no - 1) + 1, bytes(P.d[r.bs + 0x20 * (PI - 1) + 1:r.bs + 0x20 * PI]))
+        P.name(no, nm); P.evos(no, [], P.r.evos_attacks(PI)[1]); P.cry(no, *P.cry_of(PI))
+        sn = next((k for k in range(1, dmrom.NUM + 1) if src.name(k).strip() == nm), None) if src else None
+        if sn:
+            P.pic_from_rom(no, src, sn)
+            rmlog.append('%d %s(2.0 그림)' % (no, nm))
+        else:
+            P.put(r.pics + 6 * (no - 1), bytes(P.d[r.pics + 6 * (PI - 1):r.pics + 6 * PI])); P.put(r.pal + 8 * no, bytes(P.d[r.pal + 8 * PI:r.pal + 8 * PI + 8]))
+            rmlog.append('%d %s(피에몬 그림)' % (no, nm))
+        roam_dex.append(no)
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    P.log.append('S1-8 떠돌이 셋 = 사성수 (자료 %s 임시): %s' % (rules.ROAMER_TEMP, ', '.join(rmlog)))
     # 스타팅 → 유년기 (사용자 2026-10-03 「스타팅도 성장기 말고 유년기」). 유년기 칸이 아직 없으면(그림 대기) 성장기 그대로
     bs = {N[rk]: (N[bb], txt) for rk, bb, txt in rules.BABY_STARTERS if bb in N}
     for k_, t_ in P.restarter({rk: v[0] for rk, v in bs.items()}).items():
@@ -718,6 +766,14 @@ def build(base, out_rom, out_ips):
         EV['텐타몬'] = T((BOND_LO, 16, '쿠가몬'), (LV, 21, '캅테리몬'))
         EV['쿠가몬'] = T((ANYCREST, 34, '오쿠와몬'))
     for nm, ev in EV.items(): P.evos(S(nm), ev)
+    # 작업팩 10/6 S1-6·7: 천둥의 돌 → 오메가몬 두 줄·달맞이 돌 → 황제팔라딘 줄을 지우고 오메가블레이드(새 도구)로
+    OB = rules.OMEGA_BLADE; oblog = []
+    for frm, to in OB['evos']:
+        old = [tuple(e) for e in P.r.evos_attacks(S(frm))[0]]
+        keep = [e for e in old if not (e[0] == ITEM and e[-1] == S(to))]
+        P.evos(S(frm), keep + [(ITEM, OB['item'], S(to))])
+        oblog.append('%s %s → 오메가블레이드 → %s' % (frm, '·'.join('도구%d' % e[1] for e in old if e not in keep) or '-', to))
+    P.log.append('S1-6·7 진화: ' + ', '.join(oblog))
     # 잠자는 포켓몬 칸의 진화가 디지몬 칸을 가리키면 지움 (스라크 → 메탈그레몬 칸, 깜지곰 → 워가루몬 칸 같은 것, R14)
     orig = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
     pk = {n for n in range(1, dmrom.NUM + 1) if r.name(n) == orig[n - 1]}
@@ -819,6 +875,7 @@ def build(base, out_rom, out_ips):
     G = json.load(open(os.path.join(HERE, 'grades.json')))
     grade = {int(k): v['grade'] for k, v in G.items() if v['grade'] and v['name'] == r.name(int(k))}
     grade.update({KORO: '유년기Ⅱ', MGR: '완전체', WGR: '완전체'})
+    grade.update({no: '궁극체' for no, _ in rules.ROAMERS})
     for no, m in installed.items(): grade[no] = m['grade']
     for nm, v in rules.PALSWAP.items(): grade[v[1]] = v[2]
     # C단계 상대 파티 — A단계 바꾸기 뒤에
@@ -852,6 +909,11 @@ def build(base, out_rom, out_ips):
         nr13 += 1
     for g, new in plan.items(): P.group(g, groups, new)
     P.r.d = P.d
+    # 작업팩 10/6 S1-2 레드 이름표 → 매튜 (같은 길이)
+    old_, new_ = (krtext.encode(x) for x in rules.RED_NAME); assert len(old_) == len(new_)
+    for t in P.r.trainers(len(groups)):
+        if groups[t['group']] == 'Red' and bytes(P.d[t['start']:t['start'] + len(old_)]) == old_:
+            P.put(t['start'], new_); P.log.append('S1-2 레드 이름표 → %s' % rules.RED_NAME[1])
     P.log.append('C단계 파티: 지정 %d명, 암흑단 조직원 %d명, 궁극체 낮춤 %d명. 임시 종: %s' % (
         sum(len(v) for v in plan.values()) - ngrunt - nr13, ngrunt, nr13, ', '.join(sorted(waiting)) or '없음'))
     # 3 포획 규칙
@@ -878,6 +940,17 @@ def build(base, out_rom, out_ips):
     ie = il
     for _ in range(256): ie = P.d.index(0x50, ie) + 1                 # 도구 이름 256개 (pokegold-kr data/items/names.asm)
     P.words(rules.WORDS, (il, ie))
+    # 작업팩 10/6 S1-7 오메가블레이드: 빈 도구 칸 — 속성(달맞이 돌: 값 0·진화의 돌 주머니)·설명(천둥의 돌 글을 가리킴)·효과(진화의 돌)·이름(이름표를 옮겨 길이 제한 없이)
+    it = OB['item']
+    P.put(at + 7 * (it - 1), bytes(P.d[at + 7 * (OB['attr_from'] - 1):at + 7 * OB['attr_from']]))
+    P.put(dtab + 2 * (it - 1), bytes(P.d[dtab + 2 * (OB['desc_from'] - 1):dtab + 2 * OB['desc_from']]))
+    try:
+        import romanat; ie_ = romanat.Sym()['ItemEffects']
+        P.put(ie_ + 2 * (it - 1), bytes(P.d[ie_ + 2 * (OB['desc_from'] - 1):ie_ + 2 * OB['desc_from']]))   # 천둥의 돌과 같은 EvoStoneEffect
+        eff = '효과 = 진화의 돌'
+    except (FileNotFoundError, KeyError): eff = '효과 못 바꿈 (work/anat 심볼 없음)'
+    nil = P.item_rename(it, OB['name'])
+    P.log.append('S1-7 %s: 도구 %d번 칸, %s, 이름표 옮김 (InitList %d곳)' % (OB['name'], it, eff, nil))
     # D-2 관장 승리 대사 + 문장 두 줄 (원래 자리에 안 들어가면 retext 가 빈 뱅크로 옮기고 text_far 로 연결)
     import texts as TX
     for cls, (l1, l2) in rules.GYM_LINES.items():
@@ -983,6 +1056,7 @@ def build(base, out_rom, out_ips):
     # 도감 새 글 (dex_texts.json, 사용자 지시 2026-10-02): 금 원문 그대로였던 남길 종 58종. 키·몸무게는 지금 롬 값 그대로
     DX = json.load(open(os.path.join(HERE, 'dex_texts.json'))); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; ndx = 0
     nfree = P.dex_pool([n for n in range(1, dmrom.NUM + 1) if r.name(n) == rules.EMPTY_NAME])
+    for no_ in roam_dex: P.dex(no_, *rules.ROAMER_DEX[r.name(no_)])     # S1-8 사성수 도감 (2.0 글 줄임)
     for nm, v in DX.items():
         if nm.startswith('_') or nm not in N: continue
         e = P.dex_entry(N[nm]); i = 0
