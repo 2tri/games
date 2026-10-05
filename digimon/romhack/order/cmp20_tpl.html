@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2.0 그림 비교</title>
+/*STYLE*/
+<style>
+.trio { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: 6px; align-items: end; }
+.trio > b { font-size: 13px; align-self: center; }
+.pick { display: flex; gap: 6px; flex-wrap: wrap; grid-column: 2 / -1; }
+.pick button { font: 600 13px var(--body); padding: 4px 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.pick button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pick button.take[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); }
+.pick button.ref[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); }
+.chip.diff { background: var(--blue-bg); color: var(--blue); }
+.memo textarea { font: 14px/1.4 var(--body); padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); width: 100%; box-sizing: border-box; }
+.hide { display: none !important; }
+.filters button { font: 600 13px var(--body); border: 1px solid var(--paper); background: transparent; color: var(--paper); padding: 4px 10px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.ph { width: 56px; height: 56px; display: grid; place-items: center; font: 10.5px/1.3 var(--body); color: var(--sprite-ink); border: 1px dashed var(--rule); text-align: center; }
+</style></head><body>
+<main>
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">디지몬스터 내 버전 · 2.0 비교 · 전투 그림</div>
+    <h1>2.0 그림 비교</h1>
+    <p>종마다 앞·뒤를 <b>1.4 원본 | 2.0 | 지금 게임</b>으로 나란히 보여 줘요. 칸마다 <b>2.0 가져옴</b>(2.0 그림으로 바꿈) · <b>지금 유지</b>(버림) · <b>2.0 참고</b>(색·자세만 참고해서 다시 그림) 중 고르고, 필요하면 비고를 적어 주세요. 고른 건 바로 저장되고 Claude가 읽어요.</p>
+  </header>
+  <div class="bar" role="status">
+    <span>달라진 그림 <b id="nDiff">0</b></span><span>고름 <b id="nPick">0</b></span>
+    <input id="q" type="search" placeholder="검색: 이름·칸 번호" aria-label="검색" style="font:15px var(--body);padding:5px 8px;min-width:0;flex:1 1 160px;max-width:260px">
+    <span class="filters"><button type="button" data-f="diff" aria-pressed="true">2.0 에서 달라진 것</button><button type="button" data-f="all" aria-pressed="false">전체</button><button type="button" data-f="todo" aria-pressed="false">아직 안 고른 것</button></span>
+    <span class="st" id="dbState" style="font-size:12px;opacity:.8">저장 확인 중…</span>
+  </div>
+  <div id="secs" style="display:grid;gap:40px"></div>
+  <footer><span>이 페이지에는 원작 롬 그림이 들어 있어요. 링크는 다른 사람에게 공유하지 말아 주세요.</span></footer>
+</main>
+<script>
+const D = /*DATA*/null;
+const $ = (s) => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const pic = (src, cap) => { const p = el("div", "pic"); if (src) { const i = new Image(); i.src = src; i.alt = ""; i.onload = () => { i.width = i.naturalWidth; i.height = i.naturalHeight; }; p.append(i); } else p.append(el("div", "ph", "없음")); p.append(el("span", "", cap)); return p; };
+let db = null, FILTER = "diff", Q = ""; const picks = {}, btns = {}, memos = {}, cards = [];
+const LS = "dm20pick";
+function lsGet() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+function lsPut() { try { localStorage.setItem(LS, JSON.stringify(picks)); } catch (e) {} }
+async function save(id, v) {
+  picks[id] = Object.assign({}, picks[id] || {}, v); paint(id); count();
+  if (!db) { lsPut(); return; }
+  try { await db.collection("pick20").doc(id).set(Object.assign({ at: new Date().toISOString() }, picks[id])); $("#dbState").textContent = "저장됨"; }
+  catch (e) { $("#dbState").textContent = "저장 실패 · 다시 눌러 주세요"; }
+}
+function paint(id) { const v = (picks[id] || {}).pick; for (const b of btns[id] || []) b.setAttribute("aria-pressed", String(b.dataset.v === v)); if (memos[id] && document.activeElement !== memos[id]) memos[id].value = (picks[id] || {}).memo || ""; }
+const CH = [["take", "2.0 가져옴"], ["keep", "지금 유지"], ["ref", "2.0 참고"]];
+function card(r) {
+  const c = el("article", "card");
+  const h = el("div", "head"); h.append(el("span", "ko", r.ko), el("span", "en", r.en), el("span", "chip", r.grade), el("span", "chip no", "칸 " + r.no));
+  if (r.s.f.diff || r.s.b.diff) h.append(el("span", "chip diff", "2.0 달라짐"));
+  c.append(h);
+  for (const s of ["f", "b"]) {
+    const v = r.s[s]; const id = r.no + "-" + s;
+    const t = el("div", "trio"); t.append(el("b", "", s === "f" ? "앞" : "뒤"), pic(v.o, "1.4 원본"), pic(v.t, "2.0" + (v.t && !v.diff ? " (1.4와 같음)" : "")), pic(v.c, "지금 게임" + (v.ours ? " · 우리 그림" : "")));
+    const pk = el("div", "pick"); btns[id] = [];
+    for (const [k, lab] of CH) { const b = el("button", k, lab); b.type = "button"; b.dataset.v = k; b.addEventListener("click", () => save(id, { pick: (picks[id] || {}).pick === k ? "" : k })); btns[id].push(b); pk.append(b); }
+    t.append(pk); c.append(t);
+  }
+  const m = el("label", "memo"); m.append(el("b", "", "비고")); const ta = el("textarea"); ta.rows = 2; ta.placeholder = "예: 2.0 앞은 좋은데 색은 지금 것으로";
+  let tm; ta.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(() => save(r.no + "-m", { memo: ta.value }), 700); }); memos[r.no + "-m"] = ta; m.append(ta); c.append(m);
+  if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; c.append(a); }
+  cards.push([r, c]); return c;
+}
+const secs = [];
+for (const g of D.grades) { const rs = D.rows.filter((r) => r.grade === g); if (!rs.length) continue; const s = el("section", "gsec"); s.append(el("h2", "", g)); const l = el("div", "cards"); for (const r of rs) l.append(card(r)); s.append(l); $("#secs").append(s); secs.push([s, rs]); }
+const done = (r) => ["f", "b"].every((s) => !r.s[s].t || (picks[r.no + "-" + s] || {}).pick);
+const on = (r) => (!Q || (r.ko + " " + r.en + " " + r.no).toLowerCase().includes(Q)) && (FILTER === "all" || (FILTER === "diff" ? (r.s.f.diff || r.s.b.diff) : !done(r)));
+function refresh() { for (const [r, c] of cards) c.classList.toggle("hide", !on(r)); for (const [s, rs] of secs) s.classList.toggle("hide", !rs.some(on)); }
+function count() { $("#nPick").textContent = Object.entries(picks).filter(([k, v]) => !k.endsWith("-m") && v.pick).length; }
+$("#nDiff").textContent = D.rows.reduce((n, r) => n + r.s.f.diff + r.s.b.diff, 0);
+for (const b of document.querySelectorAll(".filters button")) b.addEventListener("click", () => { FILTER = b.dataset.f; for (const x of document.querySelectorAll(".filters button")) x.setAttribute("aria-pressed", String(x === b)); refresh(); });
+$("#q").addEventListener("input", (e) => { Q = e.target.value.trim().toLowerCase(); refresh(); });
+refresh();
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
+  if (!db) { Object.assign(picks, lsGet()); for (const id in picks) paint(id); count(); $("#dbState").textContent = "이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return; }
+  $("#dbState").textContent = "고른 건 바로 저장되고 Claude가 읽어요";
+  db.collection("pick20").onSnapshot((snap) => { for (const d of snap.docs) { picks[d.id] = d.data(); paint(d.id); } count(); }, () => { $("#dbState").textContent = "연결이 끊겼어요 · 새로 고침"; });
+})();
+</script>
+</body></html>
