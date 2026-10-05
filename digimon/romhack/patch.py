@@ -845,7 +845,7 @@ def build(base, out_rom, out_ips):
     import music
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)
     mtab = addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
-    ff = float(os.environ.get('MUSIC_FF', '1'))                         # 델타 빨리감기용 판: 그 배수로 들을 때 원래 곡이 되게 (사용자 2026-10-04)
+    ff = float(os.environ.get('MUSIC_FF', rules.MUSIC_FF))              # 델타 빨리감기 배수로 들을 때 원래 곡이 되게 (rules.MUSIC_FF, 사용자 2026-10-04·05)
     for nm, ids in rules.MUSIC.items():
         js = music.load(nm); loop = True if nm == 'evolve' else None
         slow = 1 if nm == 'heal' else None                              # 디지몬센터 회복은 정해진 프레임만 기다림 → 템포는 그대로, 음만 낮춤

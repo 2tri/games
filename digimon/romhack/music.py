@@ -71,9 +71,26 @@ def ff_shift(js, ch, ff):
     if ff == 1 or ch == 3: return 0
     s = -round(12 * math.log2(ff)); lo, hi = (24, 119) if ch == 2 else (36, 131)
     ps = [p for p, L in js['ch'][ch] if p and L > 0]
-    # 절반 넘게 범위 밑이면 채널 전체를 옥타브 올림, 아니면 밑으로 간 음만 그 음에서 옥타브 올림 (chan_bytes)
-    while ps and sum(p + s < lo for p in ps) * 2 > len(ps) and max(ps) + s + 12 <= hi: s += 12
+    # 10% 넘게 범위 밑이면 채널 전체를 옥타브 올림 (음마다 올리면 멜로디가 뒤틀림 — 4배에서 길 곡 멜로디 42% 가 밑으로 감),
+    #   아니면 밑으로 간 음만 그 음에서 옥타브 올림 (chan_bytes)
+    while ps and sum(p + s < lo for p in ps) * 10 > len(ps) and max(ps) + s + 12 <= hi: s += 12
     return s
+
+
+def under_lead(js, s, lo=36):
+    """화음 채널을 멜로디와 같이 s 반음 내림 (빨리감기용). 소리 범위 밑으로 간 음은 옥타브 올리되 그때 울리는 멜로디보다 높아지면 쉼
+    — 화음 채널만 통째로 옥타브 올리면 멜로디 위로 올라가 멜로디가 묻힘. 반환: 이미 옮긴 음 목록 (chan_bytes 에 shift 0 으로)"""
+    lead = []
+    for p, L in js['ch'][0]: lead += [p + s if p else 0] * max(0, L)
+    out = []; t = 0
+    for p, L in js['ch'][1]:
+        q = p + s if p else 0
+        if q and q < lo:
+            while q < lo: q += 12
+            lp = lead[t] if t < len(lead) else 0
+            if lp and q >= lp: q = 0
+        out.append([q, L]); t += max(0, L)
+    return out
 
 
 def song_bytes(js, base, loop=None, ff=1, slow=None, style=None):
@@ -83,8 +100,10 @@ def song_bytes(js, base, loop=None, ff=1, slow=None, style=None):
     loop = (not js.get('once')) if loop is None else loop
     t = tempo_of(js, ff if slow is None else slow); cap = min(255, (65535 - 255) // t)
     head = 12; chans = []; p = base + head
+    sh = [ff_shift(js, ch, ff) for ch in range(4)]; notes = [js['ch'][ch] for ch in range(4)]
+    if sh[1] > sh[0]: notes[1], sh[1] = under_lead(js, sh[0]), 0
     for ch in range(4):
-        b = chan_bytes(ch, js['ch'][ch], p, loop, cap, ff_shift(js, ch, ff), ff, style); chans.append((p, b)); p += len(b)
+        b = chan_bytes(ch, notes[ch], p, loop, cap, sh[ch], ff, style); chans.append((p, b)); p += len(b)
     c0 = bytearray(chans[0][1]); c0[1:3] = t.to_bytes(2, 'big'); chans[0] = (chans[0][0], bytes(c0))
     out = bytearray()
     for i, (a, _) in enumerate(chans):
