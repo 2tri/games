@@ -180,9 +180,12 @@ class Patch:
         self.r.d = self.d
         t = self.r.pic(no, back=back).astype(int)
         size = 48 if back else 56
-        if scale:                                                   # 줄이기 (사용자 비고 「축소」): 지금 그림 긴 변 × scale
+        if scale:                                                   # 배율 (rules.SCALE14): 지금 그림 긴 변 × scale, 칸을 넘으면 가로는 가운데·세로는 아래를 남기고 자름
             ys, xs = np.where(t > 0); size = max(8, round(max(np.ptp(ys) + 1, np.ptp(xs) + 1) * scale))
         r_ = EN.enlarge(t, size, mode); idx = np.where(r_ < 0, 0, r_).astype(np.uint8)
+        B = 48 if back else 56
+        if idx.shape[1] > B: x0 = (idx.shape[1] - B) // 2; idx = idx[:, x0:x0 + B]
+        if idx.shape[0] > B: idx = idx[idx.shape[0] - B:, :]
         if back: dat = gblz.compress(to_gb_pic(idx, 6, 6)); off = 3
         else:
             size = 7 if max(idx.shape) > 48 else 6 if max(idx.shape) > 40 else 5
@@ -942,10 +945,10 @@ def build(base, out_rom, out_ips):
                 h_, w_ = P.enlarge14(N[nm], back, md); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
     P.log.append('1.4 그림 확대 %d장: %s' % (len(big), ', '.join(big)))
     small = []
-    for (nm, side), k in rules.SHRINK14.items():                            # 1.4 그림 줄이기 (우리 그림으로 바뀐 종은 건너뜀)
+    for (nm, side), k in rules.SCALE14.items():                             # 1.4 그림 배율 (우리 그림으로 바뀐 종은 건너뜀)
         if nm in N and nm not in nrd:
             h_, w_ = P.enlarge14(N[nm], side == '뒤', 'smooth', scale=k); small.append('%s %s %d×%d' % (nm, side, w_, h_))
-    P.log.append('1.4 그림 줄이기 %d장: %s' % (len(small), ', '.join(small) or '없음'))
+    P.log.append('1.4 그림 배율 %d장: %s' % (len(small), ', '.join(small) or '없음'))
     for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
         if src in nrd:
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))
