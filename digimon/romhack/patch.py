@@ -145,6 +145,13 @@ class Patch:
         dat = gblz.compress(to_gb_pic(idx, 6, 6))
         bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
         self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
+    def back_only(self, no, back_png):
+        """앞은 그대로(1.4 그림) 두고 뒷모습만 우리 그림으로. 색은 롬의 지금 팔레트 두 색에 가까운 쪽으로 나눔 (팔레트는 안 바꿈)"""
+        self.r.d = self.d
+        bi, _ = png_to_idx(back_png, 48, 48, self.r.palette(no))
+        dat = gblz.compress(to_gb_pic(bi, 6, 6))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
     def enlarge14(self, no, back):
         """롬의 지금 그림(1.4 그림)을 칸을 꽉 채우게 키워 다시 넣음 (그림 세션 tools/enlarge14.py, 사용자 메모 「확대」 2026-10-05).
         롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀. 색 4개 그대로(색번호 그대로 키움)"""
@@ -866,6 +873,10 @@ def build(base, out_rom, out_ips):
         f, b = (os.path.join(WEB, 'art', art + s_) for s_ in ('-f.png', '-b.png'))
         if nm in N and os.path.exists(f) and os.path.exists(b): P.pic(N[nm], f, b); nrd.append(nm)
     P.log.append('1.4 그림 다시 그리기 %d종: %s' % (len(nrd), ', '.join(nrd)))
+    for nm, art in rules.BACK_ONLY.items():                                  # 앞은 1.4 그대로, 뒤만 우리 그림 (그림 세션이 뒤만 새로 그린 종)
+        bp = os.path.join(WEB, 'art', art + '-b.png')
+        if nm in N and nm not in nrd and os.path.exists(bp) and not os.path.exists(os.path.join(WEB, 'art', art + '-f.png')):
+            P.back_only(N[nm], bp); P.log.append('  %s 뒷모습만 새 그림 (앞은 1.4)' % nm)
     for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
         if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
     big = []
