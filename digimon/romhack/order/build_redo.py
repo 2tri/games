@@ -3,7 +3,7 @@
  자료: allmons.json (게임에 나오는 종) · r14.json (1.4 원래 그림, 롬 세션 비공개 아티팩트 — 저장소에 안 올림)
        · redo/*.json (롬 세션 「전투 그림 다시 뽑기」 페이지의 체크·메모, ArtifactData list redo) · art/<id>-f/-b.png
  카드마다: 지금 게임 앞·뒤, 체크(앞/뒤 다시)·메모, 받아 둔 새 그림, 할 일, 재미나이 한 줄(FRONT/BACK)"""
-import argparse, base64, glob, json, os, sys
+import argparse, base64, glob, json, os, subprocess, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(os.path.dirname(HERE)) + '/'
 sys.path.insert(0, HERE)
 import prompts, specs, redraw
@@ -31,7 +31,7 @@ PLAN = {
     109: {'f': ('gemini', '새로 (워그레이몬 색만 바꾼 듯 뭉개짐)'), 'b': ('gemini', '새로')},
     111: {'f': ('have', '받아 둔 앞모습 씀')},
     112: {'b': ('claude', '확대 — 됨, 롬 세션이 키움 (얼굴~몸 중간이 크게 보임)')},
-    117: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
+    117: {'f': ('have', '사용자가 보낸 그림 씀 (확대 아님, 1.4 색에 맞춤)'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
     129: {'f': ('gemini', '새로 — 작고 생김새가 까다로워 설명을 넣은 주문문'), 'b': ('gemini', '새로 — 같은 설명')},
     130: {'b': ('gemini', '새로')},
     133: {'f': ('gemini', '새로 그리기 (사용자: 확대본 말고 새로)'), 'b': ('gemini', '새로 그리기')},
@@ -60,10 +60,33 @@ HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude�
 def b64(p): return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').read()).decode() if p and os.path.exists(p) else ''
 
 
+def recv_time(path):
+    """받은 날짜 = 그 그림을 마지막으로 커밋한 때 (아직 커밋 전이면 파일 시각)"""
+    if not os.path.exists(path): return 0
+    t = subprocess.run(['git', 'log', '-1', '--format=%ct', '--', path], cwd=WEB, capture_output=True, text=True).stdout.strip()
+    return int(t) if t else int(os.path.getmtime(path))
+
+
 def en_of(did, ko):
     s = specs.by_id(did) or next((e for e in redraw.R if e['id'] == did), None)
     return (s or {}).get('en') or ({'v-mon': 'Veemon', 'xv-mon': 'ExVeemon', 'orgemon': 'Ogremon', 'imperialdramonpaladinmode': 'Imperialdramon Paladin Mode',
                                     'lilimon': 'Lilimon', 'fladramon': 'Flamedramon', 'lighdramon': 'Raidramon', 'megaseadramon': 'MegaSeadramon'}.get(did) or (did or ko).capitalize())
+
+
+def row(x, no, did, ko, grade, order, src_f, src_b, gf, gb, newf, newb, r, plan):
+    tf, tb = recv_time(WEB + 'art/%s-f.png' % did) if newf else 0, recv_time(WEB + 'art/%s-b.png' % did) if newb else 0
+    inrom = {'f': src_f == 'art', 'b': src_b == 'art'}
+    pl = {}
+    for k in ('f', 'b'):
+        got = newf if k == 'f' else newb
+        if got and not inrom[k]: pl[k] = [HOW['have'], '받음 — 게임엔 아직 안 들어감' + (' — %s' % plan[k][1] if k in plan and plan[k][0] in ('claude', 'have') else ''), 'have']
+        elif got: pl[k] = ['게임에 들어감', '받은 그림이 게임에 들어가 있음', 'done']
+        elif k in plan: pl[k] = [HOW[plan[k][0]], plan[k][1], plan[k][0]]
+    return dict(no=no, ko=ko, en=en_of(did, ko), grade=grade if grade in GRADES else '기타', order=order, src=src_f,
+                gf=gf, gb=gb, newf=newf, newb=newb, tf=tf, tb=tb, rom_f=inrom['f'], rom_b=inrom['b'], listed=bool(x),
+                chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''), plan=pl,
+                g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
+                img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else '')
 
 
 def main():
@@ -78,17 +101,18 @@ def main():
         if x['src_f'] == 'egg' or x['ko'] in ('디지문자',): continue
         no, did = x['no'], x['id']
         g = r14.get(str(no)) or [None, None]
-        gf = g[0] or (b64(WEB + 'art/%s-f.png' % did) if x['src_f'] == 'art' and did else '') or x.get('f', '')
-        gb = g[1] or (b64(WEB + 'art/%s-b.png' % did) if x['src_b'] == 'art' and did else '') or x.get('b', '')
-        newf = b64(WEB + 'art/%s-f.png' % did) if did and x['src_f'] != 'art' else ''      # 받아 뒀지만 아직 롬에 안 들어간 그림
-        newb = b64(WEB + 'art/%s-b.png' % did) if did and x['src_b'] != 'art' else ''
-        r = redo.get(no, {}); plan = PLAN.get(no, {})
-        en = en_of(did, x['ko'])
-        rows.append(dict(no=no, ko=x['ko'], en=en, grade=x['grade'] if x['grade'] in GRADES else '기타', order=x.get('order', 999), src=x['src_f'],
-                         gf=gf, gb=gb, newf=newf, newb=newb, chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''),
-                         plan={k: ([HOW['have'], '받음 — 롬에 넣는 중', 'have'] if (newf if k == 'f' else newb) and v[0] == 'gemini' else [HOW[v[0]], v[1], v[0]]) for k, v in plan.items()},
-                         g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
-                         img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else ''))
+        gf = (b64(WEB + 'art/%s-f.png' % did) if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
+        gb = (b64(WEB + 'art/%s-b.png' % did) if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
+        # 받은 그림 = art/<id>-f/-b.png 전부 (롬에 들어갔든 아니든 늘 보임 — 2026-10-05 사용자: 주문서는 받은 걸 확인하는 곳)
+        newf = b64(WEB + 'art/%s-f.png' % did) if did else ''
+        newb = b64(WEB + 'art/%s-b.png' % did) if did else ''
+        rows.append(row(x, no, did, x['ko'], x['grade'], x.get('order', 999), x['src_f'], x['src_b'], gf, gb, newf, newb, redo.get(no, {}), PLAN.get(no, {})))
+    # 받았지만 아직 게임 목록에 없는 종도 카드로
+    seen = {x['id'] for x in L if x['id']}
+    for did in sorted({os.path.basename(p)[:-6] for p in glob.glob(WEB + 'art/*-[fb].png')} - seen - {'placeholder'}):
+        sp = specs.by_id(did) or {}
+        rows.append(row({}, 0, did, sp.get('ko') or did, sp.get('grade') or '기타', 999, 'none', 'none', '', '',
+                        b64(WEB + 'art/%s-f.png' % did), b64(WEB + 'art/%s-b.png' % did), {}, {}))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
     D = {'common': prompts.COMMON_CONVERT, 'common_b': prompts.COMMON_BACK, 'rows': rows, 'grades': GRADES + ['기타']}
