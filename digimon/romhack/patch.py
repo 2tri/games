@@ -152,6 +152,15 @@ class Patch:
         dat = gblz.compress(to_gb_pic(bi, 6, 6))
         bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
         self.put(self.r.pics + 6 * (no - 1) + 3, bytes([bank, p & 255, p >> 8]))
+    def front_only(self, no, front_png):
+        """뒤는 그대로(1.4 그림) 두고 앞모습만 우리 그림으로. 색은 롬의 지금 팔레트 두 색에 가까운 쪽으로 나눔 (팔레트는 안 바꿈 → 뒤 색 그대로)"""
+        self.r.d = self.d
+        fi, _ = png_to_idx(front_png, 56, 56, self.r.palette(no))
+        size = 7 if max(fi.shape) > 48 else 6 if max(fi.shape) > 40 else 5
+        dat = gblz.compress(to_gb_pic(fi, size, size))
+        bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat)
+        self.put(self.r.pics + 6 * (no - 1), bytes([bank, p & 255, p >> 8]))
+        self.stats(no, pic_size=size * 0x11)
     def front_art_big_back(self, no, front_png, mode='smooth'):
         """앞은 우리 그림, 뒤는 롬의 1.4 뒷모습을 키운 것 (색번호 그대로라 새 앞 팔레트로 칠해짐) — 뒷모습을 새로 못 받은 종 (사용자 2026-10-05 피코데블몬)"""
         sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
@@ -442,6 +451,9 @@ class Patch:
         bank = self.r.evos // 0x4000
         p0 = self.d[self.r.evos + 2 * (no - 1)] | self.d[self.r.evos + 2 * (no - 1) + 1] << 8
         a0 = addr(bank, p0); n0 = sum(4 if e[0] == STAT else 3 for e in old_ev) + 1 + 2 * len(old_mv) + 1
+        # 끝 표시가 빠진 목록(메탈가루몬)은 다음 종 자료까지 읽어 n0 가 커짐 → 다음 종 시작에서 자름 (안 그러면 쿠네몬 첫 바이트를 덮어 기술 0개 → 트레이너 전투 멈춤, 2026-10-05)
+        starts = [addr(bank, self.d[self.r.evos + 2 * k] | self.d[self.r.evos + 2 * k + 1] << 8) for k in range(dmrom.NUM) if k != no - 1]
+        n0 = min([n0] + [s - a0 for s in starts if s > a0])
         if len(blob) <= n0 and 0x4000 <= p0 < 0x8000:                   # 원래 자리에 들어가면 그 자리에 (뱅크 빈 곳 아낌)
             self.put(a0, blob); return
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
@@ -513,6 +525,25 @@ class Patch:
         self.put(addr(b, org), a.build())
         self.put(site + 4, bytes([0xCD, org & 255, org >> 8]))
         self.log.append('포획 막기 코드 뱅크 %02X:%04X' % (b, org))
+
+    # ── 트레이너 AI 안전장치: 상대 기술이 0개면 AIChooseMove 를 건너뜀 (원래는 점수 깎기를 끝없이 돌아 전투가 멈춤 → ParseEnemyAction 이 발버둥으로) ──
+    def ai_guard(self):
+        d = bytes(self.d)
+        m = re.search(rb'\x21..\x11(..)\x0e\x04\x1a\x13\xa7\x28.\x35\x28', d, re.S)      # .DecrementScores (engine/battle/ai/move.asm)
+        assert m and not re.search(rb'\x21..\x11(..)\x0e\x04\x1a\x13\xa7\x28.\x35\x28', d[m.end():], re.S), 'AIChooseMove 자리를 하나로 못 찾음'
+        MOVES = int.from_bytes(m.group(1), 'little')                                   # wEnemyMonMoves
+        site = d.rfind(b'\x3d\xc8\xfa', m.start() - 200, m.start()) + 2                # ld a,[wLinkMode] / and a / ret nz
+        assert d[site] == 0xFA and d[site + 3:site + 5] == b'\xa7\xc0', '링크 확인 자리 다름'
+        LINK = d[site + 1] | d[site + 2] << 8
+        b, org = self.sp.take(14, bank=site // 0x4000)
+        a = Asm(org)
+        a.ld_a_mem(LINK); a.db(0xA7, 0xC0)                       # 링크면 nz 로 돌아감 (원래대로)
+        a.ld_a_mem(MOVES); a.db(0xA7); a.jr('none', 'z')         # 첫 기술 0 = 기술 없음
+        a.db(0xAF, 0xC9)                                         # z → 원래 길로
+        a.L('none'); a.db(0x3C, 0xC9)                            # nz → AIChooseMove 끝
+        self.put(addr(b, org), a.build())
+        self.put(site, bytes([0xCD, org & 255, org >> 8, 0xC0, 0x00]))                # call 안전장치 / ret nz / nop
+        self.log.append('트레이너 AI 기술 0개 안전장치 뱅크 %02X:%04X' % (b, org))
 
     def ips(self, path):
         base, new = self.r.base, bytes(self.d); out = bytearray(b'PATCH'); i = 0; n = len(new)
@@ -819,6 +850,7 @@ def build(base, out_rom, out_ips):
         sum(len(v) for v in plan.values()) - ngrunt - nr13, ngrunt, nr13, ', '.join(sorted(waiting)) or '없음'))
     # 3 포획 규칙
     P.catch_engine()
+    P.ai_guard()
     # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
     zero = []
     for no, g in sorted(grade.items()):
@@ -892,12 +924,17 @@ def build(base, out_rom, out_ips):
         bp = os.path.join(WEB, 'art', art + '-b.png')
         if nm in N and nm not in nrd and os.path.exists(bp) and not os.path.exists(os.path.join(WEB, 'art', art + '-f.png')):
             P.back_only(N[nm], bp); P.log.append('  %s 뒷모습만 새 그림 (앞은 1.4)' % nm)
+    front_new = set()
+    for nm, art in rules.FRONT_ONLY.items():                                 # 뒤는 1.4 그대로, 앞만 우리 그림 (1.4 팔레트에 맞춰 칠한 앞)
+        fp = os.path.join(WEB, 'art', art + '-f.png')
+        if nm in N and nm not in nrd and os.path.exists(fp) and not os.path.exists(os.path.join(WEB, 'art', art + '-b.png')):
+            P.front_only(N[nm], fp); front_new.add(nm); P.log.append('  %s 앞모습만 새 그림 (뒤는 1.4)' % nm)
     for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
         if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
     big = []
     for back, names in ((False, rules.ENLARGE14_FRONT), (True, rules.ENLARGE14_BACK)):   # 1.4 그림 확대 (우리 그림으로 바뀐 종은 건너뜀)
         for nm in names:
-            if nm in N and nm not in nrd:
+            if nm in N and nm not in nrd and not (not back and nm in front_new):
                 md = rules.ENLARGE14_MODE.get((nm, '뒤' if back else '앞'), 'smooth')
                 h_, w_ = P.enlarge14(N[nm], back, md); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
     P.log.append('1.4 그림 확대 %d장: %s' % (len(big), ', '.join(big)))

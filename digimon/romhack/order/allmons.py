@@ -37,6 +37,21 @@ def ids():
     return m, {int(k): v for k, v in json.load(open(os.path.join(HERE, 'order', 'keep_dirs.json'))).items()}
 
 
+def from14(nm, back):
+    """롬 그림이 바뀌었어도 1.4 그림에서 나온 것(확대·뒤집기)이면 True — 공개 allmons.json 에 넣지 않음 (patch.py 설치 순서와 같은 판정)"""
+    art = lambda a, s: os.path.exists(os.path.join(HERE, '..', 'art', '%s-%s.png' % (a, s)))
+    a = rules.REDRAW.get(nm)
+    if a and art(a, 'f') and art(a, 'b'): return False
+    if back:
+        a = rules.BACK_ONLY.get(nm)
+        if a and art(a, 'b') and not art(a, 'f'): return False
+        return nm in rules.ENLARGE14_BACK or nm in rules.FLIP_BACK or nm in rules.FRONT_ART_BIG_BACK
+    a = rules.FRONT_ONLY.get(nm)
+    if a and art(a, 'f') and not art(a, 'b'): return False
+    if nm in rules.FRONT_ART_BIG_BACK: return False
+    return nm in rules.ENLARGE14_FRONT
+
+
 def main(out, with14=False):
     c = check.Ctx(os.path.join(dmrom.WORK, 'myver.gbc')); r = c.r; base = c.base
     name_id, keep_dirs = ids()
@@ -62,7 +77,7 @@ def main(out, with14=False):
         empty = nm == rules.EMPTY_NAME
         src = []
         for k in (0, 3):
-            src.append('egg' if empty else '1.4' if r.d[ent + k:ent + k + 3] == base.d[bent + k:bent + k + 3] else 'art')
+            src.append('egg' if empty else '1.4' if r.d[ent + k:ent + k + 3] == base.d[bent + k:bent + k + 3] or from14(nm, k == 3) else 'art')
         row = dict(no=n, ko=nm, grade=c.grade.get(n, ''), pokemon=n in c.pk,
                    line='→'.join(c.name(x) for x in chain(n)),
                    next=['%s %s' % (c.name(e[-1]), c.cond(e)) for e in c.evos(n)],
