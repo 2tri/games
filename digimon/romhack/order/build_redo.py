@@ -86,7 +86,7 @@ def main():
         en = en_of(did, x['ko'])
         rows.append(dict(no=no, ko=x['ko'], en=en, grade=x['grade'] if x['grade'] in GRADES else '기타', order=x.get('order', 999), src=x['src_f'],
                          gf=gf, gb=gb, newf=newf, newb=newb, chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''),
-                         plan={k: [HOW[v[0]], v[1], v[0]] for k, v in plan.items()},
+                         plan={k: ([HOW['have'], '받음 — 롬에 넣는 중', 'have'] if (newf if k == 'f' else newb) and v[0] == 'gemini' else [HOW[v[0]], v[1], v[0]]) for k, v in plan.items()},
                          g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
                          img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else ''))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
