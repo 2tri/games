@@ -56,6 +56,8 @@ SONGS.update({
     #   road1 = Butter-Fly 한 곡 전체 (절·후렴 160박, 전주 없음), road2 = The Biggest Dreamer (디지몬 테이머즈 OP, bitmidi):
     #   전주 리프는 1번만(0~16박), 반복은 48박부터 끝까지. 오른손 = 1번 트랙, 화음 = 2번 트랙 위, 베이스 = 3번 트랙 아래 한 옥타브 내림
     'road1': dict(SONGS['title'], start=0, end=160, drums='soft'),
+    # 2026-10-05 사용자 「(트레이너 전투) Butter-Fly 는 자주 들리는 게 좋아, 아주 유명하고 감성 있으니까」 (Target·Brave Heart 는 모름): Butter-Fly 한 곡 전체, 드럼 그대로
+    'trainer': dict(SONGS['title'], start=0, end=160),
     'road2': dict(mid='bigdreamer.mid', intro=(0, 16), start=48, end=144, grid=12,
                   lead=[('t', 1, 'top')], harm=[('t', 2, 'top')], bass=[('t', 3, 'bottom')], bass_shift=-12, drums='soft'),
     'annyeong': dict(mid='annyeong.mid', intro=(12, 16), start=16, end=48, grid=12, bpm=100,
