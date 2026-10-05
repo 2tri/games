@@ -1,0 +1,176 @@
+<title>디지몬스터 그림 주문서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 한 줄 문서: 보내는 법 → 남은 주문(카드) → 받은 그림(모음) → 다시 그리기 34칸(카드). 기존 주문서의 색·글꼴을 이어받음 */
+:root {
+  --paper: #F1F4EC; --card: #FAFBF7; --ink: #1D2620; --muted: #5B675D; --rule: #CCD5C5;
+  --gold: #8A5F00; --gold-bg: #F2E2B3; --blue: #2B5799; --blue-bg: #DCE6F5; --warn: #9B3B22; --warn-bg: #F6DCD3; --sprite: #FFFFFF; --sprite-ink: #5B675D;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #121714; --card: #18201B; --ink: #E3E9E1; --muted: #9AA69C; --rule: #2C3730;
+  --gold: #E3B84C; --gold-bg: #3A2F12; --blue: #93B4EC; --blue-bg: #1C2A42; --warn: #F0937A; --warn-bg: #3B1E16; --sprite: #F4F6F0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #121714; --card: #18201B; --ink: #E3E9E1; --muted: #9AA69C; --rule: #2C3730;
+  --gold: #E3B84C; --gold-bg: #3A2F12; --blue: #93B4EC; --blue-bg: #1C2A42; --warn: #F0937A; --warn-bg: #3B1E16; --sprite: #F4F6F0; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font: 15px/1.65 var(--body); padding: 0 16px; }
+main { max-width: 920px; margin: 0 auto; padding-block: 32px 72px; display: grid; gap: 40px; }
+h1, h2 { font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 30px; line-height: 1.25; }
+h2 { font-size: 19px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+h2 small { font: 400 13px var(--body); color: var(--muted); }
+p { margin: 0; max-width: 70ch; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); }
+.steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.steps li::marker { font-family: var(--mono); color: var(--muted); }
+.box { background: var(--card); border: 1px solid var(--rule); padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--ink); color: var(--paper); padding: 10px 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.bar b { font-family: var(--mono); font-weight: 500; }
+.bar .st { margin-left: auto; font-size: 12px; opacity: .8; }
+.cards { display: grid; gap: 12px; }
+.card { background: var(--card); border: 1px solid var(--rule); padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.card.prio { border: 2px solid var(--ink); }
+.head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.head .ko { font-size: 18px; font-weight: 600; }
+.head .en { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.chip { font: 500 12px/1 var(--mono); padding: 4px 6px; background: var(--gold-bg); color: var(--gold); white-space: nowrap; }
+.chip.need { background: var(--warn-bg); color: var(--warn); }
+.chip.no { background: var(--blue-bg); color: var(--blue); }
+.why { font-size: 13px; color: var(--warn); background: var(--warn-bg); padding: 4px 8px; }
+.use { font-size: 13px; color: var(--muted); }
+.pics { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.pic { background: var(--sprite); border: 1px solid var(--rule); padding: 6px; display: grid; gap: 4px; justify-items: center; }
+.pic img { image-rendering: pixelated; display: block; }
+.pic span { font: 11.5px var(--mono); color: var(--sprite-ink); }
+.pic.att { border: 2px solid var(--blue); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+button.copy, a.btn { font: 600 13px var(--body); border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 6px 12px; cursor: pointer; text-decoration: none; }
+a.btn, button.copy.alt { background: transparent; color: var(--ink); }
+button.copy:focus-visible, a.btn:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+details summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+details pre { white-space: pre-wrap; font: 12.5px/1.55 var(--mono); background: var(--paper); border: 1px solid var(--rule); padding: 10px; margin: 6px 0 0; overflow-x: auto; }
+details b { display: block; margin-top: 8px; font-size: 13px; }
+.checks { display: flex; gap: 18px; flex-wrap: wrap; }
+label.ck { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+label.ck input { width: 18px; height: 18px; accent-color: var(--blue); }
+label.ck.red input { accent-color: var(--warn); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+#redrawDone { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.tile .pics { flex-wrap: wrap; }
+.tile { background: var(--card); border: 1px solid var(--rule); padding: 8px; display: grid; gap: 6px; align-content: start; }
+.tile .pics { background: var(--sprite); padding: 6px; min-height: 70px; }
+.tile .pics img { image-rendering: pixelated; }
+.tile .nm { font-size: 14px; font-weight: 600; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 4px; }
+</style>
+<style>
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filters button { font: 600 13px var(--body); border: 1px solid var(--paper); background: transparent; color: var(--paper); padding: 4px 10px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.card.on { border: 2px solid var(--warn); }
+.note-q { font-size: 14px; background: var(--gold-bg); color: var(--ink); padding: 6px 10px; border-left: 3px solid var(--gold); }
+.plan { display: grid; gap: 4px; font-size: 13.5px; }
+.plan div { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.how { font: 500 12px/1 var(--mono); padding: 4px 6px; background: var(--blue-bg); color: var(--blue); }
+.how.gemini { background: var(--warn-bg); color: var(--warn); }
+.ph { width: 56px; height: 56px; display: grid; place-items: center; font: 10.5px/1.3 var(--body); color: var(--sprite-ink); border: 1px dashed var(--rule); text-align: center; }
+.hide { display: none !important; }
+#secs, .gsec, .cards { min-width: 0; }
+.pic img { max-width: 100%; height: auto; }
+</style>
+
+<main>
+  <header style="display:grid;gap:10px">
+    <div class="eyebrow">디지몬스터 내 버전 · 그림 주문서 v4 · 2026-10-05</div>
+    <h1>디지몬스터 그림 주문서</h1>
+    <p>「전투 그림 다시 뽑기」에서 체크하신 종과 메모를 바탕으로 새로 만들었습니다. 체크한 종이 빨간 테두리로 위에 오고, 「전체」로 바꾸면 게임에 나오는 모든 종의 지금 그림을 보면서 더 고를 수 있어요.</p>
+  </header>
+
+  <section>
+    <h2>재미나이 쓰는 법</h2>
+    <div class="box">
+      <ol class="steps">
+        <li>재미나이 새 대화에 <b>시작 규칙</b>을 한 번 붙여 넣습니다 ("OK" 가 오면 준비 끝).</li>
+        <li><b>앞모습</b>: 찾은 사진을 첨부 + 카드의 「FRONT」 한 줄. 사진 자세 그대로, 칸을 꽉 채우게 나와요.</li>
+        <li><b>뒷모습</b>: 이어서 「BACK」 한 줄 + 방금 받은(또는 받아 둔) 앞모습 첨부. 상반신 크게 나와요.</li>
+        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 규칙을 잊는 것 같으면 새 대화에서 1번부터.</li>
+      </ol>
+      <div class="row" id="primerRow"></div>
+      <details id="primerDet"><summary>시작 규칙 보기</summary><pre id="primerPre"></pre></details>
+    </div>
+  </section>
+
+  <div class="bar" role="status">
+    <span>체크 <b id="nChk">0</b></span><span>재미나이 <b id="nGem">0</b></span><span>전체 <b id="nAll">0</b></span>
+    <span class="filters"><button type="button" data-f="chk" aria-pressed="true">체크한 것</button><button type="button" data-f="all" aria-pressed="false">전체</button></span>
+  </div>
+
+  <div id="secs" style="display:grid;gap:40px"></div>
+  <footer><span>이 페이지에는 디지몬스터 롬의 그림이 들어 있어요. 링크는 다른 사람에게 공유하지 말아 주세요.</span></footer>
+</main>
+
+<script>
+const D = /*DATA*/null;
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const img = (src, scale) => { const i = new Image(); i.src = src; i.alt = ""; i.onload = () => { i.width = i.naturalWidth * scale; i.height = i.naturalHeight * scale; }; return i; };
+function copyBtn(label, text, cls) {
+  const b = el("button", "copy" + (cls ? " " + cls : ""), label); b.type = "button";
+  b.addEventListener("click", () => {
+    const done = () => { b.textContent = "복사했어요"; setTimeout(() => (b.textContent = label), 1400); };
+    try { navigator.clipboard.writeText(text).then(done, () => prompt("복사해서 쓰세요", text)); } catch (e) { prompt("복사해서 쓰세요", text); }
+  });
+  return b;
+}
+function pic(src, scale, cap, cls) { const p = el("div", "pic" + (cls ? " " + cls : "")); p.append(src ? img(src, scale) : el("div", "ph", "그림 없음"), el("span", "", cap)); return p; }
+let FILTER = "chk"; const cards = [];
+$("#primerPre").textContent = D.primer; $("#primerRow").append(copyBtn("재미나이 시작 규칙 복사", D.primer));
+const SIDE = { f: "앞", b: "뒤" };
+function card(r) {
+  const on = r.chk_f || r.chk_b;
+  const c = el("article", "card" + (on ? " on" : ""));
+  const h = el("div", "head"); h.append(el("span", "ko", r.ko), el("span", "en", r.en), el("span", "chip", r.grade), el("span", "chip no", "칸 " + r.no + " · " + (r.src === "art" ? "우리 그림" : "1.4 그림")));
+  if (r.chk_f) h.append(el("span", "chip need", "앞 다시")); if (r.chk_b) h.append(el("span", "chip need", "뒤 다시"));
+  c.append(h);
+  if (r.note) c.append(el("p", "note-q", "메모: " + r.note));
+  const ps = el("div", "pics");
+  ps.append(pic(r.gf, 1, "지금 게임 앞"), pic(r.gb, 1, "지금 게임 뒤"));
+  if (r.newf) ps.append(pic(r.newf, 1, "받아 둔 앞 (아직 롬 전)", "att"));
+  if (r.newb) ps.append(pic(r.newb, 1, "받아 둔 뒤 (아직 롬 전)", "att"));
+  c.append(ps);
+  const keys = Object.keys(r.plan);
+  if (keys.length) {
+    const pl = el("div", "plan");
+    for (const k of ["f", "b"]) if (r.plan[k]) { const d = el("div"); d.append(el("b", "", SIDE[k]), el("span", "how " + r.plan[k][2], r.plan[k][0]), el("span", "", r.plan[k][1])); pl.append(d); }
+    c.append(pl);
+  }
+  const rw = el("div", "row");
+  const wantF = r.plan.f ? r.plan.f[2] === "gemini" : !on, wantB = r.plan.b ? r.plan.b[2] === "gemini" : !on;
+  if (wantF) rw.append(copyBtn("FRONT 복사", r.g_front));
+  if (wantB) rw.append(copyBtn("BACK 복사", r.g_back, "alt"));
+  if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; rw.append(a); }
+  c.append(rw);
+  cards.push([r, c]); return c;
+}
+const secs = {};
+for (const g of D.grades) {
+  const rs = D.rows.filter((r) => r.grade === g); if (!rs.length) continue;
+  const s = el("section", "gsec"); const h = el("h2"); h.append(document.createTextNode(g)); const cnt = el("small"); h.append(cnt);
+  const list = el("div", "cards");
+  for (const r of [...rs.filter((r) => r.chk_f || r.chk_b), ...rs.filter((r) => !(r.chk_f || r.chk_b))]) list.append(card(r));
+  s.append(h, list); secs[g] = [s, rs, cnt]; $("#secs").append(s);
+}
+function refresh() {
+  for (const [r, c] of cards) c.classList.toggle("hide", FILTER === "chk" && !(r.chk_f || r.chk_b));
+  for (const [s, rs, cnt] of Object.values(secs)) { const n = rs.filter((r) => r.chk_f || r.chk_b).length; cnt.textContent = rs.length + "종 · 체크 " + n; s.classList.toggle("hide", FILTER === "chk" && !n); }
+}
+$("#nAll").textContent = D.rows.length; $("#nChk").textContent = D.rows.filter((r) => r.chk_f || r.chk_b).length;
+$("#nGem").textContent = D.rows.reduce((n, r) => n + Object.values(r.plan).filter((p) => p[2] === "gemini").length, 0) + "장";
+for (const b of document.querySelectorAll(".filters button")) b.addEventListener("click", () => { FILTER = b.dataset.f; for (const x of document.querySelectorAll(".filters button")) x.setAttribute("aria-pressed", String(x === b)); refresh(); });
+refresh();
+</script>

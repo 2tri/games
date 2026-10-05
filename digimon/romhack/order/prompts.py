@@ -125,7 +125,7 @@ ALWAYS
 
 When I send a picture and write "FRONT: <name>"
 - Convert THAT picture into the sprite exactly as it is: same pose, same facing direction, same proportions, same details. Change only the art style.
-- The whole character visible, standing on the bottom edge, filling about 90% of the image.
+- Make it BIG: the whole character visible, standing on the bottom edge, filling the square as much as possible (about 95% of the height or width).
 
 When I then write "BACK" (or "BACK: <name>" with a front sprite attached)
 - Draw the BACK sprite of the same character, like the player's own monster in a classic Game Boy battle screen.
