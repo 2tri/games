@@ -154,8 +154,8 @@ function card(r) {
   if (r.note) c.append(el("p", "note-q", "메모: " + r.note));
   const ps = el("div", "pics");
   ps.append(pic(r.gf, 1, "지금 게임 앞"), pic(r.gb, 1, "지금 게임 뒤"));
-  if (r.newf) ps.append(pic(r.newf, 1, "받아 둔 앞 (아직 롬 전)", "att"));
-  if (r.newb) ps.append(pic(r.newb, 1, "받아 둔 뒤 (아직 롬 전)", "att"));
+  if (r.newf) ps.append(pic(r.newf, 1, "받은 앞 (롬에 넣음·넣는 중)", "att"));
+  if (r.newb) ps.append(pic(r.newb, 1, "받은 뒤 (롬에 넣음·넣는 중)", "att"));
   c.append(ps);
   if (r.newf || r.newb) {
     const ck = el("div", "checks");
