@@ -81,6 +81,10 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
 .how.gemini { background: var(--warn-bg); color: var(--warn); }
 .ph { width: 56px; height: 56px; display: grid; place-items: center; font: 10.5px/1.3 var(--body); color: var(--sprite-ink); border: 1px dashed var(--rule); text-align: center; }
 .hide { display: none !important; }
+.memo { display: grid; gap: 4px; font-size: 13.5px; }
+.memo textarea { font: 14px/1.4 var(--body); padding: 6px 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); resize: vertical; width: 100%; box-sizing: border-box; }
+.b2 { display: inline-flex; gap: 4px; align-items: stretch; flex-wrap: wrap; }
+.b2 select { font: 13px var(--body); padding: 2px 4px; }
 #secs, .gsec, .cards { min-width: 0; }
 .pic img { max-width: 100%; height: auto; }
 </style>
@@ -96,13 +100,12 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <h2>재미나이 쓰는 법</h2>
     <div class="box">
       <ol class="steps">
-        <li>주문문은 <b>모든 종이 똑같아요</b> (색은 받은 뒤 제가 넣어요). 아래 두 개만 쓰면 됩니다. 카드의 버튼도 같은 글이에요.</li>
-        <li><b>앞모습</b>: 찾은 사진을 첨부 + 「앞모습 주문문」. 사진을 그대로 도트로 — 뒷모습 사진이면 뒷모습 그대로 나와요.</li>
-        <li><b>뒷모습</b>: 받은(또는 받아 둔) 우리 앞모습을 첨부 + 「뒷모습 주문문」. 상반신 크게.</li>
-        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 상반신 자르기·방향 뒤집기·색은 제가 해요.</li>
+        <li>주문문은 <b>카드마다</b> 있어요 (디지몬 이름이 들어가 있음). 색은 받은 뒤 제가 넣어요.</li>
+        <li><b>앞모습</b>: 「공식 그림 열기」로 그림 저장 → 첨부 + 「앞모습 주문문」.</li>
+        <li><b>뒷모습 ①</b>: 우리 앞모습(카드의 「받은 앞」이나 「지금 게임 앞」)을 첨부 + 「뒷모습 ① 주문문」. 사진 없이 이어서 다시 시도해도 돼요.</li>
+        <li><b>뒷모습 ②</b>: ①로 끝까지 안 나오면 뒷모습 사진을 찾아 첨부 + 「뒷모습 ② 주문문」. 쳐다보는 방향을 골라서 복사하세요.</li>
+        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 고칠 점은 카드의 <b>비고</b>에 적으면 제가 읽어요.</li>
       </ol>
-      <div class="row" id="commonRow"></div>
-      <details id="commonDet"><summary>주문문 보기</summary><pre id="commonPre"></pre></details>
     </div>
   </section>
 
@@ -130,9 +133,15 @@ function copyBtn(label, text, cls) {
 }
 function blank(cap) { const p = el("div", "pic"); p.append(el("div", "ph", "빈칸"), el("span", "", cap)); return p; }
 function pic(src, scale, cap, cls) { const p = el("div", "pic" + (cls ? " " + cls : "")); p.append(src ? img(src, scale) : el("div", "ph", "그림 없음"), el("span", "", cap)); return p; }
-let FILTER = "all"; let Q = ""; const cards = []; const boxes = {}; const useState = {}; let db = null; const LS = "dmorder4";
+let FILTER = "all"; let Q = ""; const memos = {}; const cards = []; const boxes = {}; const useState = {}; let db = null; const LS = "dmorder4";
 function lsLoad() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
 function lsSave() { try { localStorage.setItem(LS, JSON.stringify(useState)); } catch (e) {} }
+const MLS = "dmorder4memo";
+async function saveMemo(id, text) {
+  if (!db) { try { const m = JSON.parse(localStorage.getItem(MLS) || "{}"); m[id] = text; localStorage.setItem(MLS, JSON.stringify(m)); } catch (e) {} return; }
+  try { await db.collection("memo").doc(String(id)).set({ text, at: new Date().toISOString() }); $("#dbState").textContent = "비고 저장됨"; }
+  catch (e) { $("#dbState").textContent = "비고 저장 실패 · 다시 적어 주세요"; }
+}
 function box(id, label) {
   const l = el("label", "ck"); const i = document.createElement("input"); i.type = "checkbox"; i.disabled = true;
   i.addEventListener("change", async () => {
@@ -145,7 +154,7 @@ function box(id, label) {
   });
   boxes[id] = i; l.append(i, document.createTextNode(label)); return l;
 }
-$("#commonPre").textContent = D.common + "\n\n───── 뒷모습 ─────\n" + D.common_b; $("#commonRow").append(copyBtn("앞모습 주문문 복사 (사진 그대로 도트로)", D.common), copyBtn("뒷모습 주문문 복사", D.common_b, "alt"));
+
 const SIDE = { f: "앞", b: "뒤" };
 const day = (t) => { if (!t) return ""; const d = new Date(t * 1000); return (d.getMonth() + 1) + "/" + d.getDate() + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
 const recvT = (r) => Math.max(r.tf || 0, r.tb || 0);
@@ -177,13 +186,24 @@ function card(r) {
     for (const k of ["f", "b"]) if (r.plan[k]) { const d = el("div"); d.append(el("b", "", SIDE[k]), el("span", "how " + r.plan[k][2], r.plan[k][0]), el("span", "", r.plan[k][1])); pl.append(d); }
     c.append(pl);
   }
+  // 비고 (db memo — Claude 가 읽음)
+  const mw = el("label", "memo"); mw.append(el("b", "", "비고"));
+  const ta = el("textarea"); ta.rows = 2; ta.placeholder = "예: 뒷모습 확대가 너무 됨 → 덜 키우기 / 뒤는 새로 받기"; ta.value = r.memo || "";
+  let tm = null; ta.addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(() => saveMemo(r.no || r.ko, ta.value), 700); });
+  memos[r.no || r.ko] = ta; mw.append(ta); c.append(mw);
   const rw = el("div", "row");
-  const wantF = true, wantB = true;   // 사용자: 확대해서 쓰든 아니든 모든 카드에 앞·뒤 주문문
-  if (wantF) rw.append(copyBtn("앞모습 주문문 복사", r.g_front));
-  if (wantB) rw.append(copyBtn("뒷모습 주문문 복사", r.g_back, "alt"));
+  rw.append(copyBtn("앞모습 주문문", r.g_front));
+  rw.append(copyBtn("뒷모습 ① (우리 앞모습 첨부)", r.g_back, "alt"));
+  const look = el("select"); look.setAttribute("aria-label", "뒷모습 ② 방향");
+  for (const [v, t] of [["upper-right (we see the back; it faces right-up)", "오른쪽 위를 봄"], ["upper-left (we see the back; it faces left-up)", "왼쪽 위를 봄"], ["same direction as in the attached picture", "사진 그대로"]]) { const o = el("option", "", t); o.value = v; look.append(o); }
+  const bp = () => r.g_back_photo.replace("{LOOK}", look.value);
+  const b2 = el("button", "copy alt", "뒷모습 ② (뒷모습 사진 첨부)"); b2.type = "button";
+  b2.addEventListener("click", () => { const t = bp(); const done = () => { b2.textContent = "복사했어요"; setTimeout(() => (b2.textContent = "뒷모습 ② (뒷모습 사진 첨부)"), 1400); }; try { navigator.clipboard.writeText(t).then(done, () => prompt("복사해서 쓰세요", t)); } catch (x) { prompt("복사해서 쓰세요", t); } });
+  const g2 = el("span", "b2"); g2.append(b2, look); rw.append(g2);
   if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; rw.append(a); }
   c.append(rw);
-  if (wantF || wantB) { const det = el("details"); det.append(el("summary", "", "주문문 보기")); if (wantF) det.append(el("b", "", "앞모습"), el("pre", "", r.g_front)); if (wantB) det.append(el("b", "", "뒷모습"), el("pre", "", r.g_back)); c.append(det); }
+  const det = el("details"); det.append(el("summary", "", "주문문 보기")); const p2 = el("pre", "", bp()); look.addEventListener("change", () => (p2.textContent = bp()));
+  det.append(el("b", "", "앞모습"), el("pre", "", r.g_front), el("b", "", "뒷모습 ①"), el("pre", "", r.g_back), el("b", "", "뒷모습 ②"), p2); c.append(det);
   cards.push([r, c]); return c;
 }
 const secs = {};
@@ -216,8 +236,10 @@ function applyUse() { for (const [id, v] of Object.entries(useState)) if (boxes[
 (async () => {
   try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
   for (const i of Object.values(boxes)) i.disabled = false;
-  if (!db) { Object.assign(useState, lsLoad()); applyUse(); $("#dbState").textContent = "체크는 이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return; }
+  if (!db) { try { const m = JSON.parse(localStorage.getItem(MLS) || "{}"); for (const [k, v] of Object.entries(m)) if (memos[k]) memos[k].value = v; } catch (e) {}
+    Object.assign(useState, lsLoad()); applyUse(); $("#dbState").textContent = "체크는 이 브라우저에만 저장돼요 (Claude가 못 읽음)"; return; }
   $("#dbState").textContent = "체크는 바로 저장되고 Claude가 읽어요";
+  db.collection("memo").onSnapshot((snap) => { for (const d of snap.docs) { const ta = memos[d.id]; if (ta && document.activeElement !== ta) ta.value = d.data().text || ""; } }, () => {});
   db.collection("use").onSnapshot((snap) => { for (const d of snap.docs) useState[d.id] = d.data(); applyUse(); }, () => { $("#dbState").textContent = "연결이 끊겼어요 · 새로 고침"; });
 })();
 </script>

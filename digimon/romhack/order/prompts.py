@@ -180,3 +180,32 @@ COMMON_BACK = ("The attached image is our finished FRONT battle sprite of a Digi
                "Fill the whole square; wing or tail tips may go outside the frame.\n"
                "Same parts in the same tones as the front sprite. Do not redesign it.\n"
                + _STYLE)
+
+
+# 2026-10-05 사용자: 공통 주문문을 카드마다 (이름 넣어서). 뒷모습은 ① 우리 앞모습 첨부 ② 뒷모습 사진 첨부(방향 지정) 두 가지
+BABY_GRADES = ('유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ')
+
+
+def _body(grade):
+    if grade in BABY_GRADES: return "Show the WHOLE body (it is a small baby monster), big, filling the square.\n"
+    if grade == '성장기': return "Show the head and most of the body (cut off only the feet), big, filling the square.\n"
+    return ("Show only the UPPER BODY, big: head, shoulders, back, arms and the start of wings or tail. The lower body is cut off by the bottom edge. "
+            "Fill the whole square; wing or tail tips may go outside the frame.\n")
+
+
+def card_front(en):
+    return f"This is {en}, a Digimon.\n" + COMMON_CONVERT
+
+
+def card_back(en, grade):
+    return (f"The attached image is our finished FRONT battle sprite of {en}, a Digimon. Draw the BACK battle sprite of the SAME character in the same pixel style.\n"
+            "View: like the player's own monster in a classic Game Boy battle screen. Camera behind and a little above it; the character faces AWAY toward the upper-right, "
+            "so we see its back, one shoulder and a thin sliver of the side of its head. NOT straight from behind, NOT a mirror of the front, no face.\n"
+            + _body(grade) + "Same parts in the same tones as the front sprite. Do not redesign it.\n" + _STYLE)
+
+
+def card_back_photo(en, grade, look='{LOOK}'):
+    """뒷모습 사진을 첨부할 때. {LOOK} 은 페이지에서 고른 방향으로 바뀜"""
+    return (f"The attached picture shows {en}, a Digimon, from behind. Convert it into a pixel-art BACK battle sprite for a Game Boy Color monster game.\n"
+            "Keep it a BACK view: we see its back, no face. Keep the same character, parts and proportions; change only the art style. Do not redesign it.\n"
+            f"Direction: the character looks toward the {look}.\n" + _body(grade) + _STYLE)

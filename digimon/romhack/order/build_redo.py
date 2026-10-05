@@ -12,6 +12,15 @@ GRADES = ['유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ', '성�
 # 사용자 메모를 읽고 정한 할 일 (side: 'f'|'b'). how: gemini = 재미나이로 새로 / have = 받아 둔 그림 씀 / claude = 내가 고침 / ask = 확인 필요
 PLAN = {
     3: {'f': ('gemini', '새로 뽑기'), 'b': ('claude', '확대 적용됨 (지금 게임 그림 = 확대본)')},
+    61: {'f': ('have', '새로 받음 (금색 갈기)'), 'b': ('have', '새로 받음 — 좌우 반전, 금색 갈기')},
+    18: {'f': ('have', '새로 받음 (1.4 색)'), 'b': ('have', '새로 받음 (1.4 색)')},
+    62: {'f': ('have', '새로 받음 (1.4 색 — 앞만)')},
+    176: {'f': ('have', '새로 받음 (1.4 색 — 앞만)')},
+    165: {'f': ('have', '새로 받음 (몸 어두운 보라, 지금 게임 색)'), 'b': ('have', '새로 받음')},
+    128: {'f': ('have', '새로 받음 (지금 게임 색 그대로 — 앞만)')},
+    70: {'f': ('have', '새로 받음'), 'b': ('have', '새로 받음 (몸 검정·초록, 날개 흰색)')},
+    118: {'b': ('have', '새로 받음 — 좌우 반전, 가로 0.8 로 덜 근육질·왜소하게')},
+    163: {'b': ('claude', '확대 너무 됨 → 몸 전체로 다시 (새로 받을 필요 없음)')},
     5: {'b': ('gemini', '90° 뒤가 아니라 옆뒤(3/4)로 새로')},
     8: {'b': ('gemini', '새로')},
     12: {'b': ('gemini', '새로')},
@@ -31,7 +40,7 @@ PLAN = {
     109: {'f': ('gemini', '새로 (워그레이몬 색만 바꾼 듯 뭉개짐)'), 'b': ('gemini', '새로')},
     111: {'f': ('have', '받아 둔 앞모습 씀')},
     112: {'b': ('claude', '확대 적용됨 (지금 게임 그림 = 확대본) (얼굴~몸 중간이 크게 보임)')},
-    117: {'f': ('gemini', '아직 못 받음 (예전에 받은 건 두리몬 그림이었음 → 지움). 받을 때까지 1.4 확대'), 'b': ('claude', '확대 적용됨 (지금 게임 그림 = 확대본)')},
+    117: {'f': ('have', '새로 받음 (진짜 원뿔몬)'), 'b': ('have', '새로 받음 — 오른쪽 위를 봄')},
     129: {'f': ('gemini', '새로 — 작고 생김새가 까다로워 설명을 넣은 주문문'), 'b': ('gemini', '새로 — 같은 설명')},
     130: {'b': ('gemini', '새로')},
     133: {'f': ('gemini', '새로 그리기 (사용자: 확대본 말고 새로)'), 'b': ('gemini', '새로 그리기')},
@@ -60,6 +69,15 @@ HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude�
 def b64(p): return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').read()).decode() if p and os.path.exists(p) else ''
 
 
+def game_art(did, side):
+    """지금 롬에 들어간 우리 그림 = allmons.json 을 만든 커밋 때의 art (그 뒤에 바뀐 건 아직 롬에 없음)"""
+    p = WEB + 'art/%s-%s.png' % (did, side)
+    if recv_time(p) <= SYNC and side not in PENDING.get(did, []): return b64(p)
+    c = subprocess.run(['git', 'log', '-1', '--format=%H', '--', HERE + '/allmons.json'], cwd=WEB, capture_output=True, text=True).stdout.strip()
+    r = subprocess.run(['git', 'show', '%s:./%s' % (c, os.path.relpath(p, WEB))], cwd=WEB, capture_output=True)
+    return 'data:image/png;base64,' + base64.b64encode(r.stdout).decode() if r.returncode == 0 and r.stdout else ''
+
+
 def recv_time(path):
     """받은 날짜 = 그 그림을 마지막으로 커밋한 때 (아직 커밋 전이면 파일 시각)"""
     if not os.path.exists(path): return 0
@@ -73,25 +91,31 @@ def en_of(did, ko):
                                     'lilimon': 'Lilimon', 'fladramon': 'Flamedramon', 'lighdramon': 'Raidramon', 'megaseadramon': 'MegaSeadramon'}.get(did) or (did or ko).capitalize())
 
 
+SYNC = 0
+PENDING = {k: v for k, v in json.load(open(HERE + '/pending.json')).items() if k != '_'}
+
+
 def row(x, no, did, ko, grade, order, src_f, src_b, gf, gb, newf, newb, r, plan):
     tf, tb = recv_time(WEB + 'art/%s-f.png' % did) if newf else 0, recv_time(WEB + 'art/%s-b.png' % did) if newb else 0
-    inrom = {'f': src_f == 'art', 'b': src_b == 'art'}
+    pend = PENDING.get(did, [])
+    inrom = {k: (src_f if k == 'f' else src_b) == 'art' and k not in pend and (tf if k == 'f' else tb) <= SYNC for k in 'fb'}   # 롬 세션이 allmons.json 을 다시 만든 뒤에 바뀐 그림은 아직
     pl = {}
     for k in ('f', 'b'):
         got = newf if k == 'f' else newb
-        if got and not inrom[k]: pl[k] = [HOW['have'], '받음 — 게임엔 아직 안 들어감' + (' — %s' % plan[k][1] if k in plan and plan[k][0] in ('claude', 'have') else ''), 'have']
+        if got and not inrom[k]: pl[k] = [HOW['have'], '받음 — 게임엔 아직 (모아서 롬 세션에 전달)' + (' — %s' % plan[k][1] if k in plan and plan[k][0] in ('claude', 'have') else ''), 'have']
         elif got: pl[k] = ['게임에 들어감', '받은 그림이 게임에 들어가 있음', 'done']
         elif k in plan: pl[k] = [HOW[plan[k][0]], plan[k][1], plan[k][0]]
     return dict(no=no, ko=ko, en=en_of(did, ko), grade=grade if grade in GRADES else '기타', order=order, src=src_f,
                 gf=gf, gb=gb, newf=newf, newb=newb, tf=tf, tb=tb, rom_f=inrom['f'], rom_b=inrom['b'], listed=bool(x),
                 chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''), plan=pl,
-                g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
+                g_front=prompts.card_front(en_of(did, ko)), g_back=prompts.card_back(en_of(did, ko), grade), g_back_photo=prompts.card_back_photo(en_of(did, ko), grade),   # 카드마다 이름 넣은 주문문
                 img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else '')
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--r14', required=True); ap.add_argument('--redo', required=True)
     a = ap.parse_args()
+    global SYNC; SYNC = recv_time(HERE + '/allmons.json')
     L = json.load(open(HERE + '/allmons.json')); r14 = json.load(open(a.r14))
     redo = {}
     for f in glob.glob(os.path.join(a.redo, '*.json')):
@@ -101,8 +125,8 @@ def main():
         if x['src_f'] == 'egg' or x['ko'] in ('디지문자',): continue
         no, did = x['no'], x['id']
         g = r14.get(str(no)) or [None, None]
-        gf = (b64(WEB + 'art/%s-f.png' % did) if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
-        gb = (b64(WEB + 'art/%s-b.png' % did) if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
+        gf = (game_art(did, 'f') if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
+        gb = (game_art(did, 'b') if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
         # 받은 그림 = art/<id>-f/-b.png 전부 (롬에 들어갔든 아니든 늘 보임 — 2026-10-05 사용자: 주문서는 받은 걸 확인하는 곳)
         newf = b64(WEB + 'art/%s-f.png' % did) if did else ''
         newb = b64(WEB + 'art/%s-b.png' % did) if did else ''
