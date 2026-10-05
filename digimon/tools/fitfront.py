@@ -15,7 +15,8 @@ SIZE = {'성장기': 48}
 MIN_FILL = {'성장기': 0.36}; MIN_FILL_DEF = 0.37
 MAX_CUT = 0.22                       # 아래로 최대 22% 까지만 자름 (발·옷자락 정도)
 BABY = ('유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ')
-SKIP = set()                         # 사용자가 「그대로」라고 한 종
+SKIP = set()
+STRICT = {'leomon'}                 # 손으로 칠한 검정·흰 자리까지 옮길 종 (레오몬 바지·갈기)                         # 사용자가 「그대로」라고 한 종
 OUT = os.path.join(WEB, 'art', 'src', 'fitfront')
 
 
@@ -66,7 +67,8 @@ def main():
         if did not in G: continue
         r = plan(did, G[did])
         if not r: continue
-        fill, cut, size = r; new = make(did, cut, size)
+        fill, cut, size = r
+        new = refit(did, cut, size, strict=did in STRICT)[0] if glob.glob(os.path.join(WEB, 'art', 'src', did + '-f_ai.*')) else make(did, cut, size)   # 원본이 있으면 원본에서 다시 (키우면 뭉개짐)
         nf = (np.asarray(new)[..., 3] > 128).sum() / size ** 2
         print('%-24s %-4s fill %.2f → %.2f (아래 %d%% 자름)' % (did, G[did], fill, nf, cut * 100))
         if a.install:
@@ -87,3 +89,58 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# 2026-10-05 사용자: 「억지로 키워서 뭉개짐 — 내가 준 이미지 그대로 넣으면 괜찮지 않았나」
+# → 작은 도트 그림을 키우지 않고, 받은 원본(art/src/<id>-f_ai)에서 아래를 잘라 그 크기로 바로 도트화. 색은 원래 art 의 같은 자리 색을 옮김(손본 색 유지)
+def refit(did, cut, size, strict=False):
+    """strict=True: 옛 그림에서 손으로 칠한 검정·흰 자리 색까지 옮김(레오몬 바지·갈기). 기본은 몸 색만"""
+    sys.path.insert(0, os.path.join(WEB, 'romhack'))
+    import ingest, snapc
+    orig = os.path.join(OUT, did + '-f_orig.png')
+    if not os.path.exists(orig): orig = os.path.join(WEB, 'art', did + '-f.png')
+    o = np.asarray(Image.open(orig).convert('RGBA'))
+    src = next(iter(glob.glob(os.path.join(WEB, 'art', 'src', did + '-f_ai.*'))))
+    im = Image.open(src).convert('RGB'); g = np.asarray(im.convert('L')).astype(int)
+    ys, xs = np.where(g < 235); y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    part = im.crop((max(0, x0 - 4), max(0, y0 - 4), min(im.width, x1 + 4), y0 + int((y1 - y0) * (1 - cut))))
+    oc = [c for c in {tuple(int(v) for v in p[:3]) for p in o.reshape(-1, 4) if p[3] > 128} if 40 < max(c) and min(c) < 235]
+    oc = sorted(oc, key=lambda c: -sum(c)); pal = [list(oc[0]), list(oc[-1])] if len(oc) >= 2 else [list(oc[0])] * 2
+    t, p4 = ingest.convert(part, size, pal, False, pal)
+    new = np.asarray(snapc.to_image(t, p4).convert('RGBA')).copy()
+    # 원래 art 의 위쪽(1-cut) 부분과 자리 맞추기 (가로 뒤집힘도 확인)
+    oa = o[..., 3] > 128; oys, oxs = np.where(oa); oy0, oy1, ox0, ox1 = oys.min(), oys.max() + 1, oxs.min(), oxs.max() + 1
+    oy1 = oy0 + int((oy1 - oy0) * (1 - cut))
+    na = new[..., 3] > 128; nys, nxs = np.where(na); ny0, ny1, nx0, nx1 = nys.min(), nys.max() + 1, nxs.min(), nxs.max() + 1
+    def look(flip):
+        yy = oy0 + ((np.arange(new.shape[0]) - ny0) * (oy1 - oy0) / max(1, ny1 - ny0)).astype(int)
+        xx = ((np.arange(new.shape[1]) - nx0) * (ox1 - ox0) / max(1, nx1 - nx0)).astype(int)
+        xx = (ox1 - 1 - xx) if flip else (ox0 + xx)
+        return np.clip(yy, 0, o.shape[0] - 1), np.clip(xx, 0, o.shape[1] - 1)
+    best = None
+    for flip in (False, True):
+        yy, xx = look(flip); m = oa[yy][:, xx]; s = (m & na).sum() / max(1, (m | na).sum())
+        if best is None or s > best[0]: best = (s, flip)
+    if best[1]: new = new[:, ::-1].copy(); na = new[..., 3] > 128; nys, nxs = np.where(na); nx0, nx1 = nxs.min(), nxs.max() + 1
+    yy, xx = look(False)
+    blk = (new[..., :3].astype(int).sum(-1) < 120)
+    from collections import Counter
+    for y in range(new.shape[0]):
+        for x in range(new.shape[1]):
+            if not na[y, x] or blk[y, x]: continue
+            Y, X = yy[y], xx[x]
+            nb = [tuple(int(v) for v in o[min(max(Y + dy, 0), o.shape[0] - 1), min(max(X + dx, 0), o.shape[1] - 1), :3])
+                  for dy in (-1, 0, 1) for dx in (-1, 0, 1) if o[min(max(Y + dy, 0), o.shape[0] - 1), min(max(X + dx, 0), o.shape[1] - 1), 3] > 128]
+            if not nb: continue
+            cnt = Counter(nb); k = sum(cnt.values())
+            dark = [c for c in cnt if sum(c) < 120]
+            if strict and dark and cnt[dark[0]] >= 6: new[y, x, :3] = dark[0]; continue    # 옛 그림에서 검게 칠한 곳(레오몬 바지)
+            body = [(c, n) for c, n in cnt.most_common() if sum(c) >= 120]
+            if not body: continue
+            c0 = body[0][0]
+            white_new = min(new[y, x, :3]) > 235
+            if white_new and not strict: continue
+            if white_new and min(c0) > 235: continue                    # 흰 곳은 흰색
+            if white_new and body[0][1] < 5: continue
+            new[y, x, :3] = c0
+    return Image.fromarray(new), best[0]
