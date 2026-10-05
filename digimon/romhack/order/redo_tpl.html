@@ -170,7 +170,7 @@ function card(r) {
     c.append(pl);
   }
   const rw = el("div", "row");
-  const wantF = r.plan.f ? r.plan.f[2] === "gemini" : !on, wantB = r.plan.b ? r.plan.b[2] === "gemini" : !on;
+  const wantF = true, wantB = true;   // 사용자: 확대해서 쓰든 아니든 모든 카드에 앞·뒤 주문문
   if (wantF) rw.append(copyBtn("앞모습 주문문 복사", r.g_front));
   if (wantB) rw.append(copyBtn("뒷모습 주문문 복사", r.g_back, "alt"));
   if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; rw.append(a); }
