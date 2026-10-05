@@ -52,6 +52,12 @@ SONGS.update({
     # 2026-10-05 사용자 「안녕 디지몬 같은 노래는 잔잔하게 배경음으로」: 장숙희 「안녕 디지몬」(KBS 엔딩, 마장조) 피아노 MIDI 의 앞 12마디
     #   (전주 4 + 1절 8, midiex 공개 미리듣기 30초 — 전체 파일은 로그인·댓글이 있어야 받음). 오른손 = 멜로디(한 옥타브 내림), 왼손 위 = 펼침화음, 왼손 아래 = 베이스, 드럼 없음
     #   사용자 「맵 옮길 때마다 처음부터 나오는데 앞의 띠딩띠딩 4번이 거슬림, 한 번만 하고 바로 노래」: 전주는 1마디만 한 번, 반복은 1절부터
+    # 2026-10-05 사용자 「대중적인 노래가 도로에서 나오면 좋겠네」: 도로 곡 두 개
+    #   road1 = Butter-Fly 한 곡 전체 (절·후렴 160박, 전주 없음), road2 = The Biggest Dreamer (디지몬 테이머즈 OP, bitmidi):
+    #   전주 리프는 1번만(0~16박), 반복은 48박부터 끝까지. 오른손 = 1번 트랙, 화음 = 2번 트랙 위, 베이스 = 3번 트랙 아래 한 옥타브 내림
+    'road1': dict(SONGS['title'], start=0, end=160, drums='soft'),
+    'road2': dict(mid='bigdreamer.mid', intro=(0, 16), start=48, end=144, grid=12,
+                  lead=[('t', 1, 'top')], harm=[('t', 2, 'top')], bass=[('t', 3, 'bottom')], bass_shift=-12, drums='soft'),
     'annyeong': dict(mid='annyeong.mid', intro=(12, 16), start=16, end=48, grid=12, bpm=100,
                      lead=[('t', 1, 'top')], lead_shift=-12, harm=[('t', 2, 'top', 50, 127), ('t', 1, 'second', 0, 127, -12)], bass=[('t', 2, 'bottom', 0, 49)], drums='none'),
 })

@@ -301,6 +301,11 @@ def rules(c, out):
         if len(set(got)) != 1 or got[0] != N[bb]: r19.append((old, '%s 이어야 하는데 %s' % (bb, '·'.join(c.name(g) for g in got))))
     rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in ('아구몬', '파피몬', '브이몬')),
         lambda b: '%s 공: %s' % b)
+    # R20 파워디지몬(02) 이후 디지몬 이름이 롬 이름표에 없음 (rules.LATE_SERIES·LATE_EXTRA, series.json 분류, 사용자 2026-10-05)
+    SER = {v['name']: v['series'] for v in json.load(open(os.path.join(HERE, 'series.json'))).values()}
+    r20 = [(n, c.name(n)) for n in range(1, 252) if SER.get(c.name(n)) in RU.LATE_SERIES or c.name(n) in RU.LATE_EXTRA]
+    rep('R20', r20, '파워디지몬 이후 디지몬 이름 0 (테이머즈·그 뒤 작품·애니 미등장 %d종 분류)' % sum(1 for v in SER.values() if v in RU.LATE_SERIES),
+        lambda b: '%d %s' % b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
