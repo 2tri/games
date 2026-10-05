@@ -163,15 +163,16 @@ const isOn = (r) => hit(r) && (FILTER === "all" || (FILTER === "chk" ? (r.chk_f 
 function card(r) {
   const on = r.chk_f || r.chk_b;
   const c = el("article", "card" + (on ? " on" : ""));
-  const h = el("div", "head"); h.append(el("span", "ko", r.ko), el("span", "en", r.en), el("span", "chip", r.grade), el("span", "chip no", "칸 " + r.no + " · " + (r.src === "art" ? "우리 그림" : "1.4 그림")));
+  const h = el("div", "head"); h.append(el("span", "ko", r.ko), el("span", "en", r.en), el("span", "chip", r.grade), (r.no ? el("span", "chip no", "칸 " + r.no + " · " + (r.src === "art" ? "우리 그림" : r.src === "2.0" ? "2.0 그림 (임시)" : "1.4 그림")) : el("span", "chip need", "2차 주문")));
   if (r.chk_f) h.append(el("span", "chip need", "앞 다시")); if (r.chk_b) h.append(el("span", "chip need", "뒤 다시"));
   c.append(h);
   if (r.note) c.append(el("p", "note-q", "메모: " + r.note));
   const ps = el("div", "pics");
-  ps.append(pic(r.gf, 1, "지금 게임 앞"), pic(r.gb, 1, "지금 게임 뒤"));
+  const person = r.grade === "사람";
+  if (!person) ps.append(pic(r.gf, 1, "지금 게임 앞"), pic(r.gb, 1, "지금 게임 뒤"));
   const st = (t, rom) => " · " + day(t) + (rom ? " · 게임에 들어감" : " · 게임엔 아직");
   ps.append(r.newf ? pic(r.newf, 1, "받은 앞" + st(r.tf, r.rom_f), "att") : blank("받은 앞 · 없음"));
-  ps.append(r.newb ? pic(r.newb, 1, "받은 뒤" + st(r.tb, r.rom_b), "att") : blank("받은 뒤 · 없음"));
+  if (!person) ps.append(r.newb ? pic(r.newb, 1, "받은 뒤" + st(r.tb, r.rom_b), "att") : blank("받은 뒤 · 없음"));
   if (!r.listed) h.append(el("span", "chip need", "게임 목록에 아직 없음"));
   c.append(ps);
   if (r.newf || r.newb) {
@@ -193,13 +194,13 @@ function card(r) {
   memos[r.no || r.ko] = ta; mw.append(ta); c.append(mw);
   const rw = el("div", "row");
   rw.append(copyBtn("앞모습 주문문", r.g_front));
-  rw.append(copyBtn("뒷모습 ① (우리 앞모습 첨부)", r.g_back, "alt"));
+  if (r.g_back) rw.append(copyBtn("뒷모습 ① (우리 앞모습 첨부)", r.g_back, "alt"));
   const look = el("select"); look.setAttribute("aria-label", "뒷모습 ② 방향");
   for (const [v, t] of [["upper-right (we see the back; it faces right-up)", "오른쪽 위를 봄"], ["upper-left (we see the back; it faces left-up)", "왼쪽 위를 봄"], ["same direction as in the attached picture", "사진 그대로"]]) { const o = el("option", "", t); o.value = v; look.append(o); }
   const bp = () => r.g_back_photo.replace("{LOOK}", look.value);
   const b2 = el("button", "copy alt", "뒷모습 ② (뒷모습 사진 첨부)"); b2.type = "button";
   b2.addEventListener("click", () => { const t = bp(); const done = () => { b2.textContent = "복사했어요"; setTimeout(() => (b2.textContent = "뒷모습 ② (뒷모습 사진 첨부)"), 1400); }; try { navigator.clipboard.writeText(t).then(done, () => prompt("복사해서 쓰세요", t)); } catch (x) { prompt("복사해서 쓰세요", t); } });
-  const g2 = el("span", "b2"); g2.append(b2, look); rw.append(g2);
+  const g2 = el("span", "b2"); g2.append(b2, look); if (r.g_back_photo) rw.append(g2);
   if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; rw.append(a); }
   c.append(rw);
   const det = el("details"); det.append(el("summary", "", "주문문 보기")); const p2 = el("pre", "", bp()); look.addEventListener("change", () => (p2.textContent = bp()));

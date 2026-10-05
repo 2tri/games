@@ -63,7 +63,7 @@ EXTRA = {(133, 'f'): 'Veemon: small blue dragon with a white muzzle and belly, a
          (109, 'b'): 'BlackWarGreymon: black armor.',
          (21, 'f'): 'Draw it larger than usual; it must fill the square.', (21, 'b'): 'Draw it larger than usual.',
          }
-HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude가 고침', 'ask': '확인 필요'}
+HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude가 고침', 'ask': '사용자 확인 필요'}
 
 
 def b64(p): return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').read()).decode() if p and os.path.exists(p) else ''
@@ -92,6 +92,9 @@ def en_of(did, ko):
 
 
 SYNC = 0
+TEMP20 = {243: ('백호몬', 'baihumon'), 244: ('주작몬', 'zhuqiaomon'), 245: ('현무몬', 'xuanwumon')}   # 떠돌이 사성수 — 롬은 2.0 그림을 빌드 때 복사
+PEOPLE = [('리키', '필드 인물 (조수)'), ('나리', '필드 인물 (빌)'), ('매튜', '전투 그림 (레드)')]
+R20 = {}
 PENDING = {k: v for k, v in json.load(open(HERE + '/pending.json')).items() if k != '_'}
 
 
@@ -113,24 +116,36 @@ def row(x, no, did, ko, grade, order, src_f, src_b, gf, gb, newf, newb, r, plan)
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--r14', required=True); ap.add_argument('--redo', required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--r14', required=True); ap.add_argument('--redo', required=True); ap.add_argument('--r20')
     a = ap.parse_args()
     global SYNC; SYNC = recv_time(HERE + '/allmons.json')
     L = json.load(open(HERE + '/allmons.json')); r14 = json.load(open(a.r14))
+    global R20
+    if a.r20 and os.path.exists(a.r20): R20 = json.load(open(a.r20))
+    for x in L:                                   # allmons 에 아직 없으면 사성수 이름 채움
+        if x['no'] in TEMP20 and x['src_f'] == 'egg': x.update(ko=TEMP20[x['no']][0], id=TEMP20[x['no']][1], grade='궁극체', src_f='2.0', src_b='2.0')
     redo = {}
     for f in glob.glob(os.path.join(a.redo, '*.json')):
         d = json.load(open(f)); d = d.get('data', d); redo[int(d['no'])] = d
     rows = []
     for x in L:
-        if x['src_f'] == 'egg' or x['ko'] in ('디지문자',): continue
+        if (x['src_f'] == 'egg' and x['no'] not in TEMP20) or x['ko'] in ('디지문자',): continue
         no, did = x['no'], x['id']
-        g = r14.get(str(no)) or [None, None]
+        g = r14.get(str(no)) or R20.get(str(no)) or [None, None]
         gf = (game_art(did, 'f') if x['src_f'] == 'art' and did else '') or g[0] or x.get('f', '')
         gb = (game_art(did, 'b') if x['src_b'] == 'art' and did else '') or g[1] or x.get('b', '')
         # 받은 그림 = art/<id>-f/-b.png 전부 (롬에 들어갔든 아니든 늘 보임 — 2026-10-05 사용자: 주문서는 받은 걸 확인하는 곳)
         newf = b64(WEB + 'art/%s-f.png' % did) if did else ''
         newb = b64(WEB + 'art/%s-b.png' % did) if did else ''
-        rows.append(row(x, no, did, x['ko'], x['grade'], x.get('order', 999), x['src_f'], x['src_b'], gf, gb, newf, newb, redo.get(no, {}), PLAN.get(no, {})))
+        pl = PLAN.get(no, {})
+        if x['src_f'] == '2.0' or no in TEMP20:   # 2026-10-06 사용자: 「일단 있는 거 쓰고, 그림주문서에 들어가 있으면 내가 확인하고 결정」
+            pl = {k: ('ask', '2.0 그림 임시 사용 중 · 사용자 확인 필요') for k in 'fb'}
+        rows.append(row(x, no, did, x['ko'], x['grade'], x.get('order', 999), x['src_f'], x['src_b'], gf, gb, newf, newb, redo.get(no, {}), pl))
+    # 사람 그림 (2차 주문, 2026-10-06 판정 1-3)
+    for ko, use in PEOPLE:
+        rows.append(dict(no=0, ko=ko, en=use, grade='사람', order=0, src='none', gf='', gb='', newf='', newb='', tf=0, tb=0, rom_f=False, rom_b=False, listed=True,
+                         chk_f=False, chk_b=False, note='', plan={'f': ['재미나이', '2차 주문 — 아직 못 받음', 'gemini']},
+                         g_front=prompts.COMMON_CONVERT, g_back='', g_back_photo='', img=''))
     # 받았지만 아직 게임 목록에 없는 종도 카드로
     seen = {x['id'] for x in L if x['id']}
     for did in sorted({os.path.basename(p)[:-6] for p in glob.glob(WEB + 'art/*-[fb].png')} - seen - {'placeholder'}):
@@ -139,7 +154,7 @@ def main():
                         b64(WEB + 'art/%s-f.png' % did), b64(WEB + 'art/%s-b.png' % did), {}, {}))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
-    D = {'common': prompts.COMMON_CONVERT, 'common_b': prompts.COMMON_BACK, 'rows': rows, 'grades': GRADES + ['기타']}
+    D = {'common': prompts.COMMON_CONVERT, 'common_b': prompts.COMMON_BACK, 'rows': rows, 'grades': GRADES + ['기타', '사람']}
     html = open(HERE + '/redo_tpl.html', encoding='utf-8').read().replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower()
     open(a.out, 'w', encoding='utf-8').write(html)
