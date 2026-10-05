@@ -118,7 +118,9 @@ REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '�
           '디그몬': 'digmon', '메라몬': 'meramon', '안드로몬': 'andromon',
           '황제드라몬': 'imperialdramondragonmode', '쿠네몬': 'kunemon',
           # 2026-10-05 사용자 「받아 둔 앞모습 씀」 (전투 그림 다시 뽑기 체크): 뒤가 오면 자동으로 들어감
-          '아라크네몬': 'archnemon', '캅테리몬': 'kabuterimon', '에이프몬': 'hanumon', '개굴몬': 'gekomon', '피코데블몬': 'picodevimon'}
+          '아라크네몬': 'archnemon', '캅테리몬': 'kabuterimon', '에이프몬': 'hanumon', '개굴몬': 'gekomon', '피코데블몬': 'picodevimon',
+          # 2026-10-05 그림 세션 1cf6d17: 매그너몬 앞·뒤 (뒤는 사용자 요청대로 좌우 뒤집음, 금색 두 톤)
+          '매그너몬': 'magnamon'}
 # 1.4 뒷모습만 좌우 뒤집을 종. 에렉몬은 「바라보는 방향」 메모가 뒤집기가 아니라 새로 받기로 정정됨(그림 세션 0c7f0ce) → 지금은 없음
 FLIP_BACK = []
 # 앞은 1.4 그림 그대로, 뒷모습만 우리 그림 (art/<id>-b.png 만 있을 때. 앞까지 오면 REDRAW 로 옮김) — 사용자 체크 「뒷모습 새로」
