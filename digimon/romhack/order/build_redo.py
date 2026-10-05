@@ -93,7 +93,9 @@ def en_of(did, ko):
 
 SYNC = 0
 TEMP20 = {243: ('백호몬', 'baihumon'), 244: ('주작몬', 'zhuqiaomon'), 245: ('현무몬', 'xuanwumon')}   # 떠돌이 사성수 — 롬은 2.0 그림을 빌드 때 복사
-PEOPLE = [('리키', '필드 인물 (조수)'), ('나리', '필드 인물 (빌)'), ('매튜', '전투 그림 (레드)')]
+PEOPLE = [('리키', '필드 인물 (조수)', '필드 걷기 그림 16×16 6장 — 아래 보기 2·위 보기 2·옆 보기 2 (태일·겐나이와 같은 규격)'),
+          ('나리', '필드 인물 (빌)', '필드 걷기 그림 16×16 6장 — 아래 보기 2·위 보기 2·옆 보기 2 (태일·겐나이와 같은 규격)'),
+          ('매튜', '전투 그림 (레드)', '트레이너 전투 그림 56×56 앞모습')]
 R20 = {}
 PENDING = {k: v for k, v in json.load(open(HERE + '/pending.json')).items() if k != '_'}
 
@@ -142,9 +144,9 @@ def main():
             pl = {k: ('ask', '2.0 그림 임시 사용 중 · 사용자 확인 필요') for k in 'fb'}
         rows.append(row(x, no, did, x['ko'], x['grade'], x.get('order', 999), x['src_f'], x['src_b'], gf, gb, newf, newb, redo.get(no, {}), pl))
     # 사람 그림 (2차 주문, 2026-10-06 판정 1-3)
-    for ko, use in PEOPLE:
+    for ko, use, spec in PEOPLE:
         rows.append(dict(no=0, ko=ko, en=use, grade='사람', order=0, src='none', gf='', gb='', newf='', newb='', tf=0, tb=0, rom_f=False, rom_b=False, listed=True,
-                         chk_f=False, chk_b=False, note='', plan={'f': ['재미나이', '2차 주문 — 아직 못 받음', 'gemini']},
+                         chk_f=False, chk_b=False, note='', plan={'f': ['재미나이', '2차 주문 — 아직 못 받음 · ' + spec, 'gemini']},
                          g_front=prompts.COMMON_CONVERT, g_back='', g_back_photo='', img=''))
     # 받았지만 아직 게임 목록에 없는 종도 카드로
     seen = {x['id'] for x in L if x['id']}
