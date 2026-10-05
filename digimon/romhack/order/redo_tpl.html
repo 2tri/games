@@ -95,10 +95,13 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <h2>재미나이 쓰는 법</h2>
     <div class="box">
       <ol class="steps">
-        <li><b>앞모습</b>: 찾은 사진을 첨부 + 카드의 「앞모습 주문문 복사」를 붙여 넣기. 사진 자세 그대로, 칸을 꽉 채우게 나와요.</li>
-        <li><b>뒷모습</b>: 받은(또는 받아 둔) 앞모습을 첨부 + 「뒷모습 주문문 복사」. 상반신이 크게 나와요.</li>
-        <li>주문문마다 규칙이 다 들어 있어서 새 대화든 이어서든 상관없어요. 받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요.</li>
+        <li>주문문은 <b>모든 종이 똑같아요</b> (색은 받은 뒤 제가 넣어요). 아래 두 개만 쓰면 됩니다. 카드의 버튼도 같은 글이에요.</li>
+        <li><b>앞모습</b>: 찾은 사진을 첨부 + 「앞모습 주문문」. 사진을 그대로 도트로 — 뒷모습 사진이면 뒷모습 그대로 나와요.</li>
+        <li><b>뒷모습</b>: 받은(또는 받아 둔) 우리 앞모습을 첨부 + 「뒷모습 주문문」. 상반신 크게.</li>
+        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 상반신 자르기·방향 뒤집기·색은 제가 해요.</li>
       </ol>
+      <div class="row" id="commonRow"></div>
+      <details id="commonDet"><summary>주문문 보기</summary><pre id="commonPre"></pre></details>
     </div>
   </section>
 
@@ -140,6 +143,7 @@ function box(id, label) {
   });
   boxes[id] = i; l.append(i, document.createTextNode(label)); return l;
 }
+$("#commonPre").textContent = D.common + "\n\n───── 뒷모습 ─────\n" + D.common_b; $("#commonRow").append(copyBtn("앞모습 주문문 복사 (사진 그대로 도트로)", D.common), copyBtn("뒷모습 주문문 복사", D.common_b, "alt"));
 const SIDE = { f: "앞", b: "뒤" };
 function card(r) {
   const on = r.chk_f || r.chk_b;

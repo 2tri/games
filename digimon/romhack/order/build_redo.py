@@ -16,11 +16,11 @@ PLAN = {
     8: {'b': ('gemini', '새로')},
     12: {'b': ('gemini', '새로')},
     15: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '받아 둔 앞모습에 맞춰 새로 (색이 같아야 함)')},
-    21: {'f': ('claude', '확대 — 시험해 보니 됨, 롬 세션이 키움'), 'b': ('gemini', '확대하면 흰 몸이 뭉개짐 → 크게 새로')},
+    21: {'f': ('gemini', '새로 (사용자: 호크몬도 주문)'), 'b': ('gemini', '새로')},
     27: {'b': ('claude', '모양은 그대로, 색칠만 고침')},
     35: {'b': ('claude', '좌우 뒤집어 반대쪽 보기')},
     39: {'f': ('claude', '확대 — 시험해 보니 됨, 롬 세션이 키움')},
-    41: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '새로')},
+    41: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '뒷모습 사진을 찾아 「공통 주문문」으로 (지금 롬은 앞·뒤 1.4)')},
     44: {'f': ('have', '받아 둔 앞모습 씀'), 'b': ('gemini', '받아 둔 앞모습에 맞춰 새로 (색이 같아야 함)')},
     56: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
     57: {'f': ('claude', '확대 — 됨, 롬 세션이 키움'), 'b': ('claude', '확대 — 됨, 롬 세션이 키움')},
@@ -87,11 +87,11 @@ def main():
         rows.append(dict(no=no, ko=x['ko'], en=en, grade=x['grade'] if x['grade'] in GRADES else '기타', order=x.get('order', 999), src=x['src_f'],
                          gf=gf, gb=gb, newf=newf, newb=newb, chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''),
                          plan={k: [HOW[v[0]], v[1], v[0]] for k, v in plan.items()},
-                         g_front=prompts.full_front(en, EXTRA.get((no, 'f'), '')), g_back=prompts.full_back(en, EXTRA.get((no, 'b'), '')),
+                         g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
                          img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else ''))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
-    D = {'rows': rows, 'grades': GRADES + ['기타']}
+    D = {'common': prompts.COMMON_CONVERT, 'common_b': prompts.COMMON_BACK, 'rows': rows, 'grades': GRADES + ['기타']}
     html = open(HERE + '/redo_tpl.html', encoding='utf-8').read().replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower()
     open(a.out, 'w', encoding='utf-8').write(html)
