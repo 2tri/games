@@ -553,7 +553,7 @@
 "src_b": "art",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAFD0lEQVR4nMVaPZLiPBBtb+0FhqPgCDKT+hjOIOUYpEvGMUhnsiWyjwJH0Be84fHckoXMtzPTtTUl7FbrqX+l9lYhBHuVqqrS6VVVmVlGIBkwAOnPzNzfL6OcApFhWG17u2/PgX6qryrmKNlfDE4XTsrUVzooWciSGqXEcikOuptYVdW1b27D5to3693gmEspTBBfZaaY2bVv8JCDJA/Gq20P66vYKQAeTx7otW+4DMYApGzKGW9vte0hgTvJo5xSYsKfSHCA27DBz7flO59TEMzKKYv649o3+Pu2fL8NG/zFq/AswOm7OqVI81CJalTH1Bk58QRs1HQS2ZQNKd+xPXcRcMOCDqtzOPyMHUDH8U99QhVgOQWaM71axKJwgSfchg3NDbm0Gveg0a2cKjyEgER77vZkVtMXAaVEYG1PByfOzFbb/u+fpfMthQgGu2d+jHVXJs5jZpdjrdh8vnTFLcZKxbh9OyF8QiURPcAhyGgNhQiUDsAvYiIIumOckOkx1IF7td4NwKFz29MBg9uwATjCxYavfQNkitIJMRewVFgygbuxZnvl15yqEcZw1NDEcwcgsTSXBDcmMOhiiApOpXOuZgMShcdYMdApaR0RBF6rOLtnRKYkCuIaJp7k8pRLc5Cs+9FMrNWVSFTIyGHJ4fZKZIpPBSVdIqTIqd/ZhBqJhfxWiBi0JzOz9nS4HGvrmsuxbi0RkkwfjHfEx2rbtyczq5HOWHj59tztzfaM9NW210i6DZv2dHDW92pQhXGLzmQ6SzWUcV+1kkpwSFzAOZs8Er5Lzn5DkjV0GRYtVAHYAT/BD1HJuaSpg+mIM+NJ8bQpzjBOHSZ1n9YI0VFwFv2ai0nVAC/UTIncDkdcbXv8RGWqqopv553tsdyU/p5Mk2NoezqgcOOacTnWerZgDYM/EPforFlAaY2Wo+TCCGqH0sTdF/XH5Vjrq1l6Lbouu6stj2qEy1sAMfHVudu39khAqmCbcwstvlsJMY+YZCJGiUky0n95NE8BzGhAiBHr1bZf1PVdQ3XMrGdWVXCYeZ0nzfBRRIxmRCUGRwhBeVBmFvWHO+nODeJSoEEOrNe+QfZxtUrHwMqTaKIkzqR5vSfUdxc6Sd2Ez5v0flF/WPfw6ReM/grQGGWeNFnyUGJRG7CESk1Pu/M0BMqUGTgiChgnnrs9cu3c4jQjmJyfaeoun4gMABefhXVeZZpld0fr3eAOmrOwlvqKq0lcyaILeDwR4NiEIiEn5KeTnmsUTsbMp8WmZJlwv1ujYaavyp3Hnka9ZpP1brgcHy2Ny7FO1qQ8Ob3iJFCSs3IahdU4/++fZRj38Z5KJ482HUwKAShzqSdNapRtmdV20D6RLvPaWfZt+X62jVMtAivn61Pv+BEDdyDFFzeGSkijar1LbJ4nhKTknI9+ntutx3HpZYgldO721n1eAdLfVTIategO+T8hauOSLUhXR1z3lDSpUTjo16mQxGz6hK/whP9PyCQN8wkGbBAl+1Zh6rr8RRTueYqZn4kJnsCHidL6Xdr8JLeijb+6YKCdvQfn9+BTZBy4lqpj+3mg2kvLsDms3+qjJm4KYsJXp0StcXX1n32vLycqjF+d+RDNUX7cWZvU1S839jSZdDHC2Gv52ZIIv9v0SkHcYL0bAPHc7cP4Px88uH+WbNwO4sAp9Sc1ShDo5693QxjrUpX6A8EUU7h/sbXxR8pb1zxAh688cMyi5I2U8P4DtvvSO9KOcZIAAAAASUVORK5CYII=",
 "b": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAE6klEQVR4nKVZPZrqMAyU+fYCcJSkCh1pcww6aHOMtNDlGLTQQZUchRzBr5gwEbIS2H36tgiJLI9HP5a9IcYo/ychBGMkhCAi31uGPoas/hONsfiHgXpsCOF/AcHcs9sZTB/pAZQYo9H8C6CgZA7ix+HPbgcoRv/nD4BEpDh0eHic8+LQidQg6RtiYoxDX7rop+HxN2IwFYfu2e34Bs9GWU/57HbFoXM/xRh/8KTj/FcMicjjnFfSFQchGs1Hcege55yWwc39lH2w7i7IJQby7HZYKOgBDj5QH19hH18ROu6y8X4M6u2x10uHIdfBAFG1TdU2WHrVNhyIZy3r7Ho/ZQyadXYVL/AJMYjiH0wiBfBmk9/colccusu+hoK8PAU0l32Nl5J4sGqb+ylz05CzrGBC86QRGJ4QEwiLqm02+Q1cbvIb0DzOuUZjCPuIZpoV08A6g0bnjqjIcAWBolNPR5j5atBoCUgxs5r7Kdse+8u+xku6EsqwS15FZJ1d9dLNxJd9jdCBBxB5JvsofmHcHvv7KRt6ASb8LA4dZ9VouFBidcU4y0UzAnqRVGuStsf+froyO4a+vJ+uWxnnw4qHvhwpzEZMfGNwEw2JmZM3hugjjekipYzZNBmVV4mjDH25zq4uGoa54c+NyGn30dlu7FZto5OZOQ9ZZ1cEh14Pi8ICJS6gH/2ZvYShSm8Ol30tUgM0Znp25eN8ExHZ71I030OxgKgHqshB1TYiuZ4JhBlD2PO1m6bief4Wjbj9UIyR3pFXOsir6G3y23JUyrynlisZxE97Fqe5YdqhpFAHGfskbXMZyhIgee9JtMARm3xafcqEy803aGShhWWVM4EJx3FnoM6LEkfSxuHXgIiGXrvsazY9mJ40sC3h9Oky5OuTiQWkW3dOqbsLHdTpgyYVHQEtz8XAEiCzGdGueJ0XZehL5hQKGPHh58LYD4AMFOLgnm+8o7tEPj/OeYzR7Zq/IWnKMleVocoJYozsd9lIiNq51icnoeB0s/19AOTiwHOatDqtFvJrk9+e3QgUu2+Mzl2AlsDtIrWORaPToAx9iQKYnBXHZ3lvXs0mwyZ/DpMFRJlcoABtjz3dRLjoLY2yMegquJj8oE73ThEZ+tKg0QJKGCV6L9PKVJgL8A+XDWR+ITsQ76Y6MCUlKRk6tFOzK/H8lYqrwNZddwfbY88/kuRiGo8Z75g+MASLIYSFliN1H9/EGD/2KkZWeuJUUHV4GpQZqgwU8sGKJYuOcwClRo1F7RS3HFCHe4i8atiy4/TpygekJ9DWxaNHp5VuENDmIq4XHDf0JfoIYlrNzcQdSp835nBzuNaEBe01o4CGGM/ENMWQWQR/GjRuieL74tBt8pt7rmUN44bNqzct416ma381Hk9zXdxM086Tq8GEadhK4wzOUj4t8izFYVobID67OoRgb7vmGnvGh74FozLHmts0XoBgeDoXSeJAG9Rzd01pVJpLN4PeBBOGu1WgapsYI/u4t/ajahswWbUNzxVsgDQmeAH3a+7GXEm3yXP0HphSREIIuK5Ag8Abt6EXnH1jjG/3t/qWSS9XXzxqv4jnhTnf0cvaGvc7wnhjiN0MCOeyuG5qaoVl2eS318H8ylnGFNlPq5oGmBu19L3MRIkZKyrkNUOaP9ZJbcoAcP6zpN8sdB3pwEWmZgca+Qcu/krkG3k8EgAAAABJRU5ErkJggg==",
-"where": "떠돌이: 떠돌이 3 / 트레이너: CooltrainerF, KimonoGirl, Schoolboy",
+"where": "트레이너: CooltrainerF, KimonoGirl, Schoolboy",
 "family": 166,
 "order": 31
 },
@@ -569,7 +569,7 @@
 "src_b": "1.4",
 "f": "",
 "b": "",
-"where": "떠돌이: 떠돌이 1 / 트레이너: CooltrainerF, KimonoGirl",
+"where": "트레이너: CooltrainerF, KimonoGirl",
 "family": 166,
 "order": 32
 },
@@ -585,7 +585,7 @@
 "src_b": "1.4",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAEZUlEQVR4nL1Z25HqMAyV72wBpISlE9NCSsgnlMN+UgItkE6yJYQOfD8UDgfZedjOrIZhILGtY71luxCC5JBzTkRyZ9XTv9wJCtE5p4j/jL7KpvnrBPfPRJstUREJIfQXJyL+Gv5MriVAs8jspHhjhUAh1MEfFnjvhVKKbRTUteMgTdJYAYvxFdt0lTc459SrRKS/vJcCssEfjv0zOSaXqiQaQgBWtQHgGPxBRLp29O0EUeqib60zwVi7dlSszjlFCXwYWcNoZ68HxGP/lFe4lT0C2T4RGwZwuzfmVdeOsofqa71eCcZ67J9GqIM0InLchcdeJCL+Gvw1KFYgHvxBf9csvn9mgvZVovgd6mxsz6oC4en3NGH9fozwoUpGe0o0hMm1vx+jPtFQBRuoodrMZKabGKQQ2QaEKtos1rVeb/ipUDVzAqVJpLoZk8lWqUr1kI15blAm5+qr7Z1CFVAVCUwTtIpSCSaxBWutjeI3pGvAQfVmrnnIMJJl4YpEHVH8dnWTWqkIBX+kBt2AfrQSAMGaLbPVfCNUXiSnMG7zHLkqTk5YOUYWs1j3eujUuG3s7LHe/XUqAo+0FC+CAUKWnVTU1vAEj4EAkg60vAKjDCGcfqS/OH8NXHPNha1sZ1LRKgN+frs3xs27doS0DJfTz3tWzEKdzKaSAq839o52VLWGRC8UgGL70YnJEIHfjG2fepQxaSFiEMBsGGW8iL+G7j3iY0A2UNN5SiqhA6UayeAP348R6pZXO+qcwyzeGB/DQKibVB8HUWBlI4OyVPvahCTpcU6khng8t9dLEl3IbNi0cSCVAZcgc7yN28XDzApLmWkh/mM5ZEIg/j01gz+opNkQb/eGJXTsn1076ifJ2jzJsFEI2OgdSdIk9Nu9MT0dSzHQ4QWTypINeuK+aqMxPtYLh5ip7fwsnRBNMYzrfyzLnRZ751ZnMmaatDwN9fg7Z3yPs3CIFWr5kZy6dkx6p6yqPs7OTJzHhdJsjFLEogRpCOteIjBYQeWFs4nYRjOcP3E4tXHluHiVrBTK0ko6AfLk4A8xLKhebfT31MxFMbbXrapnmsvXMbM54bEbhRB85NqgaQ+URQuLEkkFARaqQY+cqX/Dq1mNtzTnTIW3IiG8C95kfR7XHOgE0QgkbXGOyp2J0XAZgfo/+ZZxc3kvkSwNux26UFNHswHok+VzflPhI86bhqfcRuUzbbJ45tyO35rVsJRCxDeG5ame+2akeD7/ZhxJ7SfvpdReTdFj9rMVKCDiDgSv4o6Cqb84wEURwxuGb81BzAAKJSbbOmgteY2EUwbeTMFB5DpQRonv7fmQ6dg/9SNrd5MJGHPOFPusIWgcp0uxl8ydls2dOuUBRVzQ6lUVaipZY5fpTpyASlR3yqtwKQFqcuPjPD2PUSIYmarZrGY2w1hRjGYDNWHvcbb4DCm/haPD5fZNMm/JbBaRz9C9SgtsGKu5Yy64b06ofpn9dkLKkUiiccGVB3R32hiAtmD4D9fc4XjZhHZXAAAAAElFTkSuQmCC",
 "b": "",
-"where": "고정 만남: BurnedTowerB1F / 떠돌이: 떠돌이 2 / 트레이너: Biker, CooltrainerF, CooltrainerM, Firebreather 외 1",
+"where": "트레이너: Biker, CooltrainerF, CooltrainerM, Firebreather 외 1",
 "family": 166,
 "order": 33
 },
@@ -1024,7 +1024,7 @@
 "src_b": "art",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAEk0lEQVR4nMVaO3bqMBSUctgA7IIsAzrSZQukM13WQYc7sgU66GAZZBewBL1iYHKtq8+1gfOmyDG2PuPR/UmODyE4A7z3xpYvwpulkff+1TyqGD1rIL7Mi4SvK+q9ny62ljbVZo+gomiVJYREm9/D1+vsuK5o8/0paYGZv2O62G6OF9nmcXgB3jTZaCQV+P0evjbHC+60691T5AQzDNuud05Emx7ORH7aGJ7FcrrYYnFW8wkYt3eulejovd8cL+zG+6v5hD9X80kI4UGvpzPIhZLjWxWNOuMnXiCaZgBLoPn+5PvLCzwtORPljLSMmoUQJEvpBMZMgYmceP8QQrSMda9PakmKcqERAdAg8lk7wBKDS1FKNsoX1WhmY90MfspQxSmroJuCHz0dr3q7zo0VsWzXOzIgy1w6kFydwb0kUYBE2TfhTDLZQKQ/BkJIyeD94wf8ovZGljdFvj+jeCz7pr1eL+VqPnGZ9CO1B1fIr0nnAH45MwOyzoTJEDLkfYhHipBfhwJgutiWvYrGU60WskRlhogiFBHumC62EFKPsDleSFeDqaiKmGjB011XTteNQb+HL3hDNDFWBpELpSAu8Jddfg9f5SjxZ6OyICBk2YELyYPjnvdL55bt6eqU/xUAlsbIMMpRjCD5tadrMxvLIAelkw4hO2oPsxcGb1y71XyS8wk20HN472kPsFSnVj+HzfFiz14jd/c416ekgKiRHmB83t9swM7YgjcOl1w4KbN8isgPOcHv/ePnvF+e90un8oJEx4TM1uycu1lnMgDpMpT3LbZFXbMN1jtnLrpHsuaNKGrgff7LSUSnTnF3dUMI1EOS3hwvhWWN0J6uuUzhRH42rk8n17N6ZdiXo3jvV/NJIwaFXbp7mROlgySa2bg9XXsFhw5R6qorbf0mOYC0UwlMloVNCO16h5ZVI5aI61Fpr/pRVH2SWe4IrXy0BmmtzhT9LvSB2yUrZctW1nWXyGInEqbTvCQoJ9lgel24aINhG7uZ9jvN44amPV2jZcU12EuuevuPNZEJzIKBijaz8eZ4wUx6c8wUlYN8asz4w5eeWRQ66cmSXEMIsqJAnLJwfc5Broy1xrwVmTK4FvoOVFQ7TRLyEIGyyaT9KmciS9ffGyTAtZw+IgwhSuPTqYthgS9T5upq2W4gUaMJkiWCUa6ckzZQrU17K4ravkw6EvK2885sH4zlc7/PXDQsbO503+imNMRkOVdtQPTweqP5t6frMCcrR1MrUWltgN4ayJ8Wrr0cP0s0OjjmN5qcSWkxJFf7WWk/ojA15kZ5WMdDhKSNJg+hkuOjO/ySlXVyA3frUnYIeRzihEjameSpKsG0rmvwwgFy8lEcnmCLbB31Ke/sIoODrkkhOIVMqmXbSC89BoqOQpMteYBYPnVKTiHnct3TIY1EwMd6YSC+qJRZy+C9h9jSgZrZeJWZ9f6hp8dHqeymLLrDsrxgwekJamsaDZhtHAxItid7ac3yafL+YFiJJm9SbBpcuH/Fk+vwOMsQgikzhcxyYAh9WPmSf4V4/F3lOK6r4rOmCNXP4ANg3zb1wj+F/zya8yyy4QAAAABJRU5ErkJggg==",
 "b": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAD70lEQVR4nM2Yu3X6TBDFZ31oALrAZUCGM7eAMylzHWQowy2Q2Rkuw+4Cl6B/cNHlMvvQCr7gm+NzLIl9/HZeO7uh73v7P8nTI51DCP95+4eAKueY1P5RoOXmUMkUQlhuDqPNZo/Q9H0fQtifzmDCKx7uozGzma7vbgffn842mEN1pgP+fG7NLIS3ESD8A35ufQWhkvSVDyEE12BUAqZXlf5+vXH02lGGKdv1gkz705mvnGV8zH4QM1tuDvvTmX+uQVlAgF7sy1c0qBnnikwPaN5flbhdLwraciFGNXOQdr3Yn87Nal6lHposnsBZHcpPtlxuDr9fb9q+2x1jrEoHuFmf9nFLV1dgA6oTWtTAdoj1QDMdSCHokvwpZmreX2ERpx5HYxJ9ycV7IIVwryQgjbNpMp7dx253bFbbvu+77z8SJ2kMPuTYY+9J/uTMpLaDdpkI8NCs5laR6rJO7YT5jRMkRX/tdkcNWADZWDbymyubMhshPXTffzENoqnbHfGAX6lRpeFHhEJhP776UDLg2/WizXUdBBMz1MmqQIDAauFAOT1dk3pyMo0ytUXMpARo4BKsiZ4m+FC23QDklq4EiHY0uJupLp1LDlQCi7aIdr3QlrHawP2ohpy9HBnSI15HtYjGE6KsLJxJNaQulbMUOsbfY7nHh/S78v1+vcXFQixlDU2oqS+FxO181Bn3L35pVnPsFZOk1mRYU7c76k5ig4ZyWkF21vwZpwwn00yGIFIUSuzIMI1TEnbW+6MsV6/pQpPqgb2STGUfygKxoi1PnAyri6UyDnQPkCYebqiFkNbvzWr+/PKhr0pWZTJXo5SPUUmsS5pZzZ9fPn4+twCi+zs161EJclMZ5ya2TDWoBBbVXwDSs6LzIT2p6XmNWDM+8XSHbuWjODXkSm/LFw6Q+KDNV/A98StRyropixbLSbLm/XW5OfR9//zyQax+OKaGEGYmOcY5si69kHPZK75jCCF0339xyo5HI+L1EK5n+9gQZabc6RZL1SxA949bXh74CUA5mjJT4bitrmlS6sdtLk7dy3VJTYmZy0a5Lhj/ugMOvpE7FWV3eyjDqcrRcAPRGj7JxLkZ9m1mGYndvl0vGAIq+BhX8vwSUqJYDCh9zgJhAtgO128xzc/nVp2AKCjN3MWSDYfxeNaCzEiDQZ2NeLx3iFpsaIWE7k1FshgBsiHKkgnaX3qs5mY3hw2W+s4K+LXyqsoDIcleNvaxlbHc0VxaOWUtkMldrPoBY8Tnyd2RzWDuePRCSsvJE2bSKya9MNDMpO4ZQvC3iLeZCSE2WkHHct19oBitKyzKE/G9c85qzPuT1GNaMU6Nz0qZCvQPrx05oqAh/hoAAAAASUVORK5CYII=",
-"where": "트레이너: CooltrainerF, CooltrainerM, Jasmine, Lass 외 4",
+"where": "트레이너: CooltrainerF, CooltrainerM, Jasmine, Lass 외 5",
 "family": 239,
 "order": 58
 },
@@ -1239,7 +1239,7 @@
 "src_b": "1.4",
 "f": "",
 "b": "",
-"where": "트레이너: Blue, Clair, Lass, Red 외 4",
+"where": "트레이너: Blue, Clair, Lass, Sabrina 외 3",
 "family": 163,
 "order": 71
 },
@@ -1421,7 +1421,7 @@
 "src_b": "art",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAEr0lEQVR4nL1aO5LiMBBtb+1BmBRugjnBHGEmhYgJhwhSOAInwNwE0uEm2uCVX/W0WrIsu7YjWZa7n/ovQRNCkJmoaZoZuRn6M+XjpmncMR7NzESaBJTUNM1ivedYP85F9UCBBrCOt4eeXKz3r/uBbjCLduu9Cvh2mxVRatptViEE4DO462ge05POl6uI7DYrUdqdhfM8QIHvfLl+frwDZQghhPDTfYvIdHXKRNOLyPH2AD79atsuMTh1T+Am1YubDlRPEiI8GJomTVHt37rPQHmUQIaZOA+MRVzjoyYlxbRY77ftctsugWax3mvfqEtVo4G6Ftd06p6IIYxF5HU/7DarOOmOkzvWBAbo+XJ93Q9IqIYVNYfFjCrkVyzGmhIMk3xUei80oU1Ap+55vlz5FjkV4LiNQk2NBsp6Y8hN7Nt2udscRAQqx6Q2vbtDl2pMT0kI87f2C490zdROTLqNvSVHYQyJyPH2ON4ei/XeXXC8PTgw9ROPmIlL66DoEaaHnlghMXnqnkyfelmKmFkNykHp49ITjK75svY0TYNkBF1So0Zz2kHxqtD643zUzSYmYen6BCjIX9LnMkKHdv8TUJPANUpO6pDX5GbfJI0KpphpKuCk9wFOah8wxalEbmUeNcXGEOeRsOKzABboY9agXmtqfQjBRLqInLrnqXsCExFwRnf+qPvGU4epwvQYIKGKCGKcY7Cl8pg4pXfuOKFqtkm5FUDBGuBMutHQzRrDQSInnh8oBhqBqGKDt0RgUJIJgLqcXRqdnkxLEQq6NTdWwGrbLk0lS+IpV6RZrFVleNLidFmXIddo/04CKEQZQqDjh8ig8ttxRUWMES/KN9xWvx4ovtftkqiir9dQSXx0Q14vjjmkYOR8lEVcZ00e1fmhvhLTx07NSpd7XlLoZegBMtU/mfAZH275dlFSdoxysd4DHHpnY3fg0/1KTH4JhXgWwBDCqXsebw8T3e71YixPP8ZXEsfbQ/rOP3MycYACDVCixdSUR0lYLlzgYJ+ABbTYW/tF6zuoYodgDxF+50itzpQupb8Ucb1Wg6DFxDNgDNT3UewSTTtEQrUGJSXFcDlmHtDoQ3/Rx8fX/ZC/700GEzDRaTjQuuT5E+QeLXablXvZi8aKHOI8VQRUH4BoUL5NuRGvwaAhTMaNlXiuP0hOMNG+VIM5SyAJbNul1qh7pcgAMkB1Zw3QKPq5pD6Y8A16rsd1TQalCTgdaponKogJ3BhMrsOPCymJtnvdD4Mt+ufH+0/3HfoOwTChB+f9of4OH+rM1BLtqTEt1vvz5QoVni/Xt/aLmTXJbhRJn7FRKtnLpRaDTFcl6U4lJbfmksxN9Sk+WO+mDu2XRJmSO/V+VMqOkRqi7p5Iw/qqML0R756KzCc0t3vcK6GaCwjRWfb3lWeKeH1euN4XXEH6wxL1QBZ0Wf6Vpsqfb9yLsbw6zMy2XbLBLRIas8jgS0ktuTxKHZpdhjENa7TpSRKHYxEZpRtUINM3DsPI7MaoMKU2VsI8q7zaBhckz0wY6F+GXCpp2PjDUuh/CqN9uMlBJsn05B7QuO9YQF4fesM4NXx+vPP/EYa5v9uUg5dQYSDOwvAfTWhdnG8bcD0AAAAASUVORK5CYII=",
 "b": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAADyklEQVR4nN1YS3JaMRAcURwEb81NgBNwBNiaFV6aFWzhCJwAuAlszU1eFh3a/Wak94FKJZWpVErWG41aPR+NSFVV2b8kg78NwMt/DSil9LqRlwCllByI5j//OKAoo8maIJ4j7FVAQKBUKSYdd5Wqj8SF2HV7um5PV46hwMleW/RmaDRZ4x+PvlzMzWx/OCoUM1vNxhj3IqkfoKqq7pcNQHAnbLxczPeHI8C9Ii/FEN20mo33hyPnV7PxaLLmuJ/RvgGEAb1jDyfqYHu6EhAGPXbpjob7KUNARnwERPL6AmpxGfO5ekQPNnNhu5qNlTPKcjG/Xza94rpTDCkmxgSOjugZTdaaZVZPOuuTa8NWDfgrpcQwAiZ6x+ljBulG5oBPjZQkr0FKUkrb0/Vj+q7nUxAlZ8Wv+8Pxftk8DwhoOAM+EEaKiWGURaNnwJ+vMmRmb9NP/YQg1UhyxRBMlCA+CQiYtqerljtFwyxz7nPHYGJ2x+SzTK9uV2QdN06yHmEmcqY13TwgWNT/4664K3g/MIyozy0Zc9BvwFEEZI/kgt14WfKWwH7w2v5w/Ji+Q+Ft+smCHst9K6ymwohyh415Vg64n17y6o7v85cz6CIyK8XCqOGiUYmaxJZI3Yr5Ehpma7+gpii3kWfw5DroBjSY/D5/ufIWJZP2XIAabWa7880kyTHp6hOBwiCWUNnZbyApzxAamv3h+Db9pGkIJzXeQRjQ7M43LEHE6PLd+dZ+nZX6HmDSnotAkeGqTB01xSUYd+z5M4BojptpXwa7RINJqkVAbqa1X6t9y67XokJMVm9YFZbiVtqIuBnTzwco6Sk121XNQvtM5SyjPFuJuQwgjeWqzeUOZTyDo0rXtnbZtQeoSctMevLLwk4EpAtLmLoy5B4VJUBRR8VRa5IHaqEEaGj1C0gx6bXlBGrLxVz7a4gr69WjD46T+bNVUk6yXyM9WU2rvxitngfRv6UtBkpGaSeK/s4SE8oaSYXEC8f/xkVK9UFO045VvUEjgviJy9kQ83lErxEQlH+3Hx/Td8u1p61XjwsO7Xi0P9FIirvgK5SH7sGV7YEILnKwejww0AvcLxvViZho2XmKmIb24AoW9cHFlQ0kNbwSS5j0KRfp+PHf7nxzZMLrCIVID0SbEBeFKi6e3Ff9NDR5mij5+q5waDQlG5rJZp40xlV+cKj1+P7qld5ZnkiSdqQmT0e4aGDhIWfy6ivdFVqEVKdUYK3egHMXRioby6EGmoIjyaXocQJNl2VR+CZWJ2gp8r9yqPVWEJarnB2XxLTH4Bdg4pHNVVRhjgAAAABJRU5ErkJggg==",
-"where": "트레이너: CooltrainerF, Jasmine, PKMNTrainer, Rival1 외 1",
+"where": "트레이너: CooltrainerF, Jasmine, PKMNTrainer, Red 외 2",
 "family": 239,
 "order": 82
 },
@@ -1455,7 +1455,7 @@
 "src_b": "art",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAADsUlEQVR4nNVaPZoaMQy186WBo0C3uRF0sFdJx9BtbgQd5CZsqRRa3idsSZZnvEVUeTwe+Vk/z7IhE1H6H+TnchU5Z27wmvGIniHyY5QilpyzBCdBL5SRQKVph0fUSKCP20E+jsW6NEZzzpfd6fl0RycRXffTZXcqgmG2eBbtjbD19swNRvbrz/s8PaqYQCPa6zGP2+HzfkwpXfdTSunt4xjX5ksjRuMTwH7piZJDlq273PteADFKa0DNlzlnBvf394ahE5GvJC5Lsx4QgRuR+rgdRmXS10yOOGPUVymly+4EnnrcDkSER38uX9r05BtGvpJGZc5ab9+JpvX2zFiXhEHD9UQEV1oDLARvH0d6zaTH7cDLnkECoRilZ07UED/vR84hbkiUaH/ej6vNtNpMBdwuoO1gh3PVAOBO5s7VZpLbvfwwVcyQUlpvz/Ew6NhC5dzWSjBMjkRP8WEXLYRczwReC+aWOLjBuzz6GU1RtQBrBEObMuRgzmX0W8YgIjkSUgMNYiCiPm6T4ETRpIgKFBr8HlW6yzx4VtqjeEtEXP7VIUhGoDelDyg9k4ZLEKpoq+4ZJYPPTIWouOctZiZQsplVHVl3SkKI4O4GCnCX3QlzWPuWxWupWkBzX51zZoLGy+tjryCxIrk1/3D3ZdfX2r4QueNbSoIk0O36QimX8Xgs9qeBMjOZmCO5jTC97ickGRNtBO53JZOcAA1u146eQezefF2SnvnuD/DHYKTaVqXPouzTOnsskmraKD44CpR5jlF2TZC++6akFgclUaPqs7DG96cQUGRxry0LJf4AH2sbKFA22TuITL1iaWKNul7dfmoqDYZjjTW1TN6+JPOdLsGBaNj2/hGgFgS6injM3RMLQKOydqonVcmiGA2KNQdjleuRcameY1Vt4yt8eLy+cfajUC6gjrRomZe132XUeLKqPsuo6PHrvahFi8wgUZEUDXl4Z9Cy1EqG05t00b7Ng4WKzIBVONlhD1yGJc2DPAwOKda5KJkcrNDLl2Q1CD/rZTg2LarEqHVrIL1fnHX4DhWPFoNKxi1eNTfn0qLWHgO7SrJ0wqu2pXOOi5QQ0R/EZCVazycZuzYn11wqmviuq99j1SAwvQx/VeS3XOpbg6UeRyGLTl3WKiM+Kr5loNZhNa5cJ/w6EyMQVXDyRCqVyA0stH5/UPB2QP0EbFVvqkUco9+Zq034XSh9UWnLStBCxv0ECI3aX0yatWkzAAb8+aWQ5sqtqsUPs/EWtUCgPW/GfyOvFHTalf53AAAAAElFTkSuQmCC",
 "b": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAADF0lEQVR4nO2YsXLbMAyGwVyW+E0cb9UbqZujzc/RTdEWvZG6SX0Td0QGWAgEAiDd6K69XnC5nExRxKcfIAg7ISL8S/bwtwG0fQGV7AuoZLsBpZR2WecOoJSS53UvGvg/Q0byIOIuOtUCpZSopiuvPL6X3a2QdG/S1OtkJmUVkOdYabZL1B5jDvakBuUIIv78/novU77ObdzLgJTS1PYA0IwdK8G+eZAn88earKI55kw7ZEwjX0K+/dT2fP2ZMOVpdF9hlB+J+PfyApby8TryJdVdI4ekPMrU+Lr0kHsq0nhRKyjUjB0v5Dnga5lGNTTmHBuIOJgmMESM92BOE4y4QHlo8kFYU5vNQwF/G+ZaRnVoansSSe6vZux4XFG6pcWi4RyqBcqzpxm763yGEY6XBUb7BSALhPr4qRy6zmf6T390K79QD6oSZToOsNxdxrE4nIbDaVAEJo2yuAp4d12gb28vNe6bsTteFrkfWaQgwUlCszoU6pAMFukkr2X4FJaHAmu8VL2IgGiqxK8MGQ+qo1euHDTmZNG2h60qpkmyw2ngBsGbH/cnKSUbKKVEnsy2NTZPHgjrON+NFHp6fq1smUlI80gmN9f5XBSbHBk5REscTkMNjUqvvHGjWzTNS+SN9/zAu87nXz+eYU0FRKSmR3HI3ae8yqXUYIRCh4l6oantj5cFAIgJ+MSwUOLBHNHj4GtEfJQ3OAkkjXo+3vCw3Zg1KOrkN3KIaTwL0pOkkju0SKNaFw3EkjRjR4dAzhGcJJw01/kcF4vaSq16Ha/EBSJxghNTsYYpshuQeoxbWNV4FGuJCccuavg+FCI9WBJEjI9VD05NUDoV9/8HkERRJ87U9sFRH6DwU7haTHMD4g0vn5naXm5+mkAQsncDK9lNpkpzv0oDAFVIEHnK18TKPW7uVekXfFNTibXJoSDjjpeFNZOploeP4Yr1DKxQbhQiJvp9g+WRTNKNUiUPnEzKIpkNBE4L4RlDUNWRH/ki7vONQkAPTG1PKJVA7EadEvmhISOCjsm7D3/w6456aW7avflxo8i3aNo75KDGLiqdCBgAAAAASUVORK5CYII=",
-"where": "트레이너: Red",
+"where": "",
 "family": 240,
 "order": 84
 },
@@ -1535,7 +1535,7 @@
 "src_b": "1.4",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAD6klEQVR4nLWZ25WjMAxA5T1bAd1AC1PG1JAqsi2kjLQwdENK8H4IhKyHZWxGJx+BYOta1gsn5ZxhQFJKAKAnwfv0U0ppUNGf7pEpJY8SbxIiPd+tCwD+dozZ+bYZANK0alzOlLeZnh+xa79FkTJvMxJrofv0DLL2mfayRVNKnGDHLe10+uU242I6yIRcsyin3O8oSpKcM6dM07rfP5wBrjhuE+hgHHDptu6wj1aDA40aTNJmhRhUTBQq9mTQUwPQGze9riVUVAOVtmTpsxNoWoHtiQ7NigQWFRPpSzJGOqQgK1Eom9a1mBLn0T1ZppRz1jbgdbKvrDcaNfLRMvlhAi+e+CxIhsto5+OztQToxYTfUGaI2HNBxDqLalsaqYHKwhjW9LIv0TVMUELULbSC6q1EA+BHErCoyjnryulRQkPhAICa43tdBVewL6BsPXPO8Fk0KFjbIibxJNh604EqO1XsvkLktuRhKgdaQSlBK9tdPGYuAPPXoVJnUBoroENKMPNooezIndrVvOUt/z4AsD7cWBbQUrWXB7IS/ZPWMT83ujk/N/zQfX2Hhut6wVWQGxhU9t0y6Whcrp6LXoBepKAUazB5XFBircSNMKGA06blfMXlNnNFHo+dnoRHm0lR2I9kfUzmwnT6LDRGqbSano61cj6uQzDhpeeaIh8RH6WUelcaJHxQ5qRUTyjrYxKm5cT4PXwd3SevwHi/eW0yzjg/N06jhdPj9/UxVRJTfd9roBpX793yehMKH0W2RD68/Pn+4ohyowZBOS6wHSS7iifJzMKiYvg5cxulC+odJwnTVlj5r14eaEREsaM+H90QCaU62jgyjLnvUDrA/NzMTEmjzFeuGBTKtZ4HdyzYReBrYu4GwHqRZInuoYQEL3c6N6XppBGJiZjo0ltDR8JvivoDsUj7aFER2uYa8PvP95fuuM8JI2eNLHqMF90+atKhzXEFvffO1EIZg3JZXm+AifnAKvbdxOXQ5ACNrx9cWo8duZp6S6UpRR4wo34UlEJSF0CennAZOpJAxX63NNV6UTypOPGK78W7VxEumROg0lHzZ8pDe05D3813D7Nx9pJ/XYJHTVy+SHHHbPjNDqulq+cSHTsyMV8+9ZJEhhJTnWOPflmv1pShM3zCpbqgI0bWpOqm1aTF7Jdm9FrpdkW29mtPW4rB2T798jkil/+c5Cdhom2lJqijlIfS46NG73PQL6/3pRBpl55/l0myc2g/P7fzzP8u4g534ZTiEqyCfov0rJhck785ZPafScsJ8lUZ2nooI2kYpiajPqqTwG+YE0b/XT58QJPdbuC786j6W+wu614A7TPSXaD/Af8lU8hznQhyAAAAAElFTkSuQmCC",
 "b": "",
-"where": "",
+"where": "트레이너: Red",
 "family": 163,
 "order": 89
 },
@@ -1546,7 +1546,7 @@
 "pokemon": false,
 "line": "꼬마몬→브이몬→엑스브이몬→황제드라몬",
 "next": [
-"황제팔라딘 「달맞이 돌」"
+"황제팔라딘 「?」"
 ],
 "id": "imperialdramondragonmode",
 "src_f": "art",
@@ -1660,14 +1660,14 @@
 "pokemon": false,
 "line": "깜몬→코로몬→아구몬→그레이몬→메탈그레몬→워그레이몬",
 "next": [
-"오메가몬 「천둥의 돌」"
+"오메가몬 「?」"
 ],
 "id": "wargreymon",
 "src_f": "art",
 "src_b": "art",
 "f": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAEBklEQVR4nL1au3XjMBAE7l0DUgW80C3ImdQFFbouhWQXUka1oNCuQCoBF4w1b70glkuI9DwHFAguhvsH6JhSCksjxri42D/LirMRY4wx1j1bT5RLyrVJRRHi+NA2dXRf0qikBdzPLdjcz20UGNqGzjC0TcVaLxG9n1usej+3+Nse+vu5fe+/MEhaGCGg198gimU2++7tY8dBsCRF4L3/Atfr8d8rXOs1mlLCSqAFlttDvz30auZ7/5VSkq+kFLwu0cflKH9KLQJgDJfgZNCFjmcptZ7o9tDLsLidrmA2tM2oXsPzZaRq/aghiigOTwuClrImFTzKGID7OpVar1HkoDBmdDUt5yodwIlKonm6kbdIfWgbRn146l6Jcip1gRIKu0ty4ZkE8D7SKZkicMsf/rO7BzpoeCqP0R1CuJ2uHCQnxRK4na4UEkKYpFGvUUYSnBWEOCg5oYApV54d+2kmgsiCQXjnZEiBK+MP7KVz2+vWmJ7MYOihbaie3NDbQ48axoyGBzkNElC9jHXnmZ7rqbguJUs4Bvpoxo1kSQmT+vrrp4gLGeBYW2YfrIpBSehxOUq9VsClUbmA8kUyYzBJz5PqN1h6Uum0j1KE9EUJmZ5kA5BPVkaXWNhHS8hDftd9BrPQz8WEjyqLcGEmzvCz/+D143KUOd9OXh5YGi15lewzVGKX0/jTZumsohOmV8GhROcMbqcrHFH1H6/7QJGoqumMbvIrtfSEmpD3rLNg+Sj5qZzMbbGKdz6YR3c+ZxmiPCyw6xt1djtdMe3tY7fZdyhFfB/gResXTW+wTCkpF7Rtutl3YSqkJjGuUW6F7TzM9C6zlRKi0gK8Ytd9qhio70fxZOl5dl/UpbOIwz14jbrggRX1ThEE8ivPHClBngDkOdjpEpZGbXPw9IsjUBWfwkUphoa2Qdh5WFpER2nJo0Z06W8fO/Ab7VdIGnRJWvJDqE3C1Y/KmOB502gFx2mjMgViTiZXaQfn8fSERqnFfI8xGuk5QEK12BTu76OtYMK7ym1dMLsQD1eC+3rnps2qTBShDu4MTOpY0fVvLUf8gyzRU3LcUw9LC8vokf3NjD3w6M599K79lIFQblVnCJm1ZB0Uv7yh9ghZ/suVgir3gEptcCSbyYofxOQHnVA+Lct/jmItorki84Z/lsAVNbrZd+lnCQ1iLyV5Y6Zd91f/FqpopZRKx/s211WIsnw/LkelOUURF56C8ktfl+0NanhytZS6UuKEifN4wgSMJ9E/8FaJkvfYsQ44xcX1qKqS2Avcz1Zvui5RxSnGmFIXfr5AmAojYJXKxH29Ei63U/m6qmVTWCuYSoHs7xgV1qr1pQ1GSdnGI993VyJaXM+0r4Ff/S+dUEUR+A/dgeq345PHhAAAAABJRU5ErkJggg==",
 "b": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAC4UlEQVR4nO2Yy3XqMBCGJU4agAq8TQvxDrowy9SVJeoCdk4L2boCKMF3MeHP75nRA8g99y6YBQfkkebTaB4WcZ7n8D/J6l8DaHkC1eQJVJMnUE2eQDV5AtXkIaAYY4zxt1BEHvVQY29uR3+5G4UN8PcHXx/uBwohnI+DoJyPAwZlJIdVfhoePLLNLjEKRgQUbosxKrWC/EKWibHNLoWlq8I1dDAYY6wf6Hy7MAoTyE8Z4U8YarHYgHzdnHKJFXFSbtviqs0ulS1mj0xlKXwDGmsej5Tbwi1h5HvIzQVe1IYzhB+pwKq6JxQ8hJRmRHhFnJ+jcR+tt4cySgXIMqnNWQ+BZhw6+AZ8TSmGI1PawjEOXZ8mKISrY/AJDub7+vjEOq/vb6xjTVjEVaHF9GlCiRuHLmTySCV/nyb+gimwjZpZcRiXmXmez8fBThCscPXHOHSFwuOuz3BuHVqxGcjltJdPwZL5coKsBh+4gWxrKTwt67vixIo6adutrGGZxWaUGsIOEQaLdaDzcVhvD7K65KqqQIH6V+6MxDCCWmS9PYiTcjRZIFeVl3MVIEh+BpKqKPssVMjF+5CiUQ64nPZAd4NAzOTSVhK22kC+C+M4dBIHhQa52SXxTdmkLOI6ADQF7kWllrSy81lsSoZlS4GlPk1cJJUhd3wBJOZtx2FjLk3w2ufltJ/nuRptJSARy46EYjLFysp8FrkNVID6NKkyb0UFu2J1NZFQNwMFKlzVCdLg2IytnOXkKMtP2pdppK40KrO0n5qc9SpcW50K59wW21Fc4WX5noQ2twrUSnmailzR5qxRxCrzLffXxydXAb4bsfIN97Jq4FtjzNqn6fX9zc1QjocmIEyWF6D2KexRpMJml1R4cJz5QLZe92lSzVKRuaC4OUkZsy9xCJ0FUOE+cF/2cuaLk+wVO4QwDp3NwZ+gdkXt6e7qYply5eD7yMqXpmrTKIPiact+/tZ/jHf/1fcHLhzJf02gZxQAAAAASUVORK5CYII=",
-"where": "트레이너: Red, Rival2",
+"where": "트레이너: Rival2",
 "family": 238,
 "order": 97
 },
@@ -1694,7 +1694,7 @@
 "pokemon": false,
 "line": "푸니몬→뿔몬→파피몬→가루몬→워가루몬→메탈가루몬",
 "next": [
-"오메가몬 「천둥의 돌」"
+"오메가몬 「?」"
 ],
 "id": "metalgarurumon",
 "src_f": "art",
@@ -1722,6 +1722,54 @@
 "order": 100
 },
 {
+"no": 243,
+"ko": "백호몬",
+"grade": "궁극체",
+"pokemon": false,
+"line": "백호몬",
+"next": [],
+"id": "baihumon",
+"src_f": "2.0",
+"src_b": "2.0",
+"f": "",
+"b": "",
+"where": "떠돌이: 떠돌이 1",
+"family": 243,
+"order": 101
+},
+{
+"no": 244,
+"ko": "주작몬",
+"grade": "궁극체",
+"pokemon": false,
+"line": "주작몬",
+"next": [],
+"id": "zhuqiaomon",
+"src_f": "2.0",
+"src_b": "2.0",
+"f": "",
+"b": "",
+"where": "고정 만남: BurnedTowerB1F / 떠돌이: 떠돌이 2",
+"family": 244,
+"order": 102
+},
+{
+"no": 245,
+"ko": "현무몬",
+"grade": "궁극체",
+"pokemon": false,
+"line": "현무몬",
+"next": [],
+"id": "xuanwumon",
+"src_f": "2.0",
+"src_b": "2.0",
+"f": "",
+"b": "",
+"where": "떠돌이: 떠돌이 3",
+"family": 245,
+"order": 103
+},
+{
 "no": 201,
 "ko": "디지문자",
 "grade": "",
@@ -1735,7 +1783,7 @@
 "b": "",
 "where": "야생: 알프의 유적",
 "family": 201,
-"order": 101
+"order": 104
 },
 {
 "no": 13,
@@ -1753,7 +1801,7 @@
 "b": "",
 "where": "",
 "family": 13,
-"order": 102
+"order": 105
 },
 {
 "no": 20,
@@ -1769,7 +1817,7 @@
 "b": "",
 "where": "",
 "family": 20,
-"order": 103
+"order": 106
 },
 {
 "no": 23,
@@ -1787,7 +1835,7 @@
 "b": "",
 "where": "",
 "family": 23,
-"order": 104
+"order": 107
 },
 {
 "no": 24,
@@ -1803,7 +1851,7 @@
 "b": "",
 "where": "",
 "family": 23,
-"order": 105
+"order": 108
 },
 {
 "no": 26,
@@ -1819,7 +1867,7 @@
 "b": "",
 "where": "",
 "family": 26,
-"order": 106
+"order": 109
 },
 {
 "no": 29,
@@ -1837,7 +1885,7 @@
 "b": "",
 "where": "",
 "family": 29,
-"order": 107
+"order": 110
 },
 {
 "no": 30,
@@ -1855,7 +1903,7 @@
 "b": "",
 "where": "",
 "family": 29,
-"order": 108
+"order": 111
 },
 {
 "no": 31,
@@ -1871,7 +1919,7 @@
 "b": "",
 "where": "",
 "family": 29,
-"order": 109
+"order": 112
 },
 {
 "no": 32,
@@ -1889,7 +1937,7 @@
 "b": "",
 "where": "",
 "family": 32,
-"order": 110
+"order": 113
 },
 {
 "no": 33,
@@ -1907,7 +1955,7 @@
 "b": "",
 "where": "",
 "family": 32,
-"order": 111
+"order": 114
 },
 {
 "no": 34,
@@ -1923,7 +1971,7 @@
 "b": "",
 "where": "",
 "family": 32,
-"order": 112
+"order": 115
 },
 {
 "no": 36,
@@ -1939,7 +1987,7 @@
 "b": "",
 "where": "",
 "family": 36,
-"order": 113
+"order": 116
 },
 {
 "no": 37,
@@ -1957,7 +2005,7 @@
 "b": "",
 "where": "",
 "family": 37,
-"order": 114
+"order": 117
 },
 {
 "no": 38,
@@ -1973,7 +2021,7 @@
 "b": "",
 "where": "",
 "family": 37,
-"order": 115
+"order": 118
 },
 {
 "no": 53,
@@ -1991,7 +2039,7 @@
 "b": "",
 "where": "",
 "family": 37,
-"order": 116
+"order": 119
 },
 {
 "no": 47,
@@ -2007,7 +2055,7 @@
 "b": "",
 "where": "",
 "family": 47,
-"order": 117
+"order": 120
 },
 {
 "no": 48,
@@ -2025,7 +2073,7 @@
 "b": "",
 "where": "",
 "family": 48,
-"order": 118
+"order": 121
 },
 {
 "no": 49,
@@ -2041,7 +2089,7 @@
 "b": "",
 "where": "",
 "family": 48,
-"order": 119
+"order": 122
 },
 {
 "no": 50,
@@ -2059,7 +2107,7 @@
 "b": "",
 "where": "",
 "family": 50,
-"order": 120
+"order": 123
 },
 {
 "no": 51,
@@ -2075,7 +2123,7 @@
 "b": "",
 "where": "",
 "family": 50,
-"order": 121
+"order": 124
 },
 {
 "no": 54,
@@ -2093,7 +2141,7 @@
 "b": "",
 "where": "",
 "family": 54,
-"order": 122
+"order": 125
 },
 {
 "no": 55,
@@ -2109,7 +2157,7 @@
 "b": "",
 "where": "",
 "family": 54,
-"order": 123
+"order": 126
 },
 {
 "no": 58,
@@ -2127,7 +2175,7 @@
 "b": "",
 "where": "",
 "family": 58,
-"order": 124
+"order": 127
 },
 {
 "no": 59,
@@ -2143,7 +2191,7 @@
 "b": "",
 "where": "",
 "family": 59,
-"order": 125
+"order": 128
 },
 {
 "no": 63,
@@ -2161,7 +2209,7 @@
 "b": "",
 "where": "",
 "family": 63,
-"order": 126
+"order": 129
 },
 {
 "no": 64,
@@ -2179,7 +2227,7 @@
 "b": "",
 "where": "",
 "family": 63,
-"order": 127
+"order": 130
 },
 {
 "no": 65,
@@ -2195,7 +2243,7 @@
 "b": "",
 "where": "",
 "family": 63,
-"order": 128
+"order": 131
 },
 {
 "no": 66,
@@ -2213,7 +2261,7 @@
 "b": "",
 "where": "",
 "family": 66,
-"order": 129
+"order": 132
 },
 {
 "no": 67,
@@ -2231,7 +2279,7 @@
 "b": "",
 "where": "",
 "family": 66,
-"order": 130
+"order": 133
 },
 {
 "no": 68,
@@ -2247,7 +2295,7 @@
 "b": "",
 "where": "",
 "family": 66,
-"order": 131
+"order": 134
 },
 {
 "no": 71,
@@ -2263,7 +2311,7 @@
 "b": "",
 "where": "",
 "family": 71,
-"order": 132
+"order": 135
 },
 {
 "no": 72,
@@ -2281,7 +2329,7 @@
 "b": "",
 "where": "",
 "family": 72,
-"order": 133
+"order": 136
 },
 {
 "no": 73,
@@ -2297,7 +2345,7 @@
 "b": "",
 "where": "",
 "family": 72,
-"order": 134
+"order": 137
 },
 {
 "no": 75,
@@ -2315,7 +2363,7 @@
 "b": "",
 "where": "",
 "family": 75,
-"order": 135
+"order": 138
 },
 {
 "no": 76,
@@ -2331,7 +2379,7 @@
 "b": "",
 "where": "",
 "family": 75,
-"order": 136
+"order": 139
 },
 {
 "no": 77,
@@ -2349,7 +2397,7 @@
 "b": "",
 "where": "",
 "family": 77,
-"order": 137
+"order": 140
 },
 {
 "no": 78,
@@ -2365,7 +2413,7 @@
 "b": "",
 "where": "",
 "family": 77,
-"order": 138
+"order": 141
 },
 {
 "no": 79,
@@ -2384,7 +2432,7 @@
 "b": "",
 "where": "",
 "family": 79,
-"order": 139
+"order": 142
 },
 {
 "no": 80,
@@ -2400,7 +2448,7 @@
 "b": "",
 "where": "",
 "family": 79,
-"order": 140
+"order": 143
 },
 {
 "no": 199,
@@ -2416,7 +2464,7 @@
 "b": "",
 "where": "",
 "family": 79,
-"order": 141
+"order": 144
 },
 {
 "no": 81,
@@ -2434,7 +2482,7 @@
 "b": "",
 "where": "",
 "family": 81,
-"order": 142
+"order": 145
 },
 {
 "no": 82,
@@ -2450,7 +2498,7 @@
 "b": "",
 "where": "",
 "family": 81,
-"order": 143
+"order": 146
 },
 {
 "no": 83,
@@ -2466,7 +2514,7 @@
 "b": "",
 "where": "",
 "family": 83,
-"order": 144
+"order": 147
 },
 {
 "no": 84,
@@ -2484,7 +2532,7 @@
 "b": "",
 "where": "",
 "family": 84,
-"order": 145
+"order": 148
 },
 {
 "no": 85,
@@ -2500,7 +2548,7 @@
 "b": "",
 "where": "",
 "family": 84,
-"order": 146
+"order": 149
 },
 {
 "no": 86,
@@ -2518,7 +2566,7 @@
 "b": "",
 "where": "",
 "family": 86,
-"order": 147
+"order": 150
 },
 {
 "no": 87,
@@ -2534,7 +2582,7 @@
 "b": "",
 "where": "",
 "family": 86,
-"order": 148
+"order": 151
 },
 {
 "no": 89,
@@ -2550,7 +2598,7 @@
 "b": "",
 "where": "",
 "family": 89,
-"order": 149
+"order": 152
 },
 {
 "no": 91,
@@ -2566,7 +2614,7 @@
 "b": "",
 "where": "",
 "family": 91,
-"order": 150
+"order": 153
 },
 {
 "no": 94,
@@ -2584,7 +2632,7 @@
 "b": "",
 "where": "",
 "family": 94,
-"order": 151
+"order": 154
 },
 {
 "no": 150,
@@ -2600,7 +2648,7 @@
 "b": "",
 "where": "",
 "family": 94,
-"order": 152
+"order": 155
 },
 {
 "no": 95,
@@ -2618,7 +2666,7 @@
 "b": "",
 "where": "",
 "family": 95,
-"order": 153
+"order": 156
 },
 {
 "no": 208,
@@ -2634,7 +2682,7 @@
 "b": "",
 "where": "",
 "family": 95,
-"order": 154
+"order": 157
 },
 {
 "no": 96,
@@ -2652,7 +2700,7 @@
 "b": "",
 "where": "",
 "family": 96,
-"order": 155
+"order": 158
 },
 {
 "no": 97,
@@ -2668,7 +2716,7 @@
 "b": "",
 "where": "",
 "family": 96,
-"order": 156
+"order": 159
 },
 {
 "no": 98,
@@ -2686,7 +2734,7 @@
 "b": "",
 "where": "",
 "family": 98,
-"order": 157
+"order": 160
 },
 {
 "no": 99,
@@ -2702,7 +2750,7 @@
 "b": "",
 "where": "",
 "family": 98,
-"order": 158
+"order": 161
 },
 {
 "no": 100,
@@ -2720,7 +2768,7 @@
 "b": "",
 "where": "",
 "family": 100,
-"order": 159
+"order": 162
 },
 {
 "no": 101,
@@ -2736,7 +2784,7 @@
 "b": "",
 "where": "",
 "family": 100,
-"order": 160
+"order": 163
 },
 {
 "no": 103,
@@ -2752,7 +2800,7 @@
 "b": "",
 "where": "",
 "family": 103,
-"order": 161
+"order": 164
 },
 {
 "no": 104,
@@ -2770,7 +2818,7 @@
 "b": "",
 "where": "",
 "family": 104,
-"order": 162
+"order": 165
 },
 {
 "no": 108,
@@ -2786,7 +2834,7 @@
 "b": "",
 "where": "",
 "family": 108,
-"order": 163
+"order": 166
 },
 {
 "no": 113,
@@ -2802,7 +2850,7 @@
 "b": "",
 "where": "",
 "family": 113,
-"order": 164
+"order": 167
 },
 {
 "no": 114,
@@ -2818,7 +2866,7 @@
 "b": "",
 "where": "",
 "family": 114,
-"order": 165
+"order": 168
 },
 {
 "no": 115,
@@ -2834,7 +2882,7 @@
 "b": "",
 "where": "",
 "family": 115,
-"order": 166
+"order": 169
 },
 {
 "no": 119,
@@ -2850,7 +2898,7 @@
 "b": "",
 "where": "",
 "family": 119,
-"order": 167
+"order": 170
 },
 {
 "no": 120,
@@ -2868,7 +2916,7 @@
 "b": "",
 "where": "",
 "family": 120,
-"order": 168
+"order": 171
 },
 {
 "no": 121,
@@ -2884,7 +2932,7 @@
 "b": "",
 "where": "",
 "family": 120,
-"order": 169
+"order": 172
 },
 {
 "no": 122,
@@ -2900,7 +2948,7 @@
 "b": "",
 "where": "",
 "family": 122,
-"order": 170
+"order": 173
 },
 {
 "no": 123,
@@ -2916,7 +2964,7 @@
 "b": "",
 "where": "",
 "family": 123,
-"order": 171
+"order": 174
 },
 {
 "no": 124,
@@ -2932,7 +2980,7 @@
 "b": "",
 "where": "",
 "family": 124,
-"order": 172
+"order": 175
 },
 {
 "no": 125,
@@ -2948,7 +2996,7 @@
 "b": "",
 "where": "",
 "family": 125,
-"order": 173
+"order": 176
 },
 {
 "no": 127,
@@ -2964,7 +3012,7 @@
 "b": "",
 "where": "",
 "family": 127,
-"order": 174
+"order": 177
 },
 {
 "no": 132,
@@ -2980,7 +3028,7 @@
 "b": "",
 "where": "",
 "family": 132,
-"order": 175
+"order": 178
 },
 {
 "no": 137,
@@ -2998,7 +3046,7 @@
 "b": "",
 "where": "",
 "family": 137,
-"order": 176
+"order": 179
 },
 {
 "no": 233,
@@ -3014,7 +3062,7 @@
 "b": "",
 "where": "",
 "family": 137,
-"order": 177
+"order": 180
 },
 {
 "no": 138,
@@ -3030,7 +3078,7 @@
 "b": "",
 "where": "",
 "family": 138,
-"order": 178
+"order": 181
 },
 {
 "no": 141,
@@ -3046,7 +3094,7 @@
 "b": "",
 "where": "",
 "family": 141,
-"order": 179
+"order": 182
 },
 {
 "no": 142,
@@ -3062,7 +3110,7 @@
 "b": "",
 "where": "",
 "family": 142,
-"order": 180
+"order": 183
 },
 {
 "no": 143,
@@ -3078,7 +3126,7 @@
 "b": "",
 "where": "",
 "family": 143,
-"order": 181
+"order": 184
 },
 {
 "no": 144,
@@ -3094,7 +3142,7 @@
 "b": "",
 "where": "",
 "family": 144,
-"order": 182
+"order": 185
 },
 {
 "no": 146,
@@ -3110,7 +3158,7 @@
 "b": "",
 "where": "",
 "family": 146,
-"order": 183
+"order": 186
 },
 {
 "no": 147,
@@ -3128,7 +3176,7 @@
 "b": "",
 "where": "",
 "family": 147,
-"order": 184
+"order": 187
 },
 {
 "no": 148,
@@ -3146,7 +3194,7 @@
 "b": "",
 "where": "",
 "family": 147,
-"order": 185
+"order": 188
 },
 {
 "no": 149,
@@ -3162,7 +3210,7 @@
 "b": "",
 "where": "",
 "family": 147,
-"order": 186
+"order": 189
 },
 {
 "no": 151,
@@ -3178,7 +3226,7 @@
 "b": "",
 "where": "",
 "family": 151,
-"order": 187
+"order": 190
 },
 {
 "no": 152,
@@ -3196,7 +3244,7 @@
 "b": "",
 "where": "",
 "family": 152,
-"order": 188
+"order": 191
 },
 {
 "no": 153,
@@ -3214,7 +3262,7 @@
 "b": "",
 "where": "",
 "family": 152,
-"order": 189
+"order": 192
 },
 {
 "no": 154,
@@ -3230,7 +3278,7 @@
 "b": "",
 "where": "",
 "family": 152,
-"order": 190
+"order": 193
 },
 {
 "no": 155,
@@ -3248,7 +3296,7 @@
 "b": "",
 "where": "",
 "family": 155,
-"order": 191
+"order": 194
 },
 {
 "no": 156,
@@ -3266,7 +3314,7 @@
 "b": "",
 "where": "",
 "family": 155,
-"order": 192
+"order": 195
 },
 {
 "no": 157,
@@ -3284,7 +3332,7 @@
 "b": "",
 "where": "",
 "family": 155,
-"order": 193
+"order": 196
 },
 {
 "no": 250,
@@ -3300,7 +3348,7 @@
 "b": "",
 "where": "",
 "family": 155,
-"order": 194
+"order": 197
 },
 {
 "no": 158,
@@ -3318,7 +3366,7 @@
 "b": "",
 "where": "",
 "family": 158,
-"order": 195
+"order": 198
 },
 {
 "no": 159,
@@ -3336,7 +3384,7 @@
 "b": "",
 "where": "",
 "family": 158,
-"order": 196
+"order": 199
 },
 {
 "no": 160,
@@ -3352,7 +3400,7 @@
 "b": "",
 "where": "",
 "family": 158,
-"order": 197
+"order": 200
 },
 {
 "no": 162,
@@ -3368,7 +3416,7 @@
 "b": "",
 "where": "",
 "family": 162,
-"order": 198
+"order": 201
 },
 {
 "no": 164,
@@ -3384,7 +3432,7 @@
 "b": "",
 "where": "",
 "family": 164,
-"order": 199
+"order": 202
 },
 {
 "no": 177,
@@ -3402,7 +3450,7 @@
 "b": "",
 "where": "",
 "family": 177,
-"order": 200
+"order": 203
 },
 {
 "no": 178,
@@ -3420,7 +3468,7 @@
 "b": "",
 "where": "",
 "family": 177,
-"order": 201
+"order": 204
 },
 {
 "no": 196,
@@ -3436,7 +3484,7 @@
 "b": "",
 "where": "",
 "family": 177,
-"order": 202
+"order": 205
 },
 {
 "no": 181,
@@ -3452,7 +3500,7 @@
 "b": "",
 "where": "",
 "family": 181,
-"order": 203
+"order": 206
 },
 {
 "no": 182,
@@ -3468,7 +3516,7 @@
 "b": "",
 "where": "",
 "family": 182,
-"order": 204
+"order": 207
 },
 {
 "no": 183,
@@ -3484,7 +3532,7 @@
 "b": "",
 "where": "",
 "family": 183,
-"order": 205
+"order": 208
 },
 {
 "no": 189,
@@ -3500,7 +3548,7 @@
 "b": "",
 "where": "",
 "family": 189,
-"order": 206
+"order": 209
 },
 {
 "no": 190,
@@ -3516,7 +3564,7 @@
 "b": "",
 "where": "",
 "family": 190,
-"order": 207
+"order": 210
 },
 {
 "no": 191,
@@ -3534,7 +3582,7 @@
 "b": "",
 "where": "",
 "family": 191,
-"order": 208
+"order": 211
 },
 {
 "no": 192,
@@ -3550,7 +3598,7 @@
 "b": "",
 "where": "",
 "family": 191,
-"order": 209
+"order": 212
 },
 {
 "no": 193,
@@ -3566,7 +3614,7 @@
 "b": "",
 "where": "",
 "family": 193,
-"order": 210
+"order": 213
 },
 {
 "no": 198,
@@ -3582,7 +3630,7 @@
 "b": "",
 "where": "",
 "family": 198,
-"order": 211
+"order": 214
 },
 {
 "no": 202,
@@ -3598,7 +3646,7 @@
 "b": "",
 "where": "",
 "family": 202,
-"order": 212
+"order": 215
 },
 {
 "no": 203,
@@ -3614,7 +3662,7 @@
 "b": "",
 "where": "",
 "family": 203,
-"order": 213
+"order": 216
 },
 {
 "no": 204,
@@ -3632,7 +3680,7 @@
 "b": "",
 "where": "",
 "family": 204,
-"order": 214
+"order": 217
 },
 {
 "no": 205,
@@ -3648,7 +3696,7 @@
 "b": "",
 "where": "",
 "family": 204,
-"order": 215
+"order": 218
 },
 {
 "no": 207,
@@ -3664,7 +3712,7 @@
 "b": "",
 "where": "",
 "family": 207,
-"order": 216
+"order": 219
 },
 {
 "no": 209,
@@ -3682,7 +3730,7 @@
 "b": "",
 "where": "",
 "family": 209,
-"order": 217
+"order": 220
 },
 {
 "no": 210,
@@ -3698,7 +3746,7 @@
 "b": "",
 "where": "",
 "family": 209,
-"order": 218
+"order": 221
 },
 {
 "no": 211,
@@ -3714,7 +3762,7 @@
 "b": "",
 "where": "",
 "family": 211,
-"order": 219
+"order": 222
 },
 {
 "no": 213,
@@ -3730,7 +3778,7 @@
 "b": "",
 "where": "",
 "family": 213,
-"order": 220
+"order": 223
 },
 {
 "no": 214,
@@ -3746,7 +3794,7 @@
 "b": "",
 "where": "",
 "family": 214,
-"order": 221
+"order": 224
 },
 {
 "no": 215,
@@ -3762,7 +3810,7 @@
 "b": "",
 "where": "",
 "family": 215,
-"order": 222
+"order": 225
 },
 {
 "no": 216,
@@ -3778,7 +3826,7 @@
 "b": "",
 "where": "",
 "family": 216,
-"order": 223
+"order": 226
 },
 {
 "no": 218,
@@ -3796,7 +3844,7 @@
 "b": "",
 "where": "",
 "family": 218,
-"order": 224
+"order": 227
 },
 {
 "no": 219,
@@ -3812,7 +3860,7 @@
 "b": "",
 "where": "",
 "family": 218,
-"order": 225
+"order": 228
 },
 {
 "no": 220,
@@ -3830,7 +3878,7 @@
 "b": "",
 "where": "",
 "family": 220,
-"order": 226
+"order": 229
 },
 {
 "no": 221,
@@ -3846,7 +3894,7 @@
 "b": "",
 "where": "",
 "family": 220,
-"order": 227
+"order": 230
 },
 {
 "no": 222,
@@ -3862,7 +3910,7 @@
 "b": "",
 "where": "",
 "family": 222,
-"order": 228
+"order": 231
 },
 {
 "no": 223,
@@ -3880,7 +3928,7 @@
 "b": "",
 "where": "",
 "family": 223,
-"order": 229
+"order": 232
 },
 {
 "no": 224,
@@ -3896,7 +3944,7 @@
 "b": "",
 "where": "",
 "family": 223,
-"order": 230
+"order": 233
 },
 {
 "no": 225,
@@ -3912,7 +3960,7 @@
 "b": "",
 "where": "",
 "family": 225,
-"order": 231
+"order": 234
 },
 {
 "no": 226,
@@ -3928,7 +3976,7 @@
 "b": "",
 "where": "",
 "family": 226,
-"order": 232
+"order": 235
 },
 {
 "no": 227,
@@ -3944,7 +3992,7 @@
 "b": "",
 "where": "",
 "family": 227,
-"order": 233
+"order": 236
 },
 {
 "no": 228,
@@ -3960,7 +4008,7 @@
 "b": "",
 "where": "",
 "family": 228,
-"order": 234
+"order": 237
 },
 {
 "no": 231,
@@ -3978,7 +4026,7 @@
 "b": "",
 "where": "",
 "family": 231,
-"order": 235
+"order": 238
 },
 {
 "no": 232,
@@ -3994,7 +4042,7 @@
 "b": "",
 "where": "",
 "family": 231,
-"order": 236
+"order": 239
 },
 {
 "no": 234,
@@ -4010,7 +4058,7 @@
 "b": "",
 "where": "",
 "family": 234,
-"order": 237
+"order": 240
 },
 {
 "no": 235,
@@ -4026,7 +4074,7 @@
 "b": "",
 "where": "",
 "family": 235,
-"order": 238
+"order": 241
 },
 {
 "no": 106,
@@ -4042,7 +4090,7 @@
 "b": "",
 "where": "",
 "family": 236,
-"order": 239
+"order": 242
 },
 {
 "no": 107,
@@ -4058,7 +4106,7 @@
 "b": "",
 "where": "",
 "family": 236,
-"order": 240
+"order": 243
 },
 {
 "no": 236,
@@ -4078,7 +4126,7 @@
 "b": "",
 "where": "",
 "family": 236,
-"order": 241
+"order": 244
 },
 {
 "no": 237,
@@ -4094,7 +4142,7 @@
 "b": "",
 "where": "",
 "family": 236,
-"order": 242
+"order": 245
 },
 {
 "no": 241,
@@ -4110,54 +4158,6 @@
 "b": "",
 "where": "",
 "family": 241,
-"order": 243
-},
-{
-"no": 243,
-"ko": "-----",
-"grade": "",
-"pokemon": false,
-"line": "-----",
-"next": [],
-"id": "",
-"src_f": "egg",
-"src_b": "egg",
-"f": "",
-"b": "",
-"where": "",
-"family": 243,
-"order": 244
-},
-{
-"no": 244,
-"ko": "-----",
-"grade": "",
-"pokemon": false,
-"line": "-----",
-"next": [],
-"id": "",
-"src_f": "egg",
-"src_b": "egg",
-"f": "",
-"b": "",
-"where": "",
-"family": 244,
-"order": 245
-},
-{
-"no": 245,
-"ko": "-----",
-"grade": "",
-"pokemon": false,
-"line": "-----",
-"next": [],
-"id": "",
-"src_f": "egg",
-"src_b": "egg",
-"f": "",
-"b": "",
-"where": "",
-"family": 245,
 "order": 246
 },
 {
