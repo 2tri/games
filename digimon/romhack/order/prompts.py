@@ -138,3 +138,27 @@ Reply only with the image. Say "OK" now if you understand."""
 
 def gemini_front(e): return 'FRONT: %s' % (e['en'] or e['ko'])
 def gemini_back(e, has_front_in_chat=True): return 'BACK' if has_front_in_chat else 'BACK: %s (the attached image is its finished front sprite)' % (e['en'] or e['ko'])
+
+
+# ── 종마다 한 번에 쓰는 주문문 (2026-10-05 사용자: 시작 규칙은 재미나이가 안 지킴 → 매번 전부 적기) ──
+_STYLE = ("Style: late-1990s Game Boy Color battle sprite. Big chunky pixels, every pixel a crisp square of the same size, thick black outline, flat shapes. "
+          "No anti-aliasing, no blur, no gradients, no dithering, no shadow.\n"
+          "Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black (black = outline and eyes).\n"
+          "ONE square image, pure white background, nothing else: no text, no frame, no grid lines, no ground.")
+
+
+def full_front(en, extra=''):
+    return (f"Convert the attached picture of {en}, a Digimon, into a pixel-art battle sprite (FRONT view).\n"
+            "Keep the picture EXACTLY: same pose, same facing direction, same proportions, same parts. Change only the art style. Do not redesign it or turn it into another creature.\n"
+            "Make it BIG: the whole character visible, standing on the bottom edge, filling the square as much as possible (about 95% of the height or width).\n"
+            + _STYLE + (f"\nAlso: {extra}" if extra else ''))
+
+
+def full_back(en, extra=''):
+    return (f"The attached image is the finished FRONT battle sprite of {en}, a Digimon. Draw its BACK battle sprite in the same pixel style.\n"
+            "View: like the player's own monster in a classic Game Boy battle screen. Camera behind and a little above it; the character faces AWAY toward the upper-right, "
+            "so we see its back, one shoulder and a thin sliver of the side of its head. NOT straight from behind, NOT a mirror of the front, no face.\n"
+            "Show only the UPPER BODY, big: head, shoulders, back, arms and the start of wings or tail. The lower body is cut off by the bottom edge. "
+            "Fill the whole square; wing or tail tips may go outside the frame.\n"
+            "Same parts in the same tones as the front sprite.\n"
+            + _STYLE + (f"\nAlso: {extra}" if extra else ''))

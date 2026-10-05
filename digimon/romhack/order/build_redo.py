@@ -43,6 +43,13 @@ PLAN = {
     194: {'f': ('gemini', '크게 새로')},
     197: {'f': ('gemini', '크게 새로')},
 }
+# 메모를 주문문에 넣을 말 (영어)
+EXTRA = {(5, 'b'): 'Turn it more to the side: a three-quarter rear view, not straight from behind.',
+         (112, 'b'): 'Show only from the head down to the middle of the body, very big.',
+         (109, 'f'): 'BlackWarGreymon: black armor (not orange). Keep the armor details readable at this size.',
+         (109, 'b'): 'BlackWarGreymon: black armor.',
+         (21, 'f'): 'Draw it larger than usual; it must fill the square.', (21, 'b'): 'Draw it larger than usual.',
+         (133, 'f'): 'Draw it larger than usual; it must fill the square.', (133, 'b'): 'Draw it larger than usual.'}
 HOW = {'gemini': '재미나이', 'have': '받아 둔 그림', 'claude': 'Claude가 고침', 'ask': '확인 필요'}
 
 
@@ -76,11 +83,11 @@ def main():
         rows.append(dict(no=no, ko=x['ko'], en=en, grade=x['grade'] if x['grade'] in GRADES else '기타', order=x.get('order', 999), src=x['src_f'],
                          gf=gf, gb=gb, newf=newf, newb=newb, chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''),
                          plan={k: [HOW[v[0]], v[1], v[0]] for k, v in plan.items()},
-                         g_front='FRONT: %s' % en, g_back='BACK: %s (the attached image is its finished front sprite)' % en,
+                         g_front=prompts.full_front(en, EXTRA.get((no, 'f'), '')), g_back=prompts.full_back(en, EXTRA.get((no, 'b'), '')),
                          img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else ''))
     gi = lambda g: GRADES.index(g) if g in GRADES else len(GRADES)
     rows.sort(key=lambda r: (gi(r['grade']), r['order'], r['no']))
-    D = {'primer': prompts.GEMINI_PRIMER, 'rows': rows, 'grades': GRADES + ['기타']}
+    D = {'rows': rows, 'grades': GRADES + ['기타']}
     html = open(HERE + '/redo_tpl.html', encoding='utf-8').read().replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower()
     open(a.out, 'w', encoding='utf-8').write(html)

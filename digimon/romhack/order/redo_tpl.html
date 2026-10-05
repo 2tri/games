@@ -95,13 +95,10 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     <h2>재미나이 쓰는 법</h2>
     <div class="box">
       <ol class="steps">
-        <li>재미나이 새 대화에 <b>시작 규칙</b>을 한 번 붙여 넣습니다 ("OK" 가 오면 준비 끝).</li>
-        <li><b>앞모습</b>: 찾은 사진을 첨부 + 카드의 「FRONT」 한 줄. 사진 자세 그대로, 칸을 꽉 채우게 나와요.</li>
-        <li><b>뒷모습</b>: 이어서 「BACK」 한 줄 + 방금 받은(또는 받아 둔) 앞모습 첨부. 상반신 크게 나와요.</li>
-        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 규칙을 잊는 것 같으면 새 대화에서 1번부터.</li>
+        <li><b>앞모습</b>: 찾은 사진을 첨부 + 카드의 「앞모습 주문문 복사」를 붙여 넣기. 사진 자세 그대로, 칸을 꽉 채우게 나와요.</li>
+        <li><b>뒷모습</b>: 받은(또는 받아 둔) 앞모습을 첨부 + 「뒷모습 주문문 복사」. 상반신이 크게 나와요.</li>
+        <li>주문문마다 규칙이 다 들어 있어서 새 대화든 이어서든 상관없어요. 받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요.</li>
       </ol>
-      <div class="row" id="primerRow"></div>
-      <details id="primerDet"><summary>시작 규칙 보기</summary><pre id="primerPre"></pre></details>
     </div>
   </section>
 
@@ -129,7 +126,6 @@ function copyBtn(label, text, cls) {
 }
 function pic(src, scale, cap, cls) { const p = el("div", "pic" + (cls ? " " + cls : "")); p.append(src ? img(src, scale) : el("div", "ph", "그림 없음"), el("span", "", cap)); return p; }
 let FILTER = "chk"; const cards = [];
-$("#primerPre").textContent = D.primer; $("#primerRow").append(copyBtn("재미나이 시작 규칙 복사", D.primer));
 const SIDE = { f: "앞", b: "뒤" };
 function card(r) {
   const on = r.chk_f || r.chk_b;
@@ -151,10 +147,11 @@ function card(r) {
   }
   const rw = el("div", "row");
   const wantF = r.plan.f ? r.plan.f[2] === "gemini" : !on, wantB = r.plan.b ? r.plan.b[2] === "gemini" : !on;
-  if (wantF) rw.append(copyBtn("FRONT 복사", r.g_front));
-  if (wantB) rw.append(copyBtn("BACK 복사", r.g_back, "alt"));
+  if (wantF) rw.append(copyBtn("앞모습 주문문 복사", r.g_front));
+  if (wantB) rw.append(copyBtn("뒷모습 주문문 복사", r.g_back, "alt"));
   if (r.img) { const a = el("a", "btn", "공식 그림 열기"); a.href = r.img; a.target = "_blank"; a.rel = "noopener"; rw.append(a); }
   c.append(rw);
+  if (wantF || wantB) { const det = el("details"); det.append(el("summary", "", "주문문 보기")); if (wantF) det.append(el("b", "", "앞모습"), el("pre", "", r.g_front)); if (wantB) det.append(el("b", "", "뒷모습"), el("pre", "", r.g_back)); c.append(det); }
   cards.push([r, c]); return c;
 }
 const secs = {};
