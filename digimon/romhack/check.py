@@ -291,6 +291,16 @@ def rules(c, out):
     # R17 초반 야생 유년기 (rules.BABY_WILD_LV, 사용자 2026-10-03): 그 레벨 이하 야생 칸에, 유년기가 롬에 있는 성장기가 없음
     r17 = collections.Counter(c.name(s['cur']) for s in wild if s['cur'] in baby_of and c.d[s['addr'] - 1] <= RU.BABY_WILD_LV)
     rep('R17', sorted(r17.items()), 'Lv%d 이하 야생에 유년기가 있는 성장기 없음 (유년기 %d종)' % (RU.BABY_WILD_LV, len(babies)), lambda b: '%s (%d곳)' % b)
+    # R19 스타팅 공 3개: 스크립트의 그림·울음·이름·주는 종 네 바이트가 모두 같은 종이고, 유년기 스타팅(rules.BABY_STARTERS, 칸이 있을 때) 또는 성장기
+    r19 = []; NB = {c.base.name(n): n for n in range(1, 252)}; base = bytes(c.base.d)
+    for old, rk in (('길몬', '아구몬'), ('레나몬', '파피몬'), ('테리어몬', '브이몬')):
+        o = NB[old]; a = re.search(bytes([0x56, o, 0x84, o, 0x00]), base).start(); seg = base[a:a + 80]
+        ks = (1, 3, seg.index(bytes([0x40, o])) + 1, seg.index(bytes([0x2d, o, 5])) + 1)
+        got = [c.d[a + k] for k in ks]
+        bb = next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk)
+        if len(set(got)) != 1 or got[0] != N[bb]: r19.append((old, '%s 이어야 하는데 %s' % (bb, '·'.join(c.name(g) for g in got))))
+    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in ('아구몬', '파피몬', '브이몬')),
+        lambda b: '%s 공: %s' % b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
