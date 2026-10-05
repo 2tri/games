@@ -20,10 +20,11 @@ def tempo_of(js, ff=1):
     return max(1, round(256 * FPS * 60 * ff / (js['bpm'] * js['grid'])))
 
 
-def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1, style=None):
+def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1, style=None, loop_at=0):
     """한 채널. base = 이 채널 바이트가 놓일 주소(뱅크 안 0x4000~), loop=True 면 처음으로 되돌아감
     cap = 명령 하나의 최대 칸 수 (엔진의 음 길이 = 칸×템포/256 프레임이 한 바이트라 255프레임을 넘으면 돌아감 → 나눠 씀)
-    shift = 음높이 이동(반음, 드럼 채널 제외), style = STYLES 항목 (없으면 기본 ENV·DUTY)"""
+    shift = 음높이 이동(반음, 드럼 채널 제외), style = STYLES 항목 (없으면 기본 ENV·DUTY)
+    loop_at = 되돌아갈 칸 (0 = 처음). 앞부분(전주)은 한 번만 — 그 칸에서 음을 끊고, 옥타브·note_type 을 다시 써서 되돌아와도 같게"""
     st = style or {}; duty = st.get('duty', DUTY)
     out = bytearray()
     if ch == 0: out += bytes([0xda]) + 0 .to_bytes(2, 'big') + bytes([0xe5, 0x77])   # 템포는 song_bytes 에서 채움
@@ -50,8 +51,18 @@ def chan_bytes(ch, notes, base, loop, cap=255, shift=0, ff=1, style=None):
             c = code if first or ch not in (0, 1) else 0
             note_type(s); out.append((c << 4) | (n // s - 1)); L -= n; first = False
 
+    if loop_at:                                                                        # 되돌아갈 칸에 걸친 음은 둘로 나눔
+        cut = []; u = 0
+        for p, L in notes:
+            if u < loop_at < u + L: cut += [[p, loop_at - u], [p if ch == 2 else 0, u + L - loop_at]]   # 이어지는 조각: 파형은 같은 음, 네모파·드럼은 쉼 (다시 안 침)
+            else: cut.append([p, L])
+            u += max(0, L)
+        notes = cut
+    u = 0
     for p, L in notes:
         if L <= 0: continue
+        if loop_at and u == loop_at: start = base + len(out); speed = None; octv = None
+        u += L
         if p == 0: emit(0, L); continue
         if ch == 3:
             emit(DRUM.get(p, 1), L); continue
@@ -104,7 +115,7 @@ def song_bytes(js, base, loop=None, ff=1, slow=None, style=None, pitch=False):
     sh = [ff_shift(js, ch, ff) if pitch else 0 for ch in range(4)]; notes = [js['ch'][ch] for ch in range(4)]
     if sh[1] > sh[0]: notes[1], sh[1] = under_lead(js, sh[0]), 0
     for ch in range(4):
-        b = chan_bytes(ch, notes[ch], p, loop, cap, sh[ch], ff, style); chans.append((p, b)); p += len(b)
+        b = chan_bytes(ch, notes[ch], p, loop, cap, sh[ch], ff, style, js.get('loop_at', 0)); chans.append((p, b)); p += len(b)
     c0 = bytearray(chans[0][1]); c0[1:3] = t.to_bytes(2, 'big'); chans[0] = (chans[0][0], bytes(c0))
     out = bytearray()
     for i, (a, _) in enumerate(chans):

@@ -51,7 +51,8 @@ SONGS.update({
     'victory': dict(SONGS['title'], start=128, end=160),                       # Butter-Fly 뒷부분 8마디 → 승리
     # 2026-10-05 사용자 「안녕 디지몬 같은 노래는 잔잔하게 배경음으로」: 장숙희 「안녕 디지몬」(KBS 엔딩, 마장조) 피아노 MIDI 의 앞 12마디
     #   (전주 4 + 1절 8, midiex 공개 미리듣기 30초 — 전체 파일은 로그인·댓글이 있어야 받음). 오른손 = 멜로디(한 옥타브 내림), 왼손 위 = 펼침화음, 왼손 아래 = 베이스, 드럼 없음
-    'annyeong': dict(mid='annyeong.mid', start=0, end=48, grid=12, bpm=100,
+    #   사용자 「맵 옮길 때마다 처음부터 나오는데 앞의 띠딩띠딩 4번이 거슬림, 한 번만 하고 바로 노래」: 전주는 1마디만 한 번, 반복은 1절부터
+    'annyeong': dict(mid='annyeong.mid', intro=(12, 16), start=16, end=48, grid=12, bpm=100,
                      lead=[('t', 1, 'top')], lead_shift=-12, harm=[('t', 2, 'top', 50, 127), ('t', 1, 'second', 0, 127, -12)], bass=[('t', 2, 'bottom', 0, 49)], drums='none'),
 })
 # 회복 징글 (직접 작곡, 포켓몬 센터 느낌의 짧은 아르페지오) — [음(MIDI), 길이(칸)]
@@ -168,17 +169,22 @@ def convert(name, sp):
     if 'beat' in sp:        # MIDI 박 → 실제 박
         b, ph = sp['beat'], sp.get('phase', 0)
         notes = [(t, c, (s - ph) / b, (e - ph) / b, p) for (t, c, s, e, p) in notes]; bpm = bpm / b
-    start, end, grid = sp['start'], sp['end'], sp['grid']
-    U = int(round((end - start) * grid))
-    chs = []
-    for ch, key in enumerate(('lead', 'harm', 'bass')):
-        p, o = voice(notes, sp[key], start, end, grid, ch, sp.get(key + '_shift', 0)); chs.append(runs(p, o))
-    hit = drum_voice(notes, sp['drums'], start, end, grid, sp.get('drummap'))
-    if sp.get('addkick'):       # 킥이 없는 MIDI: 1·3박에 킥
-        for u in range(0, U, grid * 2):
-            if hit[u] in (0, HAT, OHAT): hit[u] = KICK
-    chs.append(runs(hit, [bool(h) for h in hit]))
-    return dict(bpm=sp.get('bpm', round(bpm, 2)), grid=grid, units=U, once=sp.get('once', False), ch=chs)
+    grid = sp['grid']
+    # intro=(시작, 끝): 곡 앞에 한 번만 나오는 구간 (그 뒤 start~end 를 반복, json loop_at = 반복 시작 칸)
+    parts = ([sp['intro']] if 'intro' in sp else []) + [(sp['start'], sp['end'])]
+    chs = [[] for _ in range(4)]; U = 0
+    for start, end in parts:
+        Up = int(round((end - start) * grid))
+        for ch, key in enumerate(('lead', 'harm', 'bass')):
+            p, o = voice(notes, sp[key], start, end, grid, ch, sp.get(key + '_shift', 0)); chs[ch] += runs(p, o)
+        hit = drum_voice(notes, sp['drums'], start, end, grid, sp.get('drummap'))
+        if sp.get('addkick'):       # 킥이 없는 MIDI: 1·3박에 킥
+            for u in range(0, Up, grid * 2):
+                if hit[u] in (0, HAT, OHAT): hit[u] = KICK
+        chs[3] += runs(hit, [bool(h) for h in hit]); U += Up
+    d = dict(bpm=sp.get('bpm', round(bpm, 2)), grid=grid, units=U, once=sp.get('once', False), ch=chs)
+    if 'intro' in sp: d['loop_at'] = int(round((sp['intro'][1] - sp['intro'][0]) * grid))
+    return d
 
 
 if __name__ == '__main__':

@@ -304,29 +304,31 @@ def rules(c, out):
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
-        bad, fr = music_sim(c.d, ids[0])
+        bad, fr, lp = music_sim(c.d, ids[0])
         if bad: r18.append((nm, bad))
         elif max(fr) - min(fr) > 2: r18.append((nm, '채널 길이 다름 %s' % fr))
+        elif max(lp) - min(lp) > 2: r18.append((nm, '반복 구간 길이 다름 %s' % lp))
     rep('R18', r18, '넣은 노래 %d곡 엔진 시뮬레이션 문제 없음 (음 길이 넘침·채널 어긋남 없음)' % len(RU.MUSIC), lambda b: '%s: %s' % b)
 
 
 def music_sim(d, mid):
-    """금 음악 엔진(audio/engine.asm)처럼 곡 하나를 한 바퀴 따라감 → (문제 또는 None, 채널별 프레임 수)
+    """금 음악 엔진(audio/engine.asm)처럼 곡 하나를 한 바퀴 따라감 → (문제 또는 None, 채널별 프레임 수, 채널별 반복 구간 프레임 수)
     음 길이 프레임 = (칸 × 템포 + 나머지) 의 위 바이트, 16비트 곱이라 템포×칸이 65535 를 넘으면 돌아감"""
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', d, re.S)
     mtab = dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
     bank = d[mtab + 3 * mid]; h = dmrom.addr(bank, d[mtab + 3 * mid + 1] | d[mtab + 3 * mid + 2] << 8)
-    n = (d[h] >> 6) + 1; frames = []; tempo = 256
+    n = (d[h] >> 6) + 1; frames = []; looped = []; tempo = 256
     for k in range(n):
         cid = d[h + 3 * k] & 7; a = d[h + 3 * k + 1] | d[h + 3 * k + 2] << 8
-        speed = 1; frac = 0; total = 0; loops = {}; seen = set()
+        speed = 1; frac = 0; total = 0; loops = {}; seen = set(); at = {}
         for _ in range(100000):
+            at.setdefault(a, total)
             b = d[dmrom.addr(bank, a)]
             if b < 0xd0:
                 units = ((b & 15) + 1) * speed
-                if units > 255: return '칸×속도 255 넘음', []
+                if units > 255: return '칸×속도 255 넘음', [], []
                 prod = tempo * units + frac
-                if prod > 0xffff: return '음 길이 넘침 (템포 %d × %d칸)' % (tempo, units), []
+                if prod > 0xffff: return '음 길이 넘침 (템포 %d × %d칸)' % (tempo, units), [], []
                 total += prod >> 8; frac = prod & 0xff; a += 1
             elif b <= 0xd7: a += 1
             elif b == 0xd8: speed = d[dmrom.addr(bank, a + 1)]; a += 2 if cid == 3 else 3
@@ -336,16 +338,17 @@ def music_sim(d, mid):
             elif b == 0xfd:
                 cnt = d[dmrom.addr(bank, a + 1)]; tgt = d[dmrom.addr(bank, a + 2)] | d[dmrom.addr(bank, a + 3)] << 8
                 if cnt == 0:
-                    if total == 0: return '시간 0 무한 반복', []
-                    break
+                    if total == 0 or total == at.get(tgt, 0): return '시간 0 무한 반복', [], []
+                    if tgt not in at: return '반복 위치가 음 사이가 아님', [], []
+                    looped.append(total - at[tgt]); break
                 loops[a] = loops.get(a, 0) + 1
                 if loops[a] < cnt: a = tgt
                 else: loops[a] = 0; a += 4
-            elif b == 0xff: break
-            else: return '모르는 명령 %02X' % b, []
-        else: return '끝나지 않음', []
+            elif b == 0xff: looped.append(0); break
+            else: return '모르는 명령 %02X' % b, [], []
+        else: return '끝나지 않음', [], []
         frames.append(total)
-    return None, frames
+    return None, frames, looped
 
 
 def full_evo(c, out):
