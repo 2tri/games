@@ -12,6 +12,10 @@ GRADES = ['유아기Ⅰ', '유아기Ⅱ', '유년기Ⅰ', '유년기Ⅱ', '성�
 # 사용자 메모를 읽고 정한 할 일 (side: 'f'|'b'). how: gemini = 재미나이로 새로 / have = 받아 둔 그림 씀 / claude = 내가 고침 / ask = 확인 필요
 PLAN = {
     3: {'f': ('gemini', '새로 뽑기'), 'b': ('claude', '확대 적용됨 (지금 게임 그림 = 확대본)')},
+    61: {'f': ('have', '새로 받음 (흰 갈기)'), 'b': ('have', '새로 받음 — 좌우 반전')},
+    70: {'f': ('have', '새로 받음'), 'b': ('have', '새로 받음 (몸 회색·날개 초록, 앞과 맞춤)')},
+    118: {'b': ('have', '새로 받음 — 좌우 반전, 가로 0.8 로 덜 근육질·왜소하게')},
+    163: {'b': ('claude', '확대 너무 됨 → 몸 전체로 다시 (새로 받을 필요 없음)')},
     5: {'b': ('gemini', '90° 뒤가 아니라 옆뒤(3/4)로 새로')},
     8: {'b': ('gemini', '새로')},
     12: {'b': ('gemini', '새로')},
@@ -73,25 +77,29 @@ def en_of(did, ko):
                                     'lilimon': 'Lilimon', 'fladramon': 'Flamedramon', 'lighdramon': 'Raidramon', 'megaseadramon': 'MegaSeadramon'}.get(did) or (did or ko).capitalize())
 
 
+SYNC = 0
+
+
 def row(x, no, did, ko, grade, order, src_f, src_b, gf, gb, newf, newb, r, plan):
     tf, tb = recv_time(WEB + 'art/%s-f.png' % did) if newf else 0, recv_time(WEB + 'art/%s-b.png' % did) if newb else 0
-    inrom = {'f': src_f == 'art', 'b': src_b == 'art'}
+    inrom = {'f': src_f == 'art' and tf <= SYNC, 'b': src_b == 'art' and tb <= SYNC}   # 롬 세션이 allmons.json 을 다시 만든 뒤에 바뀐 그림은 아직
     pl = {}
     for k in ('f', 'b'):
         got = newf if k == 'f' else newb
-        if got and not inrom[k]: pl[k] = [HOW['have'], '받음 — 게임엔 아직 안 들어감' + (' — %s' % plan[k][1] if k in plan and plan[k][0] in ('claude', 'have') else ''), 'have']
+        if got and not inrom[k]: pl[k] = [HOW['have'], '받음 — 게임엔 아직 (모아서 롬 세션에 전달)' + (' — %s' % plan[k][1] if k in plan and plan[k][0] in ('claude', 'have') else ''), 'have']
         elif got: pl[k] = ['게임에 들어감', '받은 그림이 게임에 들어가 있음', 'done']
         elif k in plan: pl[k] = [HOW[plan[k][0]], plan[k][1], plan[k][0]]
     return dict(no=no, ko=ko, en=en_of(did, ko), grade=grade if grade in GRADES else '기타', order=order, src=src_f,
                 gf=gf, gb=gb, newf=newf, newb=newb, tf=tf, tb=tb, rom_f=inrom['f'], rom_b=inrom['b'], listed=bool(x),
                 chk_f=bool(r.get('front')), chk_b=bool(r.get('back')), note=r.get('note', ''), plan=pl,
-                g_front=prompts.COMMON_CONVERT, g_back=prompts.COMMON_BACK,   # 2026-10-05 사용자: 색은 Claude 가 넣으니 주문문은 모든 종 똑같이
+                g_front=prompts.card_front(en_of(did, ko)), g_back=prompts.card_back(en_of(did, ko), grade), g_back_photo=prompts.card_back_photo(en_of(did, ko), grade),   # 카드마다 이름 넣은 주문문
                 img='https://digimon.net/cimages/digimon/%s.jpg' % did if did else '')
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); ap.add_argument('--r14', required=True); ap.add_argument('--redo', required=True)
     a = ap.parse_args()
+    global SYNC; SYNC = recv_time(HERE + '/allmons.json')
     L = json.load(open(HERE + '/allmons.json')); r14 = json.load(open(a.r14))
     redo = {}
     for f in glob.glob(os.path.join(a.redo, '*.json')):
