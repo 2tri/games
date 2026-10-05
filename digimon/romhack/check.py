@@ -44,7 +44,9 @@ class Ctx:
         self.grade.update({161: '유년기Ⅱ', 212: '완전체', 217: '완전체'})
         self.palswap = {v[1]: nm for nm, v in RU.PALSWAP.items() if self.name(v[1]) == nm}     # F단계 색만 바꾼 종
         self.grade.update({n: RU.PALSWAP[nm][2] for n, nm in self.palswap.items()})
-        self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed | set(self.palswap)
+        self.roamers = {n for n, nm in RU.ROAMERS if self.name(n) == nm}                # 작업팩 10/6 S1-8 떠돌이 셋 = 사성수
+        self.grade.update({n: '궁극체' for n in self.roamers})
+        self.keep = set(json.load(open(os.path.join(HERE, 'order', 'keep.json')))) | self.installed | set(self.palswap) | self.roamers
         if self.name(RU.UNOWN[0]) == RU.UNOWN[1]: self.keep.add(RU.UNOWN[0])      # 안농 칸 → 디지문자 (D단계)
         self.empty = {n for n in range(1, 252) if self.name(n) == RU.EMPTY_NAME}       # D-7 잠자는 칸 정리
         self.drop = {n for n in range(1, 252) if n not in self.pk and n not in self.keep and n not in self.empty}
