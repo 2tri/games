@@ -18,20 +18,24 @@ def to_idx(im):
     return t, (cols + [(0, 0, 0)] * 4)[:4]
 
 
-def enlarge(t, size):
+def enlarge(t, size, mode='smooth'):
+    """mode smooth = scale3x 뒤 줄이기(기본) / nearest = 칸을 정수배로 키운 뒤 조금만 줄이기 — 눈알 같은 1~2칸짜리가 살아남음(브이몬 앞)"""
     m = t > 0; lab, n = ndimage.label(m, structure=np.ones((3, 3))); sz = ndimage.sum(m, lab, range(1, n + 1))
     t = np.where(np.isin(lab, [i + 1 for i, s in enumerate(sz) if s >= 6]), t, 0)
     ys, xs = np.where(t > 0); t = t[ys.min():ys.max() + 1, xs.min():xs.max() + 1].copy()
     bg = t == 0; lab, _ = ndimage.label(bg); edge = set(np.unique(np.r_[lab[0], lab[-1], lab[:, 0], lab[:, -1]])) - {0}
     out = np.isin(lab, list(edge))                                     # 바깥 흰 = 배경 (안쪽 흰은 몸)
-    up = np.where(L.scale3x(out.astype(int)) == 1, -1, L.scale3x(t))
     k = size / max(t.shape)
+    if mode == 'nearest':
+        n = int(np.ceil(k)); up = np.where(np.kron(out, np.ones((n, n), int)) == 1, -1, np.kron(t, np.ones((n, n), int)))
+    else:
+        up = np.where(L.scale3x(out.astype(int)) == 1, -1, L.scale3x(t))
     return S2.shrink(up, max(round(t.shape[0] * k), round(t.shape[1] * k)))
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('dst'); ap.add_argument('--size', type=int, default=56); a = ap.parse_args()
-    t, cols = to_idx(Image.open(a.src)); r = enlarge(t, a.size)
+    ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('dst'); ap.add_argument('--size', type=int, default=56); ap.add_argument('--mode', choices=['smooth', 'nearest'], default='smooth'); a = ap.parse_args()
+    t, cols = to_idx(Image.open(a.src)); r = enlarge(t, a.size, a.mode)
     o = np.zeros(r.shape + (4,), np.uint8); pal = np.array([c + (255,) for c in cols], np.uint8); o[r >= 0] = pal[r[r >= 0]]
     Image.fromarray(o, 'RGBA').save(a.dst); print(a.dst, o.shape[1::-1])
 
