@@ -67,7 +67,7 @@ def b64(p): return 'data:image/png;base64,' + base64.b64encode(open(p, 'rb').rea
 def game_art(did, side):
     """지금 롬에 들어간 우리 그림 = allmons.json 을 만든 커밋 때의 art (그 뒤에 바뀐 건 아직 롬에 없음)"""
     p = WEB + 'art/%s-%s.png' % (did, side)
-    if recv_time(p) <= SYNC: return b64(p)
+    if recv_time(p) <= SYNC and side not in PENDING.get(did, []): return b64(p)
     c = subprocess.run(['git', 'log', '-1', '--format=%H', '--', HERE + '/allmons.json'], cwd=WEB, capture_output=True, text=True).stdout.strip()
     r = subprocess.run(['git', 'show', '%s:./%s' % (c, os.path.relpath(p, WEB))], cwd=WEB, capture_output=True)
     return 'data:image/png;base64,' + base64.b64encode(r.stdout).decode() if r.returncode == 0 and r.stdout else ''
@@ -87,11 +87,13 @@ def en_of(did, ko):
 
 
 SYNC = 0
+PENDING = {k: v for k, v in json.load(open(HERE + '/pending.json')).items() if k != '_'}
 
 
 def row(x, no, did, ko, grade, order, src_f, src_b, gf, gb, newf, newb, r, plan):
     tf, tb = recv_time(WEB + 'art/%s-f.png' % did) if newf else 0, recv_time(WEB + 'art/%s-b.png' % did) if newb else 0
-    inrom = {'f': src_f == 'art' and tf <= SYNC, 'b': src_b == 'art' and tb <= SYNC}   # 롬 세션이 allmons.json 을 다시 만든 뒤에 바뀐 그림은 아직
+    pend = PENDING.get(did, [])
+    inrom = {k: (src_f if k == 'f' else src_b) == 'art' and k not in pend and (tf if k == 'f' else tb) <= SYNC for k in 'fb'}   # 롬 세션이 allmons.json 을 다시 만든 뒤에 바뀐 그림은 아직
     pl = {}
     for k in ('f', 'b'):
         got = newf if k == 'f' else newb
