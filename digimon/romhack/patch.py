@@ -831,6 +831,14 @@ def build(base, out_rom, out_ips):
     empty = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) == ORIG[n_ - 1]]
     for n_ in empty: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('D-7 잠자는 포켓몬 칸 %d개 → 「%s」·포획률 0' % (len(empty), rules.EMPTY_NAME))
+    # 파워디지몬(02) 이후 디지몬 (rules.LATE_SERIES·LATE_EXTRA): 게임에서 닿지 않는 1.4 칸 → 「-----」·포획률 0. 그림·도감 글은 롬에 남지만 볼 길이 없음.
+    #   이름이 1.4 이름 그대로인 칸만 (새로 넣은 종·색 바꾼 종은 series.json 에 이름이 없어 해당 안 됨)
+    SER = {v['name']: v['series'] for v in json.load(open(os.path.join(HERE, 'series.json'))).values()}
+    late = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) != ORIG[n_ - 1]
+            and (SER.get(r.name(n_)) in rules.LATE_SERIES or r.name(n_) in rules.LATE_EXTRA)]
+    late_names = [r.name(n_) for n_ in late]
+    for n_ in late: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
+    P.log.append('파워디지몬 이후 디지몬 %d칸 → 「%s」: %s' % (len(late), rules.EMPTY_NAME, ', '.join(late_names)))
     # 1.4 그림 다시 그리기 (rules.REDRAW): 우리 그림이 앞·뒤 다 있는 종. 팔레트도 그림 색으로
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; nrd = []
     for nm, art in rules.REDRAW.items():
