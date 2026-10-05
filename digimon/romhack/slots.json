@@ -1743,6 +1743,138 @@
     ]
    ],
    "like": "추추몬"
+  },
+  {
+   "id": "metalseadramon",
+   "slot": 184,
+   "name": "메탈시드몬",
+   "grade": "궁극체",
+   "type": [
+    "WATER",
+    "STEEL"
+   ],
+   "stats": [
+    100,
+    115,
+    105,
+    90,
+    115,
+    95
+   ],
+   "exp": 230,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "WATER_GUN"
+    ],
+    [
+     1,
+     "BITE"
+    ],
+    [
+     1,
+     "SURF"
+    ],
+    [
+     1,
+     "SCARY_FACE"
+    ],
+    [
+     40,
+     "ICE_BEAM"
+    ],
+    [
+     44,
+     "DRAGONBREATH"
+    ],
+    [
+     48,
+     "HYDRO_PUMP"
+    ],
+    [
+     54,
+     "OUTRAGE"
+    ]
+   ],
+   "dex": [
+    "사이보그형",
+    30,
+    9000,
+    [
+     "크롬 데지조이드 갑옷을",
+     "두른 바다 용 디지몬.",
+     "코끝 대포로 공격한다"
+    ]
+   ],
+   "like": "메가시라몬"
+  },
+  {
+   "id": "mugendramon",
+   "slot": 188,
+   "name": "파워드라몬",
+   "grade": "궁극체",
+   "type": [
+    "STEEL",
+    "DRAGON"
+   ],
+   "stats": [
+    100,
+    130,
+    120,
+    70,
+    110,
+    90
+   ],
+   "exp": 230,
+   "catch": 0,
+   "evos": [],
+   "moves": [
+    [
+     1,
+     "METAL_CLAW"
+    ],
+    [
+     1,
+     "SCREECH"
+    ],
+    [
+     1,
+     "SLASH"
+    ],
+    [
+     1,
+     "LOCK_ON"
+    ],
+    [
+     40,
+     "IRON_TAIL"
+    ],
+    [
+     44,
+     "ZAP_CANNON"
+    ],
+    [
+     50,
+     "HYPER_BEAM"
+    ],
+    [
+     56,
+     "OUTRAGE"
+    ]
+   ],
+   "dex": [
+    "머신형",
+    30,
+    9999,
+    [
+     "온몸이 크롬 데지조이드인",
+     "기계 용 디지몬. 등의",
+     "무한캐논이 무기다"
+    ]
+   ],
+   "like": "안드로몬"
   }
  ],
  "waiting_art": [

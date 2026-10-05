@@ -83,11 +83,14 @@ def prize_menu(P, a, new_of):
 def apply(P, sites, slots, keep):
     """sites: encounters.find_all 결과 (원본 롬 주소). slots: {칸: slots.json 항목} (설치된 새 종)"""
     r = P.r; d = P.d; M = load(); G = grades(r, slots)
-    name_of = r.name
+    name_of = r.name; b0 = bytes(r.base)
     changed = 0
     for s in sites:
         sp = d[s['addr']]
-        t = target(sp, s, M, G, name_of, keep)
+        # 이 단계 전에 우리가 새 종(slots.json)으로 바꿔 둔 자리는 그대로: 빈 칸(원래 포켓몬 자리)에 넣은 새 종을 mapping.csv 가
+        #   옛 포켓몬으로 보고 바꾸던 버그 (2026-10-05 사용자 「스타팅 꼬마몬 골랐는데 캅테리몬」: 166 레디안 → 캅테리몬 줄이 givepoke 를 덮어씀).
+        #   원본 그대로인 자리(원래 그 칸의 포켓몬)는 예전처럼 바꿈
+        t = sp if sp in slots and sp != b0[s['addr']] else target(sp, s, M, G, name_of, keep)
         if t != sp: d[s['addr']] = t; changed += 1
         s['new'] = t
     # 경품 메뉴 글: 금빛시티 (캐이시·아보·미뇽 자리), 무지개시티 (마임맨·이브이·폴리곤 자리)

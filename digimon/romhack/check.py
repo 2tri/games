@@ -291,50 +291,64 @@ def rules(c, out):
     # R17 초반 야생 유년기 (rules.BABY_WILD_LV, 사용자 2026-10-03): 그 레벨 이하 야생 칸에, 유년기가 롬에 있는 성장기가 없음
     r17 = collections.Counter(c.name(s['cur']) for s in wild if s['cur'] in baby_of and c.d[s['addr'] - 1] <= RU.BABY_WILD_LV)
     rep('R17', sorted(r17.items()), 'Lv%d 이하 야생에 유년기가 있는 성장기 없음 (유년기 %d종)' % (RU.BABY_WILD_LV, len(babies)), lambda b: '%s (%d곳)' % b)
+    # R19 스타팅 공 3개: 스크립트의 그림·울음·이름·주는 종 네 바이트가 모두 같은 종이고, 유년기 스타팅(rules.BABY_STARTERS, 칸이 있을 때) 또는 성장기
+    r19 = []; NB = {c.base.name(n): n for n in range(1, 252)}; base = bytes(c.base.d)
+    for old, rk in (('길몬', '아구몬'), ('레나몬', '파피몬'), ('테리어몬', '브이몬')):
+        o = NB[old]; a = re.search(bytes([0x56, o, 0x84, o, 0x00]), base).start(); seg = base[a:a + 80]
+        ks = (1, 3, seg.index(bytes([0x40, o])) + 1, seg.index(bytes([0x2d, o, 5])) + 1)
+        got = [c.d[a + k] for k in ks]
+        bb = next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk)
+        if len(set(got)) != 1 or got[0] != N[bb]: r19.append((old, '%s 이어야 하는데 %s' % (bb, '·'.join(c.name(g) for g in got))))
+    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in ('아구몬', '파피몬', '브이몬')),
+        lambda b: '%s 공: %s' % b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
-        bad, fr = music_sim(c.d, ids[0])
+        bad, fr, lp = music_sim(c.d, ids[0])
         if bad: r18.append((nm, bad))
         elif max(fr) - min(fr) > 2: r18.append((nm, '채널 길이 다름 %s' % fr))
+        elif max(lp) - min(lp) > 2: r18.append((nm, '반복 구간 길이 다름 %s' % lp))
     rep('R18', r18, '넣은 노래 %d곡 엔진 시뮬레이션 문제 없음 (음 길이 넘침·채널 어긋남 없음)' % len(RU.MUSIC), lambda b: '%s: %s' % b)
 
 
 def music_sim(d, mid):
-    """금 음악 엔진(audio/engine.asm)처럼 곡 하나를 한 바퀴 따라감 → (문제 또는 None, 채널별 프레임 수)
+    """금 음악 엔진(audio/engine.asm)처럼 곡 하나를 한 바퀴 따라감 → (문제 또는 None, 채널별 프레임 수, 채널별 반복 구간 프레임 수)
     음 길이 프레임 = (칸 × 템포 + 나머지) 의 위 바이트, 16비트 곱이라 템포×칸이 65535 를 넘으면 돌아감"""
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', d, re.S)
     mtab = dmrom.addr(m.start() // 0x4000, int.from_bytes(m.group(1), 'little'))
     bank = d[mtab + 3 * mid]; h = dmrom.addr(bank, d[mtab + 3 * mid + 1] | d[mtab + 3 * mid + 2] << 8)
-    n = (d[h] >> 6) + 1; frames = []; tempo = 256
+    n = (d[h] >> 6) + 1; frames = []; looped = []; tempo = 256
     for k in range(n):
         cid = d[h + 3 * k] & 7; a = d[h + 3 * k + 1] | d[h + 3 * k + 2] << 8
-        speed = 1; frac = 0; total = 0; loops = {}; seen = set()
+        speed = 1; frac = 0; total = 0; loops = {}; seen = set(); at = {}
         for _ in range(100000):
+            at.setdefault(a, total)
             b = d[dmrom.addr(bank, a)]
             if b < 0xd0:
                 units = ((b & 15) + 1) * speed
-                if units > 255: return '칸×속도 255 넘음', []
+                if units > 255: return '칸×속도 255 넘음', [], []
                 prod = tempo * units + frac
-                if prod > 0xffff: return '음 길이 넘침 (템포 %d × %d칸)' % (tempo, units), []
+                if prod > 0xffff: return '음 길이 넘침 (템포 %d × %d칸)' % (tempo, units), [], []
                 total += prod >> 8; frac = prod & 0xff; a += 1
             elif b <= 0xd7: a += 1
             elif b == 0xd8: speed = d[dmrom.addr(bank, a + 1)]; a += 2 if cid == 3 else 3
             elif b == 0xda: tempo = d[dmrom.addr(bank, a + 1)] << 8 | d[dmrom.addr(bank, a + 2)]; a += 3
             elif b in (0xdb, 0xe5, 0xe3): a += 2
+            elif b == 0xe1: a += 3                                                     # vibrato
             elif b == 0xfd:
                 cnt = d[dmrom.addr(bank, a + 1)]; tgt = d[dmrom.addr(bank, a + 2)] | d[dmrom.addr(bank, a + 3)] << 8
                 if cnt == 0:
-                    if total == 0: return '시간 0 무한 반복', []
-                    break
+                    if total == 0 or total == at.get(tgt, 0): return '시간 0 무한 반복', [], []
+                    if tgt not in at: return '반복 위치가 음 사이가 아님', [], []
+                    looped.append(total - at[tgt]); break
                 loops[a] = loops.get(a, 0) + 1
                 if loops[a] < cnt: a = tgt
                 else: loops[a] = 0; a += 4
-            elif b == 0xff: break
-            else: return '모르는 명령 %02X' % b, []
-        else: return '끝나지 않음', []
+            elif b == 0xff: looped.append(0); break
+            else: return '모르는 명령 %02X' % b, [], []
+        else: return '끝나지 않음', [], []
         frames.append(total)
-    return None, frames
+    return None, frames, looped
 
 
 def full_evo(c, out):
