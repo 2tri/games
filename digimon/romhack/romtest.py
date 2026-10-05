@@ -342,6 +342,9 @@ def test_battle_pics(names, pairs=None):
                  ('피에몬', '쉘몬'), ('쉘몬', '피에몬'), ('데블드라몬', '데블드라몬'), ('메탈가루몬', '메탈가루몬'),
                  ('텐타몬', '플라이몬'), ('두리몬', '울퉁몬'), ('포로몬', '꼬마몬'), ('디그몬', '메라몬'),
                  ('메탈시드몬', '파워드라몬'), ('파워드라몬', '안드로몬')]
+    skip = [p for p in pairs if p[0] not in N or p[1] not in N]          # 그림 대기로 아직 롬에 없는 종은 건너뜀
+    if skip: print('  건너뜀 (롬에 아직 없음): %s' % ', '.join('%s/%s' % p for p in skip))
+    pairs = [p for p in pairs if p not in skip]
     grass = [s['addr'] for s in encounters.find_all(dmrom.Rom(dmrom.default_rom())) if s['kind'] == '풀숲' and s['where'].startswith('29번 도로')]
     bad = 0; keep = ROM
     try:
