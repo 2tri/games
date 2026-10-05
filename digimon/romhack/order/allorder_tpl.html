@@ -113,6 +113,21 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule)
     </div>
   </section>
 
+  <section>
+    <h2>재미나이 시작 규칙 <small>새 대화를 열 때 한 번만</small></h2>
+    <div class="box">
+      <ol class="steps">
+        <li>재미나이 새 대화를 열고 아래 <b>시작 규칙</b>을 복사해 붙여 넣으세요. "OK" 가 오면 준비 끝.</li>
+        <li><b>앞모습</b>: 카드의 <b>공식 그림 256</b>을 저장해 첨부 + 「재미나이 앞」 버튼으로 복사한 한 줄(예: FRONT: Kiwimon). 그림 자세 그대로 도트로 바꿔 줘요.</li>
+        <li><b>뒷모습</b>: 바로 이어서 「재미나이 뒤」 한 줄(BACK). 방금 앞모습의 상반신 뒷모습이 나와요. 앞모습을 이미 받아 둔 종은 「첨부용 앞모습」을 첨부하고 「BACK: 이름」 줄을 보내세요.</li>
+        <li>받은 그림은 "○○ 앞" / "○○ 뒤"로 보내 주세요. 대화가 길어져 규칙을 잊는 것 같으면 새 대화에서 1번부터.</li>
+      </ol>
+      <div class="row" id="primerRow"></div>
+      <details id="primerDet"><summary>시작 규칙 보기</summary><pre id="primerPre"></pre></details>
+      <p class="note">PixelLab(무료 횟수 적음)은 궁극체와 재미나이가 여러 번 틀린 종 카드에만 넣었어요.</p>
+    </div>
+  </section>
+
   <div class="bar" role="status">
     <span>할 일 <b id="nTodo">0</b></span><span>반영 대기 <b id="nGot">0</b></span><span>완료 <b id="nDone">0</b></span><span>1.4 그대로 <b id="n14">0</b></span>
     <span class="filters"><button type="button" data-f="todo" aria-pressed="true">할 일만</button><button type="button" data-f="all" aria-pressed="false">전체</button></span>
@@ -202,12 +217,19 @@ function card(r) {
   if (r.ab) ps.append(pic(r.ab, 1, "롬에 넣을 뒤"));
   if (r.rip) ps.append(pic(r.rip, 1, "게임 도트 후보" + (r.rip_note ? " · " + r.rip_note : ""), "att"));
   if (r.lcd8 && r.side.f !== "got" && r.side.f !== "done") ps.append(pic(r.lcd8, 0.5, "LCD 도트 · 앞모습 첨부 1장", "att"));
-  if (r.attf) ps.append(pic(r.attf, 0.25, "첨부용 앞모습 · 뒷모습 첨부 1장 (길게 눌러 저장)", "att"));
+  if (r.off256) ps.append(pic(r.off256, 0.5, "공식 그림 256 · 앞모습 첨부 (길게 눌러 저장)", "att"));
+  if (r.attf) ps.append(pic(r.attf, 0.25, "첨부용 앞모습 · 뒷모습 첨부 (길게 눌러 저장)", "att"));
   c.append(ps);
   const rw = el("div", "row");
   if (r.img) rw.append(linkBtn("공식 그림 열기", r.img));
   if (r.ref) rw.append(linkBtn("공식 도감", r.ref));
   if (rw.childElementCount) c.append(rw);
+  if (r.g_front || r.g_back) {
+    const gr = el("div", "row");
+    if (r.g_front) { const p = el("pre", "", r.g_front); gr.append(copyBtn("재미나이 앞: " + r.g_front, r.g_front, p, el("details"))); }
+    if (r.g_back) { const p = el("pre", "", r.g_back); gr.append(copyBtn("재미나이 뒤: " + (r.g_back.length > 12 ? "BACK: 이름 (앞모습 첨부)" : "BACK"), r.g_back, p, el("details"), "alt")); }
+    c.append(gr);
+  }
   if (r.pl) {
     const det = el("details"); det.append(el("summary", "", "PixelLab 주문 (참조에서 생성하기 · 캐릭터 유형: " + r.pl_type + ")"));
     if (r.plref) { const pp = el("div", "pics"); pp.append(pic(r.plref, 0.5, "PixelLab 참조 그림 · 256칸 이하 (길게 눌러 저장)", "att")); det.append(pp); }
@@ -216,7 +238,7 @@ function card(r) {
     const r3 = el("div", "row"); r3.append(copyBtn("PixelLab 설명 복사", r.pl, pre, det, "alt")); c.append(r3, det);
   }
   if (r.prompt.f || r.prompt.b) {
-    const det = el("details"); det.append(el("summary", "", "주문문 보기")); const r2 = el("div", "row");
+    const det = el("details"); det.append(el("summary", "", "예전 긴 주문문 (재미나이 규칙 없이 한 번에 받을 때)")); const r2 = el("div", "row");
     if (r.prompt.f) { const p = el("pre", "", r.prompt.f); det.append(el("b", "", r.sketch_mode ? "앞모습 주문문 (첨부 1장 = LCD 도트, 2장 = 공식 그림)" : "앞모습 주문문 (첨부 = 공식 그림)"), p); r2.append(copyBtn(r.sketch_mode ? "앞모습 주문문 복사 (LCD 첨부)" : "앞모습 주문문 복사", r.prompt.f, p, det)); }
     if (r.prompt.b) { const p = el("pre", "", r.prompt.b); det.append(el("b", "", r.attf ? "뒷모습 주문문 (첨부 1장 = 첨부용 앞모습, 2장 = 공식 그림)" : "뒷모습 주문문 (첨부 1장 = 공식 그림, 2장 = 받은 앞모습)"), p); r2.append(copyBtn("뒷모습 주문문 복사", r.prompt.b, p, det)); }
     if (r.prompt.flat) { const p = el("pre", "", r.prompt.flat); det.append(el("b", "", "평면 그림 주문문 (도트가 계속 틀릴 때)"), p); r2.append(copyBtn("평면 그림 주문문 복사", r.prompt.flat, p, det, "alt")); }
@@ -231,6 +253,7 @@ function card(r) {
   cards.push([r, c]);
   return c;
 }
+$("#primerPre").textContent = D.primer; $("#primerRow").append(copyBtn("재미나이 시작 규칙 복사", D.primer, $("#primerPre"), $("#primerDet")));
 const secs = {};
 for (const g of D.grades) {
   const rs = D.rows.filter((r) => r.grade === g); if (!rs.length) continue;

@@ -32,7 +32,7 @@ BABY_SPEC = {   # 새 유년기 4종 주문문용 (specs.py 형식). 몸 색은 
                     not_=['No legs.']),
 }
 KEEP14 = {'devimon': '지금 게임 그림(1.4, 날개를 펴서 칸을 꽉 채운 「B형태」)을 그대로 씀 — 사용자 판정 2026-10-05'}
-REDO = {'mugendramon': ('f', '앞모습 다시 받기 (사용자 판정 2026-10-04) — 받아 둔 앞모습은 아래 「롬에 넣을 앞」')}   # 받은 그림이 있어도 다시 받을 것
+REDO = {}   # 받은 그림이 있어도 다시 받을 것
 ALIAS = {'tailmon': 'gatomon', 'plotmon': 'salamon'}
 # 게임 도트 후보 — 2026-10-04 사용자 판정으로 7종만 씀(art/ 에 넣음, decisions.md). 나머지는 안 씀
 # (rip2art.py LIST 이름, 색 나누기 방식, 판정). 판정 '애매' 는 써도 되는지 사용자 확인 필요. 못 쓴 것(모노크로몬·데블몬·황제드라몬)은 넣지 않음
@@ -136,9 +136,22 @@ def row(no, ko, grade, did, f, b, src_f, src_b, where, nxt, line, order):
     # PixelLab (2026-10-05): 「B형태」 설명 + 참조 그림(256칸 이하, 투명 바탕). 앞모습이 있으면 그 앞모습 ×4, 없으면 공식 그림을 256 안으로
     if need and (sp or did):
         e = dict(sp or {}, ko=ko, en=c['en'] or (sp or {}).get('en', ''))
-        c['pl'] = prompts.pixellab_prompt(e); c['pl_type'] = prompts.body_type(e)
-        c['plref'] = pl_ref(front, (sp or {}).get('dir') or did)
+        d = (sp or {}).get('dir') or did
+        c['off256'] = off256(d)                                           # 공식 그림 256×256 (재미나이·PixelLab 첨부용)
+        c['g_front'] = prompts.gemini_front(e) if side['f'] in ('need', 'rip') else ''
+        c['g_back'] = prompts.gemini_back(e, not front) if side['b'] in ('need', 'rip') else ''
+        if grade in PL_GRADES or did in PL_HARD:                          # PixelLab 은 무료 횟수가 적음 → 재미나이가 어려운 것만
+            c['pl'] = prompts.pixellab_prompt(e); c['pl_type'] = prompts.body_type(e)
+            c['plref'] = pl_ref(front, d)
     return c
+
+
+PL_GRADES = {'궁극체'}
+PL_HARD = {'metalseadramon', 'imperialdramondragonmode', 'qinglongmon', 'mugendramon', 'archnemon', 'whamon'}   # 재미나이가 여러 번 틀린 것
+
+
+def off256(d):
+    pl_ref('', d); return BO.b64(WEB + 'art/ref/%s_256.png' % d)
 
 
 def pl_ref(front, d):
@@ -181,7 +194,7 @@ def main():
     for e in PEOPLE_ORDER:
         got = BO.b64(WEB + 'art/' + e['file'])
         people.append(dict(e, done=bool(got), got=got, ref=b64png(ref) if e['id'] == 'taichi_front' and not got else ''))
-    D = {'rows': rows, 'grades': GRADES + ['기타'], 'empty': empty, 'people': people}
+    D = {'primer': prompts.GEMINI_PRIMER, 'rows': rows, 'grades': GRADES + ['기타'], 'empty': empty, 'people': people}
     tpl = open(HERE + '/allorder_tpl.html', encoding='utf-8').read()
     html = tpl.replace('/*DATA*/null', json.dumps(D, ensure_ascii=False))
     assert 'pokemon' not in html.lower() and 'pokémon' not in html.lower()

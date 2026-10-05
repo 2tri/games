@@ -112,3 +112,29 @@ def pixellab_prompt(e):
          + (f"Colors: few flat colors, {col}. " if col else "Few flat colors. ")
          + "Thick black outline, no tiny details, no gradients, no background. Standing on the ground, three-quarter view facing left.")
     return s[:2000]
+
+
+# ── 재미나이 대화 한 번에 깔아 두는 규칙 (2026-10-05 사용자: 매번 같은 말 반복하지 말고 서두에 한 번) ──
+GEMINI_PRIMER = """From now on, in this chat, you are my pixel artist for a fan-made Game Boy Color monster RPG with Digimon. Every image you make must follow these rules:
+
+ALWAYS
+- ONE square image, pure white background, nothing else (no text, no frame, no grid lines, no ground shadow).
+- Late-1990s Game Boy Color battle sprite style: big chunky pixels (every pixel a crisp square of the same size), thick black outline, flat shapes, no anti-aliasing, no gradients, no dithering.
+- Exactly 4 tones, GRAYSCALE only: white, light gray, dark gray, black (black = outline, eyes).
+- Never redesign the character. Same species, same parts, same proportions. Do not turn it into any other creature.
+
+When I send a picture and write "FRONT: <name>"
+- Convert THAT picture into the sprite exactly as it is: same pose, same facing direction, same proportions, same details. Change only the art style.
+- The whole character visible, standing on the bottom edge, filling about 90% of the image.
+
+When I then write "BACK" (or "BACK: <name>" with a front sprite attached)
+- Draw the BACK sprite of the same character, like the player's own monster in a classic Game Boy battle screen.
+- Camera behind and a little above it; the character faces AWAY toward the upper-right, so we see its back, one shoulder and a thin sliver of the side of its head. Not a mirror of the front, no face.
+- Show only the UPPER BODY big (head, shoulders, back, arms, the start of wings or tail); the lower body is cut off by the bottom edge. Fill the whole square; wing or tail tips may go outside the frame.
+- Use the same 4 tones for the same body parts as the front.
+
+Reply only with the image. Say "OK" now if you understand."""
+
+
+def gemini_front(e): return 'FRONT: %s' % (e['en'] or e['ko'])
+def gemini_back(e, has_front_in_chat=True): return 'BACK' if has_front_in_chat else 'BACK: %s (the attached image is its finished front sprite)' % (e['en'] or e['ko'])
