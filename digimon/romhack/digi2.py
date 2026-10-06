@@ -68,22 +68,29 @@ def desc_free_runs(P, dtab, bk):
 
 
 def rename_many(P, names):
-    """도구 이름 여러 개를 한 번에 (patch.item_rename 과 같은 방법, 표를 한 번만 옮김)"""
+    """도구 이름 여러 개를 한 번에 (patch.item_rename 과 같은 방법).
+    3판: 새 표가 지금 표 자리(이미 옮겨 둔 곳)에 들어가면 제자리에 쓰고, 길면 지금 표 자리를 빈 곳으로 돌려준 뒤(P.sp.give) 다시 받음
+    — 이름표 뱅크에 한 벌을 더 쓸 자리가 없어도 됨"""
     d = bytes(P.d)
     npos = re.search(rb'\x6c(..)\x6c(..)\x00\x00\x00\x6c(..)', d, re.S)
     assert npos, 'NamesPointers'
     ip = npos.start() + 10
     old = d[ip] | d[ip + 1] << 8
     bank = d[ip - 1]
-    a = addr(bank, old)
+    a0 = a = addr(bank, old)
     lst = []
     for _ in range(256):
         j = d.index(0x50, a)
         lst.append(d[a:j])
         a = j + 1
+    old_len = a - a0
     for no, nm in names.items():
         lst[no - 1] = krtext.encode(nm)
     blob = b''.join(x + b'\x50' for x in lst)
+    if len(blob) <= old_len:
+        P.put(a0, blob + b'\x50' * (old_len - len(blob)))
+        return 0                                                  # 제자리 (포인터 그대로)
+    P.sp.give(bank, a0, a0 + old_len)
     b, p = P.sp.take(len(blob), bank=bank)
     P.put(addr(b, p), blob)
     P.put(ip, struct.pack('<H', p))

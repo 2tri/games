@@ -775,6 +775,7 @@ def build(base, out_rom, out_ips):
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
         '에테몬': T((ANYCREST, 45, '메탈에테몬')),
+        '에이프몬': T((CREST, 42, '맘몬')),
         '레오몬': T((ANYCREST, 50, '샤벨레오몬')),                            # 통신 → 개굴몬 삭제
         '울퉁몬': T((LV, 25, '모노크로몬')) if has('모노크로몬') else [],
         '쉬라몬': T((LV, 18, '원뿔몬')),
@@ -1162,8 +1163,8 @@ def build(base, out_rom, out_ips):
     P.log += digi2.apply(P)
     import boss2
     P.log += boss2.apply(P, groups)
-    # import items2   # 2판 보류: digi2.rename_many 두 번째 호출이 MemoryError '빈 곳 없음 2517' (이름표 뱅크에 한 벌 더 쓸 자리 없음)
-    # P.log += items2.apply(P)
+    import items2
+    P.log += items2.apply(P)
     import types2
     P.log += types2.apply(P)
     import extra2

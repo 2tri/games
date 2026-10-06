@@ -37,11 +37,23 @@ def tail_of(s):
     return m.group(1) if m else '<DONE>'
 
 
+def follow(d, a):
+    """text_far(0x16 ptr bank) 로 옮겨진 글이면 옮긴 자리로 (3판: S5·D-2 가 옮긴 덩어리도 다시 쓸 수 있게)"""
+    n = 0
+    while a < len(d) and d[a] == 0x16 and n < 4:
+        b, p = d[a + 3], d[a + 1] | d[a + 2] << 8
+        if not (0 < b < 0x80 and 0x4000 <= p < 0x8000):
+            break
+        a = addr(b, p)
+        n += 1
+    return a
+
+
 def blocks(P, TX):
     d = bytes(P.d)
     out = {}
     for (bank, ptr) in sorted(TX.refs_index(d)):
-        a = addr(bank, ptr)
+        a = follow(d, addr(bank, ptr))
         if a >= len(d) or d[a] != 0x00:
             continue
         t = TX.read_text(d, a)
@@ -72,16 +84,16 @@ def find_battle(d, cls, idx):
         lose = int.from_bytes(d[w + 3:w + 5], 'little')
         if not 0x4000 <= win < 0x8000:
             continue
-        wa = addr(bank, win)
-        la = addr(bank, lose) if 0x4000 <= lose < 0x8000 else None
+        wa = follow(d, addr(bank, win))
+        la = follow(d, addr(bank, lose)) if 0x4000 <= lose < 0x8000 else None
         if d[wa] != 0x00:
             continue
         t = d.rfind(b'\x4d', max(0, w - 24), w)
         pa = None
         if t >= 0:
             pp = int.from_bytes(d[t + 1:t + 3], 'little')
-            if 0x4000 <= pp < 0x8000 and d[addr(bank, pp)] == 0x00:
-                pa = addr(bank, pp)
+            if 0x4000 <= pp < 0x8000 and d[follow(d, addr(bank, pp))] == 0x00:
+                pa = follow(d, addr(bank, pp))
         hits.append((pa, wa, la))
     return hits
 
@@ -99,7 +111,7 @@ def find_trainer_event(d, cls, idx):
         seen, win, lose, scr = (int.from_bytes(d[p + 2 + 2 * i:p + 4 + 2 * i], 'little') for i in range(4))
         if not (0x4000 <= seen < 0x8000 and 0x4000 <= win < 0x8000 and lose == 0 and 0x4000 <= scr < 0x8000):
             continue
-        sa, wa = addr(bank, seen), addr(bank, win)
+        sa, wa = follow(d, addr(bank, seen)), follow(d, addr(bank, win))
         if sa >= len(d) or wa >= len(d) or d[sa] != 0x00 or d[wa] != 0x00:
             continue
         hits.append((sa, wa, None))
@@ -121,6 +133,7 @@ def apply(P):
 
     def put(a, new):
         nonlocal n_ok, n_far
+        a = follow(bytes(P.d), a)
         r = P.retext(a, new)
         if r == 'in':
             n_ok += 1

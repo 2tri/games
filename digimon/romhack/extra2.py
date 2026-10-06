@@ -56,35 +56,63 @@ def _keys(S):
 
 
 def default_names(P, S):
-    """2판: 심볼 대신 롬 전체에서 「골드@」「실버@」(이름표 끝표 뒤에 오는 것)를 같은 길이의 새 이름으로"""
+    """3판: 심볼 이름에 PlayerName/RivalName 이 든 표(개수 1바이트 + 이름 11바이트씩, 또는 @ 로 끝나는 이름 나열)를 읽어 로그에 보여 주고,
+    첫 이름(「새로 입력」 다음)을 rules.DEFAULT_NAMES 의 새 이름으로. 없으면 롬 전체 바이트 치환(2판 방식)"""
     out = []
     d = bytes(P.d)
-    for old, new in rules.DEFAULT_NAMES:
-        ob, nb = krtext.encode(old) + b'P', krtext.encode(new) + b'P'
-        if len(nb) != len(ob):
-            out.append('%s→%s 길이 다름' % (old, new))
-            continue
-        n = 0
-        i = d.find(ob)
-        while i >= 0:
-            if i == 0 or d[i - 1] in (0x50, 0x7f, 0x00):
-                P.put(i, nb)
-                n += 1
-            i = d.find(ob, i + 1)
-        out.append('%s→%s %d곳' % (old, new, n))
-    return '기본 이름: ' + ', '.join(out)
+    keys = _keys(S)
+    arrs = [k for k in keys if ('playername' in k.lower() or 'rivalname' in k.lower() or 'defaultname' in k.lower()) and 'text' not in k.lower()]
+    out.append('표 심볼 %s' % (', '.join(arrs[:8]) or '없음'))
+    new_by = {'player': rules.DEFAULT_NAMES[0][1], 'rival': rules.DEFAULT_NAMES[1][1]}
+    for k in arrs:
+        a = S[k]
+        who = 'rival' if 'rival' in k.lower() else 'player'
+        try:
+            cnt = d[a]
+            base = a + 1
+            if not 1 <= cnt <= 8:
+                cnt = 6
+                base = a                                          # 개수 바이트가 없는 모양
+            names = []
+            for i in range(cnt):
+                e = base + 11 * i
+                j = d.index(0x50, e)
+                names.append(krtext.decode(d, e, j) if j - e <= 10 else '?')
+            out.append('%s: %s' % (k, '·'.join(names)))
+            tgt = 1 if len(names) > 1 else 0                      # 0번은 보통 「새로 입력」
+            nb = krtext.encode(new_by[who]) + b'P'
+            if len(nb) <= 11:
+                P.put(base + 11 * tgt, nb + b'P' * (11 - len(nb)))
+                out.append(' → %d번 %s 를 %s 로' % (tgt, names[tgt], new_by[who]))
+        except Exception as ex:
+            out.append('%s 못 읽음 %r' % (k, ex))
+    if not arrs:
+        for old, new in rules.DEFAULT_NAMES:
+            ob, nb = krtext.encode(old) + b'P', krtext.encode(new) + b'P'
+            if len(nb) != len(ob):
+                continue
+            n = 0
+            i = d.find(ob)
+            while i >= 0:
+                if i == 0 or d[i - 1] in (0x50, 0x7f, 0x00):
+                    P.put(i, nb)
+                    n += 1
+                i = d.find(ob, i + 1)
+            out.append('%s→%s %d곳' % (old, new, n))
+    return '기본 이름: ' + ' / '.join(out)
 
 
 def trade_vmon(P):
-    """묶음 H (e): 관동 교환 NPC(원본 주는 종 프테라 142 → 레어코일 82 → 코뿌리 112 순)의 주는 종 → 브이몬, 받는 종 → 뿔몬. NPCTrades 3f:4c24, 32바이트"""
+    """묶음 H (e)·3판: 금빛시티 교환 NPC(원본 주는 종 괴력몬 66, 없으면 관동 프테라 142 → 레어코일 82 → 코뿌리 112)의 주는 종 → 브이몬, 받는 종 → 뿔몬.
+    교환 디지몬은 경험치 1.5배. NPCTrades 3f:4c24, 32바이트"""
     P.r.d = P.d
     N = {P.r.name(n): n for n in range(1, dmrom.NUM + 1)}
     if '브이몬' not in N:
         return '브이몬 교환: 브이몬 칸 없음'
     B_ = dmrom.Rom(dmrom.default_rom())
     nt = addr(0x3f, 0x4c24)
-    where = {142: '14번 도로', 82: '발전소', 112: '회색시티'}
-    for want in (142, 82, 112):
+    where = {66: '금빛시티', 142: '14번 도로', 82: '발전소', 112: '회색시티'}      # 3판(사용자 10/6): 1부 중반 금빛시티 교환(원본 괴력몬 66)이 먼저
+    for want in (66, 142, 82, 112):
         for k in range(6):
             e = nt + 32 * k
             if B_.d[e + 2] == want:

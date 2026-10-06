@@ -78,7 +78,8 @@
  "Brock": [
   {"lv": 41, "sp": "울퉁몬"},
   {"lv": 42, "sp": "아르마몬", "until": "울퉁몬", "waiting_art": true},
-  {"lv": 42, "sp": "디그몬"}
+  {"lv": 42, "sp": "디그몬"},
+  {"lv": 44, "sp": "황금아르마", "until": "울퉁몬", "waiting_art": true}
  ],
  "Misty": [
   {"lv": 42, "sp": "쉬라몬"},
@@ -124,6 +125,7 @@
   {"lv": 58, "sp": "세라피몬"}
  ],
  "Red": [
+  {"lv": 70, "sp": "황금아르마", "until": "울퉁몬", "waiting_art": true},
   {"lv": 73, "sp": "스팅몬"},
   {"lv": 75, "sp": "실피드몬"},
   {"lv": 75, "sp": "샤코몬", "until": "안드로몬", "waiting_art": true},
