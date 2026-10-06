@@ -333,13 +333,19 @@ def rules(c, out):
     if os.path.exists(rp):
         import csv as _csv
         reach = {s['cur'] for s in c.sites} | {sp for t in c.trainers for _, sp, _ in t['mons']}
+        # 닿는 종의 진화 결과 + 알(기르기집: 금 GetPreEvolution 처럼 번호가 가장 앞선 앞 단계를 끝까지 따라감)을 더 늘지 않을 때까지
+        prevo = {}
         for n in range(1, 252):
-            for e in c.evos(n): reach.add(e[-1])
-        grow = True                                                   # 알(기르기집): 닿는 종으로 진화하는 앞 단계는 알에서 나옴
+            for e in c.evos(n): prevo.setdefault(e[-1], n)
+        grow = True
         while grow:
             grow = False
-            for n in range(1, 252):
-                if n not in reach and any(e[-1] in reach for e in c.evos(n)): reach.add(n); grow = True
+            for n in list(reach):
+                for e in c.evos(n):
+                    if e[-1] not in reach: reach.add(e[-1]); grow = True
+                k = n
+                while k in prevo: k = prevo[k]
+                if k not in reach: reach.add(k); grow = True
         r23 = []
         for row in _csv.DictReader(open(rp, encoding='utf-8-sig')):
             if row['설치'] != 'Y': continue
