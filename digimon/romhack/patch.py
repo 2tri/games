@@ -342,7 +342,8 @@ class Patch:
         assert e and e[-1] in (0x5e, 0x5f, 0x50), '끝 표시(<DONE>/<PROMPT>/@)로 끝나야 함'
         if len(e) <= end - a:
             self.put(a + 1, e + b'\x50' * (end - a - len(e))); return 'in'
-        b, p = self.sp.take(len(e) + 1, banks=[0x7c, 0x7d, 0x77, 0x76, 0x75])
+        assert end - a + 1 >= 5, '원래 자리가 text_far 5바이트보다 작음 %X' % a
+        b, p = self.sp.take(len(e) + 1, banks=[0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:][::-1])
         self.put(addr(b, p), b'\x00' + e)
         self.put(a, bytes([0x16, p & 255, p >> 8, b, 0x50])); return 'far'
     # 스타팅: 공박사 연구소의 세 볼 스크립트 (pokepic X / cry X / … getmonname X / … givepoke X, 5) 종 바꾸기 → {새 종: 묻는 글 주소}
@@ -986,6 +987,13 @@ def build(base, out_rom, out_ips):
         assert h > 0 and P.d[h - 1] == 0x00 and bytes(P.d).find(hb, h + 1) < 0, head
         P.retext(h - 1, new)
     P.log.append('D-2 관장 승리 대사 %d명, D-3 유대 측정 %d구간' % (len(rules.GYM_LINES), len(rules.BOND_TEXTS)))
+    P.log.append(s5_texts(P, base))
+    # S5-3 교환 NPC 별명 = 주는 디지몬 이름 그대로 (NPCTrades 3f:4c24, 한 칸 32바이트: 대사·받는 종·주는 종·별명 11·…)
+    nt = addr(0x3f, 0x4c24); tr = []
+    for k in range(6):
+        e = nt + 32 * k; nm = P.r.name(P.d[e + 2]); b_ = krtext.encode(nm) + b'\x50'
+        assert len(b_) <= 11; P.put(e + 3, b_ + b'\x50' * (11 - len(b_))); tr.append(nm)
+    P.log.append('S5-3 교환 별명: ' + ', '.join(tr))
     un, unm = rules.UNOWN
     P.name(un, unm)
     P.dex(un, '문자형', 5, 50, ['디지털 월드의 문자가', '형체를 얻은 것. 유적', '벽에 새겨진 글자 모양'])   # 주말 작업팩 D-6 (길이에 맞춰 줄임)
@@ -1133,3 +1141,73 @@ if __name__ == '__main__':
     os.makedirs(dmrom.WORK, exist_ok=True)
     P = build(dmrom.default_rom(), os.path.join(dmrom.WORK, 'myver.gbc'), os.path.join(dmrom.WORK, 'myver.ips'))
     print('\n'.join(P.log))
+
+
+# ── 작업팩 10/6 S5 대사 속 포켓몬 이름 → 디지몬 (rules.TEXT_*) ──
+JOSA_B = [('는', '은'), ('가', '이'), ('를', '을'), ('와', '과'), ('랑', '이랑'), ('로', '으로'), ('라는', '이라는'), ('라고', '이라고'), ('라면', '이라면'), ('라서', '이라서'), ('여', '이여'), ('다!', '이다!'), ('다……', '이다……')]
+def _bat(w):
+    c = ord(w[-1]) - 0xac00
+    return 0 <= c < 11172 and c % 28 != 0
+def _josa(name, rest):
+    """이름 뒤 조사를 새 이름 받침에 맞춤 → 고친 뒷글"""
+    pairs = JOSA_B if _bat(name) else [(b, a) for a, b in JOSA_B]
+    if _bat(name) and (ord(name[-1]) - 0xac00) % 28 == 8: pairs = [p for p in pairs if p[0] != '로']   # ㄹ 받침 + 로
+    for a, b in sorted(pairs, key=lambda p: -len(p[0])):
+        if rest.startswith(a) and not rest.startswith(b): return b + rest[len(a):]
+    return rest
+def _wrap(s, W=18):
+    """줄이 W 자를 넘는 문단만 다시 나눔 (첫 줄 <LINE>, 다음부터 <CONT>)"""
+    L = lambda t: len(re.sub(r'<PLAYER>|<RIVAL>', '#####', t))
+    out = []
+    for para in re.split(r'(<PARA>)', s):
+        if para == '<PARA>': out.append(para); continue
+        m = re.search(r'(<DONE>|<PROMPT>|@)$', para); tail = m.group(1) if m else ''
+        body = para[:len(para) - len(tail)]
+        lines = re.split(r'<LINE>|<CONT>', body)
+        if max(map(L, lines)) <= W: out.append(para); continue
+        words = ' '.join(x.strip() for x in lines).split(' '); new = ['']
+        for w in words:
+            if new[-1] and L(new[-1] + ' ' + w) > W: new.append(w)
+            else: new[-1] = (new[-1] + ' ' + w).strip()
+        out.append(new[0] + ''.join(('<LINE>' if k == 1 else '<CONT>') + x for k, x in enumerate(new[1:], 1)) + tail)
+    return ''.join(out)
+def s5_texts(P, base):
+    import csv, texts as TX
+    ORIG = [re.search(r'dname "(.*)"', l).group(1) for l in open(os.path.join(encounters.KR, 'data/pokemon/names.asm')) if 'dname' in l]
+    MAP = dict(rules.TEXT_MAP_11)
+    for x in csv.DictReader(open(os.path.join(HERE, 'mapping.csv'), encoding='utf-8-sig')):
+        MAP.setdefault(x['원작'], x['계획종'] or x['대체이름'])
+    dig = ({P.r.name(n) for n in range(1, dmrom.NUM + 1)} - set(ORIG)) | set(MAP.values()) | {v for _, v in rules.ROAMERS}   # 이 때는 잠자는 칸에 포켓몬 이름이 아직 남아 있음
+    poke = [n for n in ORIG if len(n) > 1 and n not in dig]
+    import traces
+    keep = sorted(set(rules.TEXT_KEEP + traces.NOT_POKE) | {d_ for d_ in dig if d_ != '-----'}, key=len, reverse=True)
+    pre = re.compile('(?<![가-힣])(?:%s)' % '|'.join(map(re.escape, sorted(poke, key=len, reverse=True))))   # 낱말 첫머리만 (「모아보자」 속 아보 등 빼기)
+    d = bytes(P.d); idx = TX.refs_index(d); done = set(); n_in = n_far = 0; skipped = collections.Counter(); changed = []
+    for (bank, ptr) in sorted(idx):
+        a = addr(bank, ptr)
+        if a >= len(d) or a in done: continue
+        t = TX.read_text(d, a)
+        if not t or t[1] < 2: continue
+        done.add(a); s0 = s = t[2]
+        for o, nw in rules.TEXT_FIX: s = s.replace(o, nw)
+        hold = []
+        def mask(m): hold.append(m.group(0)); return '\x01%d\x02' % (len(hold) - 1)
+        s = re.sub('|'.join(map(re.escape, keep)), mask, s)
+        hits = pre.findall(s)
+        if not hits and s == s0: continue
+        bad = sorted({h for h in hits if h not in MAP})
+        if bad or any(k in s0 for k in rules.TEXT_SKIP):
+            for h in bad or ['퀴즈']: skipped[h] += 1
+            continue
+        m = pre.search(s)
+        while m:
+            nm = MAP[m.group(0)]; s = s[:m.start()] + nm + _josa(nm, s[m.end():]); m = pre.search(s, m.start() + len(nm))
+        s = re.sub('\x01(\\d+)\x02', lambda m: hold[int(m.group(1))], s)
+        s = _wrap(s)
+        if s == s0: continue
+        if P.retext(a, s) == 'in': n_in += 1
+        else: n_far += 1
+        changed.append((a, s0, s))
+    P.s5_changed = changed; P.s5_skipped = skipped
+    return 'S5 대사 이름 바꿈 %d덩어리 (제자리 %d, 옮김 %d). 대응 없는 종이 있어 건너뜀: %s' % (
+        n_in + n_far, n_in, n_far, ', '.join('%s %d' % kv for kv in skipped.most_common()))

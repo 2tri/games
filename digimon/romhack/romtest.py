@@ -293,6 +293,11 @@ def text_targets(r):
         body = rules.BOND_TEXTS[k][1].split('<')[0]
         h = d.find(krtext.encode(body))
         out.append((label, h - 1 if h > 0 and d[h - 1] == 0 else None))
+    # 작업팩 S5 대사 치환 3장면 (야돈 우물·모모 농장·불탄 탑): 글 조각이 든 덩어리의 시작(text 명령 0x00)
+    for label, frag in (('S5 야돈 우물 (강집)', '우물에서 개굴몬에게'), ('S5 모모 농장', '앓아 누워 버렸단다'), ('S5 불탄 탑 (라이벌)', '전설의 디지몬을 찾으려고')):
+        h = d.find(krtext.encode(frag)); s = h
+        while h > 0 and s > h - 400 and d[s] != 0x00: s -= 1
+        out.append((label, s if h > 0 and d[s] == 0x00 else None))
     return out
 
 
@@ -318,12 +323,13 @@ def test_texts(names):
                     if cond(): break
                     p.press(d_, 10, 10); p.tick(30)
             p.press('up', 6, 30)                                      # 책장(5,1) 보기
+            ok = (m[XC], m[YC]) == (5, 2); at = (m[XC], m[YC])        # 책장 앞 (글이 짧으면 끝난 뒤 A 로 다시 말을 거니 여기서 봄)
             p.press('a', 6, 120); shots = 0
             for page in range(8):
                 p.tick(90); p.shot('txt_%d_%d' % (k, page)); shots += 1
                 p.press('a', 6, 40)
-            ok = (m[XC], m[YC]) == (5, 2); bad += not ok
-            print('  %-24s → 책장 앞 %s, 화면 %d장 (work/shots/txt_%d_*.png)' % (label, 'OK' if ok else '못 감 %d,%d' % (m[XC], m[YC]), shots, k))
+            bad += not ok
+            print('  %-24s → 책장 앞 %s, 화면 %d장 (work/shots/txt_%d_*.png)' % (label, 'OK' if ok else '못 감 %d,%d' % at, shots, k))
             p.stop()
     finally:
         ROM = keep
