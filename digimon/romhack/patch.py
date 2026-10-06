@@ -987,6 +987,14 @@ def build(base, out_rom, out_ips):
         assert h > 0 and P.d[h - 1] == 0x00 and bytes(P.d).find(hb, h + 1) < 0, head
         P.retext(h - 1, new)
     P.log.append('D-2 관장 승리 대사 %d명, D-3 유대 측정 %d구간' % (len(rules.GYM_LINES), len(rules.BOND_TEXTS)))
+    # S3~S5 판정 C3-2: 아지트 고정 만남 4곳 (B1F 찌리리공 자리 → 톱니몬, B2F 붐볼 자리 3 → 가드로몬). C5-5: 에렉몬 타입 전기
+    Nn = {P.r.name(n): n for n in range(1, dmrom.NUM + 1)}; nh = 0
+    B_ = dmrom.Rom(base)
+    for s_ in encounters.find_all(B_):
+        if s_['kind'] == '고정 만남' and (s_['where'], B_.d[s_['addr']]) in rules.HIDEOUT_STATIC:
+            P.d[s_['addr']] = Nn[rules.HIDEOUT_STATIC[(s_['where'], B_.d[s_['addr']])]]; nh += 1
+    P.stats(Nn['에렉몬'], type1=0x17, type2=0x17)
+    P.log.append('C3-2 아지트 고정 만남 %d곳, C5-5 에렉몬 전기 타입' % nh)
     P.log.append(s5_texts(P, base))
     # S5-3 교환 NPC 별명 = 주는 디지몬 이름 그대로 (NPCTrades 3f:4c24, 한 칸 32바이트: 대사·받는 종·주는 종·별명 11·…)
     nt = addr(0x3f, 0x4c24); tr = []
