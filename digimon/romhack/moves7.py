@@ -183,7 +183,7 @@ def apply(P, groups):
     for no, sp, nm, *_r, how in SP:
         if not isinstance(how, tuple): continue
         t = N[sp]; pre = [(e, k) for k in range(1, dmrom.NUM + 1) for e in P.r.evos_attacks(k)[0] if e[-1] == t]
-        own = [e[1] for e, k in pre if e[0] == 8]                                          # 자기 문장(종류 8) 레벨
+        own = [e[1] for e, k in pre if e[0] in (8, 10)]                                        # 자기 문장(종류 8) 레벨
         lv = (min(own) if own else min(e[1] for e, k in pre)) + how[1]
         ev, mv = P.r.evos_attacks(t)
         lvs = [lv] + [x for x in rules.SPECIAL_EXTRA_LV[how[1]] if x > lv]

@@ -523,45 +523,43 @@ class Patch:
         d = bytes(self.d)
         site = find(d, 'fae5d0beda2460cd8d60ca2460e511', 'EVOLVE_STAT 자리')
         bank = site // 0x4000
-        # 원래 코드에서 주소 읽기
-        LEVEL = d[site + 1] | d[site + 2] << 8                 # wTempMonLevel
+        LEVEL = d[site + 1] | d[site + 2] << 8
         DONT1 = d[site + 5] | d[site + 6] << 8; DONT2 = DONT1 + 1
         EVERSTONE = d[site + 8] | d[site + 9] << 8
         hap = find(d, 'fae1d0fedcda', '친밀도 진화 자리'); HAPPY_RAM = d[hap + 1] | d[hap + 2] << 8
         prc = d.find(bytes.fromhex('fae5d0eafbd0'), site); PROCEED = 0x4000 + prc % 0x4000
-        m = find(d, 'fa90d13d0600', '진화 전 종 번호'); OLDSP = d[m + 1] | d[m + 2] << 8
         bdg = find(d, 'fa30d647fa2fd64f', '배지'); BADGES = d[bdg + 5] | d[bdg + 6] << 8
         n_code = 140
         b, org = self.evo_space if getattr(self, 'evo_space', None) else self.sp.take(n_code + 251, bank=bank)
         a = Asm(org)
         a.db(0x78); a.cp(STAT); a.jr('custom', 'nz')            # ld a,b / cp 5
-        a.ld_a_mem(LEVEL); a.jp(0x4000 + (site + 3) % 0x4000)    # 원래 길로 (cp [hl] 부터)
+        a.ld_a_mem(LEVEL); a.jp(0x4000 + (site + 3) % 0x4000)    # 원래 길로
         a.L('custom')
         a.ld_a_mem(LEVEL); a.db(0xBE); a.jp(DONT2, 'c')          # 레벨 모자람
-        a.db(0x78)                                               # ld a,b (종류)
+        a.db(0x78)
         a.cp(BOND_HI); a.jr('high', 'z'); a.cp(BOND_LO); a.jr('low', 'z')
         a.cp(CREST); a.jr('crest', 'z'); a.cp(DARK); a.jr('dark', 'z'); a.cp(ANYCREST); a.jr('any', 'z')
         a.jp(DONT2)
         a.L('high'); a.ld_a_mem(HAPPY_RAM); a.cp(HIGH_BOND); a.jp(DONT2, 'c'); a.jr('ok')
         a.L('low'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc'); a.jr('ok')
-        a.L('any'); a.ld_a_mem(BADGES); a.db(0xA7); a.jp(DONT2, 'z'); a.jr('ok')
-        a.L('crest'); a.call('own'); a.jp(DONT2, 'z'); a.jr('ok')
-        a.L('dark'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc')          # 유대 낮음일 때만
-        a.ld_a_mem(BADGES); a.db(0xA7); a.jp(DONT2, 'z'); a.call('own'); a.jp(DONT2, 'nz')   # 문장(배지)은 있지만 자기 문장이 아님
+        a.L('any'); a.call('count'); a.cp(rules.BADGES_ULTIMATE); a.jp(DONT2, 'c'); a.jr('ok')   # 궁극체: 배지 8개
+        a.L('crest'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'c')                   # 완전체: 유대 낮음이면 안 함(암흑으로)
+        a.call('count'); a.cp(rules.BADGES_COMPLETE); a.jp(DONT2, 'c'); a.jr('ok')               # 배지 3개
+        a.L('dark'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc')                    # 암흑: 유대 낮음
+        a.call('count'); a.cp(rules.BADGES_COMPLETE); a.jp(DONT2, 'c')                           # + 배지 3개
         a.L('ok')
         a.call(EVERSTONE); a.jp(DONT2, 'z')                      # 변함없는 돌이면 안 함
         a.db(0x23); a.jp(PROCEED)                                # inc hl → 대상 종
-        a.L('own')                                               # a = 배지 & 문장표[종-1] (z = 자기 문장 없음)
-        a.db(0xE5); a.ld_a_mem(OLDSP); a.db(0x3D, 0x5F, 0x16, 0x00, 0x21); a.ref('table'); a.db(0x19)
-        a.ld_a_mem(BADGES); a.db(0xA6, 0xE1, 0xC9)
-        a.L('table')
-        a.db(*[crest_of.get(no, 0) for no in range(1, 252)])
+        a.L('count')                                             # a = 배지 수 (bc 보존)
+        a.db(0xC5); a.ld_a_mem(BADGES); a.db(0x0E, 0x00, 0x06, 0x08)    # push bc / ld a,[배지] / ld c,0 / ld b,8
+        a.L('cl'); a.db(0x1F); a.jr('cs', 'nc'); a.db(0x0C)             # rra / jr nc / inc c
+        a.L('cs'); a.db(0x05); a.jr('cl', 'nz')                         # dec b / jr nz
+        a.db(0x79, 0xC1, 0xC9)                                          # ld a,c / pop bc / ret
+        a.L('table'); a.db(*[crest_of.get(no, 0) for no in range(1, 252)])   # (안 씀, 자리만)
         code = a.build(); assert len(code) <= n_code + 251, len(code)
         self.put(addr(b, org), code)
-        # 걸기: 원래 'ld a,[wTempMonLevel]' 3바이트 → jp 새 코드
         self.put(site, bytes([0xC3, org & 255, org >> 8]))
-        self.log.append('진화 확장 코드 뱅크 %02X:%04X (%d바이트), 레벨 %04X 친밀도 %04X 배지 %04X 진화전 %04X 진행 %04X 안함 %04X' %
-                        (b, org, len(code), LEVEL, HAPPY_RAM, BADGES, OLDSP, PROCEED, DONT2))
+        self.log.append('진화 확장 코드(배지 개수판) 뱅크 %02X:%04X (%d바이트), 완전체 배지 %d·궁극체 배지 %d' % (b, org, len(code), rules.BADGES_COMPLETE, rules.BADGES_ULTIMATE))
 
     # ── 포획: 잡기 확률이 0인 디지몬은 절대 안 잡힘 ──
     def catch_engine(self):
@@ -646,15 +644,15 @@ def build(base, out_rom, out_ips):
         mv = list(fixed.get(no) or r.evos_attacks(no)[1])
         for m in more: mv += [x for x in (fixed.get(m) or r.evos_attacks(m)[1]) if x[0] > 30]
         return sorted(set(mv))
-    P.evos(S('그레이몬'), [(CREST, 32, MGR), (ANYCREST, 36, MGR)])
-    P.evos(MGR, [(CREST, 45, S('워그레이몬'))], learn(S('그레이몬'), S('워그레이몬')))
-    P.evos(S('가루몬'), [(CREST, 33, WGR), (ANYCREST, 36, WGR)])
-    P.evos(WGR, [(CREST, 46, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
-    P.evos(S('버드라몬'), [(CREST, 31, S('가루다몬')), (ANYCREST, 36, S('가루다몬'))])
-    P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬')), (ANYCREST, 40, S('아트캅테몬'))])   # 로제몬(태양의 돌) 갈래는 뺌 (B단계)
-    P.evos(S('니드몬'), [(CREST, 30, S('릴리몬')), (ANYCREST, 32, S('릴리몬'))])
-    P.evos(S('원뿔몬'), [(CREST, 34, S('쥬드몬')), (ANYCREST, 38, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
-    P.evos(S('엔젤몬'), [(CREST, 30, S('홀리엔젤몬')), (ANYCREST, 34, S('홀리엔젤몬'))])   # 완전체 30 이상 (B단계)
+    P.evos(S('그레이몬'), [(CREST, 32, MGR)])
+    P.evos(MGR, [(ANYCREST, 45, S('워그레이몬'))], learn(S('그레이몬'), S('워그레이몬')))
+    P.evos(S('가루몬'), [(CREST, 33, WGR)])
+    P.evos(WGR, [(ANYCREST, 46, S('메탈가루몬'))], learn(S('가루몬'), S('메탈가루몬')))
+    P.evos(S('버드라몬'), [(CREST, 31, S('가루다몬'))])
+    P.evos(S('캅테리몬'), [(CREST, 35, S('아트캅테몬'))])   # 로제몬(태양의 돌) 갈래는 뺌 (B단계)
+    P.evos(S('니드몬'), [(CREST, 30, S('릴리몬'))])
+    P.evos(S('원뿔몬'), [(CREST, 32, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
+    P.evos(S('엔젤몬'), [(CREST, 30, S('홀리엔젤몬'))])   # 완전체 30 이상 (B단계)
     # 성장기 → 성숙기: 유대
     P.evos(S('파피몬'), [(BOND_HI, 16, S('가루몬')), (LV, 16, S('우가몬'))])               # 유대 높음 가루몬, 아니면 우가몬
     P.evos(S('플롯트몬'), [(BOND_HI, 16, S('가트몬')), (LV, 16, S('위자몬'))])             # 유대 높음 가트몬, 아니면 위자몬
@@ -679,13 +677,13 @@ def build(base, out_rom, out_ips):
     #   파닥몬은 공박사 조수가 주는 알 칸(원래 토게피)이라 알에서 나옴 — 토코몬 그림이 오면 알을 토코몬으로
     VM, XV, IM = S('브이몬'), S('엑스브이몬'), S('황제드라몬')
     TAM = {S('길몬'): S('아구몬'), S('그라우몬'): S('그레이몬'), S('듀크몬'): MGR,
-           S('레나몬'): S('파피몬'), S('구미호몬'): S('가루몬'), S('샤크라몬'): WGR,
-           S('테리어몬'): VM, S('가르고몬'): XV, S('래피드몬'): IM}
-    T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('파피몬'), S('테리어몬'): VM})
+           S('레나몬'): S('쉬라몬'), S('구미호몬'): S('원뿔몬'), S('샤크라몬'): S('쥬드몬'),
+           S('테리어몬'): S('팔몬'), S('가르고몬'): S('니드몬'), S('래피드몬'): S('릴리몬')}
+    T = P.starters({S('길몬'): S('아구몬'), S('레나몬'): S('쉬라몬'), S('테리어몬'): S('팔몬')})
     P.text_at(T[S('아구몬')], '겐나이『불꽃 디지몬<LINE>아구몬으로 하겠니!?')
-    P.text_at(T[S('파피몬')], '겐나이『물디지몬<LINE>파피몬이 마음에 드느냐!?')
-    P.text_at(T[VM], '겐나이『소룡디지몬<LINE>브이몬이 마음에 들었느냐!?')
-    P.log.append('스타팅 → 아구몬·파피몬·브이몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
+    P.text_at(T[S('쉬라몬')], '겐나이『물디지몬<LINE>쉬라몬이 마음에 드느냐!?')
+    P.text_at(T[S('팔몬')], '겐나이『식물디지몬<LINE>팔몬이 마음에 들었느냐!?')
+    P.log.append('스타팅 → 아구몬·쉬라몬·팔몬, 트레이너 종 %d곳 바꿈' % P.trainer_species(TAM))
     dv = os.path.join(WEB, 'art', 'digivice.png')                     # 받은 그림 (16×16), 없으면 임시 그림
     P.digivice(dv if os.path.exists(dv) else os.path.join(WEB, 'art', 'digivice_temp.png'))
     gw = os.path.join(WEB, 'art', 'gennai_ow.png')                    # 연구소 박사 필드 그림 → 겐나이 (src/people/gennai_ai.png 보고 16×16 로 찍음)
@@ -763,11 +761,11 @@ def build(base, out_rom, out_ips):
     def T(*ev): return [(k, lv, S(nm)) for k, lv, nm in ev]
     EV = {
         '쿠네몬': T((LV, 14, '플라이몬')),
-        '플라이몬': T((ANYCREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
-        '스나이몬': T((ANYCREST, 34, '아라크네몬')),
-        '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((ANYCREST, 35, '실피드몬')),
+        '플라이몬': T((CREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
+        '스나이몬': T((CREST, 34, '아라크네몬')),
+        '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((CREST, 35, '실피드몬')),
         '가트몬': (T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else []) + (T((DARK, 30, '레이디데블')) if has('레이디데블') else []),     # 달맞이 돌 → 오파니몬 삭제. 자기 문장 → 암흑 순서
-        '홀리엔젤몬': T((CREST, 45, '세라피몬')),
+        '홀리엔젤몬': T((ANYCREST, 45, '세라피몬')),
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
         '에테몬': T((LV, 45, '메탈에테몬')),
@@ -778,13 +776,25 @@ def build(base, out_rom, out_ips):
         '인펠몬': T((LV, 45, '디아블로몬')),
         '엑스브이몬': T((LV, 45, '황제드라몬')),
         '파닥몬': T((BOND_HI, 16, '엔젤몬'), (BOND_LO, 16, '데블몬'), (LV, 16, '엔젤몬')),
-        '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 32, '스컬그레몬')) if has('스컬그레몬') else []) + T((ANYCREST, 36, '메탈그레몬')),
+        '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 32, '스컬그레몬')) if has('스컬그레몬') else []),
     }
-    if has('아쿠이라몬'): EV['아쿠이라몬'] = T((ANYCREST, 35, '실피드몬'))
-    if has('엔젤우몬'): EV['엔젤우몬'] = T((CREST, 45, '마그나드몬'))
+    if has('아쿠이라몬'): EV['아쿠이라몬'] = T((CREST, 35, '실피드몬'))
+    if has('엔젤우몬'): EV['엔젤우몬'] = T((ANYCREST, 45, '마그나드몬'))
     if has('쿠가몬'):                                                # 주말 작업팩 E 연결표: 텐타몬 유대 낮음 Lv16, 쿠가몬 Lv34 아무 문장 → 오쿠와몬
         EV['텐타몬'] = T((BOND_LO, 16, '쿠가몬'), (LV, 21, '캅테리몬'))
-        EV['쿠가몬'] = T((ANYCREST, 34, '오쿠와몬'))
+        EV['쿠가몬'] = T((CREST, 34, '오쿠와몬'))
+    # 묶음 B(2부)·C(새 종)·I(스타팅 궁극체) 진화 표 추가 (설계자 2026-10-06)
+    if has('황제파이터'): EV['황제드라몬'] = T((LV, 55, '황제파이터'))      # 오메가블레이드 → 팔라딘 줄은 OB 처리에서 다시 붙음
+    if has('황금아르마'): EV['황금아르마'] = T((CREST, 35, '샤코몬')) if has('샤코몬') else []
+    EV['두리몬'] = []                                                      # 두리몬 = 드리모게몬(두더지), 진화 없음. grades.json 27 → 성숙기
+    if has('티라노몬'): EV['아구몬'] = T((BOND_LO, 16, '티라노몬'), (LV, 16, '그레이몬'))
+    if has('베지몬'): EV['팔몬'] = T((BOND_LO, 16, '베지몬'), (LV, 16, '니드몬'))
+    if has('키위몬'): EV['피요몬'] = T((BOND_LO, 18, '키위몬'), (LV, 18, '버드라몬'))
+    if has('시드라몬'): EV['쉬라몬'] = T((BOND_LO, 16, '시드라몬'), (LV, 18, '원뿔몬'))
+    if has('크리사리몬'): EV['케라몬'] = T((LV, 18, '크리사리몬'))
+    if has('왕개굴몬'): EV['개굴몬'] = T((LV, 35, '왕개굴몬'))
+    if has('바이킹몬'): EV['쥬드몬'] = T((ANYCREST, 45, '바이킹몬'))
+    if has('로제몬'): EV['릴리몬'] = T((ANYCREST, 45, '로제몬'))
     for nm, ev in EV.items(): P.evos(S(nm), ev)
     # 작업팩 10/6 S1-6·7: 천둥의 돌 → 오메가몬 두 줄·달맞이 돌 → 황제팔라딘 줄을 지우고 오메가블레이드(새 도구)로
     OB = rules.OMEGA_BLADE; oblog = []
@@ -805,7 +815,7 @@ def build(base, out_rom, out_ips):
     P.log.append('B단계 진화 표 %d종, 포켓몬 칸 진화 정리: %s' % (len(EV), ', '.join(cut) or '없음'))
     # 1·2 진화 확장 코드 + 문장표 (문장 = 배지): 조건부 종까지 정해진 뒤에
     crest = {'그레이몬': '용기', '가루몬': '우정', '버드라몬': '사랑', '캅테리몬': '지식', '니드몬': '순수', '원뿔몬': '성실', '엔젤몬': '희망', '가트몬': '빛',
-             '메탈그레몬': '용기', '워가루몬': '우정', '홀리엔젤몬': '희망', '엔젤우몬': '빛'}
+             '메탈그레몬': '용기', '워가루몬': '우정', '홀리엔젤몬': '희망', '엔젤우몬': '빛', '쥬드몬': '성실', '릴리몬': '순수'}
     P.evo_engine({N[nm]: 1 << CREST_BIT[c] for nm, c in crest.items() if nm in N})
     # A단계: 야생·트레이너·이벤트가 가리키는 포켓몬·뺄 종 → 남길 디지몬 (mapping.csv). 계획종이 설치된 칸은 그대로
     P.r.d = P.d
@@ -821,6 +831,7 @@ def build(base, out_rom, out_ips):
             for s in ss:
                 if P.d[s['addr']] == N[frm]: P.d[s['addr']] = N[to]; nsw += 1
     for nm, kd, area, slots, (lo, hi), cond in rules.PLACE_ADD:
+        if nm not in N: continue
         per = 7 if kd == '풀숲' else 3
         for (k_, wh), ss in groups_.items():
             if k_ != kd or not wh.startswith(area): continue
@@ -857,6 +868,7 @@ def build(base, out_rom, out_ips):
     dm = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', bytes(P.d), re.S)
     icons = addr(dm.start() // 0x4000, int.from_bytes(dm.group(1), 'little'))
     for nm, (src, slot, grade, c1, c2) in rules.PALSWAP.items():
+        if src not in N: continue
         s_ = N[src]; a_, b_ = r.bs + 0x20 * (slot - 1), r.bs + 0x20 * (s_ - 1)
         P.put(a_ + 1, bytes(P.d[b_ + 1:b_ + 0x20]))                          # 첫 바이트(종 번호)만 빼고 복사
         P.stats(slot, atk=min(255, P.d[b_ + 2] + 10), **{'def': max(1, P.d[b_ + 3] - 10)})
@@ -921,9 +933,10 @@ def build(base, out_rom, out_ips):
             pool = rules.GRUNT_LOW if lv < rules.GRUNT_LV else rules.GRUNT_HIGH
             new.append((lv, N[pool[1] if i == last else pool[i % 2]]))
         plan.setdefault(g, {})[t['idx']] = new; ngrunt += 1
+    import boss2
     for t in TS:
         g = groups[t['group']]
-        if g in rules.ULTIMATE_OK or (g == rules.RIVAL_FINAL[0] and t['idx'] >= rules.RIVAL_FINAL[1]) or t['idx'] in plan.get(g, {}): continue
+        if g in rules.ULTIMATE_OK or (g == rules.RIVAL_FINAL[0] and t['idx'] >= rules.RIVAL_FINAL[1]) or (g, t['idx']) in boss2.ultimate_ok_trainers() or t['idx'] in plan.get(g, {}): continue
         if not any(grade.get(sp) == '궁극체' for _, sp, _ in t['mons']): continue
         plan.setdefault(g, {})[t['idx']] = [(lv, N[rules.R13_DOWN[r.name(sp)]] if grade.get(sp) == '궁극체' else sp) for lv, sp, _ in t['mons']]
         nr13 += 1
@@ -1037,7 +1050,7 @@ def build(base, out_rom, out_ips):
     #   이름이 1.4 이름 그대로인 칸만 (새로 넣은 종·색 바꾼 종은 series.json 에 이름이 없어 해당 안 됨)
     SER = {v['name']: v['series'] for v in json.load(open(os.path.join(HERE, 'series.json'))).values()}
     late = [n_ for n_ in range(1, dmrom.NUM + 1) if n_ not in seen and n_ not in got and r.name(n_) != ORIG[n_ - 1]
-            and (SER.get(r.name(n_)) in rules.LATE_SERIES or r.name(n_) in rules.LATE_EXTRA)]
+            and r.name(n_) not in rules.LATE_KEEP and (SER.get(r.name(n_)) in rules.LATE_SERIES or r.name(n_) in rules.LATE_EXTRA)]
     late_names = [r.name(n_) for n_ in late]
     for n_ in late: P.name(n_, rules.EMPTY_NAME); P.stats(n_, catch=0)
     P.log.append('파워디지몬 이후 디지몬 %d칸 → 「%s」: %s' % (len(late), rules.EMPTY_NAME, ', '.join(late_names)))
@@ -1137,6 +1150,18 @@ def build(base, out_rom, out_ips):
     # 작업팩 S8 진화 장면 (evo8.py)
     import evo8
     P.log += evo8.apply(P)
+    import field10
+    P.log += field10.apply(P)
+    import digi2
+    P.log += digi2.apply(P)
+    import boss2
+    P.log += boss2.apply(P, groups)
+    # import items2   # 묶음 D 보류: items2.py 가 digi2.item_ids 를 부르는데 digi2 에 없음 (boss2.item_ids 에 있음) — AttributeError, 설계자 확인 필요
+    # P.log += items2.apply(P)
+    import types2
+    P.log += types2.apply(P)
+    import extra2
+    P.log += extra2.apply(P)
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)
@@ -1160,6 +1185,9 @@ def build(base, out_rom, out_ips):
         if cat is None: cat = TYPE_CAT.get(P.d[r.bs + 0x20 * (n_ - 1) + 7], '짐승'); by_type.append('%s(%s)' % (nm, cat))
         P.icon(n_, ICN.CATS[cat][1]); nic += 1
     P.log.append('G단계 메뉴 아이콘 10종: %d칸 배정%s' % (nic, ', 타입으로 정한 칸 ' + ', '.join(by_type) if by_type else ''))
+    for old_, new_ in rules.RENAME_SPECIES.items():
+        if old_ in {r.name(n) for n in range(1, dmrom.NUM + 1)}:
+            P.name({r.name(n): n for n in range(1, dmrom.NUM + 1)}[old_], new_)
     P.r.d = P.d
     open(out_rom, 'wb').write(bytes(P.d))
     n = P.ips(out_ips)

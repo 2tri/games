@@ -7,6 +7,7 @@
 import argparse, collections, json, os, re, struct, sys, zlib
 import dmrom, krtext, encounters as E, remap, texts as T
 import rules as RU
+import digi2, boss2
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 KR = E.KR
@@ -161,7 +162,7 @@ def rules(c, out):
     r3 = []
     for n in dig:
         ks = [e[0] for e in c.evos(n)]
-        for seq, nm in (((8, 9, 10), '자기 문장 → 암흑 → 아무 문장'), ((6, 7, 1), '유대 높음 → 유대 낮음 → 레벨')):
+        for seq, nm in (((8, 9), '완전체 문장(배지 3개) → 암흑'), ((6, 7, 1), '유대 높음 → 유대 낮음 → 레벨')):
             pos = [ks.index(k) for k in seq if k in ks]
             if pos != sorted(pos): r3.append((n, nm, ' · '.join(EVK[k] for k in ks)))
     rep('R3', r3, '진화 목록 순서 (남길 종 %d)' % len(dig), lambda b: '%s: %s 순서가 아님 (지금 %s)' % (c.name(b[0]), b[1], b[2]))
@@ -257,7 +258,7 @@ def rules(c, out):
     r13, gi = [], collections.Counter()
     for t in c.trainers:
         g = GROUPS[t['group']]; i = gi[g]; gi[g] += 1
-        if g in RU.ULTIMATE_OK or (g == RU.RIVAL_FINAL[0] and i >= RU.RIVAL_FINAL[1]): continue
+        if g in RU.ULTIMATE_OK or (g == RU.RIVAL_FINAL[0] and i >= RU.RIVAL_FINAL[1]) or (g, i) in boss2.ultimate_ok_trainers(): continue
         for lv, sp, _ in t['mons']:
             if c.grade.get(sp) == '궁극체': r13.append((g, i + 1, t['name'], c.name(sp), lv))
     rep('R13', r13, '궁극체는 사천왕·챔피언·레드·라이벌 마지막(%s %d번째 이후) 파티에만' % (RU.RIVAL_FINAL[0], RU.RIVAL_FINAL[1] + 1),
@@ -354,6 +355,45 @@ def rules(c, out):
             elif n not in reach: r23.append((row['종'], '칸 %d 어디에도 안 나옴' % n))
         rep('R23', r23, '로스터 설치 종 %d개 모두 야생·트레이너·이벤트·진화 중 하나에 연결' % sum(1 for _ in _csv.DictReader(open(rp, encoding='utf-8-sig')) if _['설치'] == 'Y'),
             lambda b: '%s: %s' % b)
+    # R24 parties.json 의 모든 항목(1부·2부 관장·사천왕·라이벌·간부)이 롬 파티와 같음: (레벨, 종 또는 until 종) 순서대로
+    r24 = []
+    PJ = json.load(open(os.path.join(HERE, 'parties.json'), encoding='utf-8'))
+    byg = collections.defaultdict(list)
+    for t in c.trainers: byg[GROUPS[t['group']]].append(t)
+    for key, mons in PJ.items():
+        if key.startswith('_'): continue
+        g, _, k = key.partition('#'); k = int(k) - 1 if k else 0
+        if g not in byg or k >= len(byg[g]): r24.append((key, '무리·순서 없음')); continue
+        t = byg[g][k]; got = [(lv, c.name(sp)) for lv, sp, _ in t['mons']]
+        want = [(m['lv'], {m['sp'], m.get('until', m['sp'])}) for m in mons]
+        if len(got) != len(want) or any(lv != w[0] or nm not in w[1] for (lv, nm), w in zip(got, want)):
+            r24.append((key, '%s ≠ %s' % (got, [(w[0], '/'.join(sorted(w[1]))) for w in want])))
+    rep('R24', r24, 'parties.json %d항목 전부 롬 파티와 일치' % sum(1 for k in PJ if not k.startswith('_')), lambda b: '%s: %s' % b)
+    # R25 디지멘탈: 이름표에 8개가 있고, 두 종이 다 롬에 있는 아머 진화는 (도구, 대상) 줄이 진화 목록에 있음
+    r25 = []; NM = {c.name(n): n for n in range(1, 252)}
+    for crest, (it, nm, pairs) in RU.DIGIMENTAL.items():
+        if nm not in c.items: r25.append((crest, '도구 이름 %s 없음' % nm)); continue
+        it = c.items.index(nm) + 1
+        for frm, to in pairs:
+            if frm in NM and to in NM and not any(e[0] == 2 and e[1] == it and e[-1] == NM[to] for e in c.evos(NM[frm])):
+                r25.append((crest, '%s → %s 아이템 진화 없음' % (frm, to)))
+    rep('R25', r25, '디지멘탈 %d개 이름·아머 진화 연결' % len(RU.DIGIMENTAL), lambda b: '%s: %s' % b)
+    # R26 2부 보스 트레이너(마일도) 존재 + 파티에 블랙워그몬
+    bosses = [t for t in c.trainers if t['name'] == RU.BOSS2[0]]
+    r26 = [] if bosses and any(c.name(sp) == '블랙워그몬' for _, sp, _ in bosses[0]['mons']) else [(RU.BOSS2[0], '트레이너 없음 또는 블랙워그몬 없음')]
+    rep('R26', r26, '2부 보스 %s 1명, 블랙워그몬 보유' % RU.BOSS2[0], lambda b: '%s: %s' % b)
+    # R27 (묘 J) 완전체로 가는 레벨 진화 종류는 8(문장=배지 3개, 암흑 9 은 완전체 갈래라 같이 허용), 궁극체로 가는 것은 10 또는 2(도구)만
+    #   종류 8 은 완전체로만, 종류 10 은 궁극체로만 가야 함
+    r27 = []
+    for n in dig:
+        for e in c.evos(n):
+            g = c.grade.get(e[-1])
+            if e[0] == 8 and g != '완전체': r27.append((n, e, '종류 8 인데 대상이 완전체가 아님'))
+            if e[0] == 10 and g != '궁극체': r27.append((n, e, '종류 10 인데 대상이 궁극체가 아님'))
+            if e[0] in LEVELED and g == '완전체' and e[0] not in (8, 9): r27.append((n, e, '완전체로 가는 레벨 진화가 종류 8·9 가 아님'))
+            if g == '궁극체' and e[0] not in (10, 2): r27.append((n, e, '궁극체로 가는 진화가 종류 10·도구가 아님'))
+    rep('R27', r27, '완전체로 가는 레벨 진화 = 종류 8(배지 %d)·9, 궁극체로 가는 진화 = 종류 10(배지 %d)·도구' % (RU.BADGES_COMPLETE, RU.BADGES_ULTIMATE),
+        lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2]))
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
