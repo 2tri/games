@@ -1168,6 +1168,8 @@ def build(base, out_rom, out_ips):
     P.log += types2.apply(P)
     import extra2
     P.log += extra2.apply(P)
+    import story2
+    P.log += story2.apply(P)
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)

@@ -42,6 +42,12 @@ class Ctx:
             nm = self.name(n)
             if nm in self.slots: self.grade[n] = self.slots[nm]['grade']
             elif n in G and G[n]['name'] == nm and G[n]['grade']: self.grade[n] = G[n]['grade']
+        RN = {v: k for k, v in getattr(RU, 'RENAME_SPECIES', {}).items()}      # 더빙명 → 자료 이름 (아르케니몬 → 아라크네몬)
+        for n in range(1, 252):
+            nm = RN.get(self.name(n))
+            if nm and n not in self.grade:
+                if nm in self.slots: self.grade[n] = self.slots[nm]['grade']; self.installed.add(n)
+                elif n in G and G[n]['name'] == nm and G[n]['grade']: self.grade[n] = G[n]['grade']
         self.grade.update({161: '유년기Ⅱ', 212: '완전체', 217: '완전체'})
         self.palswap = {v[1]: nm for nm, v in RU.PALSWAP.items() if self.name(v[1]) == nm}     # F단계 색만 바꾼 종
         self.grade.update({n: RU.PALSWAP[nm][2] for n, nm in self.palswap.items()})
@@ -54,6 +60,9 @@ class Ctx:
         self.sites = E.find_all(self.base)
         for s in self.sites: s['cur'] = self.d[s['addr']]
         self.trainers = self.r.trainers(len(GROUPS))
+        self.sites = [s for s in self.sites if s['kind'] != '트레이너'] + [
+            dict(kind='트레이너', where='%s %s' % (GROUPS[t['group']], t['name']), addr=a, sp=sp, lv=lv, cur=sp)
+            for t in self.trainers for lv, sp, a in t['mons']]      # 2판: 옮긴 무리도 지금 자리에서 (R10 가짜 경보)
         il = self.d.find(krtext.encode('마스터볼') + b'\x50' + krtext.encode('하이퍼볼') + b'\x50'); self.items = []
         if il >= 0:                                                   # 지금 롬의 도구 이름표 (D단계에서 바뀐 이름 반영)
             for _ in range(256):
@@ -297,17 +306,17 @@ def rules(c, out):
     rep('R17', sorted(r17.items()), 'Lv%d 이하 야생에 유년기가 있는 성장기 없음 (유년기 %d종)' % (RU.BABY_WILD_LV, len(babies)), lambda b: '%s (%d곳)' % b)
     # R19 스타팅 공 3개: 스크립트의 그림·울음·이름·주는 종 네 바이트가 모두 같은 종이고, 유년기 스타팅(rules.BABY_STARTERS, 칸이 있을 때) 또는 성장기
     r19 = []; NB = {c.base.name(n): n for n in range(1, 252)}; base = bytes(c.base.d)
-    for old, rk in (('길몬', '아구몬'), ('레나몬', '파피몬'), ('테리어몬', '브이몬')):
+    for old, rk in zip(('길몬', '레나몬', '테리어몬'), [r_ for r_, _, _ in RU.BABY_STARTERS]):
         o = NB[old]; a = re.search(bytes([0x56, o, 0x84, o, 0x00]), base).start(); seg = base[a:a + 80]
         ks = (1, 3, seg.index(bytes([0x40, o])) + 1, seg.index(bytes([0x2d, o, 5])) + 1)
         got = [c.d[a + k] for k in ks]
         bb = next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk)
         if len(set(got)) != 1 or got[0] != N[bb]: r19.append((old, '%s 이어야 하는데 %s' % (bb, '·'.join(c.name(g) for g in got))))
-    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in ('아구몬', '파피몬', '브이몬')),
+    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in [r_ for r_, _, _ in RU.BABY_STARTERS]),
         lambda b: '%s 공: %s' % b)
     # R20 파워디지몬(02) 이후 디지몬 이름이 롬 이름표에 없음 (rules.LATE_SERIES·LATE_EXTRA, series.json 분류, 사용자 2026-10-05)
     SER = {v['name']: v['series'] for v in json.load(open(os.path.join(HERE, 'series.json'))).values()}
-    r20 = [(n, c.name(n)) for n in range(1, 252) if SER.get(c.name(n)) in RU.LATE_SERIES or c.name(n) in RU.LATE_EXTRA]
+    r20 = [(n, c.name(n)) for n in range(1, 252) if (SER.get(c.name(n)) in RU.LATE_SERIES or c.name(n) in RU.LATE_EXTRA) and c.name(n) not in getattr(RU, 'LATE_KEEP', set())]
     rep('R20', r20, '파워디지몬 이후 디지몬 이름 0 (테이머즈·그 뒤 작품·애니 미등장 %d종 분류)' % sum(1 for v in SER.values() if v in RU.LATE_SERIES),
         lambda b: '%d %s' % b)
     # R21 기술 0개로 나오는 디지몬 없음: 트레이너 파티·야생 칸 종이 그 레벨에 아는 기술이 1개 이상 (트레이너 AI 는 기술 0개면 무한 반복 → 전투 멈춤, 2026-10-05)
@@ -351,7 +360,7 @@ def rules(c, out):
         for row in _csv.DictReader(open(rp, encoding='utf-8-sig')):
             if row['설치'] != 'Y': continue
             n = int(row['칸']); nm = c.name(n)
-            if nm != (row['롬이름'] or row['종']): r23.append((row['종'], '칸 %d 이름 %s' % (n, nm)))
+            if nm != getattr(RU, 'RENAME_SPECIES', {}).get(row['롬이름'] or row['종'], row['롬이름'] or row['종']): r23.append((row['종'], '칸 %d 이름 %s' % (n, nm)))
             elif n not in reach: r23.append((row['종'], '칸 %d 어디에도 안 나옴' % n))
         rep('R23', r23, '로스터 설치 종 %d개 모두 야생·트레이너·이벤트·진화 중 하나에 연결' % sum(1 for _ in _csv.DictReader(open(rp, encoding='utf-8-sig')) if _['설치'] == 'Y'),
             lambda b: '%s: %s' % b)

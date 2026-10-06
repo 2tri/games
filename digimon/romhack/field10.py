@@ -337,18 +337,24 @@ def _ow_table(P):
 
 
 def put_sprite(P, tab, sid, name, pal):
-    """표 항목 sid 의 그림을 바꿈. 크기(바이트)·종류는 표 값 그대로: 64 = 1장, 192 = 3장(서기), 종류 1(걷기)이면 3장 더(1픽셀 흔들림)"""
+    """표 항목 sid 의 그림을 바꿈. 크기(바이트)·종류는 표 값 그대로: 64 = 1장, 192 = 3장(서기), 종류 1(걷기)이면 3장 더(1픽셀 흔들림)
+    2판: 64 이면 앞모습 1장만, 그 밖 크기는 표 6바이트를 로그에 남기고 건너뜀"""
     e = tab + 6 * (sid - 1)
     size, kind = P.d[e + 2], P.d[e + 4]
+    raw = bytes(P.d[e:e + 6]).hex()
     if name == 'egg':
-        assert size == 64, '아이템볼 크기 %d' % size
+        assert size == 64, '아이템볼 크기 %d 표 %s' % (size, raw)
         gfx = _tiles(_grid(EGG))
     else:
-        assert size == 192, '%s 크기 %d (3장 서기 그림이 아님)' % (name, size)
         d_, u_, l_ = frames(name)
-        gfx = b''.join(_tiles(g) for g in (d_, u_, l_))
-        if kind == 1:
-            gfx += b''.join(_tiles(_shift(g)) for g in (d_, u_, l_))
+        if size == 64:
+            gfx = _tiles(d_)
+        elif size == 192:
+            gfx = b''.join(_tiles(g) for g in (d_, u_, l_))
+            if kind == 1:
+                gfx += b''.join(_tiles(_shift(g)) for g in (d_, u_, l_))
+        else:
+            raise ValueError('%s 크기 %d 종류 %d 표 %s (64·192 가 아님)' % (name, size, kind, raw))
     b, p = P.sp.take(len(gfx), banks=[0x77, 0x7c, 0x7d, 0x76, 0x75] + [0x2c, 0x2d, 0x3f, 0x6a, 0x72, 0x74])
     P.put(addr(b, p), gfx)
     P.put(e, bytes([p & 255, p >> 8, size, b, kind, pal if pal is not None else P.d[e + 5]]))
@@ -374,7 +380,13 @@ def battle_ball(P):
     import romanat
     S = romanat.Sym()
     log = []
-    a = S['TrainerBattlePokeballTiles']
+    keys = _sym_keys(S)
+    cand = [k for k in keys if 'ball' in k.lower() and any(w in k.lower() for w in ('tiles', 'gfx', 'graphics', '2bpp'))]
+    name = 'TrainerBattlePokeballTiles' if 'TrainerBattlePokeballTiles' in keys else next(
+        (k for k in cand if 'trainer' in k.lower() or 'battle' in k.lower()), None)
+    if not name:
+        return ['10-1 전투 시작 효과: 심볼 못 찾음 (2판 후보: %s)' % (', '.join(cand[:15]) or '없음')]
+    a = S[name]
     grid = _grid(BALL_TOP)
     gfx = bytearray()
     for tx in (0, 1):
@@ -411,7 +423,9 @@ def apply(P):
         log.append(' 스프라이트 번호 보정 %+d' % off)
     done = []
     miss = []
+    ALT = {'SPRITE_MILTANK': ('SPRITE_COW', 'SPRITE_MOOMOO', 'SPRITE_MONSTER', 'SPRITE_TAUROS')}   # 2판: 이름이 다를 때 후보
     for const, (name, pal) in rules.FIELD_SPRITES.items():
+        const = const if const in ids else next((c for c in ALT.get(const, ()) if c in ids), const)
         if const not in ids:
             miss.append(const)
             continue
@@ -422,6 +436,7 @@ def apply(P):
     log.append('10-2~5 필드 그림 %d: %s' % (len(done), ', '.join(done)))
     if miss:
         log.append(' 못 바꿈 (상수 없음·크기 다름): %s' % ', '.join(miss))
+    log.append(' 스프라이트 상수 전체 %d개: %s' % (len(ids), ' '.join('%s=%d' % (k[7:], v) for k, v in sorted(ids.items(), key=lambda kv: kv[1]))))
     log.append(' sprite_constants 에 있는 포켓몬 이름 스프라이트: %s' % ', '.join(sorted(k[7:] for k in ids if any(
         w in k for w in ('LAPRAS', 'SNORLAX', 'GYARADOS', 'HO_OH', 'LUGIA', 'PIKACHU', 'JYNX', 'MOLTRES', 'DRAGON', 'EEVEE', 'TOGE', 'UNOWN',
                          'SUICUNE', 'ENTEI', 'RAIKOU', 'ONIX', 'MARILL', 'BIG')))))

@@ -3,7 +3,7 @@
 1. 새 도감 순서(NewPokedexOrder, 251바이트) = order/roster.csv 줄 순서(파트너 → 파일 섬 → …) + 나머지 디지몬 + 빈 칸
 2. 성장 곡선: rules.GROWTH_PARTNER 줄(파트너 8줄)은 MEDIUM_SLOW(3), 그 밖 디지몬은 MEDIUM_FAST(0). 능력치 표 22번째 바이트
 3. 기본 이름: 심볼 이름에 PlayerName/RivalName 이 든 글(「골드」「실버」 류)을 rules.DEFAULT_NAMES 로 (같은 길이 이하만)
-4. 마일도 대사: boss2.pick() 의 맵 asm 에서 그 트레이너 줄의 글 라벨(Seen/Win/After)을 찾아 rules.BOSS2_TEXT 로 (romanat 심볼에 있을 때만)
+4. 브이몬 교환 NPC (2판): 관동 교환 NPC 주는 종 → 브이몬. (마일도 대사는 story2 로 옮김)
 patch.build 에서 types2 다음에 `import extra2; P.log += extra2.apply(P)`"""
 import os, re, csv, struct
 import dmrom, krtext, rules, encounters
@@ -56,21 +56,44 @@ def _keys(S):
 
 
 def default_names(P, S):
+    """2판: 심볼 대신 롬 전체에서 「골드@」「실버@」(이름표 끝표 뒤에 오는 것)를 같은 길이의 새 이름으로"""
     out = []
     d = bytes(P.d)
-    for key in _keys(S):
-        kl = key.lower()
-        if 'playername' in kl or 'rivalname' in kl or 'defaultname' in kl:
-            a = S[key]
-            for old, new in rules.DEFAULT_NAMES:
-                ob, nb = krtext.encode(old) + b'\x50', krtext.encode(new) + b'\x50'
-                if len(nb) > len(ob):
-                    continue
-                i = d.find(ob, a, a + 0x80)
-                if i >= 0:
-                    P.put(i, nb + b'\x50' * (len(ob) - len(nb)))
-                    out.append('%s %s→%s' % (key, old, new))
-    return '기본 이름: ' + (', '.join(out) or '심볼 못 찾음 (PlayerName/RivalName)')
+    for old, new in rules.DEFAULT_NAMES:
+        ob, nb = krtext.encode(old) + b'P', krtext.encode(new) + b'P'
+        if len(nb) != len(ob):
+            out.append('%s→%s 길이 다름' % (old, new))
+            continue
+        n = 0
+        i = d.find(ob)
+        while i >= 0:
+            if i == 0 or d[i - 1] in (0x50, 0x7f, 0x00):
+                P.put(i, nb)
+                n += 1
+            i = d.find(ob, i + 1)
+        out.append('%s→%s %d곳' % (old, new, n))
+    return '기본 이름: ' + ', '.join(out)
+
+
+def trade_vmon(P):
+    """묶음 H (e): 관동 교환 NPC(원본 주는 종 프테라 142 → 레어코일 82 → 코뿌리 112 순)의 주는 종 → 브이몬, 받는 종 → 뿔몬. NPCTrades 3f:4c24, 32바이트"""
+    P.r.d = P.d
+    N = {P.r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    if '브이몬' not in N:
+        return '브이몬 교환: 브이몬 칸 없음'
+    B_ = dmrom.Rom(dmrom.default_rom())
+    nt = addr(0x3f, 0x4c24)
+    where = {142: '14번 도로', 82: '발전소', 112: '회색시티'}
+    for want in (142, 82, 112):
+        for k in range(6):
+            e = nt + 32 * k
+            if B_.d[e + 2] == want:
+                P.put(e + 1, bytes([N.get('뿔몬', P.d[e + 1])]))
+                P.put(e + 2, bytes([N['브이몬']]))
+                b_ = krtext.encode('브이몬') + b'P'
+                P.put(e + 3, b_ + b'P' * (11 - len(b_)))
+                return '브이몬 교환: %s NPC(%d번째) 주는 종 → 브이몬, 받는 종 → 뿔몬' % (where[want], k + 1)
+    return '브이몬 교환: 관동 교환 NPC 못 찾음 (원본 주는 종 %s)' % [B_.d[nt + 32 * k + 2] for k in range(6)]
 
 
 def boss_text(P, S):
@@ -113,7 +136,7 @@ def apply(P):
     import romanat
     S = romanat.Sym()
     log = []
-    for fn in (lambda: dex_order(P, S), lambda: growth(P), lambda: default_names(P, S), lambda: boss_text(P, S)):
+    for fn in (lambda: dex_order(P, S), lambda: growth(P), lambda: default_names(P, S), lambda: trade_vmon(P)):   # 보스 대사는 story2 로
         try:
             log.append(fn())
         except Exception as ex:
