@@ -327,6 +327,26 @@ def rules(c, out):
     for s in c.sites:
         if s['kind'] in remap.WILD and c.d[s['addr']] and not knows(c.d[s['addr']], c.d[s['addr'] - 1]): r21.append(('야생 %s %s' % (s['where'], c.name(c.d[s['addr']])), c.d[s['addr'] - 1]))
     rep('R21', sorted(set(r21)), '트레이너·야생 디지몬 모두 그 레벨에 기술 1개 이상, 진화·기술 목록 겹침 없음', lambda b: '%s Lv%d' % b)
+    # R23 로스터(order/roster.csv) 설치됨=Y 종은 야생·트레이너·이벤트(선물·알·고정 만남·떠돌이)·진화 중 하나로 게임에서 닿음 (작업팩 10/6 S2-5)
+    rp = os.path.join(HERE, 'order', 'roster.csv')
+    if os.path.exists(rp):
+        import csv as _csv
+        reach = {s['cur'] for s in c.sites} | {sp for t in c.trainers for _, sp, _ in t['mons']}
+        for n in range(1, 252):
+            for e in c.evos(n): reach.add(e[-1])
+        grow = True                                                   # 알(기르기집): 닿는 종으로 진화하는 앞 단계는 알에서 나옴
+        while grow:
+            grow = False
+            for n in range(1, 252):
+                if n not in reach and any(e[-1] in reach for e in c.evos(n)): reach.add(n); grow = True
+        r23 = []
+        for row in _csv.DictReader(open(rp, encoding='utf-8-sig')):
+            if row['설치'] != 'Y': continue
+            n = int(row['칸']); nm = c.name(n)
+            if nm != (row['롬이름'] or row['종']): r23.append((row['종'], '칸 %d 이름 %s' % (n, nm)))
+            elif n not in reach: r23.append((row['종'], '칸 %d 어디에도 안 나옴' % n))
+        rep('R23', r23, '로스터 설치 종 %d개 모두 야생·트레이너·이벤트·진화 중 하나에 연결' % sum(1 for _ in _csv.DictReader(open(rp, encoding='utf-8-sig')) if _['설치'] == 'Y'),
+            lambda b: '%s: %s' % b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
