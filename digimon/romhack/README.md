@@ -4,6 +4,23 @@
 **롬·패치 결과·롬에서 뽑은 그림은 저장소에 올리지 않는다.** 모두 `work/`에만 둔다(`.gitignore`로 막혀 있음).
 배포 범위는 엘클 님께 확인한 뒤에 정한다.
 
+## 이어받기 (다른 세션·계정에서 이어서 할 때)
+
+- 브랜치: `claude/kind-newton-dl61e0` (저장소 2tri/games, 폴더 `digimon/`)
+- 롬 파일 (저장소에 없음 — 사용자에게 받아 `digimon/romhack/work/` 에 둠, work/ 는 gitignore):
+  - `work/base.gbc` — 디지몬스터 1.4 (모든 빌드의 바탕, `DMROM=경로` 로도 지정 가능)
+  - `work/v20.gbc` — 디지몬스터 2.0 (2.0 그림·기술 복사에 씀, rules.V20)
+- 빌드: `cd digimon/romhack && python3 -c "import patch,dmrom; patch.build(dmrom.default_rom(),'work/myver.gbc','work/myver.ips')"`
+- 검사: `python3 check.py work/myver.gbc` (규칙 R1~R23) · `python3 romtest.py` (PyBoy 시험, 처음엔 인트로 상태를 만듦)
+- 금 한글판 디스어셈블리(pokegold-kr, rgbds 1.0.3 빌드)를 `/tmp/pgkr` 에 두어야 encounters·traces·romtest 가 동작
+- 읽을 문서 순서:
+  1. `digimon/작업팩_1006_목요일까지.md` — 지금 진행 중인 단계(S1~S11)와 보고 양식
+  2. `digimon/판정/` — 설계자 판정 (날짜_단계 순서로)
+  3. `digimon/decisions.md` — 결정 로그 (한 줄씩)
+  4. `digimon/기획.md` — 전체 기획
+  5. 이 README 의 아래 절들 (도구·표 위치)
+- 지키는 것: 롬·IPS·롬에서 뽑은 그림·대사는 공개 저장소에 올리지 않음 (work/ 에만). 1.4 그림 공개 커밋 금지. 단계마다 롬 파일은 보내지 않고 S11 에서 IPS 두 개.
+
 ## 쓰는 법
 
 ```sh
