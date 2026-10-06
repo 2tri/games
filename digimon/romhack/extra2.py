@@ -45,7 +45,7 @@ def growth(P):
 
 
 def _keys(S):
-    for at in ('syms', 'd', 'names', 'table', 'map', 'sym'):
+    for at in ('by', 'syms', 'd', 'names', 'table', 'map', 'sym'):
         v = getattr(S, at, None)
         if isinstance(v, dict):
             return list(v.keys())

@@ -481,11 +481,11 @@ def test_moves(names, foe='뿔몬', foe_lv=100, my_lv=30):
                 p.shot('mv_%d_1' % no)
                 eff_ok = None
                 if eff in STAT:
-                    p.tick(120); eff_ok = bool(STAT[eff][1](m))
+                    p.tick(240); eff_ok = bool(STAT[eff][1](m))
                 if not eff_ok and hp1 == 0: eff_ok = None                               # 상대가 쓰러져 효과 판정 불가 → 실패로 세지 않음
                 res = (hp0, hp1, charged, f, eff_ok, tryn + 1)
                 p.stop()
-                if f is not None: break
+                if f is not None and eff_ok is not False: break
             hp0, hp1, charged, f, eff_ok, ntry = res
             two = eff in (151, 75)
             ok = f is not None and (not two or charged) and eff_ok is not False
