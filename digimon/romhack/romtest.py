@@ -564,6 +564,30 @@ def test_move_desc(names, moves=(221, 136, 245), sp='워그레이몬'):
     return bad
 
 
+def test_evo_scene(names, sp='아구몬', lv=15):
+    """S8 진화 장면: 아구몬 Lv15 에 이상한사탕 1번 → Lv16 그레이몬 진화. 시작 글·흰 번쩍임·끝 글을 찍음 → work/shots/evo8_*.png
+    통과: 진화 뒤 종이 바뀜 + 찍은 장면 중 화면이 거의 흰색인 장면(번쩍임)이 있음"""
+    import numpy as np
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    p = new('intro.state'); m = p.pb.memory
+    put_party(p, [(N[sp], lv, 70)], names); m[JOHTO_BADGES] = 0xff; p.tick(10)
+    p.press('start', 6, 80); p.press('down', 6, 30); p.press('a', 6, 90)
+    p.press('a', 6, 60); p.press('a', 6, 90); p.press('a', 6, 60)
+    white = 0; k = 0; best = 0
+    for f in range(1400):
+        p.tick(1)
+        img = np.asarray(p.pb.screen.image.convert('L'), dtype=int)
+        wf = (img > 240).mean()
+        if wf > 0.97: white += 1
+        if f % 40 == 0 and k < 30: p.shot('evo8_%02d' % k); k += 1
+        if f % 120 == 119: p.press('a', 6, 0)
+    sp1 = m[PARTY_SPECIES]
+    ok = sp1 == N.get('그레이몬') and white >= 1
+    print('  %s Lv%d → %s, 흰 화면 %d프레임 → %s (work/shots/evo8_*.png)' % (sp, lv, r.name(sp1), white, 'OK' if ok else '실패'))
+    p.stop()
+    return 0 if ok else 1
+
+
 def test_party_icons(names):
     """G단계: 파티 화면에 분류가 다른 디지몬 6마리를 넣고 아이콘 찍기 → work/shots/party_icons_*.png"""
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
@@ -595,5 +619,6 @@ if __name__ == '__main__':
     print('S7 전용 필살기 31'); bad += test_moves(names)
     print('S7 보스 기술'); bad += test_boss_move(names)
     print('S7 기술 설명 화면'); bad += test_move_desc(names)
+    print('S8 진화 장면'); bad += test_evo_scene(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

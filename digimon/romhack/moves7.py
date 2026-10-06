@@ -160,6 +160,24 @@ def apply(P, groups):
     for nm, (t1, t2) in rules.TYPE_FIX.items():
         P.stats(N[nm], type1=rules.T_[t1], type2=rules.T_[t2])
     log.append('7-2 타입 %d종' % len(rules.TYPE_FIX))
+    # 진화·기술 목록 뱅크 공간: 게임에 안 나오는 빈 칸(-----)의 목록을 빈 목록 하나로 모으고 옛 자리를 돌려받음 (S7 판정 C7-3 여러 레벨 넣기)
+    ev_t = P.r.evos; bank = ev_t // 0x4000
+    ptr = lambda k: P.d[ev_t + 2 * k] | P.d[ev_t + 2 * k + 1] << 8
+    empty = [k for k in range(dmrom.NUM) if P.r.name(k + 1) == rules.EMPTY_NAME]
+    live_starts = {addr(bank, ptr(k)) for k in range(dmrom.NUM) if k not in empty}
+    starts_all = sorted({addr(bank, ptr(k)) for k in range(dmrom.NUM)})
+    shared = None; freed = 0
+    for k in (empty if rules.RECLAIM_EMPTY_EVOS else []):
+        a0 = addr(bank, ptr(k)); ev, mv = P.r.evos_attacks(k + 1)
+        n0 = sum(4 if e[0] == 5 else 3 for e in ev) + 1 + 2 * len(mv) + 1
+        n0 = min([n0] + [s - a0 for s in starts_all if s > a0])
+        if any(a0 <= s < a0 + n0 for s in live_starts) or not 0x4000 <= ptr(k) < 0x8000: continue
+        if shared is None:
+            shared = ptr(k); P.put(a0, b'\x00\x00'); P.sp.give(bank, ptr(k) + 2, ptr(k) + n0); freed += n0 - 2
+        else:
+            if a0 != addr(bank, shared): P.sp.give(bank, ptr(k), ptr(k) + n0); freed += n0
+            P.put(ev_t + 2 * k, struct.pack('<H', shared))
+    log.append('빈 칸 %d개 진화·기술 목록 → 빈 목록 하나, %d바이트 돌려받음' % (len(empty), freed))
     # ── 7-4 배우는 레벨 (레벨업 표) ──
     learn = []
     for no, sp, nm, *_r, how in SP:
@@ -168,9 +186,10 @@ def apply(P, groups):
         own = [e[1] for e, k in pre if e[0] == 8]                                          # 자기 문장(종류 8) 레벨
         lv = (min(own) if own else min(e[1] for e, k in pre)) + how[1]
         ev, mv = P.r.evos_attacks(t)
-        mv = sorted([x for x in mv if x[1] != no] + [(lv, no)], key=lambda x: x[0])
+        lvs = [lv] + [x for x in rules.SPECIAL_EXTRA_LV[how[1]] if x > lv]
+        mv = sorted([x for x in mv if x[1] != no] + [(l, no) for l in lvs], key=lambda x: x[0])
         P.evos(t, ev, mv); P.r.d = P.d
-        learn.append('%s %s Lv%d' % (sp, nm, lv))
+        learn.append('%s %s Lv%s' % (sp, nm, '·'.join(map(str, lvs))))
     log.append('7-4 배우는 레벨: ' + ', '.join(learn))
     P.s7_learn = learn
     # ── 7-3 트레이너 기술 바꿈 + 보스·라이벌 기술 지정 ──

@@ -40,7 +40,12 @@ class Space:
             self.free[bank] = [start + 0x20, 0x8000]       # 앞쪽 0x20 은 여유로 남김
         self.holes = {}                     # bank → [(시작, 끝)] 다시 쓸 수 있게 돌려받은 자리 (옮기고 남은 옛 진화·기술 목록)
     def give(self, b, s, e):
-        if e > s: self.holes.setdefault(b, []).append([s, e])
+        if e <= s: return
+        hs = sorted(self.holes.get(b, []) + [[s, e]]); out = []
+        for h in hs:                                                    # 붙어 있거나 겹치는 구멍은 하나로
+            if out and h[0] <= out[-1][1]: out[-1][1] = max(out[-1][1], h[1])
+            else: out.append(list(h))
+        self.holes[b] = out
     def take(self, n, bank=None, banks=None):
         for b in ([bank] if bank is not None else banks):
             for h in self.holes.get(b, []):
@@ -1129,6 +1134,9 @@ def build(base, out_rom, out_ips):
     import moves7
     P.r.d = P.d
     P.log += moves7.apply(P, groups)
+    # 작업팩 S8 진화 장면 (evo8.py)
+    import evo8
+    P.log += evo8.apply(P)
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)

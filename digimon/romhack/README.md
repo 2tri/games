@@ -16,9 +16,12 @@
 - 읽을 문서 순서:
   1. `digimon/작업팩_1006_목요일까지.md` — 지금 진행 중인 단계(S1~S11)와 보고 양식
   2. `digimon/판정/` — 설계자 판정 (날짜_단계 순서로)
-  3. `digimon/decisions.md` — 결정 로그 (한 줄씩)
-  4. `digimon/기획.md` — 전체 기획
-  5. 이 README 의 아래 절들 (도구·표 위치)
+  3. `digimon/보고/` — 단계마다 보고서 (짧은 보고 + 롬 확인값)
+  4. `digimon/decisions.md` — 결정 로그 (한 줄씩)
+  5. `digimon/기획.md` — 전체 기획
+  6. 이 README 의 아래 절들 (도구·표 위치)
+- 단계별 코드: `patch.py`(빌드 전체) · `rules.py`(값) · `moves7.py`(S7 기술) · `evo8.py`(S8 진화 장면) · `check.py`(R1~R23) · `romtest.py`(PyBoy 시험)
+- 알려진 문제: `rules.RECLAIM_EMPTY_EVOS = True` 로 켜면 학습표가 깨짐 (꺼 둠, 원인 미확인)
 - 지키는 것: 롬·IPS·롬에서 뽑은 그림·대사는 공개 저장소에 올리지 않음 (work/ 에만). 1.4 그림 공개 커밋 금지. 단계마다 롬 파일은 보내지 않고 S11 에서 IPS 두 개.
 
 ## 쓰는 법

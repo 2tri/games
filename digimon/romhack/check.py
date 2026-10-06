@@ -343,8 +343,8 @@ def rules(c, out):
             for n in list(reach):
                 for e in c.evos(n):
                     if e[-1] not in reach: reach.add(e[-1]); grow = True
-                k = n
-                while k in prevo: k = prevo[k]
+                k = n; seen_ = {k}
+                while k in prevo and prevo[k] not in seen_: k = prevo[k]; seen_.add(k)      # 진화 ↔ 정화처럼 돌아오는 줄은 멈춤
                 if k not in reach: reach.add(k); grow = True
         r23 = []
         for row in _csv.DictReader(open(rp, encoding='utf-8-sig')):
