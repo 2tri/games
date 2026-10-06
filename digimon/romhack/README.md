@@ -13,6 +13,13 @@
 - 빌드: `cd digimon/romhack && python3 -c "import patch,dmrom; patch.build(dmrom.default_rom(),'work/myver.gbc','work/myver.ips')"`
 - 검사: `python3 check.py work/myver.gbc` (규칙 R1~R23) · `python3 romtest.py` (PyBoy 시험, 처음엔 인트로 상태를 만듦)
 - 금 한글판 디스어셈블리(pokegold-kr, rgbds 1.0.3 빌드)를 `/tmp/pgkr` 에 두어야 encounters·traces·romtest 가 동작
+- **새 세션 준비 순서 (없으면 빌드가 아래 오류로 멈춤 — 2026-10-06 실제로 막혔던 순서)**
+  1. `pip install pyboy numpy pillow scipy` (scipy 없으면 patch.py 의 `tools/enlarge14.py` 에서 ModuleNotFoundError)
+  2. `git clone --depth 1 https://github.com/Narishma-gb/pokegold-kr /tmp/pgkr` 후 `export POKEGOLD_KR=/tmp/pgkr` (없으면 `FileNotFoundError: .../data/trainers/parties.asm`. 기본값은 `/home/user/narishma-gb/pokegold-kr` 라서 환경변수 필수)
+  3. rgbds 1.0.3: `git clone --depth 1 --branch v1.0.3 https://github.com/gbdev/rgbds /tmp/rgbds && cd /tmp/rgbds && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j8 && cmake --install build` (cmake·gcc·bison·libpng 필요)
+  4. `work/anat/` 만들기 (없으면 `FileNotFoundError: work/anat/pokegold.sym`, moves7.py 가 읽음). `/tmp/pgkr` 에서 `baserom_g.bin` 을 00 으로 채운 2MB 로 두고 `make clean; make -j8 pokegold.gbc` → `pokegold.gbc` 를 `work/anat/van_00.gbc`, `pokegold.sym`·`pokegold.map` 을 `work/anat/` 로 복사. 다시 FF 로 채운 2MB 로 `make clean; make -j8 pokegold.gbc` → `work/anat/van_ff.gbc`
+  5. 롬 두 개를 `work/base.gbc`(1.4, CRC32 AEB9BACB)·`work/v20.gbc`(2.0, CRC32 A70CEC43) 로 두고 빌드·검사·시험
+  - 확인값 (2026-10-06, f0a7b7f): check.py 22 [OK] / 0 [X] / 0 [?] (3초) · romtest.py 116 OK / 실패 1 (기술 224 송곳 돌진 스팅몬 「독 안 걸림」, 약 2분)
 - 읽을 문서 순서:
   1. `digimon/작업팩_1006_목요일까지.md` — 지금 진행 중인 단계(S1~S11)와 보고 양식
   2. `digimon/판정/` — 설계자 판정 (날짜_단계 순서로)
