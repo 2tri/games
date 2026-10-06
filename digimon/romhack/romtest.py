@@ -17,6 +17,9 @@ NEWBARK_SCENE, HOUSE1F_SCENE = 0xd75e, 0xd760
 ENEMY_SPECIES, ENEMY_CATCH = 0xd1ac, 0xd1d1
 BATTLE_MODE, OTHER_CLASS, OTHER_ID, OT_COUNT, OT_SPECIES = 0xd1d3, 0xd1d5, 0xd1d8, 0xde52, 0xde53
 RARE_CANDY, POKE_BALL = 0x20, 0x05
+# 작업팩 S7 기술 시험용 램 (pokegold-kr 심볼)
+B_MON_MOVES, B_MON_PP, B_MON_HP, P_SUB3, E_SUB3, E_STATLV = 0xcb0e, 0xcb14, 0xcb1c, 0xcb50, 0xcb55, 0xcbba
+CUR_P_MOVE, CUR_E_MOVE, E_MOVES, E_PP, E_STATUS, E_HP = 0xcbc9, 0xcbca, 0xd1ae, 0xd1b4, 0xd1ba, 0xd1bc
 SHOTS = os.path.join(W, 'shots')
 
 
@@ -402,6 +405,165 @@ def test_e4(names, group='Will', cls=0x0b, tid=1):
     return 0 if ok else 1
 
 
+def _wait_menu(p, frames=3000):
+    """전투 메뉴(싸우다·가방·디지몬·도망치다)가 화면에 뜰 때까지 (전투 그림 시험 화면 pic_0 의 메뉴 칸과 비교). 글은 B 로 넘김"""
+    import numpy as np
+    from PIL import Image
+    ref = np.asarray(Image.open(os.path.join(SHOTS, 'pic_0.png')).convert('L'), dtype=int)[104:140, 72:160]
+    for f in range(0, frames, 10):
+        p.tick(10)
+        cur = np.asarray(p.pb.screen.image.convert('L'), dtype=int)[104:140, 72:160]
+        if np.abs(cur - ref).mean() < 4: return True
+        if f % 60 == 50: p.press('b', 4, 4)
+    return False
+
+
+def _fight(p, m, slot=0, frames=4200, tag=None):
+    """전투 메뉴에서 싸우다 → 기술 slot 고르고, 상대 체력이 줄 때까지(모으는 턴이면 다음 턴까지) 따라감.
+    돌려줌: (처음 체력, 줄어든 뒤 체력, 모으는 턴 봄, 걸린 프레임). 멈추면 걸린 프레임 = None"""
+    ehp = lambda: m[1, E_HP] << 8 | m[1, E_HP + 1]                       # WRAM 뱅크 1 (d000~) 에서 직접
+    hp0 = ehp()
+    p.press('a', 8, 90)                                                   # 싸우다
+    for _ in range(slot): p.press('down', 8, 30)
+    p.press('a', 8, 30)
+    charged = False
+    for f in range(0, frames, 10):
+        p.tick(10)
+        if m[P_SUB3] >> 4 & 1 and not charged:
+            charged = True
+            if tag:                                                         # 모으는 턴 글 화면
+                for _ in range(6):
+                    p.tick(20); p.shot('%s_c%d' % (tag, _))
+        hp = ehp()
+        if hp < hp0: return hp0, hp, charged, f
+        if f % 60 == 50: p.press('b', 4, 4)                              # 글 넘기기 (메뉴에서는 아무 일 없음)
+    return hp0, hp0, charged, None
+
+
+def test_moves(names, foe='코로몬', foe_lv=100, my_lv=30):
+    """S7 전용 필살기 31개: 시험용 롬(효과 확률 100%, 29번 도로 풀숲 = 노말 타입 코로몬 Lv100)에서 내 첫 칸 기술 1개로 한 번씩 씀.
+    통과: 상대 체력이 줆(멈춤 없음) + 효과(화상·얼음·마비·독·혼란·능력↓)가 걸림 + 2턴 기술은 모으는 턴(체력 그대로·모으기 표시) 다음 턴에 맞음.
+    풀죽음·추가 효과 없음(0)은 화면만. 빗나가면 누르는 때를 바꿔 4번까지 다시 (몇 번째에 맞았는지 적음). work/shots/mv_<칸>_*.png"""
+    global ROM
+    import encounters, rules
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    mt = r.d.find(bytes([1, 0, 40, 0, 255, 35, 0]))
+    e = bytearray(r.d)
+    for no, *_ in rules.SPECIALS:
+        if e[mt + 7 * (no - 1) + 6]: e[mt + 7 * (no - 1) + 6] = 255
+    for s_ in encounters.find_all(dmrom.Rom(dmrom.default_rom())):
+        if s_['kind'] == '풀숲' and s_['where'].startswith('29번 도로'): e[s_['addr']] = N[foe]; e[s_['addr'] - 1] = foe_lv
+    keep = ROM; ROM = os.path.join(W, 'move_test.gbc'); open(ROM, 'wb').write(bytes(e))
+    STAT = {4: ('화상', lambda m: m[1, E_STATUS] >> 4 & 1), 5: ('얼음', lambda m: m[1, E_STATUS] >> 5 & 1), 6: ('마비', lambda m: m[1, E_STATUS] >> 6 & 1),
+            2: ('독', lambda m: m[1, E_STATUS] >> 3 & 1), 76: ('혼란', lambda m: m[E_SUB3] >> 7 & 1),
+            68: ('공격↓', lambda m: m[E_STATLV] < 7), 69: ('방어↓', lambda m: m[E_STATLV + 1] < 7), 70: ('스피드↓', lambda m: m[E_STATLV + 2] < 7),
+            72: ('특방↓', lambda m: m[E_STATLV + 4] < 7)}
+    bad = 0
+    try:
+        for no, sp, nm, ty, pw, acc, pp, eff, ch, anim, how in rules.SPECIALS:
+            res = (0, 0, False, None, None, 0)
+            for tryn in range(4):
+                p = new('grass.state'); m = p.pb.memory
+                put_party(p, [(N[sp], my_lv, 70)], names); m[JOHTO_BADGES] = 0xff     # 배지 8개 (안 그러면 남의 디지몬이라 말을 안 들음)
+                b = PARTY_MONS
+                m[b + 2], m[b + 3], m[b + 4], m[b + 5] = no, 0, 0, 0
+                m[b + 23], m[b + 24], m[b + 25], m[b + 26] = pp, 0, 0, 0
+                for o in (34, 36): m[b + o], m[b + o + 1] = 0x03, 0xe7                # 체력 999 (상대 차례에 안 쓰러지게)
+                m[ENEMY_SPECIES] = 0
+                for i in range(120):
+                    p.press(['left', 'right'][i % 2], 10, 10); p.tick(30)
+                    if m[ENEMY_SPECIES]: break
+                if not _wait_menu(p): p.stop(); continue
+                p.press('a', 8, 90); p.shot('mv_%d_0' % no); p.press('b', 8, 30)        # 기술 목록 화면 (이름 길이·타입 확인)
+                if not _wait_menu(p): p.stop(); continue
+                p.tick(1 + 17 * tryn)                                                   # 다시 할 때는 누르는 때를 바꿈 (같은 입력 = 같은 난수 = 같은 빗나감)
+                hp0, hp1, charged, f = _fight(p, m, tag='mv_%d' % no)
+                p.shot('mv_%d_1' % no)
+                eff_ok = None
+                if eff in STAT:
+                    p.tick(120); eff_ok = bool(STAT[eff][1](m))
+                res = (hp0, hp1, charged, f, eff_ok, tryn + 1)
+                p.stop()
+                if f is not None: break
+            hp0, hp1, charged, f, eff_ok, ntry = res
+            two = eff in (151, 75)
+            ok = f is not None and (not two or charged) and eff_ok is not False
+            bad += not ok
+            print('  %3d %-8s %-6s 위력%3d → 상대 체력 %d→%d%s%s %s %s' % (
+                no, nm, sp, pw, hp0, hp1, ' · 모으는 턴 확인' if two and charged else (' · 모으는 턴 못 봄' if two else ''),
+                (' · %s %s' % (STAT[eff][0], '걸림' if eff_ok else '안 걸림')) if eff in STAT else '',
+                'OK' if ok else ('멈춤/안 맞음' if f is None else '실패'), '' if ntry <= 1 else '(%d번째에 맞음)' % ntry))
+    finally:
+        ROM = keep
+    return bad
+
+
+def test_boss_move(names, group='Will', cls=0x0b, tid=1, special=131):
+    """보스 기술: 트레이너 표에 지정됐는지 + 그 보스 전투에서 상대가 그 기술을 실제로 씀(첫 디지몬 기술을 그 기술 하나로 바꿔 강제)."""
+    import encounters
+    r = dmrom.Rom(ROM)
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
+    ts = [t for t in r.trainers(len(groups)) if groups[t['group']] == group and t['idx'] == tid - 1]
+    in_table = False
+    for t in ts:                                                                     # 기술 칸 있는 파티: 종(1)·레벨·기술 4
+        a = r.d.index(0x50, t['start']) + 2
+        for lv, sp, _ in t['mons']:
+            a += 2
+            if t['kind'] in (2, 3): a += 1
+            if special in r.d[a:a + 4]: in_table = True
+            a += 4
+    p = new('grass.state'); m = p.pb.memory
+    put_party(p, [(t['mons'][0][1], 60, 70)], names); m[JOHTO_BADGES] = 0xff
+    for o in (34, 36): m[PARTY_MONS + o], m[PARTY_MONS + o + 1] = 0x03, 0xe7
+    for i in range(160):
+        m[OTHER_CLASS] = cls; m[OTHER_ID] = tid
+        p.press(['left', 'right'][i % 2], 10, 10); p.tick(30)
+        if m[BATTLE_MODE]: break
+    _wait_menu(p)
+    for k_, v_ in enumerate((special, 0, 0, 0)): m[1, E_MOVES + k_] = v_
+    m[1, E_PP] = 5
+    hp0 = m[B_MON_HP] << 8 | m[B_MON_HP + 1]; used = False
+    for turn in range(3):                                                            # 상대는 메뉴 전에 이번 턴 기술을 골라 둠 → 다음 턴부터 그 기술
+        p.press('a', 8, 90); p.press('a', 8, 30)
+        for f in range(0, 2400, 10):
+            p.tick(10)
+            if m[CUR_E_MOVE] == special: used = True
+            if used and (m[B_MON_HP] << 8 | m[B_MON_HP + 1]) < hp0: break
+            if f % 60 == 50: p.press('b', 4, 4)
+        if used and (m[B_MON_HP] << 8 | m[B_MON_HP + 1]) < hp0: break
+        _wait_menu(p)
+    p.shot('boss_%s' % group)
+    hp1 = m[B_MON_HP] << 8 | m[B_MON_HP + 1]
+    ok = in_table and used and hp1 < hp0
+    print('  %s: 트레이너 표에 %s %s, 전투에서 상대가 씀 %s, 내 체력 %d→%d → %s (work/shots/boss_%s.png)' % (
+        group, r.d[0] and special, '있음' if in_table else '없음', used, hp0, hp1, 'OK' if ok else '실패', group))
+    p.stop()
+    return 0 if ok else 1
+
+
+def test_move_desc(names, moves=(221, 136, 245), sp='워그레이몬'):
+    """기술 설명 화면 3개: 필드에서 START → 디지몬 → 첫 칸 → 「사용할 수 있는기술」, 커서를 기술마다 내려 찍음 → work/shots/desc_<n>.png
+    통과: 화면 아래 설명 칸이 비어 있지 않음(글자 픽셀이 있음)"""
+    import numpy as np
+    r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    p = new('grass.state'); m = p.pb.memory
+    put_party(p, [(N[sp], 50, 70)], names)
+    b = PARTY_MONS
+    for k in range(4): m[b + 2 + k] = moves[k] if k < len(moves) else 0; m[b + 23 + k] = 5 if k < len(moves) else 0
+    p.tick(30)
+    for k in ('start', 'a', 'a', 'down', 'down', 'a'): p.press(k, 8, 70)
+    bad = 0
+    for i, no in enumerate(moves):
+        if i: p.press('down', 8, 60)
+        p.tick(30); p.shot('desc_%d' % i)
+        img = np.asarray(p.pb.screen.image.convert('L'), dtype=int)
+        ink = int((img[112:140, 8:152] < 100).sum())                                   # 아래 설명 칸 글자 픽셀
+        ok = ink > 80; bad += not ok
+        print('  기술 %d 설명 화면 → %s (글자 픽셀 %d, work/shots/desc_%d.png)' % (no, 'OK' if ok else '비어 있음', ink, i))
+    p.stop()
+    return bad
+
+
 def test_party_icons(names):
     """G단계: 파티 화면에 분류가 다른 디지몬 6마리를 넣고 아이콘 찍기 → work/shots/party_icons_*.png"""
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
@@ -430,5 +592,8 @@ if __name__ == '__main__':
     print('전투 화면 그림 (시험용 롬)'); bad += test_battle_pics(names)
     print('파티 화면 아이콘'); bad += test_party_icons(names)
     print('사천왕 전투 시작'); bad += test_e4(names)
+    print('S7 전용 필살기 31'); bad += test_moves(names)
+    print('S7 보스 기술'); bad += test_boss_move(names)
+    print('S7 기술 설명 화면'); bad += test_move_desc(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

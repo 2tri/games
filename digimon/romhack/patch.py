@@ -38,8 +38,13 @@ class Space:
         self.free = {}                      # bank → [시작 주소(뱅크 안), 끝]
         for bank, start, n, fill in rom.free_runs(0x80):
             self.free[bank] = [start + 0x20, 0x8000]       # 앞쪽 0x20 은 여유로 남김
+        self.holes = {}                     # bank → [(시작, 끝)] 다시 쓸 수 있게 돌려받은 자리 (옮기고 남은 옛 진화·기술 목록)
+    def give(self, b, s, e):
+        if e > s: self.holes.setdefault(b, []).append([s, e])
     def take(self, n, bank=None, banks=None):
         for b in ([bank] if bank is not None else banks):
+            for h in self.holes.get(b, []):
+                if h[1] - h[0] >= n: h[0] += n; return b, h[0] - n
             s, e = self.free.get(b, (0, 0))
             if e - s >= n:
                 self.free[b][0] = s + n; return b, s
@@ -457,6 +462,7 @@ class Patch:
         bank, tab = self.r.trainer_table()
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
         self.put(tab + 2 * groups.index(gname), struct.pack('<H', p))
+        self.sp.give(bank, s % 0x4000 + 0x4000, e % 0x4000 + 0x4000)        # 옛 자리 돌려줌 (무리 하나만 가리킴)
         self.log.append('트레이너 무리 %s %d → %d바이트, 뱅크 %02X:%04X 로 옮김' % (gname, e - s, len(blob), b, p))
     # D단계 같은 길이 치환. 대사: 새 말 + 그 줄 나머지 + 빈칸(줄어든 바이트만큼, 줄 끝이라 안 보임) → 길이가 같아 포인터를 안 건드림
     #   도구 이름표(item_list = 시작, 끝): 이름을 세어 읽는 목록이라 뒤 이름을 당기고 목록 끝에 '@'
@@ -496,6 +502,9 @@ class Patch:
             self.put(a0, blob); return
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
         self.put(self.r.evos + 2 * (no - 1), struct.pack('<H', p))
+        # 옛 자리는 다른 종이 같이 가리키지 않으면 돌려줌 (2026-10-06 S7: 뱅크 0x10 이 꽉 참)
+        if 0x4000 <= p0 < 0x8000 and not any(a0 <= st < a0 + n0 for st in starts):
+            self.sp.give(bank, p0, p0 + n0)
     def raw_moves_after(self, no, n_evo_bytes):
         """끝 표시가 빠진 진화 목록 (디지몬스터 버그): 진화 n 바이트 뒤부터를 기술 목록으로 읽음"""
         bank = self.r.evos // 0x4000
@@ -1116,6 +1125,10 @@ def build(base, out_rom, out_ips):
         while e[i] != 0x50: i += 2 if 1 <= e[i] <= 0x0b else 1          # 분류 끝 '@'
         P.dex(N[nm], v[0], e[i + 1], e[i + 2] | e[i + 3] << 8, v[1:]); ndx += 1
     P.log.append('도감 새 글 %d종 (dex_texts.json), 빈 칸 도감 자리 %d바이트를 옮길 곳으로' % (ndx, nfree))
+    # 작업팩 S7 기술 (moves7.py): 일반 기술 30 이름 · 전용 필살기 31 · 엔진 번호 의존 · 종 타입 · 트레이너 기술 · 배우는 레벨
+    import moves7
+    P.r.d = P.d
+    P.log += moves7.apply(P, groups)
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)
