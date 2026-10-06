@@ -15,6 +15,7 @@ JOHTO_BADGES = 0xd62f
 MAP_GROUP, MAP_NUM, YC, XC = 0xdafd, 0xdafe, 0xdaff, 0xdb00
 NEWBARK_SCENE, HOUSE1F_SCENE = 0xd75e, 0xd760
 ENEMY_SPECIES, ENEMY_CATCH = 0xd1ac, 0xd1d1
+BATTLE_MODE, OTHER_CLASS, OTHER_ID, OT_COUNT, OT_SPECIES = 0xd1d3, 0xd1d5, 0xd1d8, 0xde52, 0xde53
 RARE_CANDY, POKE_BALL = 0x20, 0x05
 SHOTS = os.path.join(W, 'shots')
 
@@ -372,6 +373,29 @@ def test_battle_pics(names, pairs=None):
     return bad
 
 
+def test_e4(names, group='Will', cls=0x0b, tid=1):
+    """사천왕 전투 시작 (작업팩 S4): 29번 도로 풀숲에서 만남 직전 상대 트레이너 칸을 사천왕으로 → 트레이너 전투로 들어가
+    상대 파티가 롬 트레이너 표와 같은지. work/shots/e4_<무리>.png"""
+    import encounters
+    r = dmrom.Rom(ROM)
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
+    want = [sp for t in r.trainers(len(groups)) if groups[t['group']] == group and t['idx'] == tid - 1 for _, sp, _ in t['mons']]
+    p = new('grass.state'); m = p.pb.memory
+    put_party(p, [(want[0], 50, 70)], names)
+    for i in range(160):
+        m[OTHER_CLASS] = cls; m[OTHER_ID] = tid
+        p.press(['left', 'right'][i % 2], 10, 10); p.tick(30)
+        if m[BATTLE_MODE]: break
+    p.tick(600)
+    for _ in range(4): p.press('a', 6, 80)
+    p.tick(200); p.shot('e4_' + group)
+    got = [m[OT_SPECIES + k] for k in range(m[OT_COUNT])] if m[BATTLE_MODE] == 2 else []
+    ok = got == want
+    print('  %s 전투 모드 %d, 상대 파티 %s → %s (work/shots/e4_%s.png)' % (group, m[BATTLE_MODE], ' '.join(r.name(x) for x in got) or '-', 'OK' if ok else '기대 ' + ' '.join(r.name(x) for x in want), group))
+    p.stop()
+    return 0 if ok else 1
+
+
 def test_party_icons(names):
     """G단계: 파티 화면에 분류가 다른 디지몬 6마리를 넣고 아이콘 찍기 → work/shots/party_icons_*.png"""
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
@@ -399,5 +423,6 @@ if __name__ == '__main__':
     print('포획'); bad += test_catch(names)
     print('전투 화면 그림 (시험용 롬)'); bad += test_battle_pics(names)
     print('파티 화면 아이콘'); bad += test_party_icons(names)
+    print('사천왕 전투 시작'); bad += test_e4(names)
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)
