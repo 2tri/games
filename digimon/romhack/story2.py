@@ -76,7 +76,7 @@ def find_battle(d, cls, idx):
         p = d.find(key, p + 1)
         if p < 0:
             break
-        w = d.rfind(b'\x64', max(0, p - 64), p)
+        w = d.rfind(b'\x64', max(0, p - 128), p)
         if w < 0:
             continue
         bank = p // 0x4000

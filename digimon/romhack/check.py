@@ -63,7 +63,8 @@ class Ctx:
         self.sites = [s for s in self.sites if s['kind'] != '트레이너'] + [
             dict(kind='트레이너', where='%s %s' % (GROUPS[t['group']], t['name']), addr=a, sp=sp, lv=lv, cur=sp)
             for t in self.trainers for lv, sp, a in t['mons']]      # 2판: 옮긴 무리도 지금 자리에서 (R10 가짜 경보)
-        il = self.d.find(krtext.encode('마스터볼') + b'\x50' + krtext.encode('하이퍼볼') + b'\x50'); self.items = []
+        npos = re.search(rb'\x6c(..)\x6c(..)\x00\x00\x00\x6c(..)', self.d, re.S); self.items = []
+        il = dmrom.addr(self.d[npos.start() + 9], self.d[npos.start() + 10] | self.d[npos.start() + 11] << 8) if npos else -1     # 4판: NamesPointers(ITEM_NAME) 가 가리키는 지금 이름표 (옮긴 표 포함)
         if il >= 0:                                                   # 지금 롬의 도구 이름표 (D단계에서 바뀐 이름 반영)
             for _ in range(256):
                 j = self.d.index(0x50, il); self.items.append(krtext.decode(self.d, il, j)); il = j + 1
