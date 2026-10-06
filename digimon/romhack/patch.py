@@ -44,7 +44,7 @@ class Space:
             if e - s >= n:
                 self.free[b][0] = s + n; return b, s
         raise MemoryError('빈 곳 없음 %d' % n)
-PIC_BANKS = [0x75, 0x76, 0x77, 0x7c, 0x7d]
+PIC_BANKS = [0x75, 0x76, 0x77, 0x7c, 0x7d, 0x2c, 0x2d, 0x3f, 0x6a, 0x72, 0x74]   # 뒤 6개: 작업팩 10/6 S3 그림이 늘어 추가 (뱅크 끝 빈 곳, 음악·이름표 뱅크 피함)
 
 # ── 아주 작은 어셈블러 (필요한 명령만) ──
 class Asm:
@@ -695,17 +695,23 @@ def build(base, out_rom, out_ips):
     egg = bytes(P.d).find(bytes([0x2e, S('파닥몬'), 5]))            # 공박사 조수의 알 (giveegg 종, 레벨)
     installed = {}
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}               # 코로몬·메탈그레몬처럼 앞에서 만든 칸도 찾게
+    v20p = os.path.join(dmrom.WORK, rules.V20); src = dmrom.Rom(v20p) if os.path.exists(v20p) else None     # 2.0 롬 (그림을 빌드 안에서 복사)
     for m in SL['mons']:
         f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
-        if not (os.path.exists(f) and os.path.exists(b)):
+        sn20 = next((k for k in range(1, dmrom.NUM + 1) if src.name(k).strip() == m['art20']), None) if m.get('art20') and src else None
+        if m.get('art20') and not sn20: continue                        # 2.0 그림을 쓰는 종인데 2.0 롬이 없으면 건너뜀
+        if sn20: pass
+        elif not (os.path.exists(f) and os.path.exists(b)):
             if os.environ.get('PLACEHOLDER') != '1': continue
             f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
         no = N.get(m['name']) or (m['slot'] if isinstance(m['slot'], int) else S(m['slot']))      # 빈 칸(-----)은 번호로
         st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
         P.name(no, m['name']); N[m['name']] = no                        # 새 칸끼리 진화(푸니몬 → 뿔몬)도 찾게
         P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
-        P.pic(no, f, b)
-        P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], moves_by_name(m['moves']))
+        if sn20: P.pic_from_rom(no, src, sn20)                           # 작업팩 10/6 S3-2: 2.0 그림·색
+        else: P.pic(no, f, b)
+        mv_ = list(P.r.evos_attacks(S(m['moves_from']))[1]) if m.get('moves_from') else moves_by_name(m['moves'])   # 같은 타입·단계 종 기술 복사 (E 공통 규칙)
+        P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], mv_)
         P.dex(no, *m['dex'])
         lk = S(m['like']); idx, pitch, length = P.cry_of(lk)
         baby = m['grade'].startswith(('유년기', '유아기'))
@@ -718,7 +724,6 @@ def build(base, out_rom, out_ips):
     P.log.append('새 디지몬 칸 %d종: %s' % (len(installed), ', '.join(m['name'] for m in installed.values()) or '없음 (그림 대기)'))
     # 작업팩 10/6 S1-8 떠돌이 셋 = 사성수 (243~245, mapping.csv 도 이 칸 그대로): 자료(능력치·기술·울음)는 임시로 피에몬,
     #   그림·색·도감 글은 2.0 (허락 받음, 사용자 10/6 「일단 있는 거 쓰고」 — 그림주문서에서 사용자가 확인). 2.0 롬이 없으면 피에몬 그림
-    v20p = os.path.join(dmrom.WORK, rules.V20); src = dmrom.Rom(v20p) if os.path.exists(v20p) else None
     PI = S(rules.ROAMER_TEMP); rmlog = []; roam_dex = []        # 도감 글은 빈 칸 도감 자리를 모은 뒤(dex_pool)에 씀
     for no, nm in rules.ROAMERS:
         P.put(r.bs + 0x20 * (no - 1) + 1, bytes(P.d[r.bs + 0x20 * (PI - 1) + 1:r.bs + 0x20 * PI]))
@@ -1042,6 +1047,22 @@ def build(base, out_rom, out_ips):
         if src in nrd:
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))
             P.stats(slot, pic_size=P.d[r.bs + 0x20 * (N[src] - 1) + 17]); P.log.append('  %s 그림 → %s 새 그림' % (nm, src))
+    # 작업팩 10/6 S3-1 전투 그림 교체 — 위의 다시 그리기·확대 뒤에 덮어씀
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; b14 = dmrom.Rom(base); s3 = []
+    src = dmrom.Rom(v20p) if os.path.exists(v20p) else None              # (앞에서 src 이름을 다른 뜻으로 다시 써서 새로 엶)
+    for nm in rules.PIC20:
+        k = next((x for x in range(1, dmrom.NUM + 1) if src and src.name(x).strip() == nm), None)
+        if nm in N and k: P.pic_from_rom(N[nm], src, k); s3.append(nm + ' 2.0')
+    for nm in rules.PIC14:
+        k = next((x for x in range(1, dmrom.NUM + 1) if b14.name(x).strip() == nm), None)
+        if nm in N and k:                                               # 1.4 그림은 롬 원래 자리에 그대로 있음 → 포인터·크기·색만 되돌림
+            P.put(r.pics + 6 * (N[nm] - 1), bytes(b14.d[b14.pics + 6 * (k - 1):b14.pics + 6 * k]))
+            P.stats(N[nm], pic_size=b14.d[b14.bs + 0x20 * (k - 1) + 17]); P.put(r.pal + 8 * N[nm], bytes(b14.d[b14.pal + 8 * k:b14.pal + 8 * k + 8]))
+            s3.append(nm + ' 1.4')
+    for nm in rules.PAL20:
+        k = next((x for x in range(1, dmrom.NUM + 1) if src and src.name(x).strip() == nm), None)
+        if nm in N and k: P.put(r.pal + 8 * N[nm], bytes(src.d[src.pal + 8 * k:src.pal + 8 * k + 8])); s3.append(nm + ' 색만 2.0')
+    P.log.append('S3-1 전투 그림 교체 %d: %s' % (len(s3), ', '.join(s3)))
     # 노래 (rules.MUSIC): gbc/music 곡을 금 음악 엔진 형식으로 (music.py) 빈 뱅크에 넣고 음악 포인터 표(Music, 3바이트 dba)를 바꿈
     import music
     m = re.search(rb'\x21(..)\x19\x19\x19\x2a\xea', bytes(P.d), re.S)

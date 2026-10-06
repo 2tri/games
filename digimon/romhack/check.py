@@ -236,7 +236,8 @@ def rules(c, out):
         if c.name(n) == ORIG[n - 1]: lack.append('이름')
         if bytes(c.d[c.r.bs + 0x20 * (n - 1) + 1:c.r.bs + 0x20 * (n - 1) + 11]) == bytes(b[c.r.bs + 0x20 * (n - 1) + 1:c.r.bs + 0x20 * (n - 1) + 11]): lack.append('능력치')
         if not c.r.evos_attacks(n)[1]: lack.append('기술')
-        if not os.path.exists(os.path.join(WEB, 'art', did + '-f.png')): lack.append('그림(물음표 알)')
+        art20 = (c.slots.get(c.name(n)) or {}).get('art20')      # 2.0 그림 복사 종은 그림 파일 없이 포인터만 봄
+        if not art20 and not os.path.exists(os.path.join(WEB, 'art', did + '-f.png')): lack.append('그림(물음표 알)')
         elif bytes(c.d[c.r.pics + 6 * (n - 1):c.r.pics + 6 * n]) == bytes(b[c.r.pics + 6 * (n - 1):c.r.pics + 6 * n]): lack.append('그림')
         dexp = re.search(rb'\x21(..)\x78\x3d\x06\x00\x4f\x09\x09\x07\xe6\x01\xc6(.)\x47\x2a\x66\x6f\xc9', c.d, re.S)
         tab = dmrom.addr(dexp.start() // 0x4000, int.from_bytes(dexp.group(1), 'little'))
