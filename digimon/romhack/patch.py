@@ -943,7 +943,23 @@ def build(base, out_rom, out_ips):
     # 작업팩 10/6 S1-7 오메가블레이드: 빈 도구 칸 — 속성(달맞이 돌: 값 0·진화의 돌 주머니)·설명(천둥의 돌 글을 가리킴)·효과(진화의 돌)·이름(이름표를 옮겨 길이 제한 없이)
     it = OB['item']
     P.put(at + 7 * (it - 1), bytes(P.d[at + 7 * (OB['attr_from'] - 1):at + 7 * OB['attr_from']]))
-    P.put(dtab + 2 * (it - 1), bytes(P.d[dtab + 2 * (OB['desc_from'] - 1):dtab + 2 * OB['desc_from']]))
+    db_ = b'\x59'.join(krtext.encode(l) for l in OB['desc']) + b'\x50'                 # 설명 (줄 사이 0x59)
+    # 설명 뱅크에 빈 곳이 없음 → 같은 글을 따로 가진 도구들을 첫 글 하나로 가리키게 하고, 비게 된 연속 자리에 씀
+    dd_ = bytes(P.d); ents_ = []
+    for k in range(249):
+        pp_ = dd_[dtab + 2 * k] | dd_[dtab + 2 * k + 1] << 8; a_ = addr(bk, pp_); ents_.append((k, a_, dd_.index(0x50, a_) + 1))
+    first_, freed_ = {}, []
+    for k, a_, e_ in sorted(ents_, key=lambda x: x[1]):
+        s_ = dd_[a_:e_]
+        if s_ in first_ and first_[s_] != a_:
+            P.put(dtab + 2 * k, struct.pack('<H', 0x4000 + first_[s_] % 0x4000)); freed_.append((a_, e_))
+        else: first_.setdefault(s_, a_)
+    runs_ = []
+    for a_, e_ in sorted(set(freed_)):
+        if runs_ and runs_[-1][1] >= a_: runs_[-1] = (runs_[-1][0], max(e_, runs_[-1][1]))
+        else: runs_.append((a_, e_))
+    ra_ = next(a_ for a_, e_ in sorted(runs_, key=lambda x: x[1] - x[0]) if e_ - a_ >= len(db_))
+    P.put(ra_, db_); P.put(dtab + 2 * (it - 1), struct.pack('<H', 0x4000 + ra_ % 0x4000))
     try:
         import romanat; ie_ = romanat.Sym()['ItemEffects']
         P.put(ie_ + 2 * (it - 1), bytes(P.d[ie_ + 2 * (OB['desc_from'] - 1):ie_ + 2 * OB['desc_from']]))   # 천둥의 돌과 같은 EvoStoneEffect
