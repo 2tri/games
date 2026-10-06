@@ -3,13 +3,13 @@
 설명은 설명 뱅크의 안 쓰는 구간(digi2.desc_free_runs)에 넣고 포인터만 바꿈. 자리가 모자라면 그 설명은 건너뛰고 로그에 남김 (이름은 항상 바뀜).
 patch.build 에서 boss2 다음에 `import items2; P.log += items2.apply(P)`"""
 import struct
-import krtext, rules, digi2
+import krtext, rules, digi2, boss2
 from dmrom import addr
 
 
 def apply(P):
     log = []
-    ids = digi2.item_ids()
+    ids = boss2.item_ids()
     names = {ids[c]: nm for c, nm in rules.ITEM_RENAME.items() if c in ids}
     miss = [c for c in rules.ITEM_RENAME if c not in ids]
     nil = digi2.rename_many(P, names)

@@ -709,6 +709,12 @@ def build(base, out_rom, out_ips):
     installed = {}
     N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}               # 코로몬·메탈그레몬처럼 앞에서 만든 칸도 찾게
     v20p = os.path.join(dmrom.WORK, rules.V20); src = dmrom.Rom(v20p) if os.path.exists(v20p) else None     # 2.0 롬 (그림을 빌드 안에서 복사)
+    GR = {m_['name']: m_['grade'] for m_ in SL['mons']}
+    G_ = {v['name']: v['grade'] for v in json.load(open(os.path.join(HERE, 'grades.json'))).values()}
+    KINDS = {'LV': LV, 'CREST': CREST, 'ANYCREST': ANYCREST, 'DARK': DARK, 'BOND_HI': BOND_HI, 'BOND_LO': BOND_LO, 'ITEM': ITEM}
+    def ek(k, t):      # 2판: 완전체로 가는 레벨 진화 = 문장(배지 3), 궁극체 = 배지 8 (묶음 J 규칙을 slots 에도)
+        g = GR.get(t) or G_.get(t)
+        return CREST if (k == 'LV' and g == '완전체') else ANYCREST if (k == 'LV' and g == '궁극체') else KINDS.get(k, LV)
     for m in SL['mons']:
         f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
         sn20 = next((k for k in range(1, dmrom.NUM + 1) if src.name(k).strip() == m['art20']), None) if m.get('art20') and src else None
@@ -724,7 +730,7 @@ def build(base, out_rom, out_ips):
         if sn20: P.pic_from_rom(no, src, sn20)                           # 작업팩 10/6 S3-2: 2.0 그림·색
         else: P.pic(no, f, b)
         mv_ = list(P.r.evos_attacks(S(m['moves_from']))[1]) if m.get('moves_from') else moves_by_name(m['moves'])   # 같은 타입·단계 종 기술 복사 (E 공통 규칙)
-        P.evos(no, [(LV, lv, S(t)) for _, lv, t in m['evos']], mv_)
+        P.evos(no, [(ek(k, t), lv, S(t)) for k, lv, t in m['evos']], mv_)
         P.dex(no, *m['dex'])
         lk = S(m['like']); idx, pitch, length = P.cry_of(lk)
         baby = m['grade'].startswith(('유년기', '유아기'))
@@ -768,13 +774,13 @@ def build(base, out_rom, out_ips):
         '홀리엔젤몬': T((ANYCREST, 45, '세라피몬')),
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
-        '에테몬': T((LV, 45, '메탈에테몬')),
-        '레오몬': T((LV, 50, '샤벨레오몬')),                            # 통신 → 개굴몬 삭제
+        '에테몬': T((ANYCREST, 45, '메탈에테몬')),
+        '레오몬': T((ANYCREST, 50, '샤벨레오몬')),                            # 통신 → 개굴몬 삭제
         '울퉁몬': T((LV, 25, '모노크로몬')) if has('모노크로몬') else [],
         '쉬라몬': T((LV, 18, '원뿔몬')),
-        '베타몬': T((LV, 16, '시드라몬')) if has('시드라몬') else T((LV, 30, '메가시라몬')),
-        '인펠몬': T((LV, 45, '디아블로몬')),
-        '엑스브이몬': T((LV, 45, '황제드라몬')),
+        '베타몬': T((LV, 16, '시드라몬')) if has('시드라몬') else T((CREST, 30, '메가시라몬')),
+        '인펠몬': T((ANYCREST, 45, '디아블로몬')),
+        '엑스브이몬': T((ANYCREST, 45, '황제드라몬')),
         '파닥몬': T((BOND_HI, 16, '엔젤몬'), (BOND_LO, 16, '데블몬'), (LV, 16, '엔젤몬')),
         '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 32, '스컬그레몬')) if has('스컬그레몬') else []),
     }
@@ -1156,7 +1162,7 @@ def build(base, out_rom, out_ips):
     P.log += digi2.apply(P)
     import boss2
     P.log += boss2.apply(P, groups)
-    # import items2   # 묶음 D 보류: items2.py 가 digi2.item_ids 를 부르는데 digi2 에 없음 (boss2.item_ids 에 있음) — AttributeError, 설계자 확인 필요
+    # import items2   # 2판 보류: digi2.rename_many 두 번째 호출이 MemoryError '빈 곳 없음 2517' (이름표 뱅크에 한 벌 더 쓸 자리 없음)
     # P.log += items2.apply(P)
     import types2
     P.log += types2.apply(P)
