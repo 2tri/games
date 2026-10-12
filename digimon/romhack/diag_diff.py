@@ -1,30 +1,50 @@
-"""맵 하나의 자료 구간에서 base 와 myver 가 다른 바이트 (10판 진단): python3 diag_diff.py SaffronGym"""
+"""base 와 myver 가 다른 바이트를 심볼 단위로 (12판): python3 diag_diff.py SaffronGym OverworldSprites …
+각 이름에 대해 ① 그 이름으로 시작하는 심볼마다 [심볼, 같은 뱅크의 다음 심볼) 구간을 비교하고 ② 그 심볼 바로 뒤 심볼 2개도 같이 본다."""
 import sys, dmrom, romanat
 
-pre = sys.argv[1] if len(sys.argv) > 1 else 'SaffronGym'
 S = romanat.Sym()
 D = next(v for at in ('by', 'syms', 'd') for v in [getattr(S, at, None)] if isinstance(v, dict))
 syms = sorted((a, k) for k, a in D.items() if isinstance(a, int))
-mine = [(a, k) for a, k in syms if k.startswith(pre)]
-assert mine, '심볼 없음 ' + pre
-lo = min(a for a, _ in mine)
-hi = max(a for a, _ in mine)
-nxt = next((a for a, k in syms if a > hi and not k.startswith(pre)), hi + 0x200)
-print('%s 심볼 %d개: %X~%X (다음 심볼 %X)' % (pre, len(mine), lo, hi, nxt))
-for a, k in mine: print('  %X %s' % (a, k))
 b = open(dmrom.default_rom(), 'rb').read()
 m = open(dmrom.WORK + '/myver.gbc', 'rb').read()
-i = lo
-runs = []
-while i < nxt:
-    if b[i] != m[i]:
-        j = i
-        while j < nxt and b[j] != m[j]: j += 1
-        runs.append((i, j))
-        i = j
-    else:
-        i += 1
-print('다른 구간 %d개' % len(runs))
-for i, j in runs:
-    near = max((a, k) for a, k in mine if a <= i) if any(a <= i for a, _ in mine) else (0, '?')
-    print('  %X~%X (%s+%X) base %s → myver %s' % (i, j, near[1], i - near[0], b[i:min(j, i + 24)].hex(), m[i:min(j, i + 24)].hex()))
+
+
+def span(i):
+    a = syms[i][0]
+    bank = a // 0x4000
+    j = i + 1
+    while j < len(syms) and syms[j][0] == a: j += 1
+    nxt = syms[j][0] if j < len(syms) and syms[j][0] // 0x4000 == bank else (bank + 1) * 0x4000
+    return a, min(nxt, a + 0x800)
+
+
+def report(i):
+    a, e = span(i)
+    k = syms[i][1]
+    runs = []
+    x = a
+    while x < e:
+        if b[x] != m[x]:
+            y = x
+            while y < e and b[y] != m[y]: y += 1
+            runs.append((x, y))
+            x = y
+        else:
+            x += 1
+    print('%06X~%06X %-40s 다른 구간 %d개' % (a, e, k, len(runs)))
+    for x, y in runs[:12]:
+        print('  +%04X (%d바이트) base %s → myver %s' % (x - a, y - x, b[x:min(y, x + 20)].hex(), m[x:min(y, x + 20)].hex()))
+
+
+for pre in sys.argv[1:]:
+    idx = [i for i, (a, k) in enumerate(syms) if k == pre] or [i for i, (a, k) in enumerate(syms) if k.startswith(pre)]
+    if not idx:
+        print('심볼 없음', pre)
+        continue
+    print('===', pre, '심볼 %d개' % len(idx))
+    seen = set()
+    for i in idx:
+        for j in range(i, min(i + 3, len(syms))):
+            if j not in seen:
+                seen.add(j)
+                report(j)

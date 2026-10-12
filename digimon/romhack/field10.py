@@ -330,6 +330,9 @@ def sprite_ids():
     return ids
 
 
+OW_TABLE_MAX = 96      # 12판: 이 롬의 OverworldSprites 표 칸 수 (4판 보고: sprites.asm 표는 96개)
+
+
 def _ow_table(P):
     m = re.search(rb'\xe5\x21(..)\x3d\x4f\x06\x00\x3e\x06\xcd..\x2a\x5f\x2a\x57', bytes(P.d), re.S)   # GetSprite: ld hl, OverworldSprites (patch.digivice 와 같음)
     assert m, 'OverworldSprites'
@@ -339,6 +342,8 @@ def _ow_table(P):
 def put_sprite(P, tab, sid, name, pal):
     """표 항목 sid 의 그림을 바꿈. 크기(바이트)·종류는 표 값 그대로: 64 = 1장, 192 = 3장(서기), 종류 1(걷기)이면 3장 더(1픽셀 흔들림)
     2판: 64 이면 앞모습 1장만, 그 밖 크기는 표 6바이트를 로그에 남기고 건너뜀"""
+    if sid > OW_TABLE_MAX:      # 12판: 표 밖 번호(GROWLITHE 98·CLEFAIRY 111)는 표 뒤 자료를 덮으므로 안 씀
+        raise ValueError('표 밖 번호 %d (표는 %d칸) — 건너뜀' % (sid, OW_TABLE_MAX))
     e = tab + 6 * (sid - 1)
     size, kind = P.d[e + 2], P.d[e + 4]
     raw = bytes(P.d[e:e + 6]).hex()

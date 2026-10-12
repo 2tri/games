@@ -438,7 +438,11 @@ def rules(c, out):
             if t['kind'] not in (0, 2): continue
             for lv, sp, _ in t['mons']:
                 if sp in c.empty or not (1 <= sp <= 251): continue
-                known = [mv for l, mv in c.r.evos_attacks(sp)[1] if l <= lv][-4:]
+                known = []      # 12판: FillMoves 처럼 같은 기술은 건너뜀
+                for l, mv in c.r.evos_attacks(sp)[1]:
+                    if l <= lv and mv not in known:
+                        known.append(mv)
+                        if len(known) > 4: known.pop(0)
                 if known and not any(c.d[mt + 7 * (mv - 1) + 2] > 0 for mv in known):
                     r29.append('%s %s: %s Lv%d 기술 %s 전부 위력 0' % (GROUPS[t['group']], t['name'], c.name(sp), lv, known))
     rep('R29', r29, '트레이너 파티 디지몬 모두 위력 있는 기술 1개 이상', lambda b: b)
