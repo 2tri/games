@@ -36,8 +36,10 @@ LV, ITEM, TRADE, HAPPY, STAT, BOND_HI, BOND_LO, CREST, DARK, ANYCREST = 1, 2, 3,
 class Space:
     def __init__(self, rom):
         self.free = {}                      # bank → [시작 주소(뱅크 안), 끝]
+        self.edge = {}                      # bank → 빈 곳이 원래 시작하는 자리 (앞쪽 0x20 여유 포함)
         for bank, start, n, fill in rom.free_runs(0x80):
             self.free[bank] = [start + 0x20, 0x8000]       # 앞쪽 0x20 은 여유로 남김
+            self.edge[bank] = start
         self.holes = {}                     # bank → [(시작, 끝)] 다시 쓸 수 있게 돌려받은 자리 (옮기고 남은 옛 진화·기술 목록)
     def give(self, b, s, e):
         if e <= s: return
@@ -45,6 +47,11 @@ class Space:
         for h in hs:                                                    # 붙어 있거나 겹치는 구멍은 하나로
             if out and h[0] <= out[-1][1]: out[-1][1] = max(out[-1][1], h[1])
             else: out.append(list(h))
+        # 8판: 구멍이 뒤쪽 빈 곳(free)과 맞닿으면 빈 곳을 앞으로 늘림 (구멍 2.5KB 와 빈 곳 몇백 바이트가 따로 놀아 「빈 곳 없음」이 나던 것)
+        if b in self.free:
+            untouched = self.free[b][0] == self.edge[b] + 0x20          # 아직 아무것도 안 받아 간 뱅크면 여유 0x20 도 합침
+            while out and out[-1][1] >= (self.edge[b] if untouched else self.free[b][0]):
+                self.free[b][0] = min(self.free[b][0], out[-1][0]); out.pop()
         self.holes[b] = out
     def take(self, n, bank=None, banks=None):
         for b in ([bank] if bank is not None else banks):
@@ -170,9 +177,13 @@ class Patch:
             j = d.index(0x50, a); names.append(d[a:j]); a = j + 1
         names[no - 1] = krtext.encode(new)
         blob = b''.join(x + b'\x50' for x in names)
+        old_len = a - addr(bank, old)
+        if len(blob) <= old_len and 0x4000 <= old < 0x8000:                         # 8판: 제자리에 들어가면 그 자리에
+            self.put(addr(bank, old), blob + b'\x50' * (old_len - len(blob))); return 0
         b, p = self.sp.take(len(blob), bank=bank); self.put(addr(b, p), blob)
         self.put(ip, struct.pack('<H', p))
-        n = 0                                                                           # InitList(교환·통신 목록): ld de, ItemNames 2곳 — 원본 금 심볼 지도로 함수 자리를 찾음
+        if 0x4000 <= old < 0x8000: self.sp.give(bank, old, old + old_len)           # 8판: 옛 표 자리(2.5KB)를 돌려줌
+        n = 0                                                                       # InitList(교환·통신 목록): ld de, ItemNames 2곳 — 원본 금 심볼 지도로 함수 자리를 찾음
         try:
             import romanat; il = romanat.Sym()['InitList']
             for m in re.finditer(re.escape(b'\x11' + struct.pack('<H', old)), d[il:il + 0x80]):

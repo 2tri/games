@@ -68,9 +68,8 @@ def desc_free_runs(P, dtab, bk):
 
 
 def rename_many(P, names):
-    """도구 이름 여러 개를 한 번에 (patch.item_rename 과 같은 방법).
-    3판: 새 표가 지금 표 자리(이미 옮겨 둔 곳)에 들어가면 제자리에 쓰고, 길면 지금 표 자리를 빈 곳으로 돌려준 뒤(P.sp.give) 다시 받음
-    — 이름표 뱅크에 한 벌을 더 쓸 자리가 없어도 됨"""
+    """도구 이름 여러 개를 한 번에 (patch.item_rename 과 같은 방법). 3판: 새 표가 지금 표 자리(이미 옮겨 둔 곳)에 들어가면 제자리에 쓰고,
+    길면 지금 표 자리를 빈 곳으로 돌려준 뒤(P.sp.give) 다시 받음 — 이름표 뱅크에 한 벌을 더 쓸 자리가 없어도 됨"""
     d = bytes(P.d)
     npos = re.search(rb'\x6c(..)\x6c(..)\x00\x00\x00\x6c(..)', d, re.S)
     assert npos, 'NamesPointers'
@@ -89,9 +88,13 @@ def rename_many(P, names):
     blob = b''.join(x + b'\x50' for x in lst)
     if len(blob) <= old_len:
         P.put(a0, blob + b'\x50' * (old_len - len(blob)))
-        return 0                                                  # 제자리 (포인터 그대로)
-    P.sp.give(bank, a0, a0 + old_len)
-    b, p = P.sp.take(len(blob), bank=bank)
+        return 0                                                        # 제자리 (포인터 그대로)
+    P.sp.give(bank, old, old + old_len)
+    try:
+        b, p = P.sp.take(len(blob), bank=bank)
+    except MemoryError:                                                 # 8판: 이름표 뱅크가 꽉 차면 다른 뱅크로 (NamesPointers 의 뱅크 바이트도 바꿈)
+        b, p = P.sp.take(len(blob), banks=[0x6d, 0x72, 0x74, 0x3f, 0x6a])
+        P.put(ip - 1, bytes([b]))
     P.put(addr(b, p), blob)
     P.put(ip, struct.pack('<H', p))
     n = 0
@@ -101,6 +104,10 @@ def rename_many(P, names):
         for m in re.finditer(re.escape(b'\x11' + struct.pack('<H', old)), d[il:il + 0x80]):
             P.put(il + m.start() + 1, struct.pack('<H', p))
             n += 1
+            if b != bank:                                               # ld de 앞뒤 8바이트의 ld a,BANK(ItemNames) 도
+                for m2 in re.finditer(re.escape(bytes([0x3e, bank])), d[il + m.start() - 8:il + m.start() + 11]):
+                    P.put(il + m.start() - 8 + m2.start() + 1, bytes([b]))
+                    n += 100
     except (FileNotFoundError, KeyError):
         pass
     return n

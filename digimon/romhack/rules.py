@@ -372,7 +372,7 @@ RIVAL_GROUPS = ('Rival1', 'Rival2')
 
 # S7 판정 C7-3: 필살기를 여러 레벨에 넣음 (늦게 진화해도 배우게. 이미 아는 기술은 금이 건너뜀) — 진화+n 의 n → 덧붙일 레벨
 SPECIAL_EXTRA_LV = {2: (24, 28, 32, 36, 40, 45, 50), 3: (40, 45, 50, 55, 60), 8: (45, 50, 55, 60, 70), 5: (55, 60, 70, 80)}
-RECLAIM_EMPTY_EVOS = False   # 빈 칸 진화·기술 목록 회수 (켜면 학습표가 깨짐 — 원인 조사 중, 2026-10-06)
+RECLAIM_EMPTY_EVOS = True   # 빈 칸 진화·기술 목록 회수 (켜면 학습표가 깨짐 — 원인 조사 중, 2026-10-06)
 
 # ── 작업팩 S10 필드 그림 (field10.py, 설계자 2026-10-06) ──
 # 스프라이트 상수 이름(pokegold-kr constants/sprite_constants.asm) → (field10.SPRITES 그림 이름, 팔레트). 팔레트 None = 표 값 그대로

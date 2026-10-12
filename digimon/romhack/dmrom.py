@@ -72,7 +72,7 @@ class Rom:
                 if any(not (0x4000 <= p < 0x8000) for p in ps): continue
                 # 원본은 오름차순·첫 칸이 표 바로 뒤. 고친 롬은 일부가 빈 곳으로 옮겨가므로 '대부분 오름차순 + 최솟값이 표 바로 뒤'로 본다
                 if min(ps) != 0x4000 + off + 2 * NUM: continue
-                if sum(ps[i + 1] > ps[i] for i in range(NUM - 1)) < NUM * 3 // 4: continue
+                if sum(ps[i + 1] > ps[i] for i in range(NUM - 1)) < NUM * 2 // 5: continue      # 8판: 회수·이사 뒤엔 오름차순이 절반쯤 (139/250)
                 return a
         return None
 

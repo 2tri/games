@@ -163,21 +163,30 @@ def apply(P, groups):
     # 진화·기술 목록 뱅크 공간: 게임에 안 나오는 빈 칸(-----)의 목록을 빈 목록 하나로 모으고 옛 자리를 돌려받음 (S7 판정 C7-3 여러 레벨 넣기)
     ev_t = P.r.evos; bank = ev_t // 0x4000
     ptr = lambda k: P.d[ev_t + 2 * k] | P.d[ev_t + 2 * k + 1] << 8
+    P.r.d = P.d
     empty = [k for k in range(dmrom.NUM) if P.r.name(k + 1) == rules.EMPTY_NAME]
-    live_starts = {addr(bank, ptr(k)) for k in range(dmrom.NUM) if k not in empty}
     starts_all = sorted({addr(bank, ptr(k)) for k in range(dmrom.NUM)})
-    shared = None; freed = 0
-    for k in (empty if rules.RECLAIM_EMPTY_EVOS else []):
+    def span(k):                                                        # k 번 칸 목록의 (시작, 끝) — 다음 목록 시작에서 자름
         a0 = addr(bank, ptr(k)); ev, mv = P.r.evos_attacks(k + 1)
         n0 = sum(4 if e[0] == 5 else 3 for e in ev) + 1 + 2 * len(mv) + 1
-        n0 = min([n0] + [s - a0 for s in starts_all if s > a0])
-        if any(a0 <= s < a0 + n0 for s in live_starts) or not 0x4000 <= ptr(k) < 0x8000: continue
+        return a0, a0 + min([n0] + [s - a0 for s in starts_all if s > a0])
+    live = [span(k) for k in range(dmrom.NUM) if k not in empty]
+    before = {k: P.r.evos_attacks(k + 1) for k in range(dmrom.NUM) if k not in empty}
+    shared = None; freed = 0; kept = []
+    # 8판: 빈 칸이 산 종의 목록 한가운데(꼬리)를 가리키면 그 칸은 건드리지 않음 (전엔 00 00 을 써서 그 종 학습표가 깨짐)
+    for k in (empty if rules.RECLAIM_EMPTY_EVOS else []):
+        a0, a1 = span(k)
+        if not 0x4000 <= ptr(k) < 0x8000 or any(s < a1 and a0 < e for s, e in live):
+            kept.append(k + 1); continue
         if shared is None:
-            shared = ptr(k); P.put(a0, b'\x00\x00'); P.sp.give(bank, ptr(k) + 2, ptr(k) + n0); freed += n0 - 2
+            shared = ptr(k); P.put(a0, b'\x00\x00'); P.sp.give(bank, ptr(k) + 2, 0x4000 + a1 % 0x4000); freed += a1 - a0 - 2
         else:
-            if a0 != addr(bank, shared): P.sp.give(bank, ptr(k), ptr(k) + n0); freed += n0
+            if a0 != addr(bank, shared): P.sp.give(bank, ptr(k), 0x4000 + a1 % 0x4000); freed += a1 - a0
             P.put(ev_t + 2 * k, struct.pack('<H', shared))
-    log.append('빈 칸 %d개 진화·기술 목록 → 빈 목록 하나, %d바이트 돌려받음' % (len(empty), freed))
+    P.r.d = P.d
+    bad = [P.r.name(k + 1) for k, v in before.items() if P.r.evos_attacks(k + 1) != v]
+    assert not bad, '빈 칸 회수가 산 종 목록을 건드림: %s' % bad
+    log.append('빈 칸 %d개 진화·기술 목록 → 빈 목록 하나, %d바이트 돌려받음%s' % (len(empty), freed, ' (겹쳐서 둔 칸 %d)' % len(kept) if kept else ''))
     # ── 7-4 배우는 레벨 (레벨업 표) ──
     learn = []
     for no, sp, nm, *_r, how in SP:
