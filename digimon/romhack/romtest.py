@@ -715,6 +715,9 @@ def _warp_check(g, n, x, y, names, sp):
     return alive, '' if alive else '입력 반응 없음 (work/shots/map%d_%d.png)' % (g, n)
 
 
+MAP_SKIP = {(25, 4): '원본 롬(1.4)도 세이브 순간이동으로 들어가면 같은 자리에서 멈춤 — 시험 방식 한계 (13판, diag_base 10/12)'}
+
+
 def test_maps(names, which='main'):
     """맵 불러오기: which='main' = 마을·도로·체육관, 'all' = 전부. 각 맵 첫 출입구 좌표에 세움"""
     r = dmrom.Rom(ROM)
@@ -731,6 +734,9 @@ def test_maps(names, which='main'):
         w = re.search(r'warp_event\s+(\d+),\s*(\d+)', open(f, encoding='utf-8', errors='ignore').read())
         if not w: continue
         if which == 'main' and not (envs.get(lab) in ('TOWN', 'ROUTE') or 'Gym' in lab): continue
+        if (g, n) in MAP_SKIP:
+            print('  건너뜀 %s(%s) %d-%d: %s' % (ko, lab, g, n, MAP_SKIP[(g, n)]))
+            continue
         todo.append((g, n, int(w.group(1)), int(w.group(2)), lab, ko))
     sp = N.get('코로몬') or N.get('아구몬') or 1
     bad = 0
