@@ -105,7 +105,7 @@ def leaders(P, groups, M):
         t = ts[0]
         ob = krtext.encode(t['name'])
         nb = krtext.encode(new)
-        if len(nb) <= len(ob):
+        if len(nb) == len(ob):      # 8판: 짧아지면 끝표시가 뒤로 밀려 무리 표가 깨짐(마티스→한솔: 무리 사라짐) → 같은 길이만 제자리
             P.put(t['start'], nb + b'\x50' * (len(ob) - len(nb)))
             P.r.d = P.d
         else:

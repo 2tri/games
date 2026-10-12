@@ -612,7 +612,7 @@ def _sim_evo(evos, lv, bond, badges, item=None):
         if k == 1 and lv >= e[1]: return tgt
         if k == 2 and item is not None and item == e[1]: return tgt
         if k == 6 and lv >= e[1] and bond >= 150: return tgt
-        if k == 7 and lv >= e[1] and bond < 150: return tgt
+        if k == 7 and lv >= e[1] and bond < rules.LOW_BOND: return tgt      # 8판: 엔진은 LOW_BOND(70) 미만
         if k == 8 and lv >= e[1] and bond >= 70 and nb >= rules.BADGES_COMPLETE: return tgt
         if k == 9 and lv >= e[1] and bond < 70 and nb >= rules.BADGES_COMPLETE: return tgt
         if k == 10 and lv >= e[1] and nb >= rules.BADGES_ULTIMATE: return tgt
@@ -636,7 +636,7 @@ def test_all_evos(names, limit=None):
             if k in (3, 4, 5):
                 skip += 1
                 continue
-            lv = 20 if k == 2 else max(1, e[1] - 1)
+            lv = (44 if e[1] == rules.BLACK_GEAR['item'] else 20) if k == 2 else max(1, e[1] - 1)      # 8판: 검은 톱니는 대상 단계 최소 레벨(27·42)이 있음
             bond, badges, item = {1: (70, 0, None), 2: (70, 0, e[1]), 6: (200, 0, None), 7: (40, 0, None), 8: (70, BC, None), 9: (40, BC, None), 10: (70, 0xff, None)}[k]
             b2 = bond + 5 if bond < 100 else (bond + 3 if bond < 200 else bond)      # 사탕 레벨업 때 유대가 먼저 오름
             want = _sim_evo(evos, lv + 1, b2, badges, item) or sp
