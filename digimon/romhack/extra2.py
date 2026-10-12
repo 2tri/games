@@ -1,9 +1,9 @@
-"""추가 묶음 (설계자 2026-10-06): 도감 순서 · 성장 곡선 · 기본 이름 · 마일도 대사
+"""추가 묶음 (설계자 2026-10-06): 도감 순서 · 성장 곡선 · 기본 이름 · 보스 대사
 
 1. 새 도감 순서(NewPokedexOrder, 251바이트) = order/roster.csv 줄 순서(파트너 → 파일 섬 → …) + 나머지 디지몬 + 빈 칸
 2. 성장 곡선: rules.GROWTH_PARTNER 줄(파트너 8줄)은 MEDIUM_SLOW(3), 그 밖 디지몬은 MEDIUM_FAST(0). 능력치 표 22번째 바이트
 3. 기본 이름: 심볼 이름에 PlayerName/RivalName 이 든 글(「골드」「실버」 류)을 rules.DEFAULT_NAMES 로 (같은 길이 이하만)
-4. 브이몬 교환 NPC (2판): 관동 교환 NPC 주는 종 → 브이몬. (마일도 대사는 story2 로 옮김)
+4. 브이몬 교환 NPC (2판): 관동 교환 NPC 주는 종 → 브이몬. (보스 대사는 story2 로 옮김)
 patch.build 에서 types2 다음에 `import extra2; P.log += extra2.apply(P)`"""
 import os, re, csv, struct
 import dmrom, krtext, rules, encounters
@@ -56,49 +56,37 @@ def _keys(S):
 
 
 def default_names(P, S):
-    """3판: 심볼 이름에 PlayerName/RivalName 이 든 표(개수 1바이트 + 이름 11바이트씩, 또는 @ 로 끝나는 이름 나열)를 읽어 로그에 보여 주고,
-    첫 이름(「새로 입력」 다음)을 rules.DEFAULT_NAMES 의 새 이름으로. 없으면 롬 전체 바이트 치환(2판 방식)"""
+    """6판: 이름표 두 곳만 (PlayerNameArray = 「골드@수호@인철@강산@」처럼 @로 끝나는 가변 길이 나열, NameRival.DefaultName = 「실버@」).
+    옛 이름이 rules.DEFAULT_NAMES 의 옛 값과 같고 새 이름의 바이트 길이가 같을 때만 제자리에 씀. 그 밖의 심볼(코드)은 절대 건드리지 않음"""
     out = []
     d = bytes(P.d)
-    keys = _keys(S)
-    arrs = [k for k in keys if ('playername' in k.lower() or 'rivalname' in k.lower() or 'defaultname' in k.lower()) and 'text' not in k.lower()]
-    out.append('표 심볼 %s' % (', '.join(arrs[:8]) or '없음'))
-    new_by = {'player': rules.DEFAULT_NAMES[0][1], 'rival': rules.DEFAULT_NAMES[1][1]}
-    for k in arrs:
-        a = S[k]
-        who = 'rival' if 'rival' in k.lower() else 'player'
-        try:
-            cnt = d[a]
-            base = a + 1
-            if not 1 <= cnt <= 8:
-                cnt = 6
-                base = a                                          # 개수 바이트가 없는 모양
-            names = []
-            for i in range(cnt):
-                e = base + 11 * i
-                j = d.index(0x50, e)
-                names.append(krtext.decode(d, e, j) if j - e <= 10 else '?')
-            out.append('%s: %s' % (k, '·'.join(names)))
-            tgt = 1 if len(names) > 1 else 0                      # 0번은 보통 「새로 입력」
-            nb = krtext.encode(new_by[who]) + b'P'
-            if len(nb) <= 11:
-                P.put(base + 11 * tgt, nb + b'P' * (11 - len(nb)))
-                out.append(' → %d번 %s 를 %s 로' % (tgt, names[tgt], new_by[who]))
-        except Exception as ex:
-            out.append('%s 못 읽음 %r' % (k, ex))
-    if not arrs:
-        for old, new in rules.DEFAULT_NAMES:
-            ob, nb = krtext.encode(old) + b'P', krtext.encode(new) + b'P'
-            if len(nb) != len(ob):
-                continue
-            n = 0
-            i = d.find(ob)
-            while i >= 0:
-                if i == 0 or d[i - 1] in (0x50, 0x7f, 0x00):
-                    P.put(i, nb)
-                    n += 1
-                i = d.find(ob, i + 1)
-            out.append('%s→%s %d곳' % (old, new, n))
+    keys = set(_keys(S))
+    want = dict(rules.DEFAULT_NAMES)                                  # 옛 이름 → 새 이름
+    for key, first_only in (('PlayerNameArray', False), ('NameRival.DefaultName', True)):
+        if key not in keys:
+            out.append('%s 심볼 없음' % key)
+            continue
+        a = S[key]
+        pos = a
+        seen = []
+        for i in range(6):
+            j = d.find(0x50, pos, pos + 12)
+            if j < 0:
+                break
+            old = krtext.decode(d, pos, j)
+            seen.append(old)
+            new = want.get(old)
+            if new:
+                nb = krtext.encode(new)
+                if len(nb) == j - pos:
+                    P.put(pos, nb)
+                    out.append('%s %s→%s' % (key, old, new))
+                else:
+                    out.append('%s %s→%s 길이 다름' % (key, old, new))
+            pos = j + 1
+            if first_only:
+                break
+        out.append('%s 읽은 이름 %s' % (key, '·'.join(seen)))
     return '기본 이름: ' + ' / '.join(out)
 
 

@@ -23,9 +23,20 @@ def apply(P):
             skip.append(c + '(상수 없음)')
             continue
         e = b'\x59'.join(krtext.encode(l) for l in lines) + b'\x50'
+        dd = bytes(P.d)
+        ptr = dd[dtab + 2 * (ids[c] - 1)] | dd[dtab + 2 * (ids[c] - 1) + 1] << 8          # 7판: 제자리 쓰기
+        shared = sum(1 for k_ in range(249) if dd[dtab + 2 * k_] | dd[dtab + 2 * k_ + 1] << 8 == ptr)
+        a0 = addr(bk, ptr)
+        j = a0
+        while dd[j] != 0x50:
+            j += 2 if 1 <= dd[j] <= 0x0b else 1
+        if shared == 1 and len(e) <= j + 1 - a0:
+            P.put(a0, e + b'\x50' * (j + 1 - a0 - len(e)))
+            done.append(c + '(제자리)')
+            continue
         k = next((i for i, r in enumerate(runs) if r[1] - r[0] >= len(e)), None)
         if k is None:
-            skip.append(c + '(자리 없음)')
+            skip.append(c + '(자리 없음 %d바이트)' % len(e))
             continue
         a, b = runs[k]
         P.put(a, e)

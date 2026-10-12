@@ -529,8 +529,14 @@ class Patch:
         hap = find(d, 'fae1d0fedcda', '친밀도 진화 자리'); HAPPY_RAM = d[hap + 1] | d[hap + 2] << 8
         prc = d.find(bytes.fromhex('fae5d0eafbd0'), site); PROCEED = 0x4000 + prc % 0x4000
         bdg = find(d, 'fa30d647fa2fd64f', '배지'); BADGES = d[bdg + 5] | d[bdg + 6] << 8
-        n_code = 140
-        b, org = self.evo_space if getattr(self, 'evo_space', None) else self.sp.take(n_code + 251, bank=bank)
+        # 7판: 도구 진화 갈래(.item: ld a,[hli] / ld b,a / ld a,[wCurItem] / cp b / jp nz,.dont_evolve_3 — 이 롬의 실제 모양, evolve.asm)를 가로채
+        #   검은 톱니면 대상 종의 최소 레벨(table)을 본다. 이 자리에서 hl 은 이미 대상 종을 가리킴(꾸러미 글의 cp [hl] 모양과 달라 맞춤)
+        im = list(re.finditer(rb'\x2a\x47\xfa(..)\xb8\xc2(..)', d[site:site + 400], re.S))
+        assert im, '도구 진화 자리'
+        im = im[0]; CUR_ITEM = int.from_bytes(im.group(1), 'little'); ITEM_JP = site + im.start() + 6; ITEM_BACK = 0x4000 + (ITEM_JP + 3) % 0x4000
+        DONT3 = int.from_bytes(im.group(2), 'little'); assert DONT3 == DONT1 + 2, '도구 진화 dont 자리'
+        n_code = 190
+        b, org = self.evo_space if getattr(self, 'evo_space', None) else self.sp.take(n_code + 252, bank=bank)
         a = Asm(org)
         a.db(0x78); a.cp(STAT); a.jr('custom', 'nz')            # ld a,b / cp 5
         a.ld_a_mem(LEVEL); a.jp(0x4000 + (site + 3) % 0x4000)    # 원래 길로
@@ -543,7 +549,7 @@ class Patch:
         a.L('high'); a.ld_a_mem(HAPPY_RAM); a.cp(HIGH_BOND); a.jp(DONT2, 'c'); a.jr('ok')
         a.L('low'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc'); a.jr('ok')
         a.L('any'); a.call('count'); a.cp(rules.BADGES_ULTIMATE); a.jp(DONT2, 'c'); a.jr('ok')   # 궁극체: 배지 8개
-        a.L('crest'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'c')                   # 완전체: 유대 낮음이면 안 함(암흑으로)
+        a.L('crest')                                             # 완전체: 문장 3 + 레벨만 (유대 조건 없음 — 사용자 10/7 「유대는 안 보고 싶다」. 어둠은 검은 톱니로)
         a.call('count'); a.cp(rules.BADGES_COMPLETE); a.jp(DONT2, 'c'); a.jr('ok')               # 배지 3개
         a.L('dark'); a.ld_a_mem(HAPPY_RAM); a.cp(LOW_BOND); a.jp(DONT2, 'nc')                    # 암흑: 유대 낮음
         a.call('count'); a.cp(rules.BADGES_COMPLETE); a.jp(DONT2, 'c')                           # + 배지 3개
@@ -555,10 +561,22 @@ class Patch:
         a.L('cl'); a.db(0x1F); a.jr('cs', 'nc'); a.db(0x0C)             # rra / jr nc / inc c
         a.L('cs'); a.db(0x05); a.jr('cl', 'nz')                         # dec b / jr nz
         a.db(0x79, 0xC1, 0xC9)                                          # ld a,c / pop bc / ret
-        a.L('table'); a.db(*[crest_of.get(no, 0) for no in range(1, 252)])   # (안 씀, 자리만)
-        code = a.build(); assert len(code) <= n_code + 251, len(code)
+        a.L('gear')                                              # 도구 진화: 도구가 다르면 원래대로 안 함, 검은 톱니면 대상 종 최소 레벨(table) 검사
+        a.jp(DONT3, 'nz')                                        # (cp b 의 플래그 그대로: 도구가 다르면 원래대로 안 함)
+        a.ld_a_mem(CUR_ITEM); a.cp(rules.BLACK_GEAR['item']); a.jr('gback', 'nz')
+        a.db(0xE5, 0x7E)                                         # push hl / ld a,[hl] = 대상 종
+        a.db(0x21); a.ref('table_m1')                            # ld hl, table-1
+        a.db(0x85, 0x6F); a.jr('gnc', 'nc'); a.db(0x24)          # add a,l / ld l,a / jr nc / inc h
+        a.L('gnc'); a.db(0x7E, 0x47, 0xE1)                       # ld a,[hl] (최소 레벨) / ld b,a / pop hl  (b 는 이 뒤 안 씀)
+        a.ld_a_mem(LEVEL); a.db(0xB8); a.jp(DONT3, 'c')          # cp b / 레벨 모자람
+        a.L('gback'); a.jp(ITEM_BACK)
+        a.L('table_m1'); a.db(0)                                 # table-1 (번호 1 부터 세게)
+        a.L('table'); a.db(*([0] * 251))                         # 대상 종 번호 → 검은 톱니 최소 레벨 (sane7.black_gear 가 채움)
+        code = a.build(); assert len(code) <= n_code + 252, len(code)
         self.put(addr(b, org), code)
         self.put(site, bytes([0xC3, org & 255, org >> 8]))
+        self.put(ITEM_JP, bytes([0xC3, a.lab['gear'] & 255, a.lab['gear'] >> 8]))      # jp nz,dont → jp gear
+        self.gear_table = addr(b, a.lab['table'])
         self.log.append('진화 확장 코드(배지 개수판) 뱅크 %02X:%04X (%d바이트), 완전체 배지 %d·궁극체 배지 %d' % (b, org, len(code), rules.BADGES_COMPLETE, rules.BADGES_ULTIMATE))
 
     # ── 포획: 잡기 확률이 0인 디지몬은 절대 안 잡힘 ──
@@ -616,7 +634,7 @@ def build(base, out_rom, out_ips):
     # 6 어드벤처 완전체 빈칸: 그레이몬 → 메탈그레이몬 → 워그레이몬, 가루몬 → 워가루몬 → 메탈가루몬
     #   야생·트레이너·이벤트 어디에도 안 쓰이는 포켓몬 칸에 넣음. 그림이 아직 없으면 임시 그림(물음표 알)
     #   도감: 공식 도감(digimon.net) 프로필을 3줄로 줄임. 키·몸무게는 공식 값이 없어 임시
-    P.evo_space = P.sp.take(140 + 251, bank=r.evos // 0x4000)          # 진화 확장 코드 자리 (코드는 B단계 진화 표 뒤에 씀)
+    P.evo_space = P.sp.take(190 + 252, bank=r.evos // 0x4000)          # 진화 확장 코드 자리 (코드는 B단계 진화 표 뒤에 씀)
     MGR = N.get('메탈그레몬') or S('핫삼'); WGR = N.get('워가루몬') or S('링곰')
     P.new_mon(MGR, '메탈그레몬', S('그레이몬'), S('워그레이몬'), 'metalgreymon', '사이보그형', ['몸의 절반 이상을 기계화한', '디지몬. 공격력은 핵탄두', '한 발에 맞먹는다고 한다'], 42, 2800)
     P.new_mon(WGR, '워가루몬', S('가루몬'), S('메탈가루몬'), 'weregarurumon', '수인형', ['가루몬이 진화해 두 발로', '걷게 된 디지몬. 발차기와', '점프력이 강하다'], 21, 1100)
@@ -654,8 +672,8 @@ def build(base, out_rom, out_ips):
     P.evos(S('원뿔몬'), [(CREST, 32, S('쥬드몬'))])           # 원래 통신 교환 진화라 혼자서는 못 했음
     P.evos(S('엔젤몬'), [(CREST, 30, S('홀리엔젤몬'))])   # 완전체 30 이상 (B단계)
     # 성장기 → 성숙기: 유대
-    P.evos(S('파피몬'), [(BOND_HI, 16, S('가루몬')), (LV, 16, S('우가몬'))])               # 유대 높음 가루몬, 아니면 우가몬
-    P.evos(S('플롯트몬'), [(BOND_HI, 16, S('가트몬')), (LV, 16, S('위자몬'))])             # 유대 높음 가트몬, 아니면 위자몬
+    P.evos(S('파피몬'), [(BOND_LO, 16, S('우가몬')), (LV, 16, S('가루몬'))])               # 7판: 유대 낮음(70 미만) 우가몬, 아니면 가루몬
+    P.evos(S('플롯트몬'), [(BOND_LO, 16, S('위자몬')), (LV, 16, S('가트몬'))])             # 7판: 유대 낮음 위자몬, 아니면 가트몬
     # 5 디지몬스터 버그: 메탈가루몬 진화 목록 끝 표시 (깨져 있을 때만 — 올바른 진화 종류는 1~5)
     MG = S('메탈가루몬'); ev = r.evos_attacks(MG)[0]
     if any(not 1 <= e[0] <= 5 for e in ev):
@@ -715,23 +733,27 @@ def build(base, out_rom, out_ips):
     def ek(k, t):      # 2판: 완전체로 가는 레벨 진화 = 문장(배지 3), 궁극체 = 배지 8 (묶음 J 규칙을 slots 에도)
         g = GR.get(t) or G_.get(t)
         return CREST if (k == 'LV' and g == '완전체') else ANYCREST if (k == 'LV' and g == '궁극체') else KINDS.get(k, LV)
+    ph_no = None
     for m in SL['mons']:
-        f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
+        ph = False; f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
         sn20 = next((k for k in range(1, dmrom.NUM + 1) if src.name(k).strip() == m['art20']), None) if m.get('art20') and src else None
         if m.get('art20') and not sn20: continue                        # 2.0 그림을 쓰는 종인데 2.0 롬이 없으면 건너뜀
         if sn20: pass
         elif not (os.path.exists(f) and os.path.exists(b)):
-            if os.environ.get('PLACEHOLDER') != '1': continue
-            f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png')
+            if os.environ.get('PLACEHOLDER') != '1' and m['name'] not in getattr(rules, 'PLACEHOLDER_NAMES', ()): continue      # 유대 갈래 4종은 임시 그림으로라도 설치
+            f, b = os.path.join(WEB, 'art', 'placeholder-f.png'), os.path.join(WEB, 'art', 'placeholder-b.png'); ph = True
         no = N.get(m['name']) or (m['slot'] if isinstance(m['slot'], int) else S(m['slot']))      # 빈 칸(-----)은 번호로
         st = dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), m['stats']))
         P.name(no, m['name']); N[m['name']] = no                        # 새 칸끼리 진화(푸니몬 → 뿔몬)도 찾게
         P.stats(no, **st, type1=TYPES[m['type'][0]], type2=TYPES[m['type'][1]], exp=m['exp'], catch=m['catch'], growth=0)
         if sn20: P.pic_from_rom(no, src, sn20)                           # 작업팩 10/6 S3-2: 2.0 그림·색
+        elif ph and ph_no: P.put(r.pics + 6 * (no - 1), bytes(P.d[r.pics + 6 * (ph_no - 1):r.pics + 6 * ph_no])); P.stats(no, pic_size=P.d[r.bs + 0x20 * (ph_no - 1) + 17])      # 임시 그림은 한 벌만
         else: P.pic(no, f, b)
+        if ph: ph_no = no
         mv_ = list(P.r.evos_attacks(S(m['moves_from']))[1]) if m.get('moves_from') else moves_by_name(m['moves'])   # 같은 타입·단계 종 기술 복사 (E 공통 규칙)
         P.evos(no, [(ek(k, t), lv, S(t)) for k, lv, t in m['evos']], mv_)
-        P.dex(no, *m['dex'])
+        try: P.dex(no, *m['dex'])
+        except MemoryError as ex_: P.log.append('도감 글 자리 없음 → %s 도감은 원래 칸 글 그대로 (%s)' % (m['name'], ex_))     # 7판: 종은 둠
         lk = S(m['like']); idx, pitch, length = P.cry_of(lk)
         baby = m['grade'].startswith(('유년기', '유아기'))
         P.cry(no, idx, (pitch + (0x30 if baby else -0x20)) & 0xffff, (length - 0x10 if baby else length + 0x20) & 0xffff)
@@ -770,7 +792,7 @@ def build(base, out_rom, out_ips):
         '플라이몬': T((CREST, 34, '오쿠와몬')),                       # 쿠네몬 줄은 파트너가 아니라 자기 문장 없음
         '스나이몬': T((CREST, 34, '아라크네몬')),
         '호크몬': T((LV, 18, '아쿠이라몬')) if has('아쿠이라몬') else T((CREST, 35, '실피드몬')),
-        '가트몬': (T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else []) + (T((DARK, 30, '레이디데블')) if has('레이디데블') else []),     # 달맞이 돌 → 오파니몬 삭제. 자기 문장 → 암흑 순서
+        '가트몬': (T((CREST, 30, '엔젤우몬')) if has('엔젤우몬') else []) + (T((DARK, 27, '레이디데블')) if has('레이디데블') else []),     # 달맞이 돌 → 오파니몬 삭제. 자기 문장 → 암흑 순서
         '홀리엔젤몬': T((ANYCREST, 45, '세라피몬')),
         '피코데블몬': T((LV, 20, '데블몬')),                            # 정사 진화. 피에몬은 사천왕 전용
         '피에몬': [], '위자몬': [], '스팅몬': [], '데블몬': [], '디지타마몬': [], '안드로몬': [], '콩알몬': [],
@@ -783,7 +805,7 @@ def build(base, out_rom, out_ips):
         '인펠몬': T((ANYCREST, 45, '디아블로몬')),
         '엑스브이몬': T((ANYCREST, 45, '황제드라몬')),
         '파닥몬': T((BOND_HI, 16, '엔젤몬'), (BOND_LO, 16, '데블몬'), (LV, 16, '엔젤몬')),
-        '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 32, '스컬그레몬')) if has('스컬그레몬') else []),
+        '그레이몬': T((CREST, 32, '메탈그레몬')) + (T((DARK, 29, '스컬그레몬')) if has('스컬그레몬') else []),
     }
     if has('아쿠이라몬'): EV['아쿠이라몬'] = T((CREST, 35, '실피드몬'))
     if has('엔젤우몬'): EV['엔젤우몬'] = T((ANYCREST, 45, '마그나드몬'))
@@ -874,11 +896,21 @@ def build(base, out_rom, out_ips):
     P.r.d = P.d; N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
     dm = re.search(rb'\xfe\xfd\x28.\x3d\x21(..)\x5f\x16\x00\x19\x7e\xc9', bytes(P.d), re.S)
     icons = addr(dm.start() // 0x4000, int.from_bytes(dm.group(1), 'little'))
+    G_all = {v['name']: v['grade'] for v in json.load(open(os.path.join(HERE, 'grades.json'))).values()}
+    G_all.update({m_['name']: m_['grade'] for m_ in json.load(open(os.path.join(HERE, 'slots.json')))['mons']})
+    SLM = {m_['name']: m_ for m_ in json.load(open(os.path.join(HERE, 'slots.json')))['mons']}
     for nm, (src, slot, grade, c1, c2) in rules.PALSWAP.items():
         if src not in N: continue
+        if nm in N: continue                                                 # 7판: 그림이 들어와 E단계에서 이미 설치됨
         s_ = N[src]; a_, b_ = r.bs + 0x20 * (slot - 1), r.bs + 0x20 * (s_ - 1)
         P.put(a_ + 1, bytes(P.d[b_ + 1:b_ + 0x20]))                          # 첫 바이트(종 번호)만 빼고 복사
         P.stats(slot, atk=min(255, P.d[b_ + 2] + 10), **{'def': max(1, P.d[b_ + 3] - 10)})
+        if G_all.get(src) and G_all.get(src) != grade:                       # 7판: 단계가 다르면 능력치 +20씩, 포획률은 단계표
+            P.put(a_ + 1, bytes(min(255, x + 20) for x in P.d[a_ + 1:a_ + 7]))
+            P.stats(slot, catch=rules.CATCH_BY_NAME.get(nm, rules.CATCH_BY_GRADE.get(grade, P.d[b_ + 9])))
+        if nm in SLM:                                                        # 7판: slots.json 에 능력치가 있으면 그것 (바이킹몬 580 등)
+            st_ = SLM[nm]
+            P.stats(slot, **dict(zip(('hp', 'atk', 'def', 'spd', 'sat', 'sdf'), st_['stats'])), type1=TYPES[st_['type'][0]], type2=TYPES[st_['type'][1]], exp=st_['exp'], catch=st_['catch'])
         P.name(slot, nm)
         P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (s_ - 1):r.pics + 6 * s_]))
         P.palette(slot, c1, c2)
@@ -1171,6 +1203,23 @@ def build(base, out_rom, out_ips):
     P.log += extra2.apply(P)
     import story2
     P.log += story2.apply(P)
+    import places2
+    P.log += places2.apply(P)
+    import sane7
+    P.log += sane7.apply(P)
+    import diff7
+    P.log += diff7.apply(P)
+    P.r.d = P.d; N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}                  # 7판: 색 종이 생긴 뒤 붙일 진화 (진화 뱅크 0x10 빈 곳이 1369바이트뿐이라 맨 끝으로 옮김 — 앞에 두면 D-4·moves7 가 자리 모자라 멈춤)
+    KINDS_ = {'LV': LV, 'CREST': CREST, 'ANYCREST': ANYCREST, 'DARK': DARK, 'BOND_HI': BOND_HI, 'BOND_LO': BOND_LO}
+    for src_, adds in getattr(rules, 'PALSWAP_EVOS', {}).items():
+        if src_ not in N: continue
+        ev_, mv_ = P.r.evos_attacks(N[src_]); ev_ = [tuple(e) for e in ev_ if 1 <= e[0] <= 10 and e[0] != 5]
+        new_ = [(KINDS_[k], lv, N[tg]) for k, lv, tg in adds if tg in N and not any(e[-1] == N[tg] for e in ev_)]
+        if new_:
+            try:
+                P.evos(N[src_], ev_ + new_, mv_); P.log.append('색 종 진화 붙임: %s → %s' % (src_, ', '.join(r.name(x[-1]) for x in new_)))
+            except MemoryError as ex_:      # 진화 뱅크가 꽉 차면 그 항목만 건너뜀 (꾸러미 지침: 오류 난 항목만 두고 계속)
+                P.log.append('색 종 진화 못 붙임(%s): %s → %s' % (ex_, src_, ', '.join(r.name(x[-1]) for x in new_)))
     # G단계 메뉴 아이콘 10종: art/icons/<분류>.png(tools/icons.py)를 금 아이콘 10칸에 같은 크기(128바이트)로 덮어쓰고, 디지몬 칸마다 배정 (icons.json)
     sys.path.insert(0, os.path.join(WEB, 'tools')); import icons as ICN
     gm = re.search(rb'\x11(..)\x19\x2a\x5f\x56\xe1\x01\x08(.)', bytes(P.d), re.S)

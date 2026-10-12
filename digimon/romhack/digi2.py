@@ -162,18 +162,20 @@ def apply(P):
         ie_ = romanat.Sym()['ItemEffects']
     except (FileNotFoundError, KeyError):
         ie_ = None
-    for k in need:
+    for k in DM:                                                                             # 7판: 값·효과는 9개 전부, 속성·설명은 새 칸만
         it = ids[k]
-        P.put(at + 7 * (it - 1), bytes(dd[at + 7 * 7:at + 7 * 8]))                          # 달맞이 돌 속성
+        if k in need:
+            P.put(at + 7 * (it - 1), bytes(dd[at + 7 * 7:at + 7 * 8]))                      # 달맞이 돌 속성
         P.put(at + 7 * (it - 1), struct.pack('<H', rules.DIGIMENTAL_MART[1]))               # 값
-        P.put(dtab + 2 * (it - 1), dp)
+        if k in need:
+            P.put(dtab + 2 * (it - 1), dp)
         if ie_:
             P.put(ie_ + 2 * (it - 1), bytes(P.d[ie_ + 2 * 7:ie_ + 2 * 8]))                   # 달맞이 돌 = EvoStoneEffect
     nil = rename_many(P, {ids[k]: v[1] for k, v in DM.items()})
     log.append('H-1 디지멘탈 이름 %d개(이름표 옮김, InitList %d), 새 칸 %s%s' % (
         len(DM), nil, ', '.join('%s=%d' % (k, ids[k]) for k in need), '' if ie_ else ' (효과 못 바꿈: 심볼 없음)'))
     try:
-        log.append(' ' + add_to_mart(P, rules.DIGIMENTAL_MART[0], [ids[k] for k in need]))
+        log.append(' ' + add_to_mart(P, rules.DIGIMENTAL_MART[0], [ids[k] for k in DM]))
     except Exception as ex:
         log.append(' 상점 추가 실패: %r' % (ex,))
     # 아머 진화

@@ -90,7 +90,7 @@ def test_evo(names):
              (N['메탈그레몬'], 44, 70), (N['가루몬'], 32, 70)]
     cases = [  # 이름, slot, 배지, 레벨 덮어쓰기, 기대 종
         ('파피몬 유대↑(200) → 가루몬', 0, 0, None, N['가루몬']),
-        ('파피몬 유대 보통(70) → 우가몬', 1, 0, None, N['우가몬']),
+        ('파피몬 유대 보통(70) → 가루몬', 1, 0, None, N['가루몬']),
         ('그레이몬 배지 3개 Lv32 → 메탈그레몬', 2, 0b111, None, N['메탈그레몬'], 30),   # 3판: 묶음 J = 배지 개수 (완전체 3, 궁극체 8)
         ('그레이몬 배지 없음 Lv32 → 그대로', 2, 0, None, N['그레이몬']),
         ('그레이몬 배지 2개 Lv32 → 그대로', 2, 0b11, None, N['그레이몬']),
@@ -108,13 +108,13 @@ def test_evo(names):
         ('파닥몬 유대 높음(200) → 엔젤몬', '파닥몬', 15, '엔젤몬', 200),
         ('파닥몬 유대 낮음(40) → 데블몬', '파닥몬', 15, '데블몬', 40),
         ('파닥몬 유대 보통(100) → 엔젤몬', '파닥몬', 15, '엔젤몬', 100),
-        ('파피몬 유대 140 (150 미만) → 우가몬', '파피몬', 15, '우가몬', 140),
+        ('파피몬 유대 40 (70 미만) → 우가몬', '파피몬', 15, '우가몬', 40),
         ('파피몬 유대 150 (기준값) → 가루몬', '파피몬', 15, '가루몬', 150),
-        ('그레이몬 배지 3개 + 유대 40 Lv32 → %s (암흑)' % SK, '그레이몬', 31, SK, 40, 0b111, 30 if SK != '그레이몬' else 16),
-        ('그레이몬 배지 3개 + 유대 40 Lv36 → %s (암흑)' % SK, '그레이몬', 35, SK, 40, 0b111, 30 if SK != '그레이몬' else 16),
+        ('그레이몬 배지 3개 + 유대 40 Lv32 → 메탈그레몬 (유대 무관)', '그레이몬', 31, '메탈그레몬', 40, 0b111, 30),
+        ('그레이몬 배지 3개 + 유대 40 Lv29 → %s (암흑, 레벨 29)' % SK, '그레이몬', 28, SK, 40, 0b111, 30 if SK != '그레이몬' else 16),
         ('가트몬 배지 3개 Lv30 → 엔젤우몬', '가트몬', 29, '엔젤우몬', 70, 0b111, 30),
         ('가트몬 배지 2개 Lv30 → 그대로', '가트몬', 29, '가트몬', 70, 0b11, 16),
-        ('가트몬 배지 3개 + 유대 40 Lv30 → 레이디데블 (암흑)', '가트몬', 29, '레이디데블' if '레이디데블' in N else '가트몬', 40, 0b111, 30),
+        ('가트몬 배지 3개 + 유대 40 Lv27 → 레이디데블 (암흑, 레벨 27)', '가트몬', 26, '레이디데블' if '레이디데블' in N else '가트몬', 40, 0b111, 30),
         ('엔젤우몬 배지 8개 Lv45 → 마그나드몬', '엔젤우몬', 44, '마그나드몬', 70, 0xff, 30),
         ('쉬라몬 Lv18 → 원뿔몬', '쉬라몬', 17, '원뿔몬', 70),
         ('텐타몬 유대 낮음(40) Lv16 → 쿠가몬', '텐타몬', 15, '쿠가몬', 40),
@@ -243,8 +243,8 @@ def test_dark_real(names, N):
     """스컬그레몬이 들어온 롬: 그레이몬 자기 문장 32 메탈그레몬 → 암흑 32 스컬그레몬 → 아무 문장 36 메탈그레몬"""
     g = N['그레이몬']; bad = 0
     cases = [  # 이름, 유대, 배지, 기대 종
-        ('암흑: 유대 40 + 배지 3개 Lv32 → 스컬그레몬', 40, 0b111, N['스컬그레몬']),
-        ('암흑: 유대 64(사탕 +5 → 69) + 배지 3개 → 스컬그레몬', 64, 0b111, N['스컬그레몬']),   # 이상한사탕 레벨업 때 유대 +5 뒤에 진화 판정
+        ('암흑: 유대 40 + 배지 3개 Lv32 → 메탈그레몬 (문장이 먼저, 유대 무관)', 40, 0b111, N['메탈그레몬']),
+        ('암흑: 유대 64(사탕 +5 → 69) + 배지 3개 → 메탈그레몬', 64, 0b111, N['메탈그레몬']),   # 이상한사탕 레벨업 때 유대 +5 뒤에 진화 판정
         ('암흑: 유대 65(사탕 +5 → 70) + 배지 3개 → 메탈그레몬 (문장)', 65, 0b111, N['메탈그레몬']),
         ('암흑: 유대 40 + 배지 없음 Lv32 → 그대로', 40, 0, g),
         ('암흑: 유대 40 + 배지 2개 Lv32 → 그대로', 40, 0b11, g),
@@ -602,6 +602,144 @@ def test_party_icons(names):
     return 0
 
 
+# ── 7판: 전 종 진화표 자동 시험 / 보스 전투 시작 / 전 맵 불러오기 ──
+def _sim_evo(evos, lv, bond, badges, item=None):
+    """진화 코드와 같은 순서로 목록을 훑어 처음 맞는 대상 (없으면 None). 유대 150↑ = 6, 70 미만 = 7·9, 배지 수 = 8·9·10"""
+    import rules
+    nb = bin(badges).count('1')
+    for e in evos:
+        k, tgt = e[0], e[-1]
+        if k == 1 and lv >= e[1]: return tgt
+        if k == 2 and item is not None and item == e[1]: return tgt
+        if k == 6 and lv >= e[1] and bond >= 150: return tgt
+        if k == 7 and lv >= e[1] and bond < 150: return tgt
+        if k == 8 and lv >= e[1] and bond >= 70 and nb >= rules.BADGES_COMPLETE: return tgt
+        if k == 9 and lv >= e[1] and bond < 70 and nb >= rules.BADGES_COMPLETE: return tgt
+        if k == 10 and lv >= e[1] and nb >= rules.BADGES_ULTIMATE: return tgt
+    return None
+
+
+def test_all_evos(names, limit=None):
+    """롬의 진화 목록 전부: 항목마다 그 항목이 걸리게 유대·배지·도구를 맞춰 사탕 1개 → 코드와 같은 규칙의 기대 종과 비교 (통신·친밀도·능력치 종류는 건너뜀)"""
+    import rules
+    r = dmrom.Rom(ROM)
+    bad = 0
+    n_run = 0
+    skip = 0
+    BC = (1 << rules.BADGES_COMPLETE) - 1
+    for sp in range(1, dmrom.NUM + 1):
+        nm = r.name(sp)
+        if nm == rules.EMPTY_NAME or nm.startswith('-'): continue
+        evos = [e for e in r.evos_attacks(sp)[0] if 1 <= e[0] <= 10]
+        for e in evos:
+            k = e[0]
+            if k in (3, 4, 5):
+                skip += 1
+                continue
+            lv = 20 if k == 2 else max(1, e[1] - 1)
+            bond, badges, item = {1: (70, 0, None), 2: (70, 0, e[1]), 6: (200, 0, None), 7: (40, 0, None), 8: (70, BC, None), 9: (40, BC, None), 10: (70, 0xff, None)}[k]
+            b2 = bond + 5 if bond < 100 else (bond + 3 if bond < 200 else bond)      # 사탕 레벨업 때 유대가 먼저 오름
+            want = _sim_evo(evos, lv + 1, b2, badges, item) or sp
+            got, got_lv = candy(0, [(sp, lv, bond)], names, badges, 30 if want != sp else 16, item=item)
+            ok = got == want
+            bad += not ok
+            n_run += 1
+            if not ok:
+                print('  %s %s Lv%d 유대%d 배지%s%s → %s (기대 %s)' % (nm, {1: '레벨', 2: '도구', 6: '유대↑', 7: '유대↓', 8: '문장', 9: '암흑', 10: '배지8'}[k], lv + 1, bond, bin(badges).count('1'),
+                                                                 ' 도구%d' % item if item else '', r.name(got), r.name(want)))
+            if limit and n_run >= limit: break
+        if limit and n_run >= limit: break
+    print('  진화 항목 %d개 시험, 틀림 %d, 건너뜀(통신·친밀도·능력치) %d' % (n_run, bad, skip))
+    return bad
+
+
+BOSSES = [('Falkner', 1), ('Bugsy', 1), ('Whitney', 1), ('Morty', 1), ('Chuck', 1), ('Jasmine', 1), ('Pryce', 1), ('Clair', 1), ('Will', 1), ('Koga', 1), ('Bruno', 1), ('Karen', 1),
+          ('Champion', 1), ('Brock', 1), ('Misty', 1), ('LtSurge', 1), ('Erika', 1), ('Janine', 1), ('Sabrina', 1), ('Blaine', 1), ('Blue', 1), ('Red', 1), ('Rival1', 1), ('Rival1', 4),
+          ('Rival1', 7), ('Rival1', 10), ('Rival1', 13), ('Rival2', 1), ('Rival2', 4), ('CooltrainerM', 17), ('ExecutiveM', 1)]
+
+
+def test_bosses(names):
+    """보스 전투 전부 시작해 상대 파티가 롬 표와 같은지 (test_e4 방식). grass.state 필요(포획 시험 뒤)"""
+    import encounters
+    groups = re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
+    bad = 0
+    for g, tid in BOSSES:
+        if g not in groups:
+            print('  %s 무리 없음' % g)
+            continue
+        try:
+            bad += test_e4(names, group=g, cls=groups.index(g) + 1, tid=tid)
+        except Exception as ex:
+            bad += 1
+            print('  %s %d 실패 %r' % (g, tid, ex))
+    return bad
+
+
+def _warp_check(g, n, x, y, names, sp):
+    """램에 맵·좌표를 쓰고 저장 → 전원 다시 → 계속하기 → 그 맵이 뜨고 메뉴가 열리는지"""
+    p = new('intro.state')
+    m = p.pb.memory
+    put_party(p, [(sp, 5, 70)], names)
+    m[MAP_GROUP], m[MAP_NUM], m[XC], m[YC] = g, n, x, y
+    p.tick(5)
+    p.press('start', 6, 80)
+    for _ in range(3): p.press('down', 6, 20)
+    p.press('a', 6, 100)      # 저장
+    p.press('a', 6, 150)      # 예
+    p.press('a', 6, 150)      # 덮어쓰기 예 (물음이 없으면 글 넘김)
+    p.tick(500)
+    p.pb.stop(save=True)      # 카트리지 램을 파일로
+    p = new()
+    m = p.pb.memory
+    p.tick(300)
+    for i in range(24):
+        p.press('a', 6, 60)
+        if (m[MAP_GROUP], m[MAP_NUM]) == (g, n): break
+    else:
+        p.stop()
+        return False, '불러온 뒤 맵이 %d-%d' % (m[MAP_GROUP], m[MAP_NUM])
+    p.press('a', 6, 60)
+    p.tick(240)
+    img0 = p.pb.screen.image.tobytes()
+    p.press('start', 6, 90)
+    img1 = p.pb.screen.image.tobytes()
+    alive = img0 != img1
+    if not alive: p.shot('map%d_%d' % (g, n))
+    p.stop()
+    return alive, '' if alive else '입력 반응 없음 (work/shots/map_%d_%d.png)' % (g, n)
+
+
+def test_maps(names, which='main'):
+    """맵 불러오기: which='main' = 마을·도로·체육관, 'all' = 전부. 각 맵 첫 출입구 좌표에 세움"""
+    r = dmrom.Rom(ROM)
+    N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}
+    MN = wild.map_names()
+    envs = {}
+    for l in open(os.path.join(wild.KR, 'data/maps/maps.asm')):
+        mm = re.match(r'^\s*map\s+(\w+),\s*\w+,\s*(\w+)', l)
+        if mm: envs[mm.group(1)] = mm.group(2)
+    todo = []
+    for (g, n), (lab, ko) in sorted(MN.items()):
+        f = os.path.join(wild.KR, 'maps', lab + '.asm')
+        if not os.path.exists(f): continue
+        w = re.search(r'warp_event\s+(\d+),\s*(\d+)', open(f, encoding='utf-8', errors='ignore').read())
+        if not w: continue
+        if which == 'main' and not (envs.get(lab) in ('TOWN', 'ROUTE') or 'Gym' in lab): continue
+        todo.append((g, n, int(w.group(1)), int(w.group(2)), lab, ko))
+    sp = N.get('코로몬') or N.get('아구몬') or 1
+    bad = 0
+    for g, n, x, y, lab, ko in todo:
+        try:
+            ok, why = _warp_check(g, n, x, y, names, sp)
+        except Exception as ex:
+            ok, why = False, repr(ex)
+        if not ok:
+            bad += 1
+            print('  %s(%s) %d-%d: %s' % (ko, lab, g, n, why))
+    print('  맵 %d개 불러오기, 문제 %d' % (len(todo), bad))
+    return bad
+
+
 if __name__ == '__main__':
     os.makedirs(SHOTS, exist_ok=True)
     if not os.path.exists(os.path.join(W, 'intro.state')) or '--intro' in sys.argv:
@@ -621,5 +759,9 @@ if __name__ == '__main__':
     print('S7 보스 기술'); bad += test_boss_move(names)
     print('S7 기술 설명 화면'); bad += test_move_desc(names)
     print('S8 진화 장면'); bad += test_evo_scene(names)
+    if '--quick' not in sys.argv:      # 7판: 오래 걸리는 셋 (약 10~20분)
+        print('전 종 진화표'); bad += test_all_evos(names)
+        print('보스 전투 시작'); bad += test_bosses(names)
+        print('맵 불러오기'); bad += test_maps(names, 'all' if '--all-maps' in sys.argv else 'main')
     print('결과:', '모두 통과' if not bad else '%d개 실패' % bad)
     sys.exit(1 if bad else 0)

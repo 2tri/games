@@ -152,7 +152,10 @@ def apply(P):
                     miss.append('%s: 후보 %d%s' % (e['id'], len(cand), ''.join(' [%X]%s' % (a, MARK.sub(' ', B[a])[:20]) for a in cand[:4])))
                     continue
                 for a in cand:
-                    put(a, conv(e['text'], tail_of(B[a])))
+                    if 'append' in e:                                  # 7판: 원문 뒤에 덧붙임
+                        put(a, B[a][:-len(tail_of(B[a]))] + '<PARA>' + conv(e['append'], '') + tail_of(B[a]))
+                    else:
+                        put(a, conv(e['text'], tail_of(B[a])))
                 log.append('대사 %s: %X %s' % (e['id'], cand[0], MARK.sub(' ', B[cand[0]])[:14]))
             elif 'battle' in e:
                 g, idx = e['battle']

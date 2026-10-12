@@ -404,6 +404,82 @@ def rules(c, out):
             if g == '궁극체' and e[0] not in (10, 2): r27.append((n, e, '궁극체로 가는 진화가 종류 10·도구가 아님'))
     rep('R27', r27, '완전체로 가는 레벨 진화 = 종류 8(배지 %d)·9, 궁극체로 가는 진화 = 종류 10(배지 %d)·도구' % (RU.BADGES_COMPLETE, RU.BADGES_ULTIMATE),
         lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2]))
+    # ── 7판 밸런스 규칙 R28~R31 (R30·R31 은 [?] 로만 알림) ──
+    # R28 보스 레벨 순서: 성도 관장 8명(게임 순서) 최고 레벨이 내려가지 않고, 사천왕 > 이향, 챔피언 ≥ 사천왕, 정우 ≥ 챔피언
+    bygroup = {}
+    for t in c.trainers:
+        g = GROUPS[t['group']]
+        if t['idx'] == 0 and t['mons']:
+            bygroup[g] = max(lv for lv, _, _ in t['mons'])
+    r28 = []
+    order = ['Falkner', 'Bugsy', 'Whitney', 'Morty', 'Chuck', 'Jasmine', 'Pryce', 'Clair']
+    seq = [(g, bygroup.get(g, 0)) for g in order]
+    for (g1, l1), (g2, l2) in zip(seq, seq[1:]):
+        if l2 < l1: r28.append('%s Lv%d > %s Lv%d' % (g1, l1, g2, l2))
+    e4 = [bygroup.get(g, 0) for g in ('Will', 'Koga', 'Bruno', 'Karen')]
+    if min(e4) <= bygroup.get('Clair', 0): r28.append('사천왕 최고 레벨 %s 이 이향 Lv%d 이하' % (e4, bygroup.get('Clair', 0)))
+    if bygroup.get('Champion', 0) < max(e4): r28.append('챔피언 Lv%d < 사천왕 최고 Lv%d' % (bygroup.get('Champion', 0), max(e4)))
+    if bygroup.get('Red', 0) < bygroup.get('Champion', 0): r28.append('정우 Lv%d < 챔피언 Lv%d' % (bygroup.get('Red', 0), bygroup.get('Champion', 0)))
+    rep('R28', r28, '보스 레벨 순서: 관장 %s / 사천왕 %s / 챔피언 %d / 정우 %d' % ('·'.join(str(l) for _, l in seq), e4, bygroup.get('Champion', 0), bygroup.get('Red', 0)), lambda b: b)
+    # R29 트레이너 파티(기술을 따로 적지 않는 종류 0·2)의 디지몬은 그 레벨에 아는 마지막 4기술 중 위력 있는 기술이 1개 이상 (R21 은 개수만 봄)
+    mt = c.d.find(bytes([1, 0, 40, 0, 255, 35, 0]))
+    r29 = []
+    if mt > 0:
+        for t in c.trainers:
+            if t['kind'] not in (0, 2): continue
+            for lv, sp, _ in t['mons']:
+                if sp in c.empty or not (1 <= sp <= 251): continue
+                known = [mv for l, mv in c.r.evos_attacks(sp)[1] if l <= lv][-4:]
+                if known and not any(c.d[mt + 7 * (mv - 1) + 2] > 0 for mv in known):
+                    r29.append('%s %s: %s Lv%d 기술 %s 전부 위력 0' % (GROUPS[t['group']], t['name'], c.name(sp), lv, known))
+    rep('R29', r29, '트레이너 파티 디지몬 모두 위력 있는 기술 1개 이상', lambda b: b)
+    # R30 단계별 종족값 합 범위 (알림만)
+    RANGE = {'유아기Ⅰ': (0, 240), '유아기Ⅱ': (0, 260), '유년기Ⅰ': (0, 300), '유년기Ⅱ': (0, 320), '유년기': (0, 320), '성장기': (230, 430), '성숙기': (330, 530),
+             '아머체': (350, 540), '완전체': (420, 610), '궁극체': (480, 700)}
+    r30 = []
+    for n in dig:
+        g = c.grade.get(n)
+        rg = RANGE.get(g)
+        if not rg: continue
+        tot = sum(c.d[c.r.bs + 0x20 * (n - 1) + k] for k in range(1, 7))
+        if not rg[0] <= tot <= rg[1]: r30.append('%s(%s) 종족값 합 %d (기대 %d~%d)' % (c.name(n), g, tot, rg[0], rg[1]))
+    out.append('[OK] R30 단계별 종족값 합 범위 안' if not r30 else '[?] R30 종족값 합이 단계 범위 밖 %d종: %s' % (len(r30), ' / '.join(r30[:12])))
+    # R31 진화 레벨 창: 유년기→성장기 5~12, 성장기→성숙기 12~28, 성숙기→완전체 28~42, 완전체→궁극체 40~56 (알림만)
+    WIN = {('유년기', '성장기'): (5, 12), ('성장기', '성숙기'): (12, 28), ('성숙기', '완전체'): (28, 42), ('완전체', '궁극체'): (40, 56)}
+    norm = lambda g: (g or '').replace('Ⅰ', '').replace('Ⅱ', '')
+    r31 = []
+    for n in dig:
+        for e in c.evos(n):
+            if e[0] not in LEVELED: continue
+            w = WIN.get((norm(c.grade.get(n)), norm(c.grade.get(e[-1]))))
+            if w and not w[0] <= e[1] <= w[1]: r31.append('%s → %s Lv%d (기대 %d~%d)' % (c.name(n), c.name(e[-1]), e[1], w[0], w[1]))
+    out.append('[OK] R31 진화 레벨이 단계 창 안' if not r31 else '[?] R31 진화 레벨이 단계 창 밖 %d건: %s' % (len(r31), ' / '.join(r31[:12])))
+    # R32 (7판 누적) 대사에 옛 용어·옛 지명·옛 관장 이름이 남지 않음 (배지·관장·체육관·금빛시티…)
+    words = ['배지', '관장', '체육관', '사천왕'] + list(RU.PLACE_RENAME) + list(RU.LEADER_TEXT)
+    idx32 = T.refs_index(c.d)
+    cnt32 = collections.Counter()
+    seen32 = set()
+    for (bank, ptr) in idx32:
+        p_ = dmrom.addr(bank, ptr)
+        while p_ < len(c.d) and c.d[p_] == 0x16: p_ = dmrom.addr(c.d[p_ + 3], c.d[p_ + 1] | c.d[p_ + 2] << 8)
+        if p_ >= len(c.d) or p_ in seen32: continue
+        seen32.add(p_)
+        t_ = T.read_text(c.d, p_)
+        if t_ and t_[1] >= 2:
+            for w in words:
+                if len(w) >= 2 and w in t_[2]: cnt32[w] += t_[2].count(w)
+    r32 = ['%s %d' % kv for kv in cnt32.most_common()]
+    rep('R32', r32, '대사에 옛 용어·지명·관장 이름 없음', lambda b: b)
+    # R33 (7판 누적) 일반 트레이너 파티: 성숙기 Lv10·완전체 Lv26·궁극체 Lv45 미만이 없음 (sane7 이 앞 단계로 낮춤. 보스·라이벌·간부·조직원은 제외)
+    SM = {'성숙기': 10, '완전체': 26, '궁극체': 45}
+    BOSSG = set(BOSS) | {'ExecutiveM', 'ExecutiveF'} | set(RU.GRUNT_GROUPS)
+    r33 = []
+    for t in c.trainers:
+        if GROUPS[t['group']] in BOSSG: continue
+        for lv, sp, _ in t['mons']:
+            g_ = c.grade.get(sp)
+            if g_ in SM and lv < SM[g_]: r33.append('%s %s: %s(%s) Lv%d' % (GROUPS[t['group']], t['name'], c.name(sp), g_, lv))
+    rep('R33', r33, '일반 트레이너 파티의 단계·레벨 맞음', lambda b: b)
     # R18 넣은 노래 (rules.MUSIC): 금 음악 엔진처럼 따라가서 모르는 명령·시간 0 무한 반복·음 길이 넘침(255프레임) 없고, 네 채널 한 바퀴 프레임이 같음
     r18 = []
     for nm, ids in RU.MUSIC.items():
