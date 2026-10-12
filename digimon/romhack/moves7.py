@@ -215,6 +215,11 @@ def apply(P, groups):
             for i, (lv, sp, _) in enumerate(t['mons']):
                 if sp in boss and gname in rules.BOSS_GROUPS[P.r.name(sp)]: want[i] = boss[sp]
                 if sp in rival and gname in rules.RIVAL_GROUPS and lv >= 16: want[i] = rival[sp]
+                if getattr(rules, 'R29_FILL', True) and i not in want and kind in (0, 2) and 1 <= sp <= dmrom.NUM:                  # 10판(R29): 마지막 4기술이 전부 위력 0이면 가장 센 공격기를 넣음
+                    ls_ = [m_ for l_, m_ in P.r.evos_attacks(sp)[1] if l_ <= lv]
+                    if ls_ and not any(powr(m_) > 0 for m_ in ls_[-4:]):
+                        best_ = max((m_ for m_ in ls_ if powr(m_) > 0), key=powr, default=None)
+                        if best_: want[i] = best_
             nk = kind | 1 if want else kind                                                 # 기술 칸이 없는 형식(0·2)이면 기술 칸 있는 형식(1·3)으로
             out += bytes(d[t['start']:j + 1]) + bytes([nk])
             a = j + 2
@@ -248,7 +253,12 @@ def apply(P, groups):
             P.put(s, bytes(out)); fr[0] = s % 0x4000 + 0x4000 + len(out)
             log.append('트레이너 무리 %s 제자리에서 %d → %d바이트 (뒤 빈 곳)' % (gname, e - s, len(out)))
         else:
-            b3, p3 = P.sp.take(len(out), bank=bank); P.put(addr(b3, p3), bytes(out))
+            try:
+                b3, p3 = P.sp.take(len(out), bank=bank)
+            except MemoryError:      # 10판: 트레이너 뱅크가 꽉 차면 그 무리만 건너뜀 (기술 형식 그대로)
+                log.append('트레이너 무리 %s 자리 없음(%d바이트) — 기술 바꿈·필살기 지정 건너뜀' % (gname, len(out)))
+                continue
+            P.put(addr(b3, p3), bytes(out))
             P.put(tab + 2 * groups.index(gname), struct.pack('<H', p3))
             P.sp.give(bank, s % 0x4000 + 0x4000, e % 0x4000 + 0x4000)
             log.append('트레이너 무리 %s → %02X:%04X 로 옮김 (%d바이트)' % (gname, b3, p3, len(out)))

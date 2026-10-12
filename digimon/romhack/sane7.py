@@ -61,6 +61,19 @@ def trainer_stages(P):
                 prevo.setdefault(e[-1], n)
     changed = []
     stuck = []
+    # 10판(R33): 앞 단계가 없는 종은 게임에 이미 나오는(야생·트레이너) 같은 타입·맞는 단계 종 중 종족값 합이 가장 가까운 것으로
+    used = {sp for t in r.trainers(len(groups)) for _, sp, _ in t['mons']}
+    for s in encounters.find_all(dmrom.Rom(dmrom.default_rom())):
+        if s['kind'] in ('풀숲', '물', '낚시') and 1 <= P.d[s['addr']] <= dmrom.NUM: used.add(P.d[s['addr']])
+    stage_for = lambda lv: max([g_ for g_, m_ in STAGE_MIN.items() if lv >= m_], key=lambda g_: STAGE_MIN[g_], default='성장기')
+    def substitute(sp, lv):
+        want = stage_for(lv)
+        bs = r.base_stats(sp)
+        tot = lambda n: sum(r.base_stats(n)[k] for k in ('hp', 'atk', 'def', 'spd', 'sat', 'sdf'))
+        cands = [n for n in used if G.get(n) == want and r.name(n) != rules.EMPTY_NAME and not r.name(n).startswith('-')]
+        same = [n for n in cands if bs['type'][0] in r.base_stats(n)['type']]
+        pool = same or cands
+        return min(pool, key=lambda n: abs(tot(n) - tot(sp))) if pool else None
     for t in r.trainers(len(groups)):
         g = groups[t['group']]
         if g in BOSS_GROUPS or g in rules.GRUNT_GROUPS:
@@ -71,6 +84,9 @@ def trainer_stages(P):
             while G.get(sp) in STAGE_MIN and lv < STAGE_MIN[G[sp]] and sp in prevo and n_ < 3:
                 sp = prevo[sp]
                 n_ += 1
+            if G.get(sp) in STAGE_MIN and lv < STAGE_MIN[G[sp]]:
+                alt = substitute(sp, lv)
+                if alt: sp = alt
             if sp != sp0:
                 P.d[a] = sp
                 changed.append('%s %s %s Lv%d→%s' % (g, t['name'], r.name(sp0), lv, r.name(sp)))

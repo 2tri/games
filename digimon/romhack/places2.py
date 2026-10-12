@@ -29,7 +29,7 @@ def rename_texts(P, pairs, names=()):
     pairs = sorted(pairs, key=lambda q: -len(q[0]))
     M = dict(pairs)
     NM = set(names)
-    JO = '[은는이가을를과의에와도만랑『<!?,.…]'     # 이름 뒤: 조사·말머리 기호·글 명령(<LINE>)·문장 부호·끝 (빈칸은 안 됨: 「그린 사람」)
+    JO = '(?:님|씨|께|한테|하고|이랑|으로|로|부터|까지|처럼|보다|라고|라는|이라|이다|이야|이지|에게|[은는이가을를과의에와도만랑『<!?,.…])'     # 이름 뒤: 조사·말머리 기호·글 명령(<LINE>)·문장 부호·끝 (빈칸은 안 됨: 「그린 사람」)
     alt = '|'.join(re.escape(o) + ('(?=%s|$)' % JO if o in NM else '') for o, _ in pairs)
     rx = re.compile('(?<![가-힣])(?:%s)' % alt)
     for (bank, ptr) in sorted(idx):

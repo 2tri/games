@@ -734,14 +734,21 @@ def test_maps(names, which='main'):
         todo.append((g, n, int(w.group(1)), int(w.group(2)), lab, ko))
     sp = N.get('코로몬') or N.get('아구몬') or 1
     bad = 0
-    for g, n, x, y, lab, ko in todo:
-        try:
-            ok, why = _warp_check(g, n, x, y, names, sp)
-        except Exception as ex:
-            ok, why = False, repr(ex)
+    import multiprocessing as mp
+    def _run(q, args):
+        try: q.put(_warp_check(*args))
+        except Exception as ex: q.put((False, repr(ex)))
+    for i, (g, n, x, y, lab, ko) in enumerate(todo):
+        print('  [%d/%d] %s(%s) %d-%d' % (i + 1, len(todo), ko, lab, g, n), flush=True)      # 10판: 진행 줄
+        q = mp.Queue(); pr = mp.Process(target=_run, args=(q, (g, n, x, y, names, sp))); pr.start()
+        pr.join(240)      # 10판: 맵 하나 4분 넘으면 멈춘 것 (노랑 수련장)
+        if pr.is_alive():
+            pr.terminate(); pr.join(); ok, why = False, '시간 초과 — 맵에 들어간 뒤 게임이 멈춤'
+        else:
+            ok, why = q.get() if not q.empty() else (False, '결과 없음')
         if not ok:
             bad += 1
-            print('  %s(%s) %d-%d: %s' % (ko, lab, g, n, why))
+            print('  %s(%s) %d-%d: %s' % (ko, lab, g, n, why), flush=True)
     print('  맵 %d개 불러오기, 문제 %d' % (len(todo), bad))
     return bad
 

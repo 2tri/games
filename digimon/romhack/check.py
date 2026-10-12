@@ -148,6 +148,7 @@ def rules(c, out):
         if bad:
             out.append('[X] %s %d건%s' % (code, len(bad), note))
             cap = 10 if len(bad) <= 10 else 6
+            if '--all' in sys.argv: cap = len(bad)      # 10판: 줄 전부
             for b in bad[:cap]: out.append('     ' + fmt(b))
             if len(bad) > cap: out.append('     … 외 %d건 (--full evo 로 전체)' % (len(bad) - cap) if code in ('R1', 'R2', 'R3') else '     … 외 %d건' % (len(bad) - cap))
         else: out.append('[OK] %s %s' % (code, ok_msg))
@@ -287,9 +288,14 @@ def rules(c, out):
     # R16 E단계 출현 연결 (rules.PLACE_SWAP·PLACE_ADD): 넣을 종이 그 지역 야생에 있고, 없앨 종이 그 지역에 없음
     N = {c.name(n): n for n in range(1, 252)}; r16 = []
     wild = [s for s in c.sites if s['kind'] in remap.WILD]
+    import sane7 as _S7
+    def kanto(where):      # 10판: sane7.kanto_wild 가 신대륙 야생을 ×1.3(최소 25) 하므로 창도 같이
+        m_ = re.match(r'(\d+)번 도로', where)
+        return (m_ and int(m_.group(1)) <= 28) or where.startswith(_S7.KANTO)
+    readded = {(nm, area) for nm, kd, area, slots, (lo, hi), cond in RU.PLACE_ADD}
     for frm, to, area in RU.PLACE_SWAP:
         if frm not in N: continue
-        left = [s['where'] for s in wild if s['cur'] == N[frm] and (not area or s['where'].startswith(area))]
+        left = [s['where'] for s in wild if s['cur'] == N[frm] and (not area or s['where'].startswith(area)) and not any(nm == frm and s['where'].startswith(ar) for nm, ar in readded)]
         if left: r16.append(('%s 가 %s 에 남음' % (frm, area or '야생'), len(left)))
     babies = {n for n, g in c.grade.items() if g.startswith('유년기')}
     baby_of = {e[-1]: b for b in babies for e in c.evos(b) if e[0] == 1 and e[-1] not in babies}
@@ -298,7 +304,9 @@ def rules(c, out):
         here = [s for s in wild if s['kind'] == kd and s['where'].startswith(area) and s['cur'] == N[nm]]
         # 초반 야생 유년기(R17)로 그 종의 유년기가 된 Lv 낮은 칸도 넣은 것으로 침
         here_b = [s for s in wild if s['kind'] == kd and s['where'].startswith(area) and s['cur'] == baby_of.get(N[nm]) and c.d[s['addr'] - 1] <= RU.BABY_WILD_LV]
-        bad_lv = [s for s in here if not lo <= c.d[s['addr'] - 1] <= hi]
+        lo_, hi_ = (max(25, round(lo * 1.3)), max(25, round(hi * 1.3))) if kanto(area) else (lo, hi)
+        bad_lv = [s for s in here if not lo_ <= c.d[s['addr'] - 1] <= hi_]
+        lo, hi = lo_, hi_
         if not here and not here_b: r16.append(('%s 가 %s %s 에 없음' % (nm, area, kd), 0))
         elif bad_lv: r16.append(('%s 의 %s 레벨이 %d~%d 밖' % (nm, area, lo, hi), len(bad_lv)))
     rep('R16', r16, '출현 연결표 %d줄 (없앨 종 %d, 넣을 곳 %d) 모두 맞음' % (len(RU.PLACE_SWAP) + len(RU.PLACE_ADD), len(RU.PLACE_SWAP), len(RU.PLACE_ADD)),
@@ -459,7 +467,7 @@ def rules(c, out):
     words = ['배지', '관장', '체육관', '사천왕'] + list(RU.PLACE_RENAME) + list(RU.LEADER_TEXT)
     idx32 = T.refs_index(c.d)
     cnt32 = collections.Counter()
-    seen32 = set()
+    seen32 = set(); ctx32 = collections.defaultdict(list)
     for (bank, ptr) in idx32:
         p_ = dmrom.addr(bank, ptr)
         while p_ < len(c.d) and c.d[p_] == 0x16: p_ = dmrom.addr(c.d[p_ + 3], c.d[p_ + 1] | c.d[p_ + 2] << 8)
@@ -468,8 +476,10 @@ def rules(c, out):
         t_ = T.read_text(c.d, p_)
         if t_ and t_[1] >= 2:
             for w in words:
-                if len(w) >= 2 and w in t_[2]: cnt32[w] += t_[2].count(w)
-    r32 = ['%s %d' % kv for kv in cnt32.most_common()]
+                if len(w) >= 2 and w in t_[2]:
+                    cnt32[w] += t_[2].count(w)
+                    k_ = t_[2].find(w); ctx32[w].append('%X「%s」' % (p_, t_[2][max(0, k_ - 6):k_ + len(w) + 8].replace('\n', '/')))
+    r32 = ['%s %d: %s' % (w, n_, ' '.join(ctx32[w][:3])) for w, n_ in cnt32.most_common()]      # 10판: 앞뒤 글도
     rep('R32', r32, '대사에 옛 용어·지명·관장 이름 없음', lambda b: b)
     # R33 (7판 누적) 일반 트레이너 파티: 성숙기 Lv10·완전체 Lv26·궁극체 Lv45 미만이 없음 (sane7 이 앞 단계로 낮춤. 보스·라이벌·간부·조직원은 제외)
     SM = {'성숙기': 10, '완전체': 26, '궁극체': 45}
@@ -562,6 +572,7 @@ def full_wild(c, out):
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('rom', nargs='?', default=os.path.join(dmrom.WORK, 'myver.gbc'))
     ap.add_argument('--full', nargs='*', choices=['evo', 'party', 'wild'])
+    ap.add_argument('--all', action='store_true')      # 10판: 규칙 위반 줄 전부 (rep 이 sys.argv 를 봄)
     a = ap.parse_args()
     c = Ctx(a.rom); out = []
     summary(c, out); out.append(''); rules(c, out)

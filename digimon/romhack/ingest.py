@@ -20,6 +20,9 @@ sys.path.insert(0, os.path.join(WEB, 'tools')); sys.path.insert(0, os.path.join(
 import snapc, specs
 
 FRONT = {'유아기Ⅰ': 40, '유아기Ⅱ': 40, '유년기Ⅰ': 40, '유년기Ⅱ': 40, '유년기': 40, '성장기': 48}
+DEFAULT_PAL = {'gorillamon': ((168, 176, 192), (72, 80, 104)), 'holyangemon': ((240, 224, 128), (72, 104, 200)), 'marindevimon': ((128, 168, 208), (48, 72, 136)),
+               'mummymon': ((224, 208, 160), (120, 96, 64)), 'skullsatamon': ((208, 208, 216), (224, 120, 40)), 'baihumon': ((232, 232, 240), (120, 88, 168)),
+               'holydramon': ((248, 192, 208), (200, 96, 144)), 'mammon': ((176, 128, 88), (96, 64, 40))}      # 10판: 회색으로 온 그림의 몸 색 (specs 에 없는 종)
 
 
 def split(im):
@@ -145,6 +148,8 @@ def main():
     grade = a.grade or sp.get('grade') or '성숙기'
     pal = [tuple(int(v) for v in x.split(',')) for x in a.pal] if a.pal else sp.get('pal')
     im = Image.open(a.src)
+    if pal is None and a.side == 'b' and front_colors(a.id): pal = [tuple(x) for x in front_colors(a.id)]      # 10판: 뒷모습은 앞모습 색
+    if pal is None: pal = DEFAULT_PAL.get(a.id)      # 10판: 회색 앞모습 기본 색
     if pal is None and (a.flat or is_gray(im)):      # 9판: 색 그림은 그림에서 몸 색을 고르므로 specs 가 없어도 됨
         raise SystemExit('specs.py 에 %s 가 없고 회색 그림: --pal 로 몸 색 두 개를 알려 주세요' % a.id)
     tag = {'f': '-f', 'b': '-b', 'sheet': ''}[a.side]
