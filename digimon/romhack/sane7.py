@@ -153,9 +153,36 @@ def black_gear(P):
         len(added), ', '.join(added), (' — 진화 뱅크 자리 없어 못 넣음 %d: %s' % (len(nofit), ', '.join(nofit))) if nofit else '', nfill, rules.COMPLETE_LV - 3, rules.ULTIMATE_LV - 3, mart)
 
 
+def evo_kinds(P):
+    """9판: 완전체로 가는 레벨 진화(1)는 자기 문장(8)으로, 궁극체로 가는 것은 아무 문장(10)으로 — 설계 J「진화 = 문장 개수」(R27).
+    롬 원본에 남은 야돈→야도란 Lv37(개굴몬→왕개굴몬)·황제드라몬→황제파이터 Lv55 같은 줄"""
+    P.r.d = P.d
+    r = P.r
+    G = grades(P)
+    fixed = []
+    for n in range(1, dmrom.NUM + 1):
+        ev, mv = r.evos_attacks(n)
+        ev = [tuple(e) for e in ev if 1 <= e[0] <= 10 and e[0] != 5]
+        new = []
+        chg = False
+        for e in ev:
+            g = G.get(e[-1])
+            if e[0] == 1 and g == '완전체':
+                new.append((8, e[1], e[2])); chg = True
+            elif e[0] == 1 and g == '궁극체':
+                new.append((10, e[1], e[2])); chg = True
+            else:
+                new.append(e)
+        if chg:
+            P.evos(n, new, mv)
+            P.r.d = P.d
+            fixed.append('%s→%s' % (r.name(n), '·'.join(r.name(e[-1]) for e in new if e not in ev)))
+    return '완전체·궁극체 레벨 진화 → 문장 종류 %d줄%s' % (len(fixed), ': ' + ', '.join(fixed) if fixed else '')
+
+
 def apply(P):
     log = []
-    for fn in (lambda: type_chart(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P)):
+    for fn in (lambda: type_chart(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P), lambda: evo_kinds(P)):
         try:
             log.append(fn())
         except Exception as ex:

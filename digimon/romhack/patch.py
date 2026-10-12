@@ -364,7 +364,10 @@ class Patch:
         if len(e) <= end - a:
             self.put(a + 1, e + b'\x50' * (end - a - len(e))); return 'in'
         assert end - a + 1 >= 5, '원래 자리가 text_far 5바이트보다 작음 %X' % a
-        b, p = self.sp.take(len(e) + 1, banks=[0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:][::-1])
+        first = [0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:][::-1]
+        avoid = set(first) | {0x00, 0x10, 0x0b, 0x11, 0x13, 0x6c, 0x6d, self.r.evos // 0x4000}      # 진화·음악·이름표 뱅크는 남겨 둠
+        rest = sorted((b for b in self.sp.free if b not in avoid), key=lambda b: self.sp.free[b][0] - self.sp.free[b][1])      # 많이 남은 뱅크부터
+        b, p = self.sp.take(len(e) + 1, banks=first + rest)      # 9판: 그림 뱅크가 차서 「빈 곳 없음」→ 다른 뱅크로
         self.put(addr(b, p), b'\x00' + e)
         self.put(a, bytes([0x16, p & 255, p >> 8, b, 0x50])); return 'far'
     # 스타팅: 공박사 연구소의 세 볼 스크립트 (pokepic X / cry X / … getmonname X / … givepoke X, 5) 종 바꾸기 → {새 종: 묻는 글 주소}

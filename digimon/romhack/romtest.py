@@ -36,6 +36,8 @@ def save(p, name):
 
 def intro():
     """전원 → 이름 'ㄱㄱㄱㄱㄱ' → 2층 방. 입력 순서는 고정(에뮬레이터는 결정적)"""
+    for ext in ('.ram', '.rtc'):      # 9판: 앞 실행(맵 시험)이 남긴 세이브가 「계속하기」를 띄워 인트로를 가로챔
+        if os.path.exists(ROM + ext): os.remove(ROM + ext)
     p = new()
     p.tick(300)
     for _ in range(52): p.press('a', 6, 50)
@@ -221,8 +223,8 @@ def test_trainers():
     groups = re.findall(r'dw (\w+)Group', open(os.path.join(wild.KR, 'data/trainers/party_pointers.asm')).read())
     r1 = [t for t in ts if groups[t['group']] == 'Rival1'][:3]
     show = ' / '.join(', '.join('%s Lv%d' % (r.name(sp), lv) for lv, sp, _ in t['mons']) for t in r1)
-    ok = all([r.name(sp) for _, sp, _ in t['mons']][0] == '뿔몬' and len(t['mons']) == 2 for t in r1)   # 3판: 라이벌 매튜 = 뿔몬 Lv5
-    print('  라이벌 1차 (옮긴 무리, 2마리): %s %s' % (show, 'OK' if ok else '틀림'))
+    ok = all(t['mons'] and r.name(t['mons'][0][1]) == '뿔몬' for t in r1)   # 9판: 라이벌 매튜 = 뿔몬 (마릿수는 parties.json 대로)
+    print('  라이벌 1차 (옮긴 무리, 뿔몬): %s %s' % (show, 'OK' if ok else '틀림'))
     return bad + (not ok)
 
 
@@ -231,8 +233,8 @@ def test_black_gear(names):
     import rules
     r = dmrom.Rom(ROM); N = {r.name(n): n for n in range(1, dmrom.NUM + 1)}; it = rules.BLACK_GEAR['item']; bad = 0
     if rules.BLACK_GEAR['to'] not in N: print('  건너뜀 (다크그레몬 없음)'); return 0
-    for name, sp, lv, want in (('검은 톱니 → 그레이몬 Lv20 → 다크그레몬', '그레이몬', 20, N['다크그레몬']),
-                               ('검은 톱니 → 가루몬 Lv20 → 그대로', '가루몬', 20, N['가루몬'])):
+    for name, sp, lv, want in (('검은 톱니 → 그레이몬 Lv30 → 다크그레몬', '그레이몬', 30, N['다크그레몬']),      # 9판: 완전체 최소 27
+                               ('검은 톱니 → 가루몬 Lv30 → 그대로', '가루몬', 30, N['가루몬'])):
         got, got_lv = candy(0, [(N[sp], lv, 70)], names, 0, 30, item=it)
         ok = got == want; bad += not ok
         print('  %-36s → %3d Lv%-3d %s' % (name, got, got_lv, 'OK' if ok else '틀림(기대 %d)' % want))
@@ -698,15 +700,19 @@ def _warp_check(g, n, x, y, names, sp):
     else:
         p.stop()
         return False, '불러온 뒤 맵이 %d-%d' % (m[MAP_GROUP], m[MAP_NUM])
-    p.press('a', 6, 60)
-    p.tick(240)
-    img0 = p.pb.screen.image.tobytes()
-    p.press('start', 6, 90)
-    img1 = p.pb.screen.image.tobytes()
-    alive = img0 != img1
+    alive = False
+    for _ in range(6):      # 9판: 「계속하기」 요약 창·글 상자가 남아 있으면 A 를 더 눌러 지나감
+        p.press('a', 6, 90)
+        p.tick(180)
+        img0 = p.pb.screen.image.tobytes()
+        p.press('start', 6, 90)
+        img1 = p.pb.screen.image.tobytes()
+        if img0 != img1:
+            alive = True
+            break
     if not alive: p.shot('map%d_%d' % (g, n))
     p.stop()
-    return alive, '' if alive else '입력 반응 없음 (work/shots/map_%d_%d.png)' % (g, n)
+    return alive, '' if alive else '입력 반응 없음 (work/shots/map%d_%d.png)' % (g, n)
 
 
 def test_maps(names, which='main'):

@@ -11,7 +11,7 @@
 회색 그림이면 밝기로 4톤(흰·밝은·어두운·검정)을 나누고, specs 의 몸 색 두 개를 입힌다 (앞·뒤가 팔레트 하나를 같이 쓰므로 같은 색).
 손으로 고칠 칸은 art/fix/<id>-<f|b>.txt 에 적어 두면 변환 뒤에 덮어씀 (다시 변환해도 유지):
   첫 줄 「x y」(고칠 곳 왼쪽 위), 다음 줄부터 한 칸에 한 글자 — 빈칸 그대로, . 배경, W 흰, l 밝은, d 어두운, # 검정"""
-import argparse, os, sys, shutil
+import argparse, os, sys, shutil, json
 import numpy as np
 from PIL import Image
 
@@ -137,10 +137,16 @@ def main():
     if not sp:                                                         # 다시 그리기 칸 (order/redraw.py: 등급·몸 색)
         import redraw
         sp = next((e for e in redraw.R if e['id'] == a.id), {})
+    if not sp.get('grade'):      # 9판: slots.json 의 등급 (specs 에 없는 종 55)
+        try:
+            sl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'slots.json'), encoding='utf-8'))
+            sp = dict(sp, grade=next((m['grade'] for m in sl['mons'] if m.get('id') == a.id), None) or sp.get('grade'))
+        except Exception: pass
     grade = a.grade or sp.get('grade') or '성숙기'
     pal = [tuple(int(v) for v in x.split(',')) for x in a.pal] if a.pal else sp.get('pal')
-    if pal is None: raise SystemExit('specs.py 에 %s 가 없음: --pal 로 몸 색 두 개를 알려 주세요' % a.id)
     im = Image.open(a.src)
+    if pal is None and (a.flat or is_gray(im)):      # 9판: 색 그림은 그림에서 몸 색을 고르므로 specs 가 없어도 됨
+        raise SystemExit('specs.py 에 %s 가 없고 회색 그림: --pal 로 몸 색 두 개를 알려 주세요' % a.id)
     tag = {'f': '-f', 'b': '-b', 'sheet': ''}[a.side]
     keep = os.path.join(WEB, 'art', 'src', a.id + tag + '_ai' + os.path.splitext(a.src)[1])
     if os.path.abspath(a.src) != os.path.abspath(keep): shutil.copy(a.src, keep)

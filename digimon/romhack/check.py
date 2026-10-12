@@ -160,9 +160,10 @@ def rules(c, out):
             if g is None: unk.add(e[-1]); continue
             if e[0] not in LEVELED: continue
             lv = e[1]; lo, hi = RU.CHAMPION_LV
-            if g == '완전체' and lv < RU.COMPLETE_LV: r1.append((n, e, '완전체인데 %d 미만' % RU.COMPLETE_LV))
-            if g == '궁극체' and lv < RU.ULTIMATE_LV: r1.append((n, e, '궁극체인데 %d 미만' % RU.ULTIMATE_LV))
-            if g == '성숙기' and not lo <= lv <= hi:
+            dk = 3 if e[0] in (7, 9) else 0      # 9판: 암흑 갈래(유대 낮음·암흑)는 정상보다 3 낮게 (사용자 10/7)
+            if g == '완전체' and lv < RU.COMPLETE_LV - dk: r1.append((n, e, '완전체인데 %d 미만' % (RU.COMPLETE_LV - dk)))
+            if g == '궁극체' and lv < RU.ULTIMATE_LV - dk: r1.append((n, e, '궁극체인데 %d 미만' % (RU.ULTIMATE_LV - dk)))
+            if g == '성숙기' and not lo - dk <= lv <= hi:
                 (r2x if c.name(n) in RU.R2_EXCEPT else r2).append((n, e, '%d~%d 밖' % (lo, hi)))
     f = lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2])
     rep('R1', r1, '완전체 ≥%d, 궁극체 ≥%d (남길 종 %d)' % (RU.COMPLETE_LV, RU.ULTIMATE_LV, len(dig)), f)
@@ -401,7 +402,7 @@ def rules(c, out):
             if e[0] == 8 and g != '완전체': r27.append((n, e, '종류 8 인데 대상이 완전체가 아님'))
             if e[0] == 10 and g != '궁극체': r27.append((n, e, '종류 10 인데 대상이 궁극체가 아님'))
             if e[0] in LEVELED and g == '완전체' and e[0] not in (8, 9): r27.append((n, e, '완전체로 가는 레벨 진화가 종류 8·9 가 아님'))
-            if g == '궁극체' and e[0] not in (10, 2): r27.append((n, e, '궁극체로 가는 진화가 종류 10·도구가 아님'))
+            if g == '궁극체' and e[0] not in (10, 2, 9): r27.append((n, e, '궁극체로 가는 진화가 종류 10·9·도구가 아님'))      # 9판: 암흑 궁극체(블랙워그몬) 허용
     rep('R27', r27, '완전체로 가는 레벨 진화 = 종류 8(배지 %d)·9, 궁극체로 가는 진화 = 종류 10(배지 %d)·도구' % (RU.BADGES_COMPLETE, RU.BADGES_ULTIMATE),
         lambda b: '%s %s %s → %s (%s)' % (c.name(b[0]), EVK[b[1][0]], c.cond(b[1]), c.name(b[1][-1]), b[2]))
     # ── 7판 밸런스 규칙 R28~R31 (R30·R31 은 [?] 로만 알림) ──
