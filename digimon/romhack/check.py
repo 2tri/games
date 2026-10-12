@@ -475,10 +475,13 @@ def rules(c, out):
         seen32.add(p_)
         t_ = T.read_text(c.d, p_)
         if t_ and t_[1] >= 2:
+            import places2 as P2
             for w in words:
-                if len(w) >= 2 and w in t_[2]:
-                    cnt32[w] += t_[2].count(w)
-                    k_ = t_[2].find(w); ctx32[w].append('%X「%s」' % (p_, t_[2][max(0, k_ - 6):k_ + len(w) + 8].replace('\n', '/')))
+                if len(w) < 2: continue
+                hits = [m_.start() for m_ in re.finditer('(?<![가-힣])' + re.escape(w) + ('(?=%s|$)' % P2.JO_AFTER_NAME if w in RU.LEADER_TEXT else ''), t_[2])]
+                if hits:
+                    cnt32[w] += len(hits)
+                    k_ = hits[0]; ctx32[w].append('%X「%s」' % (p_, t_[2][max(0, k_ - 6):k_ + len(w) + 8].replace('\n', '/')))
     r32 = ['%s %d: %s' % (w, n_, ' '.join(ctx32[w][:3])) for w, n_ in cnt32.most_common()]      # 10판: 앞뒤 글도
     rep('R32', r32, '대사에 옛 용어·지명·관장 이름 없음', lambda b: b)
     # R33 (7판 누적) 일반 트레이너 파티: 성숙기 Lv10·완전체 Lv26·궁극체 Lv45 미만이 없음 (sane7 이 앞 단계로 낮춤. 보스·라이벌·간부·조직원은 제외)

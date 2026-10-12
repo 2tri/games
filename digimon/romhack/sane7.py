@@ -196,9 +196,56 @@ def evo_kinds(P):
     return '완전체·궁극체 레벨 진화 → 문장 종류 %d줄%s' % (len(fixed), ': ' + ', '.join(fixed) if fixed else '')
 
 
+BASIC_ATTACK = {0x00: 33, 0x01: 2, 0x02: 16, 0x03: 40, 0x04: 189, 0x05: 88, 0x07: 210, 0x08: 122, 0x09: 232,      # 타입 → 기본 공격기 (몸통박치기·가라테촙·바람·독침·진흙·돌·연속베기·핥기·메탈클로)
+                0x14: 52, 0x15: 55, 0x16: 22, 0x17: 84, 0x18: 93, 0x19: 181, 0x1a: 44, 0x1b: 44}      # 불꽃세례·물대포·덩굴채찍·전기쇼크·염동력·눈보라·물기
+
+
+def learnsets_attack(P):
+    """11판(R29): 종마다 레벨 1~100 의 「마지막 4기술」(FillMoves: 같은 기술 건너뜀, 5개째면 앞을 밂)에 위력 있는 기술이 하나는 있게.
+    없으면 그 레벨에 배우는 보조기를 타입 기본 공격기(없으면 몸통박치기)로 바꿈 — 목록 길이가 같아 진화 뱅크·트레이너 뱅크를 안 씀 (트레이너 뱅크 0x0e 가 꽉 차 R29_FILL 은 못 켬)"""
+    P.r.d = P.d
+    r = P.r
+    mt = bytes(P.d).find(bytes([1, 0, 40, 0, 255, 35, 0]))
+    if mt < 0: return 'R29 학습표: 기술 표 못 찾음'
+    powr = lambda mv: P.d[mt + 7 * (mv - 1) + 2] if 1 <= mv <= 251 else 0
+
+    def window(mv_list, lv):
+        ms = []
+        for l, m in mv_list:
+            if l <= lv and m not in ms:
+                ms.append(m)
+                if len(ms) > 4: ms.pop(0)
+        return ms
+    fixed = []
+    for n in range(1, dmrom.NUM + 1):
+        nm = r.name(n)
+        if nm == rules.EMPTY_NAME or nm.startswith('-'): continue
+        ev, mv = r.evos_attacks(n)
+        mv = [list(x) for x in mv]
+        if not mv: continue
+        t1 = r.base_stats(n)['type'][0]
+        chg = []
+        for _ in range(8):
+            bad = next((lv for lv in sorted({1} | {l for l, _ in mv}) if not any(powr(m) > 0 for m in window(mv, lv))), None)
+            if bad is None: break
+            k = max((i for i, (l, m) in enumerate(mv) if l <= bad and powr(m) == 0), default=None)      # 그 레벨까지 배운 마지막 보조기
+            if k is None: break
+            known = {m for _, m in mv}
+            cand = [BASIC_ATTACK.get(t1, 33), 33, 10, 64, 29]      # 타입 기본기 → 몸통박치기 → 할퀴기 → 쪼기 → 박치기
+            new = next((c for c in cand if c not in known and powr(c) > 0), None)
+            if new is None: break
+            chg.append('Lv%d %d→%d' % (mv[k][0], mv[k][1], new))
+            mv[k][1] = new
+        if chg:
+            P.evos(n, [tuple(e) for e in ev], [tuple(x) for x in mv])
+            P.r.d = P.d
+            fixed.append('%s(%s)' % (nm, ', '.join(chg)))
+    return 'R29 학습표 공격기 보장 %d종%s' % (len(fixed), ': ' + ', '.join(fixed) if fixed else '')
+
+
 def apply(P):
     log = []
-    for fn in (lambda: type_chart(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P), lambda: evo_kinds(P)):
+    for fn in (lambda: type_chart(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P), lambda: evo_kinds(P), lambda: learnsets_attack(P)):
         try:
             log.append(fn())
         except Exception as ex:

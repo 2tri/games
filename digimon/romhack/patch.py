@@ -37,10 +37,29 @@ class Space:
     def __init__(self, rom):
         self.free = {}                      # bank → [시작 주소(뱅크 안), 끝]
         self.edge = {}                      # bank → 빈 곳이 원래 시작하는 자리 (앞쪽 0x20 여유 포함)
+        self.fixed = []                     # 11판: 원본 금 지도(pokegold.map)의 EMPTY 구간보다 앞은 0 이어도 자료로 봄 (타일·블록 자료가 0 으로 끝나는 뱅크)
+        vem = self._vanilla_empty()
         for bank, start, n, fill in rom.free_runs(0x80):
+            if bank in vem and vem[bank] > start:
+                self.fixed.append('%02X: %04X→%04X' % (bank, start, vem[bank])); start = vem[bank]
+            if 0x8000 - start < 0x80 + 0x20: continue
             self.free[bank] = [start + 0x20, 0x8000]       # 앞쪽 0x20 은 여유로 남김
             self.edge[bank] = start
         self.holes = {}                     # bank → [(시작, 끝)] 다시 쓸 수 있게 돌려받은 자리 (옮기고 남은 옛 진화·기술 목록)
+    @staticmethod
+    def _vanilla_empty():
+        """bank → 뱅크 끝까지 이어지는 EMPTY 구간의 시작 (없으면 0x8000 = 끝에 빈 곳 없음). 지도 파일이 없으면 {}"""
+        try: m = open(os.path.join(HERE, 'work', 'anat', 'pokegold.map'), encoding='utf-8', errors='ignore').read()
+        except OSError: return {}
+        out = {}
+        for blk in re.split(r'\n(?=[A-Z0-9]+ bank #)', m)[1:]:
+            h = blk.split('\n', 1)[0]
+            if not h.startswith('ROMX'): continue
+            bn = int(re.search(r'#(\d+)', h).group(1)); out[bn] = 0x8000
+            if re.search(r'^\s+EMPTY\s*$', blk, re.M): out[bn] = 0x4000; continue
+            for s, e in re.findall(r'EMPTY: \$(\w+)-\$(\w+)', blk):
+                if int(e, 16) >= 0x7fff: out[bn] = min(out[bn], int(s, 16))
+        return out
     def give(self, b, s, e):
         if e <= s: return
         hs = sorted(self.holes.get(b, []) + [[s, e]]); out = []
@@ -132,6 +151,7 @@ def rgb555(c): return (c[0] * 31 // 255) | (c[1] * 31 // 255) << 5 | (c[2] * 31 
 class Patch:
     def __init__(self, base):
         self.r = dmrom.Rom(base); self.d = self.r.d; self.sp = Space(self.r); self.log = []
+        if self.sp.fixed: self.log.append('뱅크 끝 빈 곳 보정(원본 지도 기준) %d개: %s' % (len(self.sp.fixed), ', '.join(self.sp.fixed)))
     def put(self, a, data): self.d[a:a + len(data)] = data
     # 이름 (5글자까지)
     def name(self, no, s):
@@ -367,6 +387,7 @@ class Patch:
         first = [0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:][::-1]
         avoid = set(first) | {0x00, 0x10, 0x0b, 0x11, 0x13, 0x6c, 0x6d, self.r.evos // 0x4000}      # 진화·음악·이름표 뱅크는 남겨 둠
         rest = sorted((b for b in self.sp.free if b not in avoid), key=lambda b: self.sp.free[b][0] - self.sp.free[b][1])      # 많이 남은 뱅크부터
+        if os.environ.get('NO_EXTRA_TEXT_BANKS'): rest = []      # 11판: 진단용 (그림 뱅크만)
         b, p = self.sp.take(len(e) + 1, banks=first + rest)      # 9판: 그림 뱅크가 차서 「빈 곳 없음」→ 다른 뱅크로
         self.put(addr(b, p), b'\x00' + e)
         self.put(a, bytes([0x16, p & 255, p >> 8, b, 0x50])); return 'far'
