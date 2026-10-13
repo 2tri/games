@@ -32,6 +32,14 @@ GRADE = {'leafmon': '유년기Ⅱ', 'pegasusmon': '아머체', 'tsubumon': '유�
          'garbagemon': '완전체'}
 
 
+def back_as_is(en, grade):
+    """뒷모습 사진이 있을 때: 사진 그대로 도트로 (2026-10-13 사용자 「이 사진 그대로 그려줘」)"""
+    return (f"The attached picture shows {en}, a Digimon, from BEHIND. Convert it into a pixel-art BACK battle sprite for a Game Boy Color monster game.\n"
+            "Draw this picture EXACTLY as it is: same character, same pose, same viewing angle (it shows the back: keep the back, do not turn it around, do not add a face), "
+            "same facing direction, same proportions, same parts. Change only the art style. Do not redesign it or turn it into another creature.\n"
+            + prompts._body(grade) + prompts._STYLE)
+
+
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'work', 'order_new.html')
     picks = json.load(open(os.path.join(HERE, 'picks.json'), encoding='utf-8'))
@@ -43,7 +51,7 @@ def main():
         en, wiki, img, memo = INFO[i]; g = GRADE[i]
         if getattr(rules, 'NO_BABIES', False) and g.startswith('유') and v['name'] not in rules.BABY_KEEP: continue      # 13번: 유년기는 게임에서 뺌
         rows.append({'ko': v['name'], 'id': i, 'grade': g, 'en': en, 'wiki': wiki, 'img': img, 'memo': memo,
-                     'front': None if i in FRONT_DONE else prompts.card_front(en), 'back': prompts.card_back(en, g),
+                     'front': None if i in FRONT_DONE else prompts.card_front(en), 'back': back_as_is(en, g), 'back2': prompts.card_front(en),
                      'need': '뒤' if i in FRONT_DONE else ('앞·뒤' if v['f'] == v['b'] == 'none' else ('앞' if v['f'] == 'none' else '뒤'))})
     order = ['유년기Ⅰ', '유년기Ⅱ', '성장기', '아머체', '완전체', '궁극체']
     rows.sort(key=lambda r: (order.index(r['grade']) if r['grade'] in order else 9, r['ko']))
