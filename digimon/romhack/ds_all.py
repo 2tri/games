@@ -4,7 +4,7 @@
 import os, sys, glob, shutil, subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
-ART = os.path.join(WEB, 'art'); BAK = os.path.join(WEB, 'art_bak'); IMG = os.path.join(WEB, 'images', 'digimon')
+ART = os.path.join(WEB, 'art'); BAK = os.path.join(WEB, 'art_bak'); IMG = os.path.join(os.path.dirname(WEB), 'images', 'digimon')      # 저장소 루트 images/digimon
 os.makedirs(BAK, exist_ok=True)
 args = sys.argv[1:]
 if '--revert' in args:
