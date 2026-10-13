@@ -375,6 +375,7 @@ def rules(c, out):
         for row in _csv.DictReader(open(rp, encoding='utf-8-sig')):
             if row['설치'] != 'Y': continue
             n = int(row['칸']); nm = c.name(n)
+            if getattr(RU, 'NO_BABIES', False) and row['단계'].startswith('유') and nm == RU.EMPTY_NAME: continue      # 19판: 안 만든 유년기 칸은 안 봄
             if nm != getattr(RU, 'RENAME_SPECIES', {}).get(row['롬이름'] or row['종'], row['롬이름'] or row['종']): r23.append((row['종'], '칸 %d 이름 %s' % (n, nm)))
             elif n not in reach: r23.append((row['종'], '칸 %d 어디에도 안 나옴' % n))
         rep('R23', r23, '로스터 설치 종 %d개 모두 야생·트레이너·이벤트·진화 중 하나에 연결' % sum(1 for _ in _csv.DictReader(open(rp, encoding='utf-8-sig')) if _['설치'] == 'Y'),
