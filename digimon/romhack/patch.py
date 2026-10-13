@@ -1176,7 +1176,7 @@ def build(base, out_rom, out_ips):
             h_, w_ = P.enlarge14(N[nm], side == '뒤', 'smooth', scale=k); small.append('%s %s %d×%d' % (nm, side, w_, h_))
     P.log.append('1.4 그림 배율 %d장: %s' % (len(small), ', '.join(small) or '없음'))
     for nm, (src, slot, *_) in rules.PALSWAP.items():                      # 색만 바꾼 종은 원본의 새 그림을 따라감 (팔레트는 자기 것)
-        if src in nrd:
+        if src in nrd and nm not in nrd:      # 21판: 자기 그림이 따로 있는 종(왕개굴몬·데드메라몬 등 REDRAW)은 원본 그림으로 덮지 않음
             P.put(r.pics + 6 * (slot - 1), bytes(P.d[r.pics + 6 * (N[src] - 1):r.pics + 6 * N[src]]))
             P.stats(slot, pic_size=P.d[r.bs + 0x20 * (N[src] - 1) + 17]); P.log.append('  %s 그림 → %s 새 그림' % (nm, src))
     # 작업팩 10/6 S3-1 전투 그림 교체 — 위의 다시 그리기·확대 뒤에 덮어씀
