@@ -1194,6 +1194,8 @@ def build(base, out_rom, out_ips):
     for nm in rules.PAL20:
         k = next((x for x in range(1, dmrom.NUM + 1) if src and src.name(x).strip() == nm), None)
         if nm in N and k: P.put(r.pal + 8 * N[nm], bytes(src.d[src.pal + 8 * k:src.pal + 8 * k + 8])); s3.append(nm + ' 색만 2.0')
+    for nm in getattr(rules, 'FLIP_BACK_ALL', []):                      # 21판: 내 쪽 뒷모습이 좌측 상단(적 반대쪽)을 보는 종을 좌우반전 (사용자 플레이 중 지적). 그림 출처(우리·2.0·1.4)와 상관없이 롬에 들어간 뒷모습을 뒤집음
+        if nm in N: P.flip_back(N[nm]); s3.append(nm + ' 뒷모습 좌우반전')
     P.log.append('S3-1 전투 그림 교체 %d: %s' % (len(s3), ', '.join(s3)))
     # 노래 (rules.MUSIC): gbc/music 곡을 금 음악 엔진 형식으로 (music.py) 빈 뱅크에 넣고 음악 포인터 표(Music, 3바이트 dba)를 바꿈
     import music
