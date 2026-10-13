@@ -83,7 +83,7 @@ class Space:
 # 16판 보강: 첫 바이트(00)를 바꾸면 안 되는 글 자리. 도라지 상점의 맵 머리(56:4000, 장면 스크립트 수 0xb0 → 4000+1+4×176 = 42C1)가 읽는
 #   「콜백 개수」 바이트가 소라 승리 글의 첫 바이트(00)와 같은 자리라, 16(text_far)으로 바꾸면 콜백 22개로 읽어 상점이 멈춤 (2026-10-13 바이트 추적)
 NO_FAR_AT = {0x1582C1}
-PIC_BANKS = [0x75, 0x76, 0x77, 0x7c, 0x7d, 0x2c, 0x2d, 0x3f, 0x6a, 0x72, 0x74]   # 뒤 6개: 작업팩 10/6 S3 그림이 늘어 추가 (뱅크 끝 빈 곳, 음악·이름표 뱅크 피함)
+PIC_BANKS = [0x75, 0x76, 0x77, 0x7c, 0x7d, 0x2c, 0x2d, 0x3f, 0x6a, 0x72, 0x74, 0x7b, 0x7f]   # 뒤 6개: 작업팩 10/6 S3 그림이 늘어 추가 (뱅크 끝 빈 곳, 음악·이름표 뱅크 피함). 17판: DS 그림이 커서 0x7b·0x7f 추가 (대사는 PIC_BANKS[5:11] 그대로)
 
 # ── 아주 작은 어셈블러 (필요한 명령만) ──
 class Asm:
@@ -390,7 +390,7 @@ class Patch:
         if d[a + 1] == 0x00 or a in NO_FAR_AT:      # 16판: 「00 00」으로 시작하는 글은 다른 맵의 빈 스크립트 머리(00 00)와 같은 자리일 수 있어(도라지 상점 ← 소라 승리 글) 첫 두 바이트를 못 건드림 → 옮기지 않음
             return 'skip'
         assert end - a + 1 >= 5, '원래 자리가 text_far 5바이트보다 작음 %X' % a
-        first = [0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:][::-1]
+        first = [0x7c, 0x7d, 0x77, 0x76, 0x75] + PIC_BANKS[5:11][::-1]
         avoid = set(first) | {0x00, 0x10, 0x0b, 0x11, 0x13, 0x6c, 0x6d, self.r.evos // 0x4000}      # 진화·음악·이름표 뱅크는 남겨 둠
         rest = sorted((b for b in self.sp.free if b not in avoid), key=lambda b: self.sp.free[b][0] - self.sp.free[b][1])      # 많이 남은 뱅크부터
         if os.environ.get('NO_EXTRA_TEXT_BANKS'): rest = []      # 11판: 진단용 (그림 뱅크만)
