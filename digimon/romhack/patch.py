@@ -654,6 +654,23 @@ class Patch:
         self.put(site, bytes([0xCD, org & 255, org >> 8, 0xC0, 0x00]))                # call 안전장치 / ret nz / nop
         self.log.append('트레이너 AI 기술 0개 안전장치 뱅크 %02X:%04X' % (b, org))
 
+    # ── 도라지시티 상점: 1.4 원본에서 맵 스크립트·점원·할머니·청년 스크립트와 할머니 대사 앞부분(56:4000~407F)이 그림 자료 0x80바이트로 덮여 있음
+    #    → 말 걸면 엉뚱한 곳을 실행해 「게임보이 컬러 전용」 화면으로 튕김 (사용자 2026-10-13). 덮인 자료는 롬 어디서도 안 가리킴(56 00 40 은 이 맵 머리만)
+    #    → 원본 금(work/anat/van_00.gbc) 의 같은 자리(스크립트~청년 대사 앞)를 되돌리고 할머니 대사의 「포켓몬」만 「디지몬」으로 ──
+    def fix_violet_mart(self):
+        sym = {}
+        for l in open(os.path.join(HERE, 'work', 'anat', 'pokegold.sym'), encoding='utf-8'):
+            p = l.split()
+            if len(p) == 2 and p[1].startswith('VioletMart'):
+                b_, a_ = p[0].split(':'); sym[p[1]] = int(b_, 16) * 0x4000 + int(a_, 16) - 0x4000
+        s, e = sym['VioletMart_MapScripts'], sym['VioletMartCooltrainerMText']
+        van = open(os.path.join(HERE, 'work', 'anat', 'van_00.gbc'), 'rb').read()[s:e]
+        cur = bytes(self.d[s:e])
+        if cur[:2] == b'\x00\x00' and cur[2:9] == van[2:9]: return       # 이미 정상
+        assert cur[-6:] == van[-6:], '도라지시티 상점 자리 모양이 다름 (할머니 대사 끝)'
+        self.put(s, van.replace(krtext.encode('포켓몬'), krtext.encode('디지몬')))
+        self.log.append('도라지시티 상점 스크립트 되돌림 (1.4 에서 그림 자료로 덮인 %X~%X, %d바이트)' % (s, e, e - s))
+
     def ips(self, path):
         base, new = self.r.base, bytes(self.d); out = bytearray(b'PATCH'); i = 0; n = len(new)
         while i < n:
@@ -1034,6 +1051,7 @@ def build(base, out_rom, out_ips):
     # 3 포획 규칙
     P.catch_engine()
     P.ai_guard()
+    P.fix_violet_mart()
     # 단계별 포획률 (rules.py). 이름 지정(떠돌이 셋 30, 보스·암흑체 0)이 먼저. 단계를 모르는 칸(포켓몬·뺄 종)은 그대로
     zero = []
     for no, g in sorted(grade.items()):
