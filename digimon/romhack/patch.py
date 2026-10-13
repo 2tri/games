@@ -245,13 +245,14 @@ class Patch:
             bank, p = self.sp.take(len(dat), banks=PIC_BANKS); self.put(addr(bank, p), dat); ents += [bank, p & 255, p >> 8]
         self.put(self.r.pics + 6 * (no - 1), bytes(ents))
         self.stats(no, pic_size=size * 0x11); self.palette(no, *pal)
-    def enlarge14(self, no, back, mode='smooth', scale=None):
+    def enlarge14(self, no, back, mode='smooth', scale=None, cap=None):
         """롬의 지금 그림(1.4 그림)을 칸을 꽉 채우게 키워 다시 넣음 (그림 세션 tools/enlarge14.py, 사용자 메모 「확대」 2026-10-05).
         롬에서 꺼낸 그림이라 파일로 남기지 않고 빌드 안에서만 씀. 색 4개 그대로(색번호 그대로 키움)"""
         sys.path.insert(0, os.path.join(WEB, 'tools')); import enlarge14 as EN
         self.r.d = self.d
         t = self.r.pic(no, back=back).astype(int)
         size = 48 if back else 56
+        if cap: size = min(size, cap)                               # 14판: 등급 한도 (유년기 40·성장기 48 — 칸을 꽉 채우지 않음)
         if scale:                                                   # 배율 (rules.SCALE14): 지금 그림 긴 변 × scale, 칸을 넘으면 가로는 가운데·세로는 아래를 남기고 자름
             ys, xs = np.where(t > 0); size = max(8, round(max(np.ptp(ys) + 1, np.ptp(xs) + 1) * scale))
         r_ = EN.enlarge(t, size, mode); idx = np.where(r_ < 0, 0, r_).astype(np.uint8)
@@ -1149,11 +1150,12 @@ def build(base, out_rom, out_ips):
     for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
         if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
     big = []
+    import sane7 as _S7; _G = _S7.grades(P); _CAP = {'유아기Ⅰ': 40, '유아기Ⅱ': 40, '유년기Ⅰ': 40, '유년기Ⅱ': 40, '유년기': 40, '성장기': 48}   # 14판: 등급별 앞모습 한도
     for back, names in ((False, rules.ENLARGE14_FRONT), (True, rules.ENLARGE14_BACK)):   # 1.4 그림 확대 (우리 그림으로 바뀐 종은 건너뜀)
         for nm in names:
             if nm in N and nm not in nrd and not (not back and nm in front_new):
                 md = rules.ENLARGE14_MODE.get((nm, '뒤' if back else '앞'), 'smooth')
-                h_, w_ = P.enlarge14(N[nm], back, md); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
+                h_, w_ = P.enlarge14(N[nm], back, md, cap=None if back else _CAP.get(_G.get(N[nm]))); big.append('%s %s %d×%d%s' % (nm, '뒤' if back else '앞', w_, h_, '' if md == 'smooth' else ' ' + md))
     P.log.append('1.4 그림 확대 %d장: %s' % (len(big), ', '.join(big)))
     small = []
     for (nm, side), k in rules.SCALE14.items():                             # 1.4 그림 배율 (우리 그림으로 바뀐 종은 건너뜀)

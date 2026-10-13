@@ -733,7 +733,9 @@ def test_maps(names, which='main'):
         if not os.path.exists(f): continue
         w = re.search(r'warp_event\s+(\d+),\s*(\d+)', open(f, encoding='utf-8', errors='ignore').read())
         if not w: continue
-        if which == 'main' and not (envs.get(lab) in ('TOWN', 'ROUTE') or 'Gym' in lab): continue
+        if which.startswith('pre:'):                                       # 14판: --maps 접두어 (집·건물 포함)
+            if not any(lab.startswith(p_) for p_ in which[4:].split(',')): continue
+        elif which == 'main' and not (envs.get(lab) in ('TOWN', 'ROUTE') or 'Gym' in lab): continue
         if (g, n) in MAP_SKIP:
             print('  건너뜀 %s(%s) %d-%d: %s' % (ko, lab, g, n, MAP_SKIP[(g, n)]))
             continue
@@ -765,6 +767,10 @@ if __name__ == '__main__':
         print('인트로 지나가는 중…'); intro()
     r = dmrom.Rom(ROM)
     names = {n: bytes(r.d[r.names + 10 * (n - 1):r.names + 10 * n]) for n in range(1, dmrom.NUM + 1)}
+    if '--maps' in sys.argv:                                               # 14판: python3 romtest.py --maps Violet,Cherrygrove  (그 맵들만)
+        pre = sys.argv[sys.argv.index('--maps') + 1]
+        print('맵 불러오기 (%s)' % pre); bad = test_maps(names, 'pre:' + pre)
+        print('결과:', '모두 통과' if not bad else '%d개 실패' % bad); sys.exit(1 if bad else 0)
     print('트레이너 표'); bad = test_trainers()
     print('진화'); bad += test_evo(names)
     print('암흑 진화'); bad += test_dark(names)

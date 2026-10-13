@@ -20,6 +20,24 @@ sys.path.insert(0, os.path.join(WEB, 'tools')); sys.path.insert(0, os.path.join(
 import snapc, specs
 
 FRONT = {'유아기Ⅰ': 40, '유아기Ⅱ': 40, '유년기Ⅰ': 40, '유년기Ⅱ': 40, '유년기': 40, '성장기': 48}
+
+
+def grade_of(did):
+    """id → 등급: slots.json(새 칸) → rules.REDRAW·FRONT_ONLY·BACK_ONLY(이름→id)로 이름을 찾아 grades.json·slots.json 에서. 없으면 None (14판)"""
+    try:
+        import rules
+        sl = json.load(open(os.path.join(HERE, 'slots.json'), encoding='utf-8'))['mons']
+        g = next((m['grade'] for m in sl if m.get('id') == did), None)
+        if g: return g
+        names = [nm for tab in ('REDRAW', 'FRONT_ONLY', 'BACK_ONLY', 'FRONT_ART_BIG_BACK') for nm, i in getattr(rules, tab, {}).items() if i == did]
+        if not names: return None
+        gr = json.load(open(os.path.join(HERE, 'grades.json'), encoding='utf-8'))
+        for nm in names:
+            g = next((v['grade'] for v in gr.values() if v.get('name') == nm and v.get('grade')), None) or next((m['grade'] for m in sl if m['name'] == nm), None)
+            if g: return g
+    except Exception as ex:
+        print('  등급 찾기 실패', ex)
+    return None
 DEFAULT_PAL = {'gorillamon': ((168, 176, 192), (72, 80, 104)), 'holyangemon': ((240, 224, 128), (72, 104, 200)), 'marindevimon': ((128, 168, 208), (48, 72, 136)),
                'mummymon': ((224, 208, 160), (120, 96, 64)), 'skullsatamon': ((208, 208, 216), (224, 120, 40)), 'baihumon': ((232, 232, 240), (120, 88, 168)),
                'holydramon': ((248, 192, 208), (200, 96, 144)), 'mammon': ((176, 128, 88), (96, 64, 40))}      # 10판: 회색으로 온 그림의 몸 색 (specs 에 없는 종)
@@ -140,11 +158,8 @@ def main():
     if not sp:                                                         # 다시 그리기 칸 (order/redraw.py: 등급·몸 색)
         import redraw
         sp = next((e for e in redraw.R if e['id'] == a.id), {})
-    if not sp.get('grade'):      # 9판: slots.json 의 등급 (specs 에 없는 종 55)
-        try:
-            sl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'slots.json'), encoding='utf-8'))
-            sp = dict(sp, grade=next((m['grade'] for m in sl['mons'] if m.get('id') == a.id), None) or sp.get('grade'))
-        except Exception: pass
+    if not sp.get('grade'):      # 9판: slots.json 의 등급 (specs 에 없는 종 55). 14판: 1.4 기본 종은 rules 이름표 + grades.json
+        sp = dict(sp, grade=grade_of(a.id) or sp.get('grade'))
     grade = a.grade or sp.get('grade') or '성숙기'
     pal = [tuple(int(v) for v in x.split(',')) for x in a.pal] if a.pal else sp.get('pal')
     im = Image.open(a.src)
