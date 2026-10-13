@@ -70,7 +70,7 @@ def main():
                     for tag in ('dst', 'dssm', 'dsle', 'ds[a-z]'):
                         pats += [r'%s_battle_hit.png' % tag, r'%s_battle_attack.png' % tag, r'battle_hit%s.png' % tag, r'battle_attack%s.png' % tag]
                 for pat in pats:
-                    mm = re.search(r'(/images/[0-9a-f]/[0-9a-f]{2}/[^"\' ]+%s)' % pat, html)
+                    mm = re.search(r'(/images/[0-9a-f]/[0-9a-f]{2}/%s[^"\' ]*%s)' % (re.escape(t), pat), html, re.I)      # 18판: 파일 이름이 제목으로 시작해야 함 (안킬로몬에 다른 그림이 받아짐)
                     if mm:
                         m[kind] = mm.group(1)
                         break

@@ -9,6 +9,20 @@ HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 ART = os.path.join(WEB, 'art'); BAK = os.path.join(WEB, 'art_bak'); IMG = os.path.join(os.path.dirname(WEB), 'images', 'digimon')      # 저장소 루트의 images/digimon
 os.makedirs(BAK, exist_ok=True)
 args = sys.argv[1:]
+if '--reset' in args:      # 18판: 전부 원래대로 (art_bak → art, DS 로만 생긴 파일은 삭제)
+    n1 = n2 = 0
+    for b in glob.glob(os.path.join(BAK, '*.png')):
+        shutil.copy(b, ART)
+        n1 += 1
+    for src in glob.glob(os.path.join(IMG, '*-ds-f.png')):
+        did = os.path.basename(src)[:-len('-ds-f.png')]
+        for side in ('f', 'b'):
+            a_ = os.path.join(ART, '%s-%s.png' % (did, side))
+            if os.path.exists(a_) and not os.path.exists(os.path.join(BAK, '%s-%s.png' % (did, side))):
+                os.remove(a_)
+                n2 += 1
+    print('되돌림 %d장, DS 로만 생긴 것 삭제 %d장' % (n1, n2))
+    sys.exit()
 if '--revert' in args:
     for did in args[args.index('--revert') + 1].split(','):
         for side in ('f', 'b'):
