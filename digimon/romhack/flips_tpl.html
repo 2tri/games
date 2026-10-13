@@ -1,0 +1,130 @@
+<title>뒷모습 방향 고르기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 위에 기준 설명과 도구줄, 아래로 뒷모습 카드 격자. 카드를 누르면 좌우반전 미리보기와 표시가 켜진다. */
+:root {
+  --bg: #eceee9; --surface: #f8f9f6; --ink: #1c2420; --muted: #5d6a63; --line: #cfd5cc;
+  --pick: #1d5fd0; --pick-soft: #dce8fb; --flip: #c4372b; --flip-soft: #f8e1de; --sprite: #ffffff;
+  --f-display: "Do Hyeon", "Noto Sans KR", sans-serif; --f-body: "Noto Sans KR", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #131815; --surface: #1c231f; --ink: #e5ebe6; --muted: #98a59c; --line: #323c36; --pick: #7aadff; --pick-soft: #1b2e4d; --flip: #ff8173; --flip-soft: #3d1f1b; --sprite: #f1f3ee; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #131815; --surface: #1c231f; --ink: #e5ebe6; --muted: #98a59c; --line: #323c36; --pick: #7aadff; --pick-soft: #1b2e4d; --flip: #ff8173; --flip-soft: #3d1f1b; --sprite: #f1f3ee; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
+.wrap { max-width: 1100px; margin-inline: auto; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: 1.9rem; margin: 20px 0 4px; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0 0 12px; max-width: 68ch; }
+.lead b { color: var(--ink); }
+.rule { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
+.rule svg { flex: none; }
+.rule p { margin: 0; flex: 1 1 18rem; font-size: 14px; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); padding-block: 10px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.bar .num { font-weight: 700; font-variant-numeric: tabular-nums; }
+.save { font-size: 12px; color: var(--muted); }
+.save.err { color: var(--flip); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: 13px; padding: 6px 11px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--pick-soft); color: var(--pick); font-weight: 700; }
+input[type=search] { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; width: 9.5rem; }
+:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
+.card { font: inherit; text-align: left; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; position: relative; min-width: 0; }
+.card:hover { border-color: var(--muted); }
+.card .box { background: var(--sprite); border-radius: 6px; display: flex; align-items: flex-end; justify-content: center; min-height: 150px; padding: 4px; }
+.card img { image-rendering: pixelated; display: block; width: calc(var(--w) * 3px); height: calc(var(--h) * 3px); max-width: none; }
+.card.on { border-color: var(--flip); background: var(--flip-soft); }
+.card.on img { transform: scaleX(-1); }
+.card .nm { font-size: 13px; font-weight: 500; }
+.card .nm small { color: var(--muted); font-weight: 400; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.card .tag { position: absolute; top: 6px; right: 8px; font-size: 11.5px; font-weight: 700; color: var(--flip); }
+.empty { color: var(--muted); padding: 28px 0; text-align: center; }
+@media (max-width: 520px) { #grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card .box { min-height: 130px; } .card img { width: calc(var(--w) * 2.4px); height: calc(var(--h) * 2.4px); } }
+</style>
+
+<div class="wrap">
+  <h1>뒷모습 방향 고르기</h1>
+  <p class="lead">배틀에서 내 쪽 디지몬은 <b>오른쪽 위에 있는 상대를 봐야</b> 합니다. 지금 <b>왼쪽을 보고 있는 것만</b> 눌러서 표시하세요. 표시하면 좌우반전한 모습으로 바뀌어 보입니다. 이미 오른쪽 위를 보는 것, 앞뒤가 대칭이라 방향이 없는 것은 누르지 마세요. 누르는 즉시 저장됩니다.</p>
+  <div class="rule">
+    <svg width="132" height="84" viewBox="0 0 132 84" role="img" aria-label="배틀 화면 방향: 내 디지몬은 왼쪽 아래에서 오른쪽 위의 상대를 봄">
+      <rect x="1" y="1" width="130" height="82" rx="5" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+      <circle cx="98" cy="22" r="9" fill="currentColor" fill-opacity=".35"/><text x="98" y="26" font-size="10" text-anchor="middle" fill="currentColor">상대</text>
+      <circle cx="34" cy="62" r="11" fill="currentColor" fill-opacity=".2"/><text x="34" y="66" font-size="10" text-anchor="middle" fill="currentColor">나</text>
+      <path d="M46 52 L84 30" stroke="#1d5fd0" stroke-width="3" fill="none"/><path d="M84 30 l-9 1 M84 30 l-4 8" stroke="#1d5fd0" stroke-width="3" fill="none"/>
+    </svg>
+    <p><b>좋은 방향</b>: 왼쪽 아래의 내 디지몬이 오른쪽 위를 봄(파란 화살표). <b>고칠 방향</b>: 왼쪽 위를 보고 있음.</p>
+  </div>
+  <div class="bar">
+    <span class="num" id="pnum">반전 표시 0종</span><span class="save" id="save"></span>
+    <div class="seg" id="seg" role="group" aria-label="보이는 칸"><button type="button" data-s="all" aria-pressed="true">전체</button><button type="button" data-s="on" aria-pressed="false">표시한 것</button></div>
+    <input id="q" type="search" placeholder="이름 찾기" aria-label="이름 찾기">
+  </div>
+  <div id="grid"></div>
+</div>
+
+<script>
+const DATA = /*DATA*/[];
+const on = {};          // key → true
+const els = {};
+const ui = { show: 'all', q: '' };
+let dbNS = null, msg = null;
+const $ = (s) => document.querySelector(s);
+function mk(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function setSave(t, err) { const s = $('#save'); s.textContent = t; s.classList.toggle('err', !!err); clearTimeout(msg); if (!err) msg = setTimeout(() => { s.textContent = ''; }, 2500); }
+function build() {
+  const g = $('#grid');
+  for (const r of DATA) {
+    const c = mk('button', 'card'); c.type = 'button'; c.setAttribute('aria-pressed', 'false');
+    const box = mk('div', 'box'); const im = new Image(); im.src = r.img; im.alt = ''; im.style.setProperty('--w', r.w); im.style.setProperty('--h', r.h); box.appendChild(im);
+    c.appendChild(box);
+    const nm = mk('div', 'nm'); nm.appendChild(mk('small', '', String(r.no))); nm.appendChild(document.createTextNode(r.ko)); c.appendChild(nm);
+    const tag = mk('span', 'tag', '반전'); tag.hidden = true; c.appendChild(tag);
+    c.addEventListener('click', () => toggle(r.k));
+    g.appendChild(c); els[r.k] = { c, tag, r };
+  }
+  const e = mk('div', 'empty', '조건에 맞는 칸이 없습니다.'); e.id = 'empty'; e.hidden = true; g.after(e);
+}
+function paint(k) { const o = els[k]; if (!o) return; const v = !!on[k]; o.c.classList.toggle('on', v); o.c.setAttribute('aria-pressed', String(v)); o.tag.hidden = !v; }
+function refresh() {
+  let n = 0, shown = 0;
+  for (const o of Object.values(els)) {
+    if (on[o.r.k]) n++;
+    const vis = (ui.show === 'all' || on[o.r.k]) && (!ui.q || o.r.ko.includes(ui.q));
+    o.c.hidden = !vis; if (vis) shown++;
+  }
+  $('#pnum').textContent = '반전 표시 ' + n + '종';
+  $('#empty').hidden = shown > 0;
+}
+const chain = {};
+function persist(k) {
+  const p = (chain[k] || Promise.resolve()).then(async () => {
+    if (!dbNS) return setSave('이 브라우저에만 표시됨 (저장 안 됨)', true);
+    const ref = dbNS.doc('flips/' + k), r = els[k].r;
+    if (on[k]) await ref.set({ flip: true, name: r.ko, n: r.n, at: Date.now() }); else await ref.delete();
+    setSave('저장됨', false);
+  }).catch((e) => setSave('저장 실패: ' + ((e && e.code) || e) + ' (다시 눌러 보세요)', true));
+  chain[k] = p;
+}
+function toggle(k) { if (on[k]) delete on[k]; else on[k] = true; paint(k); refresh(); persist(k); }
+async function init() {
+  build();
+  for (const b of document.querySelectorAll('#seg button')) b.addEventListener('click', () => { ui.show = b.dataset.s; for (const x of document.querySelectorAll('#seg button')) x.setAttribute('aria-pressed', String(x === b)); refresh(); });
+  $('#q').addEventListener('input', (e) => { ui.q = e.target.value.trim(); refresh(); });
+  refresh();
+  try { dbNS = window.claude && (await window.claude.use('db')); } catch (e) { dbNS = null; }
+  if (!dbNS) { setSave('공유 저장을 쓸 수 없어 이 화면에서만 표시됩니다', true); return; }
+  dbNS.collection('flips').onSnapshot((snap) => {
+    const seen = {};
+    for (const d of snap.docs) { const v = d.data(); if (v && v.flip && els[d.id]) { on[d.id] = true; seen[d.id] = 1; } }
+    for (const k of Object.keys(on)) if (!seen[k]) delete on[k];
+    for (const k of Object.keys(els)) paint(k);
+    refresh();
+  }, (e) => setSave('실시간 연결 끊김: ' + (e && e.code), true));
+}
+init();
+</script>
