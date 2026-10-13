@@ -1152,6 +1152,10 @@ def build(base, out_rom, out_ips):
         fp = os.path.join(WEB, 'art', art + '-f.png')
         if nm in N and nm not in nrd and os.path.exists(fp) and not os.path.exists(os.path.join(WEB, 'art', art + '-b.png')):
             P.front_only(N[nm], fp); front_new.add(nm); P.log.append('  %s 앞모습만 새 그림 (뒤는 1.4)' % nm)
+    for nm, art in getattr(rules, 'FRONT_FORCE', {}).items():                # 20판: 앞만 우리 그림 (뒤·팔레트는 롬 그대로, art 뒷 파일 유무와 무관)
+        fp = os.path.join(WEB, 'art', art + '-f.png')
+        if nm in N and nm not in nrd and os.path.exists(fp):
+            P.front_only(N[nm], fp); front_new.add(nm); P.log.append('  %s 앞모습만 우리 그림 (뒤는 롬 그대로)' % nm)
     for nm in rules.FLIP_BACK:                                               # 1.4 뒷모습 좌우 뒤집기 (우리 그림이 있는 종은 그림 파일에서 뒤집음)
         if nm in N and nm not in nrd: P.flip_back(N[nm]); P.log.append('  %s 뒷모습 좌우 뒤집음 (1.4 그림)' % nm)
     big = []
