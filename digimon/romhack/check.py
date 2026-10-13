@@ -512,6 +512,40 @@ def rules(c, out):
         elif max(fr) - min(fr) > 2: r18.append((nm, '채널 길이 다름 %s' % fr))
         elif max(lp) - min(lp) > 2: r18.append((nm, '반복 구간 길이 다름 %s' % lp))
     rep('R18', r18, '넣은 노래 %d곡 엔진 시뮬레이션 문제 없음 (음 길이 넘침·채널 어긋남 없음)' % len(RU.MUSIC), lambda b: '%s: %s' % b)
+    # R34 (2026-10-13 도라지시티 상점 멈춤) 맵 스크립트 시작점: 모든 맵의 맵 스크립트·사람·표지판·밟는 칸 스크립트가 원본 금 스크립트 자리를 가리키면
+    #     그 자리 첫 3바이트가 원본 금(work/anat/van_00.gbc)과 같음 (자료로 덮이면 말 거는 순간 엉뚱한 곳을 실행해 멈춤). 도구 공·나무 열매(자료 칸)는 제외 — 이름이 Script 로 끝나는 것만
+    try:
+        import romdump, romanat, wild
+        van = open(os.path.join(HERE, 'work', 'anat', 'van_00.gbc'), 'rb').read()
+        vff = open(os.path.join(HERE, 'work', 'anat', 'van_ff.gbc'), 'rb').read()
+        syms = {}
+        for l in open(os.path.join(HERE, 'work', 'anat', 'pokegold.sym'), encoding='utf-8'):
+            p = l.split()
+            if len(p) == 2 and ':' in p[0]:
+                b_, a_ = p[0].split(':'); b_, a_ = int(b_, 16), int(a_, 16)
+                syms[b_ * 0x4000 + a_ - 0x4000 if b_ else a_] = p[1]
+        R = romdump.Dump(c.path); mn = wild.map_names(); gp = romdump.S['MapGroupPointers']; cnt = {}
+        for (g, n) in mn: cnt[g] = max(cnt.get(g, 0), n)
+        r34, n34 = [], 0
+        for g in range(1, 27):
+            ga = romanat.off(gp // 0x4000, R.d[gp + 2 * (g - 1)] | R.d[gp + 2 * (g - 1) + 1] << 8)
+            for n in range(1, cnt.get(g, 0) + 1):
+                try: mb = R.map1(g, n, ga, mn)
+                except Exception: continue
+                sb = mb['events_at'] // 0x4000; tg = [mb['scripts_at']]
+                for kind in ('objects', 'bgs', 'coords'):
+                    for ob in mb['events'][kind]:
+                        if kind == 'bgs' and ob['kind'] >= 7: continue
+                        if 0x4000 <= ob['script'] < 0x8000: tg.append(romanat.off(sb, ob['script']))
+                for a in tg:
+                    lab = syms.get(a)
+                    if not lab or not lab.endswith(('Script', '_MapScripts')) or van[a] != vff[a]: continue      # 도구 공·나무 열매 등 자료 칸은 빼고 스크립트만
+                    n34 += 1
+                    k_ = 2 if lab.endswith('_MapScripts') else 3      # 맵 스크립트 머리는 2바이트(장면 수·콜백 수) — 그 뒤는 다른 자료
+                    if R.d[a:a + k_] != van[a:a + k_]: r34.append('%s %s %X' % (mb['label'], lab, a))
+        rep('R34', r34, '맵 스크립트 시작점 %d곳이 원본 금 스크립트와 같음 (말 걸기·표지판·밟는 칸)' % n34, lambda b: b)
+    except (OSError, ImportError) as ex:
+        out.append('[?] R34 맵 스크립트 검사 못 함: %s' % ex)
 
 
 def music_sim(d, mid):
