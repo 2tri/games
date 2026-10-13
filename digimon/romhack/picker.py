@@ -13,6 +13,10 @@ IMG = os.path.join(os.path.dirname(WEB), 'images', 'digimon')
 EXTRA_ID = {'아르케니몬': 'arachnemon', '블랙워그몬': 'blackwargreymon', '다크티라몬': 'darktyranomon', '로제몬': 'rosemon'}      # 롬 이름과 art id 가 다른 종
 JUST_REFETCHED = {'drimogemon', 'darklizamon', 'ankylomon', 'minomon'}                  # 19판: 위키몬에서 올바른 페이지로 다시 받은 종
 NOT_FOUND = {'플롯트몬', '다이버몬', '스콜피오몬', '트리케라몬', '브이몬', '데이터몬', '엑스브이몬', '황제드라몬', '왕개굴몬', '지로몬'}      # 위키몬에서 못 찾음
+ALT = {'번개콩알몬': ('thunderballmon', '새 그림 (DS 변환, 썬더볼몬 칸용이던 것)')}      # 20판: 롬은 1.4 그림 → art/<id> 그림도 후보로
+RECHECK = {'agumon', 'andromon', 'ankylomon', 'chrysalimon', 'darklizamon', 'deramon', 'flymon', 'frigimon', 'gomamon', 'gottsumon', 'hagurumon', 'hanumon', 'hawkmon',
+           'holyangemon', 'keramon', 'koromon', 'leomon', 'lilimon', 'mammon', 'metalgreymon', 'minomon', 'monochromon', 'mugendramon', 'mummymon', 'mushroomon', 'numemon',
+           'nyaromon', 'orgemon', 'qinglongmon', 'saberleomon', 'shogungekomon', 'snimon', 'sukamon', 'tanemon', 'tankmon', 'togemon', 'tokomon', 'tunomon', 'vademon', 'wizarmon'}      # 20판: 앞뒤 따로 저장 전에 두 번 이상 고친 칸 (앞·뒤를 따로 골랐을 수 있음)
 GRADES = ['유년기Ⅰ', '유년기Ⅱ', '성장기', '성숙기', '완전체', '궁극체', '아머체', '기타']
 
 
@@ -72,17 +76,26 @@ def main():
         art_f = os.path.join(ART, '%s-f.png' % did) if did else ''
         from_ds = bool(did) and os.path.exists(ds_f) and os.path.exists(art_f) and not same(art_f, bak_f)      # DS 가 있고 art 가 이전(bak)과 다르면 DS 변환본 (bak 없는 새 art 도 포함)
         tiles.append({'k': 'cur', 'label': '현재 롬 그림' + (' (DS 변환)' if from_ds else ''), 'f': cf, 'b': cb})
-        if did and os.path.exists(bak_f) and not same(art_f, bak_f):
+        alt = ALT.get(ko)
+        if alt:
+            af = os.path.join(ART, '%s-f.png' % alt[0]); ab = os.path.join(ART, '%s-b.png' % alt[0])
+            if os.path.exists(af):
+                f, fs = file_uri(af); b, bs = file_uri(ab)
+                tiles.append({'k': 'alt', 'label': alt[1], 'f': [f, fs[0], fs[1]], 'b': [b, bs[0], bs[1]] if b else None})
+        elif did and os.path.exists(bak_f) and not same(art_f, bak_f):
             f, fs = file_uri(bak_f); b, bs = file_uri(os.path.join(BAK, '%s-b.png' % did))
             tiles.append({'k': 'bak', 'label': '이전 그림 (DS 적용 전)', 'f': [f, fs[0], fs[1]], 'b': [b, bs[0], bs[1]] if b else None})
-        if did and os.path.exists(ds_f) and not from_ds:
+        if did and not alt and os.path.exists(ds_f) and not from_ds:
             f, fs = file_uri(ds_f); b, bs = file_uri(os.path.join(IMG, '%s-ds-b.png' % did))
             tiles.append({'k': 'ds', 'label': 'DS 원본 (위키몬)', 'f': [f, fs[0], fs[1]], 'b': [b, bs[0], bs[1]] if b else None})
         title = FIX.get(ko) or TIT.get(EN.get(ko, ''), '') or (EN.get(ko, '') or '').replace(' ', '_')
         flag = ''
         if did in JUST_REFETCHED: flag = '방금 위키몬에서 다시 받음'
         elif ko in NOT_FOUND: flag = '위키몬에서 못 찾음'
-        rows.append({'n': n, 'ko': ko, 'id': did or ('slot%d' % n), 'grade': ((grade_of(did) if did else None) or '기타').replace('유아기', '유년기'), 'tiles': tiles, 'wiki': title, 'flag': flag})
+        rows.append({'n': n, 'ko': ko, 'id': did or ('slot%d' % n), 'recheck': (did in RECHECK), 'grade': ((grade_of(did) if did else None) or '기타').replace('유아기', '유년기'), 'tiles': tiles, 'wiki': title, 'flag': flag})
+    cnt = {}
+    for x in rows: cnt[x['id']] = cnt.get(x['id'], 0) + 1
+    for x in rows: x['key'] = x['id'] if cnt[x['id']] == 1 else '%s-%d' % (x['id'], x['n'])      # 같은 id 를 쓰는 칸이 있으면 칸 번호를 붙여 따로 저장
     rows.sort(key=lambda x: (GRADES.index(x['grade']) if x['grade'] in GRADES else 99, x['n']))
     tpl = open(os.path.join(HERE, 'picker_tpl.html'), encoding='utf-8').read()
     html = tpl.replace('/*DATA*/[]', json.dumps(rows, ensure_ascii=False, separators=(',', ':')))

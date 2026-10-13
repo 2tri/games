@@ -35,10 +35,11 @@
   --warn: #e8c46a; --warn-soft: #3a3016; --sprite: #f1f3ee; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
 .wrap { max-width: 1180px; margin-inline: auto; }
 h1 { font-family: var(--f-display); font-weight: 400; font-size: 1.9rem; margin: 20px 0 4px; letter-spacing: .01em; text-wrap: balance; }
-.lead { color: var(--muted); margin: 0 0 14px; max-width: 62ch; }
+.lead { color: var(--muted); margin: 0 0 14px; max-width: 66ch; }
 .lead b { color: var(--ink); font-weight: 700; }
 
 .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); padding-block: 10px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
@@ -57,6 +58,7 @@ input[type=search] { width: 9.5rem; }
 :focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
 .save { font-size: 12px; color: var(--muted); }
 .save.err { color: var(--bad); }
+.hint { font-size: 12px; color: var(--muted); flex-basis: 100%; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 #list { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
@@ -71,12 +73,14 @@ input[type=search] { width: 9.5rem; }
 .chip { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); }
 .chip.st { margin-left: auto; background: var(--pick-soft); color: var(--pick); font-weight: 700; }
 .chip.st.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.st.half { background: var(--warn-soft); color: var(--warn); }
 .tiles { display: flex; flex-wrap: wrap; gap: 10px; }
 .tile { font: inherit; text-align: left; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; min-width: 0; position: relative; }
 .tile:hover { border-color: var(--muted); }
-.tile[aria-pressed="true"] { border-color: var(--pick); background: var(--pick-soft); }
-.tile[aria-pressed="true"]::after { content: "✓ 채택"; position: absolute; top: 6px; right: 8px; font-size: 11.5px; font-weight: 700; color: var(--pick); }
-.tile .lb { font-size: 12px; color: var(--muted); padding-right: 3.2em; }
+.tile.other { border-color: var(--pick); border-style: dotted; }
+.tile[aria-pressed="true"] { border-color: var(--pick); border-style: solid; background: var(--pick-soft); }
+.tile .sel { position: absolute; top: 6px; right: 8px; font-size: 11.5px; font-weight: 700; color: var(--pick); }
+.tile .lb { font-size: 12px; color: var(--muted); padding-right: 4.6em; }
 .tile[aria-pressed="true"] .lb { color: var(--pick); }
 .pics { display: flex; align-items: flex-end; gap: 8px; }
 .pics .box { background: var(--sprite); border-radius: 4px; padding: 4px; display: flex; align-items: flex-end; justify-content: center; }
@@ -88,7 +92,7 @@ input[type=search] { width: 9.5rem; }
 .tile.none { border-style: dashed; justify-content: center; min-width: 150px; max-width: 190px; }
 .tile.none .lb { color: var(--bad); font-size: 13px; font-weight: 500; padding-right: 0; }
 .tile.none[aria-pressed="true"] { border-color: var(--bad); background: var(--bad-soft); }
-.tile.none[aria-pressed="true"]::after { color: var(--bad); content: "✓"; }
+.tile.none .sel { color: var(--bad); }
 .tile.none small { color: var(--muted); font-size: 11.5px; }
 .empty { color: var(--muted); padding: 28px 0; text-align: center; }
 @media (max-width: 520px) {
@@ -101,19 +105,19 @@ input[type=search] { width: 9.5rem; }
 
 <div class="wrap">
   <h1>디지몬 그림 고르기</h1>
-  <p class="lead">칸마다 후보 그림이 있습니다. <b>그 디지몬이 맞는 그림을 한 번 누르면</b> 바로 저장됩니다. 맞는 그림이 없으면 오른쪽 점선 칸을 누르세요. 현재 그림이 맞으면 「현재 롬 그림」을 누르면 됩니다. 이름 옆 「위키몬」 링크로 실제 모습을 볼 수 있습니다.</p>
+  <p class="lead">칸마다 후보 그림이 있습니다. <b>맞는 그림을 한 번 누르면</b> 바로 저장됩니다. <b>「앞+뒤」</b> 보기에서 누르면 앞·뒤를 같이 고르고, <b>「앞」</b> 또는 <b>「뒤」</b> 보기에서 누르면 그 면만 바뀝니다. 그래서 앞은 DS, 뒤는 직접 올린 그림 같은 조합도 됩니다. 맞는 그림이 없으면 점선 칸을 누르세요. 이름 옆 「위키몬」 링크로 실제 모습을 볼 수 있습니다.</p>
 
   <div class="bar" id="bar">
     <div class="prog"><span class="num" id="pnum">0 / 0</span> <span class="save" id="save"></span><div class="meter"><i id="pbar"></i></div></div>
-    <div class="seg" id="segView" role="group" aria-label="보이는 면">
-      <button type="button" data-v="f" aria-pressed="true">앞</button><button type="button" data-v="b" aria-pressed="false">뒤</button><button type="button" data-v="fb" aria-pressed="false">앞+뒤</button>
+    <div class="seg" id="segView" role="group" aria-label="보이는 면 (누르면 고르는 면)">
+      <button type="button" data-v="f" aria-pressed="false">앞</button><button type="button" data-v="b" aria-pressed="false">뒤</button><button type="button" data-v="fb" aria-pressed="true">앞+뒤</button>
     </div>
     <button type="button" class="btn" id="copy">결과 복사</button>
   </div>
 
   <div class="filters">
     <div class="seg" id="segShow" role="group" aria-label="보이는 칸">
-      <button type="button" data-s="all" aria-pressed="true">전체</button><button type="button" data-s="todo" aria-pressed="false">안 고른 것</button><button type="button" data-s="flag" aria-pressed="false">의심</button><button type="button" data-s="alt" aria-pressed="false">바꾼 것</button>
+      <button type="button" data-s="all" aria-pressed="true">전체</button><button type="button" data-s="todo" aria-pressed="false">안 고른 것</button><button type="button" data-s="recheck" aria-pressed="false">앞뒤 확인</button><button type="button" data-s="flag" aria-pressed="false">의심</button><button type="button" data-s="alt" aria-pressed="false">바꾼 것</button>
     </div>
     <select id="selGrade" aria-label="단계"></select>
     <input id="q" type="search" placeholder="이름 찾기" aria-label="이름 찾기">
@@ -124,16 +128,17 @@ input[type=search] { width: 9.5rem; }
 
 <script>
 const DATA = /*DATA*/[];
-const LABEL = { cur: '현재 롬 그림', bak: '이전 그림', ds: 'DS 원본', none: '모두 틀림' };
-const ui = { v: 'f', show: 'all', grade: 'all', q: '' };
-const picks = {};            // id → 'cur' | 'bak' | 'ds' | 'none'
-const els = {};              // id → { row, tiles: {k: el}, st }
+const LABEL = { cur: '현재 롬', bak: '이전 그림', ds: 'DS 원본', alt: '새 그림', none: '모두 틀림' };
+const ui = { v: 'fb', show: 'all', grade: 'all', q: '' };
+const picks = {};            // key → { f: 'cur'|'bak'|'ds'|'alt'|'none', b: … }
+const legacy = {};           // key → true: 앞뒤 따로 저장하기 전 방식으로 저장된 선택
+const els = {};              // key → { row, tiles: {k: el}, sel: {k: el}, st, r }
 let dbNS = null, saveMsg = null;
 const $ = (s) => document.querySelector(s);
 
 function store(get) { try { return get(); } catch (e) { return null; } }
-function loadLocal() { const s = store(() => localStorage.getItem('picks.v1')); try { Object.assign(picks, JSON.parse(s || '{}')); } catch (e) {} }
-function saveLocal() { store(() => localStorage.setItem('picks.v1', JSON.stringify(picks))); }
+function loadLocal() { const s = store(() => localStorage.getItem('picks.v2')); try { Object.assign(picks, JSON.parse(s || '{}')); } catch (e) {} }
+function saveLocal() { store(() => localStorage.setItem('picks.v2', JSON.stringify(picks))); }
 
 function mk(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function pic(arr, cls) {
@@ -148,45 +153,64 @@ function build() {
   let lastGrade = null, head = null;
   for (const r of DATA) {
     if (r.grade !== lastGrade) { lastGrade = r.grade; head = mk('div', 'gh', r.grade); head.dataset.grade = r.grade; head._small = mk('small'); head.appendChild(head._small); list.appendChild(head); }
-    const row = mk('section', 'row'); row.dataset.id = r.id; row.dataset.grade = r.grade;
+    const row = mk('section', 'row'); row.dataset.key = r.key; row.dataset.grade = r.grade;
     const rh = mk('div', 'rh');
     rh.appendChild(mk('span', 'nm', r.ko));
     rh.appendChild(mk('span', 'id', r.id));
     if (r.wiki) { const a = mk('a', '', '위키몬'); a.href = 'https://wikimon.net/' + encodeURIComponent(r.wiki); a.target = '_blank'; a.rel = 'noopener'; rh.appendChild(a); }
     if (r.flag) rh.appendChild(mk('span', 'chip', r.flag));
+    const lg = mk('span', 'chip', '앞·뒤를 따로 골랐다면 다시 눌러 주세요'); lg.hidden = true; rh.appendChild(lg);
     const st = mk('span', 'chip st'); st.hidden = true; rh.appendChild(st);
     row.appendChild(rh);
-    const tiles = mk('div', 'tiles'); const t = {};
+    const tiles = mk('div', 'tiles'); const t = {}, sel = {};
+    const mkSel = (b) => { const s = mk('span', 'sel'); s.hidden = true; b.appendChild(s); return s; };
     for (const tl of r.tiles) {
       const b = mk('button', 'tile'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
       b.appendChild(mk('span', 'lb', tl.label));
       const p = mk('div', 'pics'); p.appendChild(pic(tl.f, 'pf')); p.appendChild(pic(tl.b, 'pb')); b.appendChild(p);
-      b.addEventListener('click', () => choose(r.id, tl.k)); tiles.appendChild(b); t[tl.k] = b;
+      sel[tl.k] = mkSel(b);
+      b.addEventListener('click', () => choose(r.key, tl.k)); tiles.appendChild(b); t[tl.k] = b;
     }
     const nb = mk('button', 'tile none'); nb.type = 'button'; nb.setAttribute('aria-pressed', 'false');
     nb.appendChild(mk('span', 'lb', '모두 틀림')); nb.appendChild(mk('small', '', '이 디지몬이 아니다 / 새 그림 필요'));
-    nb.addEventListener('click', () => choose(r.id, 'none')); tiles.appendChild(nb); t.none = nb;
+    sel.none = mkSel(nb);
+    nb.addEventListener('click', () => choose(r.key, 'none')); tiles.appendChild(nb); t.none = nb;
     row.appendChild(tiles); list.appendChild(row);
-    els[r.id] = { row, tiles: t, st, r };
+    els[r.key] = { row, tiles: t, sel, st, lg, r };
   }
   const e = mk('div', 'empty', '조건에 맞는 칸이 없습니다.'); e.id = 'empty'; e.hidden = true; list.appendChild(e);
 }
 
-function paint(id) {
-  const o = els[id]; if (!o) return; const k = picks[id] || null;
-  for (const [kk, b] of Object.entries(o.tiles)) b.setAttribute('aria-pressed', String(kk === k));
-  o.row.classList.toggle('done', !!k);
-  o.st.hidden = !k;
-  if (k) { o.st.textContent = k === 'cur' ? '현재 그림이 맞음' : k === 'none' ? '모두 틀림' : LABEL[k] + '으로'; o.st.classList.toggle('bad', k === 'none'); }
+function sideText(k) { return LABEL[k] || k; }
+function paint(key) {
+  const o = els[key]; if (!o) return; const p = picks[key] || {};
+  const sides = ui.v === 'f' ? ['f'] : ui.v === 'b' ? ['b'] : ['f', 'b'];
+  for (const [k, b] of Object.entries(o.tiles)) {
+    const on = (p.f === k ? 'f' : '') + (p.b === k ? 'b' : '');
+    const inView = sides.some((s) => p[s] === k);
+    b.setAttribute('aria-pressed', String(inView));
+    b.classList.toggle('other', !inView && !!on);
+    const s = o.sel[k]; s.hidden = !on; s.textContent = on === 'fb' ? '앞·뒤 ✓' : on === 'f' ? '앞 ✓' : on === 'b' ? '뒤 ✓' : '';
+  }
+  const has = p.f || p.b, full = p.f && p.b;
+  o.row.classList.toggle('done', !!full);
+  o.st.hidden = !has;
+  if (has) {
+    o.st.textContent = p.f === p.b ? (p.f === 'cur' ? '현재 그림이 맞음' : p.f === 'none' ? '모두 틀림' : sideText(p.f) + '으로') : '앞 ' + (p.f ? sideText(p.f) : '미정') + ' · 뒤 ' + (p.b ? sideText(p.b) : '미정');
+    o.st.classList.toggle('bad', p.f === 'none' && p.b === 'none');
+    o.st.classList.toggle('half', !full || p.f !== p.b);
+  }
+  o.lg.hidden = !(legacy[key] && o.r.recheck);
 }
 
 function visible(o) {
-  const r = o.r, k = picks[r.id];
+  const r = o.r, p = picks[r.key] || {};
   if (ui.grade !== 'all' && r.grade !== ui.grade) return false;
   if (ui.q && !(r.ko.includes(ui.q) || r.id.includes(ui.q.toLowerCase()))) return false;
-  if (ui.show === 'todo') return !k;
-  if (ui.show === 'flag') return !!r.flag || k === 'none';
-  if (ui.show === 'alt') return !!k && k !== 'cur';
+  if (ui.show === 'todo') return !(p.f && p.b);
+  if (ui.show === 'recheck') return !!(legacy[r.key] && r.recheck);
+  if (ui.show === 'flag') return !!r.flag || p.f === 'none' || p.b === 'none';
+  if (ui.show === 'alt') return !!(p.f || p.b) && !(p.f === 'cur' && p.b === 'cur');
   return true;
 }
 function refresh() {
@@ -196,38 +220,45 @@ function refresh() {
   }
   for (const h of document.querySelectorAll('.gh')) { const c = perGrade[h.dataset.grade] || 0; h.hidden = !c; h._small.textContent = c + '칸'; }
   $('#empty').hidden = shown > 0;
-  const done = DATA.filter((r) => picks[r.id]).length;
-  $('#pnum').textContent = done + ' / ' + DATA.length + ' 확인';
-  $('#pbar').style.width = (DATA.length ? done / DATA.length * 100 : 0) + '%';
+  const full = DATA.filter((r) => picks[r.key] && picks[r.key].f && picks[r.key].b).length;
+  const half = DATA.filter((r) => picks[r.key] && (!!picks[r.key].f !== !!picks[r.key].b)).length;
+  $('#pnum').textContent = full + ' / ' + DATA.length + ' 확인' + (half ? ' (한 면만 ' + half + ')' : '');
+  $('#pbar').style.width = (DATA.length ? full / DATA.length * 100 : 0) + '%';
   $('#list').className = 'v-' + ui.v;
 }
 
 const chain = {};
-function persist(id, k) {
-  const p = (chain[id] || Promise.resolve()).then(async () => {
+function persist(key) {
+  const p = (chain[key] || Promise.resolve()).then(async () => {
     if (!dbNS) { saveLocal(); return setSave('이 브라우저에만 저장됨', false); }
-    const ref = dbNS.doc('picks/' + id), r = els[id].r;
-    if (k) await ref.set({ pick: k, name: r.ko, id: r.id, grade: r.grade, at: Date.now() }); else await ref.delete();
+    const ref = dbNS.doc('picks/' + key), r = els[key].r, v = picks[key];
+    if (v) await ref.set({ f: v.f || null, b: v.b || null, name: r.ko, id: r.id, n: r.n, grade: r.grade, at: Date.now() }); else await ref.delete();
     setSave('저장됨', false);
   }).catch((e) => { setSave('저장 실패: ' + ((e && e.code) || e) + ' (다시 눌러 보세요)', true); });
-  chain[id] = p;
+  chain[key] = p;
 }
 function setSave(t, err) { const s = $('#save'); s.textContent = t; s.classList.toggle('err', !!err); clearTimeout(saveMsg); if (!err) saveMsg = setTimeout(() => { s.textContent = ''; }, 2500); }
 
-function choose(id, k) {
-  if (picks[id] === k) { delete picks[id]; k = null; } else picks[id] = k;
-  paint(id); refresh(); persist(id, k);
+function choose(key, k) {
+  const p = picks[key] || {};
+  const sides = ui.v === 'f' ? ['f'] : ui.v === 'b' ? ['b'] : ['f', 'b'];
+  const same = sides.every((s) => p[s] === k);
+  const np = Object.assign({}, p);
+  for (const s of sides) { if (same) delete np[s]; else np[s] = k; }
+  if (!np.f && !np.b) delete picks[key]; else picks[key] = np;
+  delete legacy[key];
+  paint(key); refresh(); persist(key);
 }
 
 function wire() {
-  for (const b of document.querySelectorAll('#segView button')) b.addEventListener('click', () => { ui.v = b.dataset.v; for (const x of document.querySelectorAll('#segView button')) x.setAttribute('aria-pressed', String(x === b)); refresh(); });
+  for (const b of document.querySelectorAll('#segView button')) b.addEventListener('click', () => { ui.v = b.dataset.v; for (const x of document.querySelectorAll('#segView button')) x.setAttribute('aria-pressed', String(x === b)); for (const k of Object.keys(els)) paint(k); refresh(); });
   for (const b of document.querySelectorAll('#segShow button')) b.addEventListener('click', () => { ui.show = b.dataset.s; for (const x of document.querySelectorAll('#segShow button')) x.setAttribute('aria-pressed', String(x === b)); refresh(); });
   const sel = $('#selGrade'); sel.appendChild(new Option('모든 단계', 'all'));
   for (const g of [...new Set(DATA.map((r) => r.grade))]) sel.appendChild(new Option(g, g));
   sel.addEventListener('change', () => { ui.grade = sel.value; refresh(); });
   $('#q').addEventListener('input', (e) => { ui.q = e.target.value.trim(); refresh(); });
   $('#copy').addEventListener('click', async () => {
-    const lines = DATA.filter((r) => picks[r.id]).map((r) => r.id + '\t' + r.ko + '\t' + picks[r.id]);
+    const lines = DATA.filter((r) => picks[r.key]).map((r) => r.key + '\t' + r.ko + '\t앞 ' + (picks[r.key].f || '-') + '\t뒤 ' + (picks[r.key].b || '-'));
     const text = lines.join('\n');
     try { await navigator.clipboard.writeText(text); setSave('복사됨 (' + lines.length + '줄)', false); }
     catch (e) { const ta = mk('textarea'); ta.value = text; ta.rows = 8; ta.style.cssText = 'width:100%;margin-top:8px'; $('#bar').after(ta); ta.select(); setSave('복사가 막혀서 아래 상자에 띄웠습니다', true); }
@@ -239,15 +270,19 @@ async function init() {
   try { dbNS = window.claude && (await window.claude.use('db')); } catch (e) { dbNS = null; }
   if (!dbNS) {
     loadLocal();
-    for (const id of Object.keys(picks)) { if (els[id]) paint(id); else delete picks[id]; }
+    for (const k of Object.keys(picks)) { if (els[k]) paint(k); else delete picks[k]; }
     refresh(); setSave('이 브라우저에만 저장됩니다 (공유 저장 사용 불가)', true);
     return;
   }
   dbNS.collection('picks').onSnapshot((snap) => {
     const seen = {};
-    for (const d of snap.docs) { const v = d.data(); if (v && els[d.id] && v.pick) { picks[d.id] = v.pick; seen[d.id] = 1; } }
-    for (const id of Object.keys(picks)) if (!seen[id]) delete picks[id];
-    for (const id of Object.keys(els)) paint(id);
+    for (const d of snap.docs) {
+      const v = d.data(); if (!v || !els[d.id]) continue;
+      if ('f' in v || 'b' in v) { const p = {}; if (v.f) p.f = v.f; if (v.b) p.b = v.b; if (p.f || p.b) { picks[d.id] = p; seen[d.id] = 1; delete legacy[d.id]; } }
+      else if (v.pick) { picks[d.id] = { f: v.pick, b: v.pick }; legacy[d.id] = true; seen[d.id] = 1; }
+    }
+    for (const k of Object.keys(picks)) if (!seen[k]) { delete picks[k]; delete legacy[k]; }
+    for (const k of Object.keys(els)) paint(k);
     refresh();
   }, (e) => setSave('실시간 연결 끊김: ' + (e && e.code), true));
 }
