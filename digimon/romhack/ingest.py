@@ -29,6 +29,11 @@ def grade_of(did):
         sl = json.load(open(os.path.join(HERE, 'slots.json'), encoding='utf-8'))['mons']
         g = next((m['grade'] for m in sl if m.get('id') == did), None)
         if g: return g
+        try:                                                           # 15판: order/allmons.json (칸마다 id·등급)
+            am = json.load(open(os.path.join(HERE, 'order', 'allmons.json'), encoding='utf-8'))
+            g = next((m['grade'] for m in am if m.get('id') == did and m.get('grade')), None)
+            if g: return g
+        except Exception: pass
         names = [nm for tab in ('REDRAW', 'FRONT_ONLY', 'BACK_ONLY', 'FRONT_ART_BIG_BACK') for nm, i in getattr(rules, tab, {}).items() if i == did]
         if not names: return None
         gr = json.load(open(os.path.join(HERE, 'grades.json'), encoding='utf-8'))

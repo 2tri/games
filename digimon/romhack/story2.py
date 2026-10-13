@@ -67,6 +67,16 @@ def groups():
     return re.findall(r'dw (\w+)Group', open(os.path.join(encounters.KR, 'data/trainers/party_pointers.asm')).read())
 
 
+def _is_text(d, a, nmin=4):
+    """a 가 text(00)로 시작하는 진짜 대사인지: 한글 nmin 자 이상 (15판)"""
+    try:
+        import texts as TX
+        t = TX.read_text(d, a)
+        return bool(t) and sum('가' <= ch <= '힣' for ch in t[2]) >= nmin
+    except Exception:
+        return False
+
+
 def find_battle(d, cls, idx):
     """→ (pre 글 주소 또는 None, win 글 주소, lose 글 주소 또는 None)"""
     key = bytes([0x5e, cls, idx])
@@ -76,6 +86,8 @@ def find_battle(d, cls, idx):
         p = d.find(key, p + 1)
         if p < 0:
             break
+        if d[p + 3] != 0x5f:                      # 15판: loadtrainer 바로 뒤는 startbattle — 아니면 우연히 맞은 바이트
+            continue
         w = d.rfind(b'\x64', max(0, p - 128), p)
         if w < 0:
             continue
@@ -87,6 +99,8 @@ def find_battle(d, cls, idx):
         wa = follow(d, addr(bank, win))
         la = follow(d, addr(bank, lose)) if 0x4000 <= lose < 0x8000 else None
         if d[wa] != 0x00:
+            continue
+        if not _is_text(d, wa):                    # 15판: 이김 글이 진짜 글(한글 4자 이상)인지
             continue
         t = d.rfind(b'\x4d', max(0, w - 24), w)
         pa = None
@@ -113,6 +127,8 @@ def find_trainer_event(d, cls, idx):
             continue
         sa, wa = follow(d, addr(bank, seen)), follow(d, addr(bank, win))
         if sa >= len(d) or wa >= len(d) or d[sa] != 0x00 or d[wa] != 0x00:
+            continue
+        if not (_is_text(d, sa) and _is_text(d, wa)):   # 15판
             continue
         hits.append((sa, wa, None))
     return hits
