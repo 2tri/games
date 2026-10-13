@@ -29,7 +29,7 @@ def rename_texts(P, pairs, names=()):
     d = bytes(P.d)
     idx = TX.refs_index(d)
     done = set()
-    n_in = n_far = 0
+    n_in = n_far = 0; n_skip = 0
     pairs = sorted(pairs, key=lambda q: -len(q[0]))
     M = dict(pairs)
     NM = set(names)
@@ -53,11 +53,15 @@ def rename_texts(P, pairs, names=()):
         if s == s0:
             continue
         s = patch._wrap(s)
-        if P.retext(a, s) == 'in':
+        r = P.retext(a, s)
+        if r == 'in':
             n_in += 1
+        elif r == 'skip':      # 16판: 00 00 머리 글은 못 옮김 → 원문 그대로 (R32 에 남으면 그 글만 손으로)
+            n_skip += 1
         else:
             n_far += 1
         d = bytes(P.d)
+    rename_texts.skipped = n_skip
     return n_in, n_far
 
 
@@ -157,7 +161,7 @@ def apply(P):
     pairs = list(rules.TERM_RENAME.items()) + list(rules.PLACE_RENAME.items()) + list(rules.BADGE_RENAME.items()) + list(rules.LEADER_TEXT.items())
     try:
         n_in, n_far = rename_texts(P, pairs, names=rules.LEADER_TEXT.keys())
-        log.append('용어·지명·이름 대사 %d덩어리 (제자리 %d, 옮김 %d)' % (n_in + n_far, n_in, n_far))
+        log.append('용어·지명·이름 대사 %d덩어리 (제자리 %d, 옮김 %d, 못 옮김 %d)' % (n_in + n_far, n_in, n_far, getattr(rename_texts, 'skipped', 0)))
     except Exception as ex:
         log.append('대사 바꾸기 실패 %r' % (ex,))
     for fn in (lambda: landmarks(P, SY, rules.PLACE_RENAME),
@@ -168,5 +172,12 @@ def apply(P):
             log.append(fn())
         except Exception as ex:
             log.append('places2 실패 %r' % (ex,))
+    try:      # 16판: 남은 「배지」(메뉴 글·못 옮긴 글)는 같은 길이 「문장」으로 롬 전체에서 (사용자 10/13 「아직도 배지배지」)
+        n0 = bytes(P.d).count(krtext.encode('배지'))
+        P.words([('배지', '문장')], (0, 0))
+        P.log.pop()
+        log.append('남은 「배지」→「문장」 %d곳 (롬 전체, 같은 길이)' % n0)
+    except Exception as ex:
+        log.append('배지→문장 실패 %r' % (ex,))
     P.r.d = P.d
     return log

@@ -86,8 +86,6 @@ def find_battle(d, cls, idx):
         p = d.find(key, p + 1)
         if p < 0:
             break
-        if d[p + 3] != 0x5f:                      # 15판: loadtrainer 바로 뒤는 startbattle — 아니면 우연히 맞은 바이트
-            continue
         w = d.rfind(b'\x64', max(0, p - 128), p)
         if w < 0:
             continue
@@ -100,7 +98,7 @@ def find_battle(d, cls, idx):
         la = follow(d, addr(bank, lose)) if 0x4000 <= lose < 0x8000 else None
         if d[wa] != 0x00:
             continue
-        if not _is_text(d, wa):                    # 15판: 이김 글이 진짜 글(한글 4자 이상)인지
+        if not _is_text(d, wa, 0):                 # 15판: 이김 글이 진짜 글인지 (16판: 「…… 졌다」처럼 짧은 글도 있어 한글 수는 안 봄)
             continue
         t = d.rfind(b'\x4d', max(0, w - 24), w)
         pa = None
@@ -151,6 +149,18 @@ def apply(P):
         nonlocal n_ok, n_far
         a = follow(bytes(P.d), a)
         r = P.retext(a, new)
+        if r == 'skip':      # 16판: 옮길 수 없는 자리(00 00 머리) → 뒤 상자부터 줄여 제자리에 맞춤
+            tail = tail_of(new)
+            body = new[:-len(tail)] if tail and new.endswith(tail) else new
+            boxes = body.split('<PARA>')
+            for k in range(len(boxes) - 1, 0, -1):
+                if P.retext(a, '<PARA>'.join(boxes[:k]) + tail) == 'in':
+                    log.append('  %X 글은 옮길 수 없는 자리(00 00 머리)라 상자 %d개 → %d개로 줄여 제자리에' % (a, len(boxes), k))
+                    r = 'in'
+                    break
+            if r != 'in':
+                log.append('  %X 글은 옮길 수 없는 자리(00 00 머리)인데 줄여도 안 들어가 원문 그대로' % a)
+                return
         if r == 'in':
             n_ok += 1
         else:
