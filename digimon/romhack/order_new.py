@@ -18,17 +18,16 @@ INFO = {
     'submarimon': ('Submarimon', 'Submarimon', 'https://wikimon.net/images/a/a4/Submarimon.jpg', ''),
     'giromon': ('Giromon', 'Giromon', 'https://wikimon.net/images/8/85/Giromon.jpg', ''),
     'pururumon': ('Pururumon', 'Pururumon', 'https://wikimon.net/images/0/03/Pururumon.jpg', ''),
-    'scorpiomon': ('Anomalocarimon', 'Anomalocarimon', 'https://wikimon.net/images/3/33/Anomalocarimon.jpg', '설계자 종 목록(roster)의 영어 이름이 Anomalocarimon. 위키몬에 DS 전투 그림은 없음(확인함).'),
+    'scorpiomon': ('Anomalocarimon', 'Anomalocarimon', 'https://wikimon.net/images/3/33/Anomalocarimon.jpg', '한국어 이름 스콜피오몬 = Anomalocarimon (설계자 종 목록, 사용자 확인). 위키몬에 DS 전투 그림은 없음(확인함).'),
     'deathmeramon': ('DeathMeramon', 'DeathMeramon', 'https://wikimon.net/images/a/ae/Deathmeramon.jpg', '위키몬 문서 이름은 Death Meramon.'),
     'whamon': ('Whamon', 'Whamon', None, '위키몬 문서 안에서 첫 그림(Whamon_adult.jpg 등)을 쓰세요.'),
     'rosemon': ('Rosemon', 'Rosemon', 'https://wikimon.net/images/9/91/Rosemon.gif', '스타팅 특례 칸(릴리몬 → 로제몬).'),
     'garbagemon': ('Garbagemon', 'Garbagemon', 'https://wikimon.net/images/5/5b/Gerbemon.jpg', '영어판 이름 Gerbemon (위키몬 문서 이름).'),
-    'slot189': ('Vegiemon', 'Vegiemon', None, '확인 필요: 「정우베지몬」은 롬 원래 이름이고 위키몬에 이 이름의 디지몬이 없습니다. 지금은 베지몬 그림을 색만 바꿔 쓰는 칸입니다. 주문 전에 설계자에게 무슨 디지몬인지 확인하세요.'),
 }
 GRADE_ALIAS = {'유아기Ⅰ': '유년기Ⅰ', '유아기Ⅱ': '유년기Ⅱ'}
 GRADE = {'leafmon': '유년기Ⅱ', 'pegasusmon': '아머체', 'tsubumon': '유년기Ⅰ', 'shogungekomon': '완전체', 'nyaromon': '유년기Ⅱ', 'nefertimon': '아머체', 'upamon': '유년기Ⅱ',
          'submarimon': '아머체', 'giromon': '완전체', 'pururumon': '유년기Ⅰ', 'scorpiomon': '완전체', 'deathmeramon': '완전체', 'whamon': '완전체', 'rosemon': '궁극체',
-         'garbagemon': '완전체', 'slot189': '완전체'}
+         'garbagemon': '완전체'}
 
 
 def main():

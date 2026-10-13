@@ -60,6 +60,7 @@ def apply():
     changed, miss, mixed, recol, nothing = [], [], [], [], []
     for key, v in picks.items():
         did = v['id']
+        dspal = None
         for side in ('f', 'b'):
             k = v[side]; dst = os.path.join(ART, '%s-%s.png' % (did, side))
             if k == 'bak':
@@ -70,7 +71,8 @@ def apply():
             elif k == 'ds':
                 src = os.path.join(IMG, '%s-ds-%s.png' % (did, side))
                 g = ingest.grade_of(did); fmax = ingest.FRONT.get(g, 56) if g else 56
-                size, _ = ds_convert.convert(src, dst, fmax if side == 'f' else 48, None)
+                size, pal_ = ds_convert.convert(src, dst, fmax if side == 'f' else 48, dspal)      # 뒤는 앞 몸색 그대로 (ds_all 과 같게)
+                if side == 'f': dspal = pal_
                 changed.append((v['name'], side, 'DS 변환 %dx%d' % size))
         if v['f'] != v['b'] and 'none' not in (v['f'], v['b']):
             mixed.append(v['name'])

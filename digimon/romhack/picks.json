@@ -1189,13 +1189,6 @@
   "b": "cur",
   "leg": true
  },
- "slot189": {
-  "name": "정우베지몬",
-  "id": "slot189",
-  "f": "none",
-  "b": "none",
-  "leg": true
- },
  "vegiemon": {
   "name": "베지몬",
   "id": "vegiemon",
@@ -1426,5 +1419,12 @@
   "f": "cur",
   "b": "cur",
   "leg": true
+ },
+ "redvegimon": {
+  "name": "레드베지몬",
+  "id": "redvegimon",
+  "f": "ds",
+  "b": "ds",
+  "leg": false
  }
 }

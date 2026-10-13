@@ -1053,6 +1053,8 @@ def build(base, out_rom, out_ips):
     ie = il
     for _ in range(256): ie = P.d.index(0x50, ie) + 1                 # 도구 이름 256개 (pokegold-kr data/items/names.asm)
     P.words(rules.WORDS, (il, ie))
+    for nm_, v_ in rules.PALSWAP.items():                              # 20판: WORDS 의 ('레드' → '정우')가 종 이름 「레드베지몬」까지 바꿔 「정우베지몬」이 됐음 (사용자 지적) → 이름표만 되돌림
+        if '레드' in nm_: P.name(v_[1], nm_)
     # 작업팩 10/6 S1-7 오메가블레이드: 빈 도구 칸 — 속성(달맞이 돌: 값 0·진화의 돌 주머니)·설명(천둥의 돌 글을 가리킴)·효과(진화의 돌)·이름(이름표를 옮겨 길이 제한 없이)
     it = OB['item']
     P.put(at + 7 * (it - 1), bytes(P.d[at + 7 * (OB['attr_from'] - 1):at + 7 * OB['attr_from']]))

@@ -180,7 +180,8 @@ REDRAW = {'아구몬': 'agumon', '파피몬': 'gabumon', '팔몬': 'palmon', '�
           '스팅몬': 'stingmon', '가루다몬': 'garudamon',
           # 20판 사용자 검수(picker): 롬이 2.0·1.4·확대 그림을 쓰던 종인데 이전(우리) 그림을 앞·뒤 모두 골라서 art 그림으로 옮김
           '홀리엔젤몬': 'holyangemon', '맘몬': 'mammon', '우가몬': 'orgemon', '위자몬': 'wizarmon', '인펠몬': 'infermon',
-          '화염드라몬': 'fladramon', '샤벨레오몬': 'saberleomon', '베놈묘티몬': 'venommyotismon'}
+          '화염드라몬': 'fladramon', '샤벨레오몬': 'saberleomon', '베놈묘티몬': 'venommyotismon',
+          '레드베지몬': 'redvegimon'}      # 20판: 위키몬 DS 그림(Redvegimon_dssm_battle)을 변환. 색만 바꾼 베지몬(PALSWAP)보다 우선
 # 20판: 앞만 우리(이전) 그림, 뒤·팔레트는 롬 그대로 (사용자 검수 「앞 이전·뒤 현재」). FRONT_ONLY 와 달리 art 뒷 파일이 있어도 적용
 FRONT_FORCE = {'톱니몬': 'hagurumon', '케라몬': 'keramon', '스나이몬': 'snimon'}
 # 1.4 뒷모습만 좌우 뒤집을 종. 에렉몬은 「바라보는 방향」 메모가 뒤집기가 아니라 새로 받기로 정정됨(그림 세션 0c7f0ce) → 지금은 없음
