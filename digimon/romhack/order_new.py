@@ -23,11 +23,12 @@ INFO = {
     'scorpiomon': ('Anomalocarimon', 'Anomalocarimon', 'https://wikimon.net/images/3/33/Anomalocarimon.jpg', '한국어 이름 스콜피오몬 = Anomalocarimon (설계자 종 목록, 사용자 확인). 위키몬에 DS 전투 그림은 없음(확인함).'),
     'deathmeramon': ('DeathMeramon', 'DeathMeramon', 'https://wikimon.net/images/a/ae/Deathmeramon.jpg', '위키몬 문서 이름은 Death Meramon.'),
     'whamon': ('Whamon', 'Whamon', None, '위키몬 문서 안에서 첫 그림(Whamon_adult.jpg 등)을 쓰세요.'),
+    'hiandromon': ('Hi Andromon', 'HiAndromon', 'https://wikimon.net/images/2/23/Hiandromon_dst_battle.png', '궁극체(안드로몬에서 진화). 위키몬에 DS 전투 그림(dst_battle)이 있어 아래 링크가 그것입니다. AI 그림이 마음에 안 들면 DS 그림으로 바로 넣을 수도 있습니다.'),
     'rosemon': ('Rosemon', 'Rosemon', 'https://wikimon.net/images/9/91/Rosemon.gif', '스타팅 특례 칸(릴리몬 → 로제몬).'),
     'garbagemon': ('Garbagemon', 'Garbagemon', 'https://wikimon.net/images/5/5b/Gerbemon.jpg', '영어판 이름 Gerbemon (위키몬 문서 이름).'),
 }
 GRADE_ALIAS = {'유아기Ⅰ': '유년기Ⅰ', '유아기Ⅱ': '유년기Ⅱ'}
-GRADE = {'leafmon': '유년기Ⅱ', 'pegasusmon': '아머체', 'tsubumon': '유년기Ⅰ', 'shogungekomon': '완전체', 'nyaromon': '유년기Ⅱ', 'nefertimon': '아머체', 'upamon': '유년기Ⅱ',
+GRADE = {'hiandromon': '궁극체', 'leafmon': '유년기Ⅱ', 'pegasusmon': '아머체', 'tsubumon': '유년기Ⅰ', 'shogungekomon': '완전체', 'nyaromon': '유년기Ⅱ', 'nefertimon': '아머체', 'upamon': '유년기Ⅱ',
          'submarimon': '아머체', 'giromon': '완전체', 'pururumon': '유년기Ⅰ', 'scorpiomon': '완전체', 'deathmeramon': '완전체', 'whamon': '완전체', 'rosemon': '궁극체',
          'garbagemon': '완전체'}
 
@@ -48,12 +49,17 @@ def main():
         if 'none' not in (v['f'], v['b']): continue
         i = v['id']
         if i not in INFO: continue
-        if i != 'garbagemon' and os.path.exists(os.path.join(HERE, '..', 'art', i + '-f.png')) and os.path.exists(os.path.join(HERE, '..', 'art', i + '-b.png')): continue      # 앞·뒤 다 받음
+        if os.path.exists(os.path.join(HERE, '..', 'art', i + '-f.png')) and os.path.exists(os.path.join(HERE, '..', 'art', i + '-b.png')): continue      # 앞·뒤 다 받음
         en, wiki, img, memo = INFO[i]; g = GRADE[i]
         if getattr(rules, 'NO_BABIES', False) and g.startswith('유') and v['name'] not in rules.BABY_KEEP: continue      # 13번: 유년기는 게임에서 뺌
         rows.append({'ko': v['name'], 'id': i, 'grade': g, 'en': en, 'wiki': wiki, 'img': img, 'memo': memo,
                      'front': None if i in FRONT_DONE else prompts.card_front(en), 'back': back_as_is(en, g), 'back2': prompts.card_front(en),
                      'need': '뒤' if i in FRONT_DONE else ('앞·뒤' if v['f'] == v['b'] == 'none' else ('앞' if v['f'] == 'none' else '뒤'))})
+    for i in ('hiandromon',):      # 20번 이후 추가 주문: 검수 선택과 무관하게 그림이 없는 종 (하이안드몬: 슬롯 13, 그림 대기)
+        if os.path.exists(os.path.join(HERE, '..', 'art', i + '-f.png')) and os.path.exists(os.path.join(HERE, '..', 'art', i + '-b.png')): continue
+        en, wiki, img, memo = INFO[i]; g = GRADE[i]
+        rows.append({'ko': '하이안드몬', 'id': i, 'grade': g, 'en': en, 'wiki': wiki, 'img': img, 'memo': memo,
+                     'front': prompts.card_front(en), 'back': back_as_is(en, g), 'back2': prompts.card_front(en), 'need': '앞·뒤'})
     order = ['유년기Ⅰ', '유년기Ⅱ', '성장기', '아머체', '완전체', '궁극체']
     rows.sort(key=lambda r: (order.index(r['grade']) if r['grade'] in order else 9, r['ko']))
     tpl = open(os.path.join(HERE, 'order_new_tpl.html'), encoding='utf-8').read()
