@@ -134,6 +134,28 @@ def rle_encode(t):
     return bytes(out) + b'\xff'
 
 
+FONT5 = {'E': ['11111', '10000', '11110', '10000', '11111'], 'D': ['11110', '10001', '10001', '10001', '11110'], 'I': ['01110', '00100', '00100', '00100', '01110'],
+         'T': ['11111', '00100', '00100', '00100', '00100'], 'B': ['11110', '10001', '11110', '10001', '11110'], 'Y': ['10001', '01010', '00100', '00100', '00100'],
+         'N': ['10001', '11001', '10101', '10011', '10001'], 'H': ['10001', '10001', '11111', '10001', '10001'], ' ': ['000', '000', '000', '000', '000']}
+CREDIT_TEXT = 'EDIT BY NH'      # 21판 (사용자 요청 「edit by NH 같은 내가 했다는 티」): 제목 화면 맨 아래 줄 오른쪽 아래
+
+
+def credit_canvas(text=CREDIT_TEXT, right=156):
+    """맨 아래 한 줄(8×160) 값: 2 = 남색 바탕, 3 = 흰 글씨 (5×5 글꼴, 글자 사이 1칸). 오른쪽 끝을 right 에 맞춤"""
+    glyphs = [FONT5[ch] for ch in text]
+    width = sum(len(g[0]) for g in glyphs) + len(glyphs) - 1
+    C = np.full((8, 256), 2, np.uint8); x0 = right - width
+    for g in glyphs:
+        for yy, line in enumerate(g):
+            for xx, chx in enumerate(line):
+                if chx == '1': C[1 + yy, x0 + xx] = 3
+        x0 += len(g[0]) + 1
+    return C
+
+
+CREDIT = credit_canvas()
+
+
 def digital_canvas(cx=76, cy=78):
     """화면 6~17줄(y 48~143) 값(0 짙은 파랑 · 1 하늘빛 · 2 남색 · 3 흰빛). 6~11줄 = 빛 번짐 + 숫자, 12~16줄 = 흐르는 격자(16칸 주기), 17줄 = 남색"""
     H = np.full((144, 256), 2, np.uint8)
@@ -193,7 +215,7 @@ def digital_background(P, d, gfx1):
             y, x = row * 8, col * 8
             src = H6 if row < 12 else H
             tb = tile_bytes(src[y:y + 8, x:x + 8]) if (row >= 12 or x < 160) else tile_bytes(blank)
-            if row == 17: tb = tile_bytes(blank)
+            if row == 17: tb = tile_bytes(CREDIT[:, x:x + 8]) if x < 160 else tile_bytes(blank)      # 21판: 맨 아래 줄에 만든 사람 표시 (CREDIT)
             if tb not in cache:
                 if 12 <= row <= 16: t = next(floor_idx); gfx1[t * 16:t * 16 + 16] = tb
                 else:
