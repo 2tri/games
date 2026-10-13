@@ -6,7 +6,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, 'order'))
 import prompts
 import rules
-FRONT_DONE = {'nefertimon', 'submarimon', 'pegasusmon', 'garbagemon', 'whamon', 'deathmeramon', 'scorpiomon', 'giromon', 'rosemon', 'shogungekomon'}      # 앞모습을 받아 art 에 넣은 종 (뒷모습만 남음)
+FRONT_DONE = set()      # 13번 이후: 뒷모습까지 받은 종은 art 에 앞·뒤가 다 있어 주문서에서 뺌 (가베지몬만 앞모습 교체 대기)      # 앞모습을 받아 art 에 넣은 종 (뒷모습만 남음)
 
 # id → (영어 이름, 위키몬 문서, 공식 그림 직접 주소 또는 None, 메모)
 INFO = {
@@ -48,6 +48,7 @@ def main():
         if 'none' not in (v['f'], v['b']): continue
         i = v['id']
         if i not in INFO: continue
+        if i != 'garbagemon' and os.path.exists(os.path.join(HERE, '..', 'art', i + '-f.png')) and os.path.exists(os.path.join(HERE, '..', 'art', i + '-b.png')): continue      # 앞·뒤 다 받음
         en, wiki, img, memo = INFO[i]; g = GRADE[i]
         if getattr(rules, 'NO_BABIES', False) and g.startswith('유') and v['name'] not in rules.BABY_KEEP: continue      # 13번: 유년기는 게임에서 뺌
         rows.append({'ko': v['name'], 'id': i, 'grade': g, 'en': en, 'wiki': wiki, 'img': img, 'memo': memo,
