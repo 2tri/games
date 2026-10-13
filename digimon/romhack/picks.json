@@ -1,0 +1,1430 @@
+{
+ "salamon": {
+  "name": "플롯트몬",
+  "id": "salamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "jyureimon": {
+  "name": "쥬레이몬",
+  "id": "jyureimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "v-mon": {
+  "name": "브이몬",
+  "id": "v-mon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "tunomon": {
+  "name": "뿔몬",
+  "id": "tunomon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "hagurumon": {
+  "name": "톱니몬",
+  "id": "hagurumon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "blossomon": {
+  "name": "블로섬몬",
+  "id": "blossomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "diablomon": {
+  "name": "디아블로몬",
+  "id": "diablomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "imperialdramondragonmode": {
+  "name": "황제드라몬",
+  "id": "imperialdramondragonmode",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "blackwargreymon": {
+  "name": "블랙워그몬",
+  "id": "blackwargreymon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "ladydevimon": {
+  "name": "레이디데블",
+  "id": "ladydevimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "gorillamon": {
+  "name": "고릴라몬",
+  "id": "gorillamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "nyokimon": {
+  "name": "뇨키몬",
+  "id": "nyokimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "gizamon": {
+  "name": "기자몬",
+  "id": "gizamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "dokugumon": {
+  "name": "도쿠구몬",
+  "id": "dokugumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "halsemon": {
+  "name": "할세몬",
+  "id": "halsemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "woodmon": {
+  "name": "우드몬",
+  "id": "woodmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "mojyamon": {
+  "name": "모야몬",
+  "id": "mojyamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": false
+ },
+ "gazimon": {
+  "name": "가지몬",
+  "id": "gazimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "punimon": {
+  "name": "푸니몬",
+  "id": "punimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "pabumon": {
+  "name": "파브몬",
+  "id": "pabumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "piyomon": {
+  "name": "피요몬",
+  "id": "piyomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "mekanorimon": {
+  "name": "메카노리몬",
+  "id": "mekanorimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "pumpmon": {
+  "name": "펌프몬",
+  "id": "pumpmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "venommyotismon": {
+  "name": "베놈묘티몬",
+  "id": "venommyotismon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "centalmon": {
+  "name": "켄터스몬",
+  "id": "centalmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "seraphimon": {
+  "name": "세라피몬",
+  "id": "seraphimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "leafmon": {
+  "name": "리프몬",
+  "id": "leafmon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "pegasusmon": {
+  "name": "페가수스몬",
+  "id": "pegasusmon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "pinochimon": {
+  "name": "피노키몬",
+  "id": "pinochimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "airdramon": {
+  "name": "에어드라몬",
+  "id": "airdramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "kuwagamon": {
+  "name": "쿠가몬",
+  "id": "kuwagamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "kunemon": {
+  "name": "쿠네몬",
+  "id": "kunemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "flymon": {
+  "name": "플라이몬",
+  "id": "flymon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "snimon": {
+  "name": "스나이몬",
+  "id": "snimon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "raremon": {
+  "name": "레어몬",
+  "id": "raremon",
+  "f": "bak",
+  "b": "bak",
+  "leg": false
+ },
+ "xuanwumon": {
+  "name": "현무몬",
+  "id": "xuanwumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "triceramon": {
+  "name": "트리케라몬",
+  "id": "triceramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "tsubumon": {
+  "name": "츠부몬",
+  "id": "tsubumon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "shogungekomon": {
+  "name": "왕개굴몬",
+  "id": "shogungekomon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "poromon": {
+  "name": "포로몬",
+  "id": "poromon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "piemon": {
+  "name": "피에몬",
+  "id": "piemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "keramon": {
+  "name": "케라몬",
+  "id": "keramon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "wargreymon": {
+  "name": "워그레이몬",
+  "id": "wargreymon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "tsumemon": {
+  "name": "츠메몬",
+  "id": "tsumemon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "wormmon": {
+  "name": "추추몬",
+  "id": "wormmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "chrysalimon": {
+  "name": "크리사리몬",
+  "id": "chrysalimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "mushroomon": {
+  "name": "머슈룸몬",
+  "id": "mushroomon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "metalgreymon": {
+  "name": "메탈그레몬",
+  "id": "metalgreymon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "chuumon": {
+  "name": "츄몬",
+  "id": "chuumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "tankmon": {
+  "name": "탱크몬",
+  "id": "tankmon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "lighdramon": {
+  "name": "번개드라몬",
+  "id": "lighdramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "vamdemon": {
+  "name": "묘티스몬",
+  "id": "vamdemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "thunderballmon": {
+  "name": "번개콩알몬",
+  "id": "thunderballmon",
+  "f": "cur",
+  "b": "alt",
+  "leg": false
+ },
+ "nanimon": {
+  "name": "나니몬",
+  "id": "nanimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "ikkakumon": {
+  "name": "원뿔몬",
+  "id": "ikkakumon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "holyangemon": {
+  "name": "홀리엔젤몬",
+  "id": "holyangemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": false
+ },
+ "betamon": {
+  "name": "베타몬",
+  "id": "betamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "revolmon": {
+  "name": "레볼몬",
+  "id": "revolmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "golemon": {
+  "name": "골레몬",
+  "id": "golemon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "tentomon": {
+  "name": "텐타몬",
+  "id": "tentomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "nyaromon": {
+  "name": "야옹몬",
+  "id": "nyaromon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "frigimon": {
+  "name": "프리지몬",
+  "id": "frigimon",
+  "f": "ds",
+  "b": "cur",
+  "leg": false
+ },
+ "knightmon": {
+  "name": "나이트몬",
+  "id": "knightmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "garudamon": {
+  "name": "가루다몬",
+  "id": "garudamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "yukimibotamon": {
+  "name": "유키보타몬",
+  "id": "yukimibotamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "mammon": {
+  "name": "맘몬",
+  "id": "mammon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "otamamon": {
+  "name": "오타마몬",
+  "id": "otamamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "koromon": {
+  "name": "코로몬",
+  "id": "koromon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "nefertimon": {
+  "name": "네페르몬",
+  "id": "nefertimon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "apocalymon": {
+  "name": "아포카리몬",
+  "id": "apocalymon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "darktyranomon": {
+  "name": "다크티라몬",
+  "id": "darktyranomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "hououmon": {
+  "name": "호우오몬",
+  "id": "hououmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "ankylomon": {
+  "name": "황금아르마",
+  "id": "ankylomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "parrotmon": {
+  "name": "파롯트몬",
+  "id": "parrotmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "arachnemon": {
+  "name": "아르케니몬",
+  "id": "arachnemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "datamon": {
+  "name": "데이터몬",
+  "id": "datamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "devidramon": {
+  "name": "데블드라몬",
+  "id": "devidramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "lilithmon": {
+  "name": "리리스몬",
+  "id": "lilithmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "starmon": {
+  "name": "스타몬",
+  "id": "starmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "upamon": {
+  "name": "우파몬",
+  "id": "upamon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "piximon": {
+  "name": "피콜로몬",
+  "id": "piximon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "divermon": {
+  "name": "다이버몬",
+  "id": "divermon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "yuramon": {
+  "name": "유라몬",
+  "id": "yuramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "poyomon": {
+  "name": "포요몬",
+  "id": "poyomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "coelamon": {
+  "name": "실러캔몬",
+  "id": "coelamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "megadramon": {
+  "name": "메가드라몬",
+  "id": "megadramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "evilmon": {
+  "name": "이비르몬",
+  "id": "evilmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "guardromon": {
+  "name": "가드로몬",
+  "id": "guardromon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "octomon": {
+  "name": "옥토몬",
+  "id": "octomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "metalseadramon": {
+  "name": "메탈시드몬",
+  "id": "metalseadramon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "patamon": {
+  "name": "파닥몬",
+  "id": "patamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "hawkmon": {
+  "name": "호크몬",
+  "id": "hawkmon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "okuwamon": {
+  "name": "오쿠와몬",
+  "id": "okuwamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "palmon": {
+  "name": "팔몬",
+  "id": "palmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "angemon": {
+  "name": "엔젤몬",
+  "id": "angemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "kokatorimon": {
+  "name": "꼬끼몬",
+  "id": "kokatorimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "mochimon": {
+  "name": "모티몬",
+  "id": "mochimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "submarimon": {
+  "name": "잠수몬",
+  "id": "submarimon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "chimeramon": {
+  "name": "키메라몬",
+  "id": "chimeramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "magnamon": {
+  "name": "매그너몬",
+  "id": "magnamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "orgemon": {
+  "name": "우가몬",
+  "id": "orgemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "giromon": {
+  "name": "지로몬",
+  "id": "giromon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "silphymon": {
+  "name": "실피드몬",
+  "id": "silphymon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "zudomon": {
+  "name": "쥬드몬",
+  "id": "zudomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "omegamon": {
+  "name": "오메가몬",
+  "id": "omegamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "pukamon": {
+  "name": "둥실몬",
+  "id": "pukamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "pururumon": {
+  "name": "푸루루몬",
+  "id": "pururumon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "zhuqiaomon": {
+  "name": "주작몬",
+  "id": "zhuqiaomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "tyranomon": {
+  "name": "티라노몬",
+  "id": "tyranomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": false
+ },
+ "tortomon": {
+  "name": "토르토몬",
+  "id": "tortomon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "qinglongmon": {
+  "name": "청룡몬",
+  "id": "qinglongmon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "kiwimon": {
+  "name": "키위몬",
+  "id": "kiwimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "leomon": {
+  "name": "레오몬",
+  "id": "leomon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "pichimon": {
+  "name": "피치몬",
+  "id": "pichimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "mummymon": {
+  "name": "미이라몬",
+  "id": "mummymon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "metaltyrannomon": {
+  "name": "메탈티라몬",
+  "id": "metaltyrannomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "botamon": {
+  "name": "깜몬",
+  "id": "botamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "slot216": {
+  "name": "다크퍼펫몬",
+  "id": "slot216",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "aquilamon": {
+  "name": "아쿠이라몬",
+  "id": "aquilamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "drimogemon": {
+  "name": "두리몬",
+  "id": "drimogemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "minotarumon": {
+  "name": "미노타루몬",
+  "id": "minotarumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "kuramon": {
+  "name": "쿠라몬",
+  "id": "kuramon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "weregarurumon": {
+  "name": "워가루몬",
+  "id": "weregarurumon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "sukamon": {
+  "name": "슈카몬",
+  "id": "sukamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "gomamon": {
+  "name": "쉬라몬",
+  "id": "gomamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "darklizamon": {
+  "name": "다크리자몬",
+  "id": "darklizamon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "gigadramon": {
+  "name": "기가드라몬",
+  "id": "gigadramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "rukamon": {
+  "name": "돌핀몬",
+  "id": "rukamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "vademon": {
+  "name": "베이더몬",
+  "id": "vademon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "pagumon": {
+  "name": "퍼그몬",
+  "id": "pagumon",
+  "f": "bak",
+  "b": "bak",
+  "leg": false
+ },
+ "gabumon": {
+  "name": "파피몬",
+  "id": "gabumon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "scorpiomon": {
+  "name": "스콜피오몬",
+  "id": "scorpiomon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "herculeskabuterimon": {
+  "name": "헤라캅테몬",
+  "id": "herculeskabuterimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "gesomon": {
+  "name": "게소몬",
+  "id": "gesomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "fantomon": {
+  "name": "팬텀몬",
+  "id": "fantomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "imperialdramonpaladinmode": {
+  "name": "황제팔라딘",
+  "id": "imperialdramonpaladinmode",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "gatomon": {
+  "name": "가트몬",
+  "id": "gatomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "lilimon": {
+  "name": "릴리몬",
+  "id": "lilimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "tokomon": {
+  "name": "토코몬",
+  "id": "tokomon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "tanemon": {
+  "name": "시드몬",
+  "id": "tanemon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "stingmon": {
+  "name": "스팅몬",
+  "id": "stingmon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "seadramon": {
+  "name": "시드라몬",
+  "id": "seadramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "vikemon": {
+  "name": "바이킹몬",
+  "id": "vikemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "armadimon": {
+  "name": "아르마몬",
+  "id": "armadimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "shellmon": {
+  "name": "쉘몬",
+  "id": "shellmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "megaseadramon": {
+  "name": "메가시라몬",
+  "id": "megaseadramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "mugendramon": {
+  "name": "파워드라몬",
+  "id": "mugendramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "kabuterimon": {
+  "name": "캅테리몬",
+  "id": "kabuterimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "shurimon": {
+  "name": "수리몬",
+  "id": "shurimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "deathmeramon": {
+  "name": "데드메라몬",
+  "id": "deathmeramon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "gekomon": {
+  "name": "개굴몬",
+  "id": "gekomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "mamemon": {
+  "name": "콩알몬",
+  "id": "mamemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "imperialdramonfm": {
+  "name": "황제파이터",
+  "id": "imperialdramonfm",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "gottsumon": {
+  "name": "울퉁몬",
+  "id": "gottsumon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "monzaemon": {
+  "name": "퍼펫몬",
+  "id": "monzaemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "digitamamon": {
+  "name": "디지타마몬",
+  "id": "digitamamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "greymon": {
+  "name": "그레이몬",
+  "id": "greymon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "fladramon": {
+  "name": "화염드라몬",
+  "id": "fladramon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "devimon": {
+  "name": "데블몬",
+  "id": "devimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "floramon": {
+  "name": "플로라몬",
+  "id": "floramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "whamon": {
+  "name": "고래몬",
+  "id": "whamon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "picodevimon": {
+  "name": "피코데블몬",
+  "id": "picodevimon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "shakkoumon": {
+  "name": "샤코몬",
+  "id": "shakkoumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "devitamamon": {
+  "name": "데비타마몬",
+  "id": "devitamamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "chibimon": {
+  "name": "꼬마몬",
+  "id": "chibimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "elecmon": {
+  "name": "에렉몬",
+  "id": "elecmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "bakemon": {
+  "name": "고스몬",
+  "id": "bakemon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "garurumon": {
+  "name": "가루몬",
+  "id": "garurumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": false
+ },
+ "wizarmon": {
+  "name": "위자몬",
+  "id": "wizarmon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "pyocomon": {
+  "name": "어니몬",
+  "id": "pyocomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "slot189": {
+  "name": "정우베지몬",
+  "id": "slot189",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "vegiemon": {
+  "name": "베지몬",
+  "id": "vegiemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "musyamon": {
+  "name": "무사몬",
+  "id": "musyamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "digmon": {
+  "name": "디그몬",
+  "id": "digmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "togemon": {
+  "name": "니드몬",
+  "id": "togemon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "baihumon": {
+  "name": "백호몬",
+  "id": "baihumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "angewomon": {
+  "name": "엔젤우몬",
+  "id": "angewomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "crabmon": {
+  "name": "가니몬",
+  "id": "crabmon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "agumon": {
+  "name": "아구몬",
+  "id": "agumon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "rosemon": {
+  "name": "로제몬",
+  "id": "rosemon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "numemon": {
+  "name": "워매몬",
+  "id": "numemon",
+  "f": "cur",
+  "b": "bak",
+  "leg": false
+ },
+ "grankuwagamon": {
+  "name": "그란쿠와몬",
+  "id": "grankuwagamon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "saberleomon": {
+  "name": "샤벨레오몬",
+  "id": "saberleomon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "xv-mon": {
+  "name": "엑스브이몬",
+  "id": "xv-mon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "paildramon": {
+  "name": "파일드라몬",
+  "id": "paildramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "etemon": {
+  "name": "에테몬",
+  "id": "etemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "metaletemon": {
+  "name": "메탈에테몬",
+  "id": "metaletemon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "metalgarurumon": {
+  "name": "메탈가루몬",
+  "id": "metalgarurumon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "unimon": {
+  "name": "유니몬",
+  "id": "unimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "deramon": {
+  "name": "데라몬",
+  "id": "deramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": false
+ },
+ "atlurkabuterimon": {
+  "name": "아트캅테몬",
+  "id": "atlurkabuterimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "minomon": {
+  "name": "데롱몬",
+  "id": "minomon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "monochromon": {
+  "name": "모노크로몬",
+  "id": "monochromon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "holydramon": {
+  "name": "마그나드몬",
+  "id": "holydramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "infermon": {
+  "name": "인펠몬",
+  "id": "infermon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "birdramon": {
+  "name": "버드라몬",
+  "id": "birdramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "hanumon": {
+  "name": "에이프몬",
+  "id": "hanumon",
+  "f": "bak",
+  "b": "cur",
+  "leg": false
+ },
+ "skullgreymon": {
+  "name": "스컬그레몬",
+  "id": "skullgreymon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "garbagemon": {
+  "name": "가베지몬",
+  "id": "garbagemon",
+  "f": "none",
+  "b": "none",
+  "leg": true
+ },
+ "dagomon": {
+  "name": "다고몬",
+  "id": "dagomon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "andromon": {
+  "name": "안드로몬",
+  "id": "andromon",
+  "f": "bak",
+  "b": "bak",
+  "leg": true
+ },
+ "valkyrimon": {
+  "name": "발키리몬",
+  "id": "valkyrimon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "meramon": {
+  "name": "메라몬",
+  "id": "meramon",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ },
+ "slot110": {
+  "name": "다크그레몬",
+  "id": "slot110",
+  "f": "cur",
+  "b": "cur",
+  "leg": true
+ }
+}

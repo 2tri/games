@@ -1,0 +1,139 @@
+<title>새 그림 주문서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 주문서 카드 한 장 = 디지몬 한 마리. 공식 그림 링크 → 앞 주문문 → 뒤 주문문 순으로 위에서 아래로 쓰면 되게 쌓는다. */
+:root {
+  --bg: #eceee9; --surface: #f8f9f6; --ink: #1c2420; --muted: #5d6a63; --line: #cfd5cc;
+  --pick: #1d5fd0; --pick-soft: #dce8fb; --ok: #2e7d4f; --ok-soft: #dcf0e3;
+  --warn: #8a5a00; --warn-soft: #f6ecd2; --code: #eef0ea;
+  --f-display: "Do Hyeon", "Noto Sans KR", sans-serif;
+  --f-body: "Noto Sans KR", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131815; --surface: #1c231f; --ink: #e5ebe6; --muted: #98a59c; --line: #323c36;
+    --pick: #7aadff; --pick-soft: #1b2e4d; --ok: #6fcf97; --ok-soft: #173325; --warn: #e8c46a; --warn-soft: #3a3016; --code: #141a17; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131815; --surface: #1c231f; --ink: #e5ebe6; --muted: #98a59c; --line: #323c36;
+  --pick: #7aadff; --pick-soft: #1b2e4d; --ok: #6fcf97; --ok-soft: #173325; --warn: #e8c46a; --warn-soft: #3a3016; --code: #141a17; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
+.wrap { max-width: 980px; margin-inline: auto; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: 1.9rem; margin: 20px 0 4px; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0 0 12px; max-width: 68ch; }
+.lead b { color: var(--ink); }
+ol.steps { margin: 0 0 14px; padding-left: 1.3rem; color: var(--muted); max-width: 68ch; }
+ol.steps li { margin-block: 2px; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); padding-block: 10px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.bar .num { font-variant-numeric: tabular-nums; font-weight: 700; }
+.meter { height: 6px; border-radius: 3px; background: var(--line); flex: 1 1 160px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .25s; }
+.btn { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.btn:hover { border-color: var(--pick); }
+.btn.copied { border-color: var(--ok); color: var(--ok); }
+:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+#list { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.card.done { border-color: var(--ok); }
+.ch { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.ch .nm { font-family: var(--f-display); font-size: 1.4rem; }
+.ch .id { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.chip { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--pick-soft); color: var(--pick); }
+.chip.need { background: var(--warn-soft); color: var(--warn); }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; }
+.links a { color: var(--pick); }
+.memo { font-size: 12.5px; color: var(--warn); background: var(--warn-soft); border-radius: 6px; padding: 6px 10px; }
+.pr { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pr .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.pr .top b { font-size: 13px; }
+.pr .top small { color: var(--muted); font-size: 12px; flex: 1 1 14rem; }
+pre.txt { margin: 0; background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-family: var(--f-mono); font-size: 12px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 7.2rem; overflow: auto; user-select: all; }
+.chk { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; align-items: center; }
+.chk label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.fn { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+
+<div class="wrap">
+  <h1>새 그림 주문서</h1>
+  <p class="lead">검수에서 <b>「모두 틀림」</b>으로 고른 종만 모았습니다. 칸마다 앞모습을 먼저, 그 앞모습을 붙여서 뒷모습을 받는 순서입니다.</p>
+  <ol class="steps">
+    <li>「공식 그림 열기」로 그림을 저장하거나 복사합니다.</li>
+    <li>재미나이에 공식 그림을 붙이고 <b>앞 주문문</b>을 복사해 붙여넣습니다.</li>
+    <li>나온 앞모습이 맞으면, 그 앞모습을 붙이고 <b>뒤 주문문</b>을 붙여넣어 뒷모습을 받습니다.</li>
+    <li>채팅에 올릴 때 파일 이름을 아래 「올릴 때 이름」대로 붙이면 제가 바로 넣을 수 있습니다.</li>
+  </ol>
+
+  <div class="bar">
+    <span class="num" id="pnum">0 / 0 올림</span>
+    <div class="meter"><i id="pbar"></i></div>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+const DATA = /*DATA*/[];
+const $ = (s) => document.querySelector(s);
+function safe(fn, dflt) { try { return fn(); } catch (e) { return dflt; } }
+const state = safe(() => JSON.parse(localStorage.getItem('ordernew.v1') || '{}'), {});
+function save() { safe(() => localStorage.setItem('ordernew.v1', JSON.stringify(state))); }
+function mk(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+async function copyText(text, btn, pre) {
+  try { await navigator.clipboard.writeText(text); btn.textContent = '복사됨'; btn.classList.add('copied'); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = '선택됨 (Ctrl+C)'; }
+  setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000);
+}
+
+function prompt(label, hint, text) {
+  const d = mk('div', 'pr'), top = mk('div', 'top');
+  top.appendChild(mk('b', '', label)); top.appendChild(mk('small', '', hint));
+  const b = mk('button', 'btn', '복사'); b.type = 'button'; top.appendChild(b);
+  const pre = mk('pre', 'txt', text); b.addEventListener('click', () => copyText(text, b, pre));
+  d.appendChild(top); d.appendChild(pre); return d;
+}
+
+const cards = {};
+function build() {
+  const list = $('#list');
+  for (const r of DATA) {
+    const c = mk('section', 'card'); cards[r.id] = c;
+    const h = mk('div', 'ch'); h.appendChild(mk('span', 'nm', r.ko)); h.appendChild(mk('span', 'id', r.id));
+    h.appendChild(mk('span', 'chip', r.grade)); h.appendChild(mk('span', 'chip need', '필요: ' + r.need));
+    c.appendChild(h);
+    const l = mk('div', 'links'); l.appendChild(mk('span', 'fn', r.en));
+    const a = mk('a', '', '위키몬 문서'); a.href = 'https://wikimon.net/' + encodeURIComponent(r.wiki); a.target = '_blank'; a.rel = 'noopener'; l.appendChild(a);
+    if (r.img) { const b = mk('a', '', '공식 그림 열기'); b.href = r.img; b.target = '_blank'; b.rel = 'noopener'; l.appendChild(b); }
+    c.appendChild(l);
+    if (r.memo) c.appendChild(mk('div', 'memo', r.memo));
+    c.appendChild(prompt('앞 주문문', '공식 그림을 붙인 뒤', r.front));
+    c.appendChild(prompt('뒤 주문문', '완성된 앞모습을 붙인 뒤', r.back));
+    const ck = mk('div', 'chk');
+    ck.appendChild(mk('span', 'fn', '올릴 때 이름: ' + r.id + '-f.png · ' + r.id + '-b.png'));
+    for (const [k, t] of [['f', '앞 받음'], ['b', '뒤 받음']]) {
+      const lb = mk('label'), i = mk('input'); i.type = 'checkbox'; i.id = 'ck-' + r.id + '-' + k; i.checked = !!(state[r.id] && state[r.id][k]);
+      i.addEventListener('change', () => { state[r.id] = Object.assign({}, state[r.id], { [k]: i.checked }); save(); refresh(); });
+      lb.appendChild(i); lb.appendChild(document.createTextNode(t)); ck.appendChild(lb);
+    }
+    c.appendChild(ck); list.appendChild(c);
+  }
+}
+function refresh() {
+  let done = 0;
+  for (const r of DATA) {
+    const s = state[r.id] || {}; const ok = (r.need === '뒤' ? s.b : r.need === '앞' ? s.f : s.f && s.b);
+    cards[r.id].classList.toggle('done', !!ok); if (ok) done++;
+  }
+  $('#pnum').textContent = done + ' / ' + DATA.length + ' 올림';
+  $('#pbar').style.width = (DATA.length ? done / DATA.length * 100 : 0) + '%';
+}
+build(); refresh();
+</script>
