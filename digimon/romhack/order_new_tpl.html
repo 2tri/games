@@ -63,11 +63,10 @@ pre.txt { margin: 0; background: var(--code); border: 1px solid var(--line); bor
 
 <div class="wrap">
   <h1>새 그림 주문서</h1>
-  <p class="lead">검수에서 <b>「모두 틀림」</b>으로 고른 종만 모았습니다. 칸마다 앞모습을 먼저, 그 앞모습을 붙여서 뒷모습을 받는 순서입니다.</p>
+  <p class="lead">검수에서 <b>「모두 틀림」</b>으로 고른 종 중 유년기를 뺀 10종입니다. 앞모습은 받아서 롬에 넣었고, 지금은 <b>뒷모습</b>만 남았습니다.</p>
   <ol class="steps">
-    <li>「공식 그림 열기」로 그림을 저장하거나 복사합니다.</li>
-    <li>재미나이에 공식 그림을 붙이고 <b>앞 주문문</b>을 복사해 붙여넣습니다.</li>
-    <li>나온 앞모습이 맞으면, 그 앞모습을 붙이고 <b>뒤 주문문</b>을 붙여넣어 뒷모습을 받습니다.</li>
+    <li>재미나이에 이미 받은 앞모습(회색 그림)을 붙입니다. 공식 그림이 더 필요하면 「공식 그림 열기」를 쓰세요.</li>
+    <li><b>뒤 주문문</b>을 복사해 붙여넣고 뒷모습을 받습니다.</li>
     <li>채팅에 올릴 때 파일 이름을 아래 「올릴 때 이름」대로 붙이면 제가 바로 넣을 수 있습니다.</li>
   </ol>
 
@@ -114,11 +113,11 @@ function build() {
     if (r.img) { const b = mk('a', '', '공식 그림 열기'); b.href = r.img; b.target = '_blank'; b.rel = 'noopener'; l.appendChild(b); }
     c.appendChild(l);
     if (r.memo) c.appendChild(mk('div', 'memo', r.memo));
-    c.appendChild(prompt('앞 주문문', '공식 그림을 붙인 뒤', r.front));
-    c.appendChild(prompt('뒤 주문문', '완성된 앞모습을 붙인 뒤', r.back));
+    if (r.front) c.appendChild(prompt('앞 주문문', '공식 그림을 붙인 뒤', r.front)); else c.appendChild(mk('div', 'memo', '앞모습은 받아서 롬 그림에 넣었습니다. 뒷모습만 남았습니다.'));
+    c.appendChild(prompt('뒤 주문문', '받은 앞모습을 붙인 뒤', r.back));
     const ck = mk('div', 'chk');
     ck.appendChild(mk('span', 'fn', '올릴 때 이름: ' + r.id + '-f.png · ' + r.id + '-b.png'));
-    for (const [k, t] of [['f', '앞 받음'], ['b', '뒤 받음']]) {
+    for (const [k, t] of (r.front ? [['f', '앞 받음'], ['b', '뒤 받음']] : [['b', '뒤 받음']])) {
       const lb = mk('label'), i = mk('input'); i.type = 'checkbox'; i.id = 'ck-' + r.id + '-' + k; i.checked = !!(state[r.id] && state[r.id][k]);
       i.addEventListener('change', () => { state[r.id] = Object.assign({}, state[r.id], { [k]: i.checked }); save(); refresh(); });
       lb.appendChild(i); lb.appendChild(document.createTextNode(t)); ck.appendChild(lb);

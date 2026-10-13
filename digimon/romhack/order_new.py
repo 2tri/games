@@ -5,6 +5,8 @@ import os, sys, json, html
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, 'order'))
 import prompts
+import rules
+FRONT_DONE = {'nefertimon', 'submarimon', 'pegasusmon', 'garbagemon', 'whamon', 'deathmeramon', 'scorpiomon', 'giromon', 'rosemon', 'shogungekomon'}      # 앞모습을 받아 art 에 넣은 종 (뒷모습만 남음)
 
 # id → (영어 이름, 위키몬 문서, 공식 그림 직접 주소 또는 None, 메모)
 INFO = {
@@ -36,10 +38,13 @@ def main():
     rows = []
     for v in picks.values():
         if 'none' not in (v['f'], v['b']): continue
-        i = v['id']; en, wiki, img, memo = INFO[i]; g = GRADE[i]
+        i = v['id']
+        if i not in INFO: continue
+        en, wiki, img, memo = INFO[i]; g = GRADE[i]
+        if getattr(rules, 'NO_BABIES', False) and g.startswith('유') and v['name'] not in rules.BABY_KEEP: continue      # 13번: 유년기는 게임에서 뺌
         rows.append({'ko': v['name'], 'id': i, 'grade': g, 'en': en, 'wiki': wiki, 'img': img, 'memo': memo,
-                     'front': prompts.card_front(en), 'back': prompts.card_back(en, g),
-                     'need': '앞·뒤' if v['f'] == v['b'] == 'none' else ('앞' if v['f'] == 'none' else '뒤')})
+                     'front': None if i in FRONT_DONE else prompts.card_front(en), 'back': prompts.card_back(en, g),
+                     'need': '뒤' if i in FRONT_DONE else ('앞·뒤' if v['f'] == v['b'] == 'none' else ('앞' if v['f'] == 'none' else '뒤'))})
     order = ['유년기Ⅰ', '유년기Ⅱ', '성장기', '아머체', '완전체', '궁극체']
     rows.sort(key=lambda r: (order.index(r['grade']) if r['grade'] in order else 9, r['ko']))
     tpl = open(os.path.join(HERE, 'order_new_tpl.html'), encoding='utf-8').read()
