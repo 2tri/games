@@ -105,7 +105,6 @@ def test_evo(names):
     SK = '스컬그레몬' if '스컬그레몬' in N else '그레이몬'      # 스컬그레몬 그림 전에는 암흑 갈래가 없어 그대로
     extra = [  # 따로 한 마리씩: 이름, 종, 레벨, 기대 종, 유대(친밀도)[, 배지, 누르는 수]
         ('브이몬 Lv16 → 엑스브이몬', '브이몬', 15, '엑스브이몬', 70),
-        ('뿔몬 Lv8 → 파피몬 (새 칸, 그림 있을 때)', '뿔몬', 7, '파피몬', 70),
         ('토코몬 Lv8 → 파닥몬 (새 칸, 그림 있을 때)', '토코몬', 7, '파닥몬', 70),
         ('파닥몬 유대 높음(200) → 엔젤몬', '파닥몬', 15, '엔젤몬', 200),
         ('파닥몬 유대 낮음(40) → 데블몬', '파닥몬', 15, '데블몬', 40),
@@ -223,8 +222,8 @@ def test_trainers():
     groups = re.findall(r'dw (\w+)Group', open(os.path.join(wild.KR, 'data/trainers/party_pointers.asm')).read())
     r1 = [t for t in ts if groups[t['group']] == 'Rival1'][:3]
     show = ' / '.join(', '.join('%s Lv%d' % (r.name(sp), lv) for lv, sp, _ in t['mons']) for t in r1)
-    ok = all(t['mons'] and r.name(t['mons'][0][1]) == '뿔몬' for t in r1)   # 9판: 라이벌 매튜 = 뿔몬 (마릿수는 parties.json 대로)
-    print('  라이벌 1차 (옮긴 무리, 뿔몬): %s %s' % (show, 'OK' if ok else '틀림'))
+    ok = all(t['mons'] and r.name(t['mons'][0][1]) == '파피몬' for t in r1)   # 19판: 유년기 없음 → 라이벌 매튜 = 파피몬 Lv5
+    print('  라이벌 1차 (옮긴 무리, 파피몬): %s %s' % (show, 'OK' if ok else '틀림'))
     return bad + (not ok)
 
 

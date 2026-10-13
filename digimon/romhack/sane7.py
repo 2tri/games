@@ -5,7 +5,7 @@
 (4) 검은 톱니로 어둠 갈래 진화 (유대 NPC 없이도), 곤충 마을 상점 2500
 patch.build 에서 places2 다음, diff7 앞에 `import sane7; P.log += sane7.apply(P)`"""
 import os, re, json
-import dmrom, encounters, rules
+import dmrom, encounters, rules, remap
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PSYCHIC, DARK = 24, 27
@@ -243,9 +243,42 @@ def learnsets_attack(P):
     return 'R29 학습표 공격기 보장 %d종%s' % (len(fixed), ': ' + ', '.join(fixed) if fixed else '')
 
 
+def no_babies_wild(P):
+    """19판: 야생 칸의 유년기(BABY_KEEP 빼고)를 그 종의 레벨 진화 대상(성장기)으로. 레벨은 그대로 (Lv2~5 아구몬처럼)"""
+    if not getattr(rules, 'NO_BABIES', False): return '유년기 그대로 (NO_BABIES 꺼짐)'
+    P.r.d = P.d
+    r = P.r
+    G = grades(P)
+    try:      # 19판 보강: grades.json 에 없는 1.4 기본 유년기(코로몬 161)는 order/allmons.json 의 단계를 씀 (없으면 코로몬 야생이 그대로 남음)
+        for m_ in json.load(open(os.path.join(HERE, 'order', 'allmons.json'), encoding='utf-8')):
+            if m_.get('grade') and 1 <= m_['no'] <= dmrom.NUM and r.name(m_['no']) == m_['ko']: G.setdefault(m_['no'], m_['grade'])
+    except Exception: pass
+    nxt = {}
+    for n in range(1, dmrom.NUM + 1):
+        for e in r.evos_attacks(n)[0]:
+            if e[0] == 1 and 1 <= e[-1] <= dmrom.NUM: nxt.setdefault(n, e[-1])
+    cnt = {}
+    stuck = set()
+    for s in encounters.find_all(dmrom.Rom(dmrom.default_rom())):
+        if s['kind'] not in remap.WILD: continue      # 야생 칸만 (선물·알·고정 만남은 안 건드림)
+        sp = P.d[s['addr']]
+        if not (1 <= sp <= dmrom.NUM) or not (G.get(sp) or '').startswith('유') or r.name(sp) in rules.BABY_KEEP: continue
+        t = sp
+        for _ in range(3):
+            if not (G.get(t) or '').startswith('유'): break
+            if t not in nxt: break
+            t = nxt[t]
+        if (G.get(t) or '').startswith('유'):
+            stuck.add(r.name(sp)); continue
+        P.d[s['addr']] = t
+        k_ = '%s→%s' % (r.name(sp), r.name(t)); cnt[k_] = cnt.get(k_, 0) + 1
+    P.r.d = P.d
+    return '야생 유년기 → 성장기 %d칸: %s%s' % (sum(cnt.values()), ', '.join('%s %d' % kv for kv in cnt.items()) or '없음', (' / 진화 대상 없어 그대로: ' + ', '.join(sorted(stuck))) if stuck else '')
+
+
 def apply(P):
     log = []
-    for fn in (lambda: type_chart(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P), lambda: evo_kinds(P), lambda: learnsets_attack(P)):
+    for fn in (lambda: type_chart(P), lambda: no_babies_wild(P), lambda: trainer_stages(P), lambda: kanto_wild(P), lambda: black_gear(P), lambda: evo_kinds(P), lambda: learnsets_attack(P)):
         try:
             log.append(fn())
         except Exception as ex:

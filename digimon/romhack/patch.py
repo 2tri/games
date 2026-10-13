@@ -776,6 +776,7 @@ def build(base, out_rom, out_ips):
         return CREST if (k == 'LV' and g == '완전체') else ANYCREST if (k == 'LV' and g == '궁극체') else KINDS.get(k, LV)
     ph_no = None
     for m in SL['mons']:
+        if getattr(rules, 'NO_BABIES', False) and m['grade'].startswith('유') and m['name'] not in rules.BABY_KEEP: continue      # 19판: 유년기 칸 안 만듦
         ph = False; f, b = (os.path.join(WEB, 'art', m['id'] + s_) for s_ in ('-f.png', '-b.png'))
         sn20 = next((k for k in range(1, dmrom.NUM + 1) if src.name(k).strip() == m['art20']), None) if m.get('art20') and src else None
         if m.get('art20') and not sn20: continue                        # 2.0 그림을 쓰는 종인데 2.0 롬이 없으면 건너뜀
@@ -896,6 +897,7 @@ def build(base, out_rom, out_ips):
     for s in sites0:
         if s['kind'] in remap.WILD: groups_.setdefault((s['kind'], s['where']), []).append(s)
     for frm, to, area in rules.PLACE_SWAP:
+        if frm not in N or to not in N: continue      # 19판: 유년기 칸을 안 만들면 (시드몬 등) 건너뜀
         for (kd, wh), ss in groups_.items():
             if area and not wh.startswith(area): continue
             for s in ss:

@@ -243,6 +243,8 @@ def rules(c, out):
     # R12
     new = {161: 'koromon', 212: 'metalgreymon', 217: 'weregarurumon'}
     new.update({n: c.slots[c.name(n)]['id'] for n in c.installed})
+    if getattr(RU, 'NO_BABIES', False):      # 19판: 안 나오는 유년기는 그림 안 봄
+        new = {n: i for n, i in new.items() if not (c.grade.get(n) or '').startswith('유') or c.name(n) in RU.BABY_KEEP}
     b = c.base.d; r12 = []
     for n, did in sorted(new.items()):
         lack = []
@@ -316,13 +318,14 @@ def rules(c, out):
     rep('R17', sorted(r17.items()), 'Lv%d 이하 야생에 유년기가 있는 성장기 없음 (유년기 %d종)' % (RU.BABY_WILD_LV, len(babies)), lambda b: '%s (%d곳)' % b)
     # R19 스타팅 공 3개: 스크립트의 그림·울음·이름·주는 종 네 바이트가 모두 같은 종이고, 유년기 스타팅(rules.BABY_STARTERS, 칸이 있을 때) 또는 성장기
     r19 = []; NB = {c.base.name(n): n for n in range(1, 252)}; base = bytes(c.base.d)
-    for old, rk in zip(('길몬', '레나몬', '테리어몬'), [r_ for r_, _, _ in RU.BABY_STARTERS]):
+    RK = [r_ for r_, _, _ in RU.BABY_STARTERS] or ['아구몬', '쉬라몬', '팔몬']      # 19판: 유년기 스타팅 없으면 성장기
+    for old, rk in zip(('길몬', '레나몬', '테리어몬'), RK):
         o = NB[old]; a = re.search(bytes([0x56, o, 0x84, o, 0x00]), base).start(); seg = base[a:a + 80]
         ks = (1, 3, seg.index(bytes([0x40, o])) + 1, seg.index(bytes([0x2d, o, 5])) + 1)
         got = [c.d[a + k] for k in ks]
         bb = next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk)
         if len(set(got)) != 1 or got[0] != N[bb]: r19.append((old, '%s 이어야 하는데 %s' % (bb, '·'.join(c.name(g) for g in got))))
-    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in [r_ for r_, _, _ in RU.BABY_STARTERS]),
+    rep('R19', r19, '스타팅 공 3개 = %s (그림·울음·이름·주는 종 모두 같음)' % '·'.join(next((b for r_, b, _ in RU.BABY_STARTERS if r_ == rk and b in N), rk) for rk in RK),
         lambda b: '%s 공: %s' % b)
     # R20 파워디지몬(02) 이후 디지몬 이름이 롬 이름표에 없음 (rules.LATE_SERIES·LATE_EXTRA, series.json 분류, 사용자 2026-10-05)
     SER = {v['name']: v['series'] for v in json.load(open(os.path.join(HERE, 'series.json'))).values()}
@@ -353,6 +356,8 @@ def rules(c, out):
     if os.path.exists(rp):
         import csv as _csv
         reach = {s['cur'] for s in c.sites} | {sp for t in c.trainers for _, sp, _ in t['mons']}
+        if getattr(RU, 'NO_BABIES', False):
+            reach |= {n for n in range(1, 252) if (c.grade.get(n) or '').startswith('유') and c.name(n) not in RU.BABY_KEEP}      # 19판: 안 나오는 유년기는 닿은 것으로 침
         # 닿는 종의 진화 결과 + 알(기르기집: 금 GetPreEvolution 처럼 번호가 가장 앞선 앞 단계를 끝까지 따라감)을 더 늘지 않을 때까지
         prevo = {}
         for n in range(1, 252):
