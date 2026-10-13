@@ -74,44 +74,37 @@ input[type=search] { width: 9.5rem; }
 .chip.st { margin-left: auto; background: var(--pick-soft); color: var(--pick); font-weight: 700; }
 .chip.st.bad { background: var(--bad-soft); color: var(--bad); }
 .chip.st.half { background: var(--warn-soft); color: var(--warn); }
-.tiles { display: flex; flex-wrap: wrap; gap: 10px; }
-.tile { font: inherit; text-align: left; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; min-width: 0; position: relative; }
-.tile:hover { border-color: var(--muted); }
-.tile.other { border-color: var(--pick); border-style: dotted; }
-.tile[aria-pressed="true"] { border-color: var(--pick); border-style: solid; background: var(--pick-soft); }
-.tile .sel { position: absolute; top: 6px; right: 8px; font-size: 11.5px; font-weight: 700; color: var(--pick); }
-.tile .lb { font-size: 12px; color: var(--muted); padding-right: 4.6em; }
-.tile[aria-pressed="true"] .lb { color: var(--pick); }
-.pics { display: flex; align-items: flex-end; gap: 8px; }
-.pics .box { background: var(--sprite); border-radius: 4px; padding: 4px; display: flex; align-items: flex-end; justify-content: center; }
-.pics img { image-rendering: pixelated; display: block; max-width: none; }
-.pics .box.pf { min-width: 120px; min-height: 120px; }
-.pics .box.pb { min-width: 104px; min-height: 104px; }
-.pics .gone { width: 104px; height: 104px; display: grid; place-items: center; font-size: 11px; color: #777; text-align: center; }
-.v-f .pb, .v-b .pf { display: none; }
-.tile.none { border-style: dashed; justify-content: center; min-width: 150px; max-width: 190px; }
-.tile.none .lb { color: var(--bad); font-size: 13px; font-weight: 500; padding-right: 0; }
-.tile.none[aria-pressed="true"] { border-color: var(--bad); background: var(--bad-soft); }
-.tile.none .sel { color: var(--bad); }
-.tile.none small { color: var(--muted); font-size: 11.5px; }
+.gridwrap { overflow-x: auto; }
+.grid { --sc: 2; display: grid; grid-template-columns: 1.6rem repeat(var(--n), max-content) minmax(5.5rem, 7rem); gap: 8px; align-items: stretch; width: max-content; max-width: 100%; }
+.grid .corner { }
+.side { align-self: center; justify-self: center; font-weight: 700; font-size: 13px; color: var(--muted); }
+.head { font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 2px 6px; cursor: pointer; text-align: center; white-space: normal; }
+.head:hover { border-color: var(--pick); color: var(--pick); }
+.head[aria-pressed="true"] { background: var(--pick-soft); color: var(--pick); font-weight: 700; }
+.cell { font: inherit; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: 6px; cursor: pointer; position: relative; display: flex; align-items: flex-end; justify-content: center; min-width: 0; }
+.cell:hover:not(:disabled) { border-color: var(--muted); }
+.cell[aria-pressed="true"] { border-color: var(--pick); background: var(--pick-soft); }
+.cell:disabled { cursor: not-allowed; opacity: .55; }
+.cell .box { background: var(--sprite); border-radius: 4px; padding: 4px; display: flex; align-items: flex-end; justify-content: center; min-width: calc(58px * var(--sc)); min-height: calc(58px * var(--sc)); }
+.cell.b .box { min-width: calc(50px * var(--sc)); min-height: calc(50px * var(--sc)); }
+.cell img { image-rendering: pixelated; display: block; max-width: none; width: calc(var(--w) * var(--sc) * 1px); height: calc(var(--h) * var(--sc) * 1px); }
+.cell .gone { font-size: 11px; color: #777; align-self: center; }
+.cell .sel { position: absolute; top: 4px; right: 6px; font-size: 12px; font-weight: 700; color: var(--pick); }
+.cell.none { border-style: dashed; align-items: center; flex-direction: column; justify-content: center; gap: 2px; text-align: center; font-size: 13px; color: var(--bad); }
+.cell.none[aria-pressed="true"] { border-color: var(--bad); background: var(--bad-soft); }
+.cell.none .sel { color: var(--bad); }
+.cell.none small { color: var(--muted); font-size: 11px; }
 .empty { color: var(--muted); padding: 28px 0; text-align: center; }
-@media (max-width: 520px) {
-  .tiles { gap: 8px; }
-  .pics .box.pf { min-width: 104px; min-height: 104px; }
-  .pics .box.pb { min-width: 92px; min-height: 92px; }
-}
+@media (max-width: 520px) { .grid { --sc: 1.2; gap: 6px; grid-template-columns: 1.2rem repeat(var(--n), max-content) 3.8rem; } .cell { padding: 4px; } .cell.none small { display: none; } .side { font-size: 12px; } }
 @media (prefers-reduced-motion: reduce) { .prog .meter i { transition: none; } }
 </style>
 
 <div class="wrap">
   <h1>디지몬 그림 고르기</h1>
-  <p class="lead">칸마다 후보 그림이 있습니다. <b>맞는 그림을 한 번 누르면</b> 바로 저장됩니다. <b>「앞+뒤」</b> 보기에서 누르면 앞·뒤를 같이 고르고, <b>「앞」</b> 또는 <b>「뒤」</b> 보기에서 누르면 그 면만 바뀝니다. 그래서 앞은 DS, 뒤는 직접 올린 그림 같은 조합도 됩니다. 맞는 그림이 없으면 점선 칸을 누르세요. 이름 옆 「위키몬」 링크로 실제 모습을 볼 수 있습니다.</p>
+  <p class="lead">칸마다 후보 그림이 있습니다. <b>맞는 그림을 한 번 누르면</b> 바로 저장됩니다. 칸마다 윗줄은 <b>앞모습</b>, 아랫줄은 <b>뒷모습</b>입니다. 앞과 뒤를 따로 눌러도 되고(앞은 DS, 뒤는 직접 올린 그림 같은 조합), 후보 이름(「현재 롬」 등)을 누르면 앞·뒤가 한 번에 골라집니다. 맞는 그림이 없으면 점선 칸을 누르세요. 이름 옆 「위키몬」 링크로 실제 모습을 볼 수 있습니다.</p>
 
   <div class="bar" id="bar">
     <div class="prog"><span class="num" id="pnum">0 / 0</span> <span class="save" id="save"></span><div class="meter"><i id="pbar"></i></div></div>
-    <div class="seg" id="segView" role="group" aria-label="보이는 면 (누르면 고르는 면)">
-      <button type="button" data-v="f" aria-pressed="false">앞</button><button type="button" data-v="b" aria-pressed="false">뒤</button><button type="button" data-v="fb" aria-pressed="true">앞+뒤</button>
-    </div>
     <button type="button" class="btn" id="copy">결과 복사</button>
   </div>
 
@@ -129,10 +122,10 @@ input[type=search] { width: 9.5rem; }
 <script>
 const DATA = /*DATA*/[];
 const LABEL = { cur: '현재 롬', bak: '이전 그림', ds: 'DS 원본', alt: '새 그림', none: '모두 틀림' };
-const ui = { v: 'fb', show: 'all', grade: 'all', q: '' };
+const ui = { show: 'all', grade: 'all', q: '' };
 const picks = {};            // key → { f: 'cur'|'bak'|'ds'|'alt'|'none', b: … }
 const legacy = {};           // key → true: 앞뒤 따로 저장하기 전 방식으로 저장된 선택
-const els = {};              // key → { row, tiles: {k: el}, sel: {k: el}, st, r }
+const els = {};              // key → { row, cells: {f:{k:el}, b:{k:el}}, sels, heads, st, lg, r }
 let dbNS = null, saveMsg = null;
 const $ = (s) => document.querySelector(s);
 
@@ -141,10 +134,10 @@ function loadLocal() { const s = store(() => localStorage.getItem('picks.v2')); 
 function saveLocal() { store(() => localStorage.setItem('picks.v2', JSON.stringify(picks))); }
 
 function mk(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-function pic(arr, cls) {
-  const box = mk('div', 'box ' + cls);
+function pic(arr) {
+  const box = mk('div', 'box');
   if (!arr || !arr[0]) { box.appendChild(mk('div', 'gone', '없음')); return box; }
-  const im = new Image(); im.src = arr[0]; im.width = arr[1] * 2; im.height = arr[2] * 2; im.alt = '';
+  const im = new Image(); im.src = arr[0]; im.alt = ''; im.style.setProperty('--w', arr[1]); im.style.setProperty('--h', arr[2]);
   box.appendChild(im); return box;
 }
 
@@ -162,21 +155,31 @@ function build() {
     const lg = mk('span', 'chip', '앞·뒤를 따로 골랐다면 다시 눌러 주세요'); lg.hidden = true; rh.appendChild(lg);
     const st = mk('span', 'chip st'); st.hidden = true; rh.appendChild(st);
     row.appendChild(rh);
-    const tiles = mk('div', 'tiles'); const t = {}, sel = {};
-    const mkSel = (b) => { const s = mk('span', 'sel'); s.hidden = true; b.appendChild(s); return s; };
+    const gw = mk('div', 'gridwrap'), g = mk('div', 'grid'); g.style.setProperty('--n', r.tiles.length);
+    const cells = { f: {}, b: {} }, sels = { f: {}, b: {} }, heads = {};
+    g.appendChild(mk('div', 'corner'));
     for (const tl of r.tiles) {
-      const b = mk('button', 'tile'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
-      b.appendChild(mk('span', 'lb', tl.label));
-      const p = mk('div', 'pics'); p.appendChild(pic(tl.f, 'pf')); p.appendChild(pic(tl.b, 'pb')); b.appendChild(p);
-      sel[tl.k] = mkSel(b);
-      b.addEventListener('click', () => choose(r.key, tl.k)); tiles.appendChild(b); t[tl.k] = b;
+      const h = mk('button', 'head', tl.label); h.type = 'button'; h.title = '앞·뒤를 같이 선택'; h.setAttribute('aria-pressed', 'false');
+      h.addEventListener('click', () => choose(r.key, 'fb', tl.k)); g.appendChild(h); heads[tl.k] = h;
     }
-    const nb = mk('button', 'tile none'); nb.type = 'button'; nb.setAttribute('aria-pressed', 'false');
-    nb.appendChild(mk('span', 'lb', '모두 틀림')); nb.appendChild(mk('small', '', '이 디지몬이 아니다 / 새 그림 필요'));
-    sel.none = mkSel(nb);
-    nb.addEventListener('click', () => choose(r.key, 'none')); tiles.appendChild(nb); t.none = nb;
-    row.appendChild(tiles); list.appendChild(row);
-    els[r.key] = { row, tiles: t, sel, st, lg, r };
+    g.appendChild(mk('div', 'corner'));
+    for (const s of ['f', 'b']) {
+      g.appendChild(mk('div', 'side', s === 'f' ? '앞' : '뒤'));
+      const mkSel = (c) => { const x = mk('span', 'sel', '✓'); x.hidden = true; c.appendChild(x); return x; };
+      for (const tl of r.tiles) {
+        const c = mk('button', 'cell ' + s); c.type = 'button'; c.setAttribute('aria-pressed', 'false');
+        const arr = tl[s]; c.appendChild(pic(arr));
+        if (!arr || !arr[0]) c.disabled = true;
+        sels[s][tl.k] = mkSel(c);
+        c.addEventListener('click', () => choose(r.key, s, tl.k)); g.appendChild(c); cells[s][tl.k] = c;
+      }
+      const nb = mk('button', 'cell none'); nb.type = 'button'; nb.setAttribute('aria-pressed', 'false');
+      nb.appendChild(mk('span', '', '모두 틀림')); nb.appendChild(mk('small', '', '이 디지몬이 아님 · 새 그림 필요'));
+      sels[s].none = mkSel(nb);
+      nb.addEventListener('click', () => choose(r.key, s, 'none')); g.appendChild(nb); cells[s].none = nb;
+    }
+    gw.appendChild(g); row.appendChild(gw); list.appendChild(row);
+    els[r.key] = { row, cells, sels, heads, st, lg, r };
   }
   const e = mk('div', 'empty', '조건에 맞는 칸이 없습니다.'); e.id = 'empty'; e.hidden = true; list.appendChild(e);
 }
@@ -184,14 +187,10 @@ function build() {
 function sideText(k) { return LABEL[k] || k; }
 function paint(key) {
   const o = els[key]; if (!o) return; const p = picks[key] || {};
-  const sides = ui.v === 'f' ? ['f'] : ui.v === 'b' ? ['b'] : ['f', 'b'];
-  for (const [k, b] of Object.entries(o.tiles)) {
-    const on = (p.f === k ? 'f' : '') + (p.b === k ? 'b' : '');
-    const inView = sides.some((s) => p[s] === k);
-    b.setAttribute('aria-pressed', String(inView));
-    b.classList.toggle('other', !inView && !!on);
-    const s = o.sel[k]; s.hidden = !on; s.textContent = on === 'fb' ? '앞·뒤 ✓' : on === 'f' ? '앞 ✓' : on === 'b' ? '뒤 ✓' : '';
+  for (const sd of ['f', 'b']) for (const [k, c] of Object.entries(o.cells[sd])) {
+    const on = p[sd] === k; c.setAttribute('aria-pressed', String(on)); o.sels[sd][k].hidden = !on;
   }
+  for (const [k, h] of Object.entries(o.heads)) h.setAttribute('aria-pressed', String(!!p.f && p.f === k && p.b === k));
   const has = p.f || p.b, full = p.f && p.b;
   o.row.classList.toggle('done', !!full);
   o.st.hidden = !has;
@@ -224,7 +223,6 @@ function refresh() {
   const half = DATA.filter((r) => picks[r.key] && (!!picks[r.key].f !== !!picks[r.key].b)).length;
   $('#pnum').textContent = full + ' / ' + DATA.length + ' 확인' + (half ? ' (한 면만 ' + half + ')' : '');
   $('#pbar').style.width = (DATA.length ? full / DATA.length * 100 : 0) + '%';
-  $('#list').className = 'v-' + ui.v;
 }
 
 const chain = {};
@@ -239,19 +237,18 @@ function persist(key) {
 }
 function setSave(t, err) { const s = $('#save'); s.textContent = t; s.classList.toggle('err', !!err); clearTimeout(saveMsg); if (!err) saveMsg = setTimeout(() => { s.textContent = ''; }, 2500); }
 
-function choose(key, k) {
+function choose(key, side, k) {
   const p = picks[key] || {};
-  const sides = ui.v === 'f' ? ['f'] : ui.v === 'b' ? ['b'] : ['f', 'b'];
-  const same = sides.every((s) => p[s] === k);
+  const sides = side === 'fb' ? ['f', 'b'] : [side];
+  const same = sides.every((x) => p[x] === k);
   const np = Object.assign({}, p);
-  for (const s of sides) { if (same) delete np[s]; else np[s] = k; }
+  for (const x of sides) { if (same) delete np[x]; else np[x] = k; }
   if (!np.f && !np.b) delete picks[key]; else picks[key] = np;
   delete legacy[key];
   paint(key); refresh(); persist(key);
 }
 
 function wire() {
-  for (const b of document.querySelectorAll('#segView button')) b.addEventListener('click', () => { ui.v = b.dataset.v; for (const x of document.querySelectorAll('#segView button')) x.setAttribute('aria-pressed', String(x === b)); for (const k of Object.keys(els)) paint(k); refresh(); });
   for (const b of document.querySelectorAll('#segShow button')) b.addEventListener('click', () => { ui.show = b.dataset.s; for (const x of document.querySelectorAll('#segShow button')) x.setAttribute('aria-pressed', String(x === b)); refresh(); });
   const sel = $('#selGrade'); sel.appendChild(new Option('모든 단계', 'all'));
   for (const g of [...new Set(DATA.map((r) => r.grade))]) sel.appendChild(new Option(g, g));
