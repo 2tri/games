@@ -164,6 +164,9 @@ def main():
         s = slot[ko]
         new = r['출처'] == '새로' or ko == '블랙워그레이몬'
         if not new:
+            if '스타팅 균형: 타입' in r['메모'] and s < len(pers):      # 10/19: 디지골드 종도 표의 타입으로 (스타팅 균형 고침만)
+                pb = bytearray(pers[s]); ts_ = r['타입'].split('/'); pb[6], pb[7] = TYPES.index(ts_[0]), TYPES.index(ts_[-1]); pers[s] = bytes(pb)
+                say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입']))
             if ko in HELD_CLEAR and s < len(pers) and len(pers[s]) >= 16:      # 진화표 결정3·5: 야생이 지닌 진화 돌을 뺌(암흑·아머 갈래가 너무 일찍 열림)
                 pb = bytearray(pers[s]); held = struct.unpack_from('<HH', pb, 12)
                 if any(held): pb[12:16] = bytes(4); pers[s] = bytes(pb); held_cleared.add(s); say('야생이 지닌 물건 뺌: %s %s' % (ko, held))
@@ -519,6 +522,12 @@ def main():
     say('같은 레벨 기술 정리: %d종 — 옮김 %d · 날림 %d (자세히는 아래)' % (n_sp, n_move, n_drop))
     for x in lv_log: say('  ' + x)
 
+    # 종 칸·실제 타입·능력치 목록 (밸런스 검토용)
+    with open(os.path.join(OUT_DIR if 'OUT_DIR' in globals() else 'hg2_out', 'slots.tsv'), 'w', encoding='utf-8') as f_:
+        f_.write('이름\t칸\t타입\t능력치\n')
+        for ko_, s_ in sorted(slot.items(), key=lambda x: x[1]):
+            if s_ < len(pers) and len(pers[s_]) >= 8:
+                b_ = pers[s_]; f_.write('%s\t%d\t%s\t%s\n' % (ko_, s_, '/'.join(dict.fromkeys(TYPES[t] for t in b_[6:8])), ' '.join(str(x) for x in b_[0:6])))
     # ---- 쓰기
     def rebuild(key, files):
         n = NARC(rom.get(hg1.NARC_PATHS[key])); n.files = files; return n.build()
