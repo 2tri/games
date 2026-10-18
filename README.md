@@ -5,6 +5,7 @@
 | 폴더 | 게임 | 내용 |
 |---|---|---|
 | `2048/` | 쑥쑥 2048 | 같은 과일을 합쳐 👶를 만드는 2048 퍼즐 |
+| `nds/` | NDS 플레이어 | 저장소의 `.nds` 롬(LFS)을 브라우저에서 실행 (EmulatorJS) |
 
 ## 폴더 하나의 구성
 
@@ -21,3 +22,14 @@
 
 저장소 Settings → Pages → Source 「Deploy from a branch」 → Branch `main` / `(root)` → Save.
 1~2분 뒤 `https://2tri.github.io/games/` 에서 열린다.
+
+## NDS 플레이어 (`nds/`)
+
+- 주소: `https://2tri.github.io/games/nds/` (다른 롬: `.../nds/?rom=폴더/파일.nds`)
+- 에뮬레이터: EmulatorJS 4.2.3 (CDN `cdn.emulatorjs.org/4.2.3/`, 버전 고정). 코어 melonDS 기본, DeSmuME 2015 선택 가능
+- **롬 경로**: `nds/index.html` 의 `DEFAULT_ROM` (저장소 루트 기준)
+- **LFS 처리**: GitHub Pages·raw 주소는 LFS 파일 대신 134바이트 포인터만 준다. 그래서 롬은
+  `https://media.githubusercontent.com/media/2tri/games/main/<경로>` 에서 받는다 (공개 저장소 · CORS 허용 확인).
+- 처음 한 번 받은 롬은 그 기기 브라우저 저장소(IndexedDB)에 보관 → 다음부터는 안 받음 (LFS 대역폭 절약)
+- 가상 패드: 터치 기기에서 EmulatorJS 가 자동 표시. 아래 화면은 터치/마우스
+- 한국어 메뉴: CDN 의 `ko-KO.json` 이 문법 오류라 고친 사본 `nds/ko-KO.json` 사용
