@@ -88,9 +88,10 @@ body.playing #stage{display:block}
 <script>
 'use strict';
 // ── 설정 ───────────────────────────────────────────────
-// 롬 경로(저장소 루트 기준). 주소 뒤에 ?rom=폴더/파일.nds 를 붙이면 다른 롬도 열 수 있다.
+// 롬 경로(저장소 루트 기준). 주소 뒤에 붙여서 바꿀 수 있다:
+//   ?rom=폴더/파일.nds  → 다른 롬
+//   &ref=브랜치이름      → main 이 아닌 브랜치의 롬 (작업 중인 시험판)
 const DEFAULT_ROM = '포켓몬/1_폰에 넣을 파일/디지몬골드 v1.6 (이지+노래 1016 밤).nds';
-const BRANCH = 'main';
 const EJS_VERSION = '4.2.3';
 const EJS_DATA = `https://cdn.emulatorjs.org/${EJS_VERSION}/data/`;
 
@@ -103,13 +104,24 @@ function repoInfo() {
 
 // GitHub Pages·raw 주소는 LFS 파일 대신 134바이트짜리 포인터만 준다.
 // 실제 파일은 media.githubusercontent.com 에서 받는다 (공개 저장소, CORS 허용).
+const enc = (path) => path.split('/').map(encodeURIComponent).join('/');
 function lfsUrl(path) {
   const { owner, repo } = repoInfo();
-  return `https://media.githubusercontent.com/media/${owner}/${repo}/${BRANCH}/` +
-    path.split('/').map(encodeURIComponent).join('/');
+  return `https://media.githubusercontent.com/media/${owner}/${repo}/${REF}/${enc(path)}`;
+}
+
+// 포인터(134바이트)만 읽어 롬의 지문(oid)을 알아낸다. LFS 용량을 쓰지 않음.
+// 지문이 저장된 롬과 다르면 새 버전이 올라온 것.
+async function latestOid() {
+  const { owner, repo } = repoInfo();
+  const res = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${REF}/${enc(ROM_PATH)}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const m = (await res.text()).match(/oid sha256:([0-9a-f]{64})/);
+  return m ? m[1] : null;
 }
 
 const qs = new URLSearchParams(location.search);
+const REF = qs.get('ref') || 'main';
 const ROM_PATH = qs.get('rom') || DEFAULT_ROM;
 const ROM_FILE = ROM_PATH.split('/').pop();
 const GAME_NAME = ROM_FILE.replace(/\.nds$/i, '');
@@ -147,15 +159,24 @@ function setBar(ratio) {
   $('barFill').style.width = Math.round((ratio || 0) * 100) + '%';
 }
 
-let cached = null; // { blob, size, savedAt }
+let cached = null;  // { blob, size, savedAt, oid }
+let latest = null;  // 저장소에 올라온 롬의 지문 (모르면 null)
+
+const fmtDate = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+const isOld = () => cached && cached.blob && latest && cached.oid !== latest;
 
 async function refresh() {
   $('romName').textContent = GAME_NAME;
-  $('romPath').textContent = ROM_PATH;
+  $('romPath').textContent = ROM_PATH + (REF !== 'main' ? `  [브랜치 ${REF}]` : '');
   $('core').value = CORE;
   try { cached = await romGet(ROM_PATH); } catch (e) { cached = null; }
-  if (cached && cached.blob) {
-    setState(`이 기기에 저장됨 · ${MB(cached.size)} · 바로 시작 가능`, 'ok');
+  try { latest = await latestOid(); } catch (e) { latest = null; }  // 인터넷 없으면 저장본 그대로
+  if (isOld()) {
+    setState(`새 버전이 올라와 있음 · 저장된 판은 ${fmtDate(cached.savedAt)} 에 받은 것`, 'bad');
+    $('btnPlay').textContent = '새 버전 받고 시작';
+    $('btnClear').disabled = false;
+  } else if (cached && cached.blob) {
+    setState(`최신 판 저장됨 · ${MB(cached.size)} · ${fmtDate(cached.savedAt)} 받음 · 바로 시작`, 'ok');
     $('btnPlay').textContent = '시작';
     $('btnClear').disabled = false;
   } else {
@@ -199,7 +220,8 @@ async function download() {
 async function save(blob) {
   try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
   try {
-    await romPut(ROM_PATH, { blob, size: blob.size, savedAt: Date.now() });
+    await romDel(ROM_PATH);  // 옛 판을 먼저 지워 공간 확보 (롬은 한 경로에 하나만 보관)
+    await romPut(ROM_PATH, { blob, size: blob.size, savedAt: Date.now(), oid: latest });
   } catch (e) {
     // 저장 공간 부족 등: 이번 한 번은 메모리로 실행
     console.warn('롬 저장 실패', e);
@@ -235,7 +257,7 @@ $('btnPlay').addEventListener('click', async () => {
   $('btnPlay').disabled = true; $('btnClear').disabled = true;
   try {
     let blob = cached && cached.blob;
-    if (!blob) {
+    if (!blob || isOld()) {
       blob = await download();
       setState('기기에 저장하는 중…');
       await save(blob);

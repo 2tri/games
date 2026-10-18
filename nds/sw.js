@@ -3,7 +3,7 @@
 // - 에뮬레이터(cdn.emulatorjs.org/버전/): 버전 고정이라 한 번 받으면 저장본 사용.
 // - 롬(media.githubusercontent.com)은 여기서 다루지 않음 → 페이지가 IndexedDB 에 따로 보관.
 // index.html 을 고친 뒤에는 VERSION 을 바꿔야 옛 캐시가 지워집니다.
-const VERSION = 'nds-2026-10-18a';
+const VERSION = 'nds-2026-10-19a';
 const CDN = 'https://cdn.emulatorjs.org/4.2.3/';
 const FILES = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './ko-KO.json'];
 
