@@ -65,8 +65,8 @@ body.playing #stage{display:block}
   <div class="card">
     <small>에뮬레이터 코어 (바꾸면 페이지가 다시 열립니다)</small>
     <select id="core">
-      <option value="melonds">melonDS (기본 · 정확도 높음)</option>
-      <option value="desmume2015">DeSmuME 2015 (가벼움 · 느린 폰용)</option>
+      <option value="melonds">melonDS (정확도 높음 · 아이폰은 흰 화면)</option>
+      <option value="desmume2015">DeSmuME 2015 (가벼움 · 아이폰 기본)</option>
       <option value="desmume">DeSmuME</option>
     </select>
   </div>
@@ -126,7 +126,9 @@ const ROM_PATH = qs.get('rom') || DEFAULT_ROM;
 const ROM_FILE = ROM_PATH.split('/').pop();
 const GAME_NAME = ROM_FILE.replace(/\.nds$/i, '');
 let savedCore = null; try { savedCore = localStorage.getItem('nds-core'); } catch (e) {}
-const CORE = qs.get('core') || savedCore || 'melonds';
+// 아이폰·아이패드 사파리는 melonDS 가 흰 화면만 나옴(2026-10-19 사용자 확인) → DeSmuME 2015 기본
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const CORE = qs.get('core') || savedCore || (IOS ? 'desmume2015' : 'melonds');
 
 // ── 롬 보관함 (IndexedDB) ──────────────────────────────
 const DB = { name: 'nds-player', store: 'roms' };
