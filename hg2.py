@@ -157,6 +157,7 @@ def main():
     pers = list(N['personal'].files); learn = list(N['learn'].files); evo = list(N['evo'].files)
     seed, names_ent = MSG[NAMEF]; names_ent = [list(e) for e in names_ent]
     expect = {}; held_cleared = set(); dg_learn_n = [0]
+    SPECIAL_DI = set()                     # 필살기로 쓴 기술 칸 (같은 레벨 정리에서 제자리 우선)
     for r in draft:
         ko = r['이름']
         if ko not in slot: continue
@@ -420,6 +421,7 @@ def main():
                 struct.pack_into('<H', d_, 0, 0); d_[2] = 1 if t_ in SPECIAL_TYPES else 0      # 효과 0 = 그냥 데미지 / 분류 0 물리 · 1 특수
                 d_[3] = min(255, pw_); d_[4] = t_; d_[5] = min(100, ac_); d_[6] = min(40, pp_); d_[7] = 0
                 wf[di] = bytes(d_); mvf[di] = enc_
+                SPECIAL_DI.add(di)
                 if anim_files is not None and max(di, tpl) < len(anim_files): anim_files[di] = anim_files[tpl]; anim_n[0] += 1
                 lv = STAGE_LV.get(grade_of_.get(owner, ''), 20) + (8 if order_ == 2 else 0)
                 ls = hg1.learnset(learn[os_]); ls = [(l_, m_) for l_, m_ in ls if m_ != di] + [(lv, di)]
@@ -461,6 +463,24 @@ def main():
             if slot[src_] in expect and 'name' in expect[slot[src_]]: expect[slot[src_]]['evo'] = [t for _, _, t in ev]
             elif slot[src_] in expect: expect[slot[src_]].pop('evo_add', None)
         say('진화 표 적용: 출발 종 %d (표 우선, 초안 진화는 덮음)' % nwrite)
+
+    # ---- 같은 레벨에 기술 2개 막기 (10/19 사용자: 「Lv12 에 두 개를 동시에 배움 — 그런 일 없어야」)
+    #      Lv1 은 그대로(시작 기술). 그 밖에는 레벨마다 1개 — 필살기는 제 레벨에 두고, 겹친 기술을 바로 뒤 빈 레벨(+1, +2 …)로 옮김
+    moved_n = [0, 0]
+    for s_ in range(len(learn)):
+        ls_ = hg1.learnset(learn[s_])
+        if not ls_: continue
+        lv1 = [x for x in ls_ if x[0] <= 1]; rest = [x for x in ls_ if x[0] > 1]
+        if len(set(l for l, _ in rest)) == len(rest): continue
+        rest.sort(key=lambda x: (x[0], 0 if x[1] in SPECIAL_DI else 1))
+        taken = set(); fixed = []
+        for l, m in [x for x in rest if x[1] in SPECIAL_DI] + [x for x in rest if x[1] not in SPECIAL_DI]:
+            for d in list(range(0, 20)) + [-1, -2, -3]:      # 뒤로 옮김(진화 전 레벨로 당기면 진화한 종은 못 배움)
+                if 2 <= l + d <= 100 and l + d not in taken: break
+            if d: moved_n[0] += 1
+            taken.add(l + d); fixed.append((l + d, m))
+        fixed.sort(key=lambda x: x[0]); learn[s_] = enc_learn(lv1 + fixed); moved_n[1] += 1
+    say('같은 레벨 기술 정리: %d종에서 %d개를 옆 레벨로 옮김 (필살기는 제자리)' % (moved_n[1], moved_n[0]))
 
     # ---- 쓰기
     def rebuild(key, files):

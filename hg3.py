@@ -53,6 +53,24 @@ NAMEFILE_NEW = {'목호': '아포카리몬'}     # 트레이너 이름표의 목
 POKE_DENY = {'럭키', '마그마', '부스터', '투구', '랜턴', '블루', '코일', '두두', '나시', '크랩', '셀러', '삐', '뮤'}
 CHANGES = []    # 이름·문맥 바꾸기 기록(앞뒤 글과 함께 report 에)
 
+# 10/19 클라우드: 이름 변수는 {FFFE}{01xx}{0002}{버퍼}{조사} 5칸 — 예전 정규식은 4칸만 잡아 조사 칸이 빠졌고, 게임이 바로 뒤 글자를 조사로 먹었음
+NAME_VAR = re.compile(r'\{FFFE\}\{(01[0-9A-F]{2})\}\{0002\}\{([0-9A-F]{4})\}\{([0-9A-F]{4})\}')
+# 게임 조사표(arm9 0x020F6316): 1 는/은 2 를/을 3 가/이 4 와/과 5 (으)로 6 (이)라 7 야/아
+JOSA_NO = [('으로', 5, '로'), ('이라', 6, '라'), ('은', 1, ''), ('는', 1, ''), ('을', 2, ''), ('를', 2, ''), ('이', 3, ''), ('가', 3, ''),
+           ('과', 4, ''), ('와', 4, ''), ('아', 7, ''), ('야', 7, '')]
+def put_vars(orig, new_txt):
+    """새 대사의 {주인공}/{라이벌}(+조사)를 원문의 이름 변수로 차례대로 바꿈. 조사는 게임이 받침에 맞춰 붙이게 번호로."""
+    vs = iter(NAME_VAR.findall(orig))
+    def one(m):
+        v = next(vs, None); rest = m.group(2) or ''
+        if v is None: return ('너' if m.group(1) == '주인공' else '매튜') + rest
+        cmd, buf, _ = v; jo, tail = 0, rest
+        for lit, idx, keep in JOSA_NO:
+            if rest == lit: jo, tail = idx, keep; break
+        return '{FFFE}{%s}{0002}{%s}{%04X}' % (cmd, buf, jo) + tail
+    return re.sub(r'\{(주인공|라이벌)\}((?:으로|이라|[은는을를이가과와아야])?)', one, new_txt)
+
+
 def apply_terms(s, terms, counter, names_file=False):
     """앞에서부터 한 번 훑으며 바꿈(바꾼 글 안을 다시 바꾸지 않게)"""
     res = []; i = 0; n = len(s)
@@ -404,10 +422,7 @@ def main():
                             if ent_k and ent_k[0] == 0xF100: why = '압축 글이라 못 바꿈'; continue
                             if (tfi, k) in scene_new: why = '다른 줄이 이미 바꾼 글(겹침)'; continue
                             orig = CM.dec(ent_k); new_txt = disp(row['새 대사'])
-                            vars_ = re.findall(r'\{FFFE\}(?:\{[0-9A-F]{4}\}){2,3}', orig)
-                            ph = re.findall(r'\{(주인공|라이벌)\}', new_txt)
-                            for v in vars_[:len(ph)]: new_txt = re.sub(r'\{(주인공|라이벌)\}', lambda m, v=v: v, new_txt, count=1)
-                            new_txt = new_txt.replace('{주인공}', '너').replace('{라이벌}', '매튜')
+                            new_txt = put_vars(orig, new_txt)
                             try: CM.enc(new_txt)
                             except ValueError as ex: why = '글자표에 없는 글자(%s) — 문장부호 표 채운 뒤' % ex; continue
                             scene_new[(tfi, k)] = new_txt; hit += 1
@@ -456,12 +471,7 @@ def main():
                 orig = decoded[fi][j]; new_txt = disp(row['새 대사'])
                 if (fi, j) in scene_new: P('장면 대사 %s: 다른 줄이 이미 바꾼 글(겹침) msg%d#%d — 건너뜀' % (row['번호'], fi, j)); continue
                 if MSG[fi][1][j] and MSG[fi][1][j][0] == 0xF100: P('장면 대사 %s: 압축 글이라 못 바꿈' % row['번호']); continue
-                vars_ = re.findall(r'\{FFFE\}(?:\{[0-9A-F]{4}\}){2,3}', orig)
-                ph = re.findall(r'\{(주인공|라이벌)\}', new_txt)
-                if ph or vars_:
-                    # 10/15 완화: 원문 변수가 남으면 그냥 버리고, 새 대사 변수가 더 많으면 「너」「매튜」로
-                    for v in vars_[:len(ph)]: new_txt = re.sub(r'\{(주인공|라이벌)\}', lambda m, v=v: v, new_txt, count=1)
-                    new_txt = new_txt.replace('{주인공}', '너').replace('{라이벌}', '매튜')
+                new_txt = put_vars(orig, new_txt)      # 원문 변수가 남으면 버리고, 새 대사 변수가 더 많으면 「너」「매튜」
                 new_txt = keep_label(orig, new_txt, row.get('화자', ''))
                 try: CM.enc(new_txt)
                 except ValueError as ex: P('장면 대사 %s: 글자표에 없는 글자라 건너뜀(%s)' % (row['번호'], ex)); continue
