@@ -1,0 +1,37 @@
+태일이 전투 뒷모습 — 제미나이 주문문 (DS 롬용, 색 있는 그림)
+2026-10-13
+
+[준비물] 같은 대화방에 이 두 장을 먼저 올린다 (둘 다 저장소 digimon/art/src/people/ 안)
+  이미지 1 = taichi_portrait_ai.png   (정면 전신, 색 있음 — 이 그림체·색을 따라 그리게 함)
+  이미지 2 = taichi_ai.png            (걷기 시트 — 가운데 줄이 뒷모습이라 머리·옷 뒷면 참고용)
+
+[주문문 — 그대로 복사해서 보내기]
+------------------------------------------------------------
+The attached Image 1 is our finished FRONT picture of Taichi Yagami (Tai Kamiya) from Digimon Adventure, in color pixel art. Image 2 is his small walking sheet; its middle row shows the back of his head and his back.
+
+Task: draw his BACK battle sprite for a Nintendo DS Pokemon HeartGold/SoulSilver style battle screen (the player trainer seen from behind, like the player's back sprite in those games), in exactly the same pixel style and the same colors as Image 1: chunky square pixels, thick black outline, flat colors, no gradients, no anti-aliasing.
+
+Pose: three-quarter view from behind, slightly turned toward the upper right, so we see his back, the back of his head, one shoulder, and only a thin sliver of the side of his face (cheek and ear edge, no eyes). One arm is bent forward as if he is about to throw something or hold up his Digivice.
+
+Keep from behind:
+- the big spiky brown hair mass, bigger than his head, with sharp spikes sticking out to the sides and up
+- the blue strap of the goggles running across the back of his head, and the white goggles peeking out above the hair edge on both sides
+- the blue short-sleeve T-shirt (plain back), bare arms, white gloves
+- brown cargo shorts at the bottom edge
+
+Framing: one character, big, centered, filling the whole square canvas from the top of his hair down to the middle of his thighs; the lower legs are cut off by the bottom edge. Plain solid white background, no ground, no shadow, no text, no frame.
+
+Draw it on a coarse grid of about 80x80 pixels (each pixel a big visible block), so it can be shrunk to 80x80 later without blur. Output one square image.
+------------------------------------------------------------
+
+[잘 안 나올 때 — 한 줄씩 덧붙여 다시 요청]
+1. NOT straight from behind, NOT symmetrical, NOT a mirror of the front, NO face visible.
+2. Use exactly the same colors as Image 1: brown hair, blue shirt, brown shorts, white gloves, skin tone. Do not add any new colors.
+3. The hair must stay a big spiky brown mass like in Image 1, not a cap and not smooth.
+4. Remove any extra objects, any Digimon, any text or border. Only the boy on a plain white background.
+5. Make the pixels bigger and chunkier, like a real 80x80 sprite; no small details.
+
+[받은 뒤]
+- 받은 그림을 digimon/art/src/people/taichi_back_ds_ai.png 로 저장해서(또는 대화에 올려서) 알려 주면
+  16색 + 투명으로 정리해 80x80 전투 뒷모습 칸에 넣는다.
+- 한 번에 한 장. 마음에 안 들면 위 「잘 안 나올 때」 문장을 하나씩 붙여 다시.

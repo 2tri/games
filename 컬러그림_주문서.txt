@@ -1,0 +1,26 @@
+컬러 그림 주문서 — 지금 게임에 회색(GBC용) 그림뿐이라 원래 포켓몬 그림이 남는 14종
+(예: 가지몬을 만나면 「강철톤」 그림이 나옴.) 아래 종마다 「앞모습」 1장 + 「뒷모습」 1장을 컬러로 받아 주세요.
+받은 그림은 games\digimon\art\src\ 에 <영문이름>-f_ai.png (앞), <영문이름>-b_ai.png (뒤) 로 저장하면 됩니다(이미 있는 회색 파일은 덮어씀).
+→ 단, 회색 4톤이 아닌 「색이 있는」 그림이어야 art_nds 가 씁니다.
+
+[공통 주문 문장 — 제미나이에 그대로 붙이고 「<디지몬>」 자리만 바꾸기]
+Pixel art of <디지몬> (Digimon), full body, in the style of Pokémon HeartGold/SoulSilver DS battle sprites (Gen 4 trainer-battle sprite look): clean 1-pixel black outline, 12–16 flat colors with simple cel shading, bright saturated colors faithful to the official Digimon design, NO dithering, NO gradients, NO background (solid flat light-gray #CCCCCC background I can remove), centered, the whole body fits inside a square canvas with a little margin. Show the <앞모습: FRONT view, facing the viewer, slightly 3/4> / <뒷모습: BACK view, seen from behind, same pose and same colors as the front>.
+(앞·뒤를 한 대화에서 연달아 요청하면 색·크기가 같아집니다. 뒷모습은 「same character from behind」 한 줄을 더하세요.)
+
+[종 목록]
+ 번호  한글 이름      영문 이름(요청에 쓸 것)            메모
+  1   둥실몬         Pukamon                          유년기 — 작고 둥근 해파리 같은 몸
+  2   메라몬         Meramon                          성숙기 — 불꽃 몸
+  3   가지몬         Gazimon                          성장기 — 보라 털·토끼귀 같은 생물
+  4   브이몬         V-mon (Veemon)                   성장기 — 파란 용, 이마에 V
+  5   엑스브이몬     ExVeemon                         성숙기 — 브이몬 진화형, 가슴에 X
+  6   황제드라몬     Imperialdramon Dragon Mode       궁극체 — 큰 용(전신이 한 장에 들어가게)
+  7   디그몬         Digmon                           아머체 — 드릴 코
+  8   서브마리몬     Submarimon                       아머체 — 잠수정 모양
+  9   페가수몬       Pegasusmon                       아머체 — 날개 달린 말
+ 10   고릴라몬       Gorillamon                       성숙기 — 고릴라
+ 11   데스메라몬     Death Meramon                    완전체 — 메라몬 상위
+ 12   다크그레몬     Dark Greymon (Metal Greymon Virus)  완전체 — 검은 메탈그레이몬
+ 13   데드메라몬     (영문 이름 확인 필요 — 설계자에게 물어볼 것)
+ 14   디지문자       Digi-script / Digimoji           특수 — 알프 유적의 글자, 설계자와 먼저 모양을 정할 것
+※ 1~12 는 지금 바로 주문 가능, 13·14 는 설계 확인 후.
