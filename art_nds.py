@@ -99,20 +99,28 @@ def remove_bg(img):
     def near(p):
         if checker and min(p[:3]) >= 185 and max(p[:3]) - min(p[:3]) <= 28: return True
         return sum((a - b) ** 2 for a, b in zip(p[:3], bg)) < 45 ** 2
-    out = [list(r) for r in img]; seen = [[False] * w for _ in range(h)]
-    stack = [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
-    while stack:
-        x, y = stack.pop()
-        if seen[y][x]: continue
-        seen[y][x] = True
-        if not near(img[y][x]): continue
-        out[y][x] = T
-        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < w and 0 <= ny < h and not seen[ny][nx]: stack.append((nx, ny))
+    out = [list(r) for r in img]
+    # 10/19 사용자 「츄몬 흰 눈알이 투명」: 큰 도트(제미나이 1024) 그림은 외곽선의 1~몇 픽셀 틈(jpg 번짐)으로 테두리 flood 가
+    # 눈·이빨 흰 칸까지 새어 들어감 → 도트 반쯤보다 좁은 틈은 못 지나가게(배경 마스크를 깎고 flood → 지운 곳을 배경 안에서만 다시 넓힘)
+    nm = bytearray(1 if near(p) else 0 for r in img for p in r)
+    dot = _dot_size(img, nm, w, h)
+    k = int(dot * 0.6) | 1 if (Image is not None and dot >= 4) else 1
+    if k >= 3:
+        from PIL import ImageFilter
+        M = Image.frombytes('L', (w, h), bytes(v * 255 for v in nm))
+        E = bytearray(1 if v else 0 for v in M.filter(ImageFilter.MinFilter(k)).tobytes())
+        reach = _flood_border(E, w, h)
+        for _ in range(k // 2 + 1):                     # 깎은 만큼 배경 안에서만 넓힘(외곽선은 못 넘음)
+            R = Image.frombytes('L', (w, h), bytes(v * 255 for v in reach)).filter(ImageFilter.MaxFilter(3)).tobytes()
+            reach = bytearray(1 if (R[i] and nm[i]) else 0 for i in range(w * h))
+    else:
+        reach = _flood_border(nm, w, h)
+    for i in range(w * h):
+        if reach[i]: out[i // w][i % w] = T
     if True:                                            # 몸 사이에 갇힌 배경(흰 잔사): 배경색과 거의 같은 덩어리 중 큰 것만(눈·반짝임처럼 작은 흰 점은 남김)
         # 10/16: 정한 종(HOLE_SPECIES)은 지우고, 나머지 종은 「흰 잔사 의심」으로 세기만 함(보고 → 눈으로 보고 HOLE_SPECIES 에 더함)
-        lim = max(24, w * h // 2000); seen2 = [[False] * w for _ in range(h)]
+        # 10/19: 크기는 원본 픽셀이 아니라 도트² 로 (1024 그림에서 w*h//2000 = 524px = 도트 2~5칸 → 눈알·이빨까지 지웠음)
+        lim = max(24, int(HOLE_MIN_DOTS * max(1.0, dot) ** 2)); seen2 = [[False] * w for _ in range(h)]
         for y0 in range(h):
             for x0 in range(w):
                 if seen2[y0][x0] or out[y0][x0][3] == 0 or not near(out[y0][x0]): continue
@@ -128,6 +136,28 @@ def remove_bg(img):
                         for x, y in comp: out[y][x] = T
     return out
 
+def _flood_border(mask, w, h):
+    """mask(bytearray, 1 = 배경색) 중 테두리와 4방향으로 이어진 칸 → bytearray"""
+    reach = bytearray(w * h)
+    st = [i for i in list(range(w)) + list(range((h - 1) * w, h * w)) + list(range(0, h * w, w)) + list(range(w - 1, h * w, w)) if mask[i]]
+    for i in st: reach[i] = 1
+    while st:
+        i = st.pop(); x = i % w
+        for j in ((i - 1) if x > 0 else -1, (i + 1) if x < w - 1 else -1, i - w, i + w):
+            if 0 <= j < w * h and mask[j] and not reach[j]: reach[j] = 1; st.append(j)
+    return reach
+
+def _dot_size(img, nm, w, h):
+    """큰 도트 그림의 도트 한 칸 크기(원본 픽셀). 200 미만(DS 원본 도트)이면 1"""
+    if max(w, h) < 200: return 1.0
+    reach = _flood_border(nm, w, h)
+    tmp = [[T if reach[y * w + x] else img[y][x] for x in range(w)] for y in range(h)]
+    b = bbox(tmp)
+    if not b: return 1.0
+    c = crop(tmp, b); n = native(c)
+    return max(1.0, len(c[0]) / max(1, len(n[0])))
+
+HOLE_MIN_DOTS = 60          # 10/19: HOLE_SPECIES 에서 지우는 갇힌 배경 덩어리의 최소 크기(도트²). 츄몬: 눈알 ≤ 30, 팔 사이 배경 120 ~ 410
 HOLE_COUNT = [0]
 
 HOLES = [False]
