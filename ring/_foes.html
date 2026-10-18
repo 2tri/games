@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f4f1e8">
+<canvas id="c" width="1260" height="860"></canvas>
+<script src="sprites.js"></script>
+<script>
+const {FOE,toCanvas}=RingSprites, c=document.getElementById('c'), g=c.getContext('2d');
+g.font='bold 18px sans-serif'; g.fillStyle='#222'; g.textAlign='center';
+const L=[['wolf','들늑대'],['willow','묵은숲 버드나무'],['spider','숲 거미'],['midges','늪 모기 떼'],['ruffian','브리 불량배'],['rider','검은 기사'],['wight','무덤 악령 (1장 보스)'],
+ ['orc','오크'],['uruk','우루크하이'],['crebain','까마귀 떼'],['gollum','골룸'],['watcher','물속의 감시자'],['troll','동굴 트롤'],['shelob','쉴로브']];
+let i=0;
+for(const [k,n] of L){ const s=FOE[k](); const sc=s.w>40?4:5; const cv=toCanvas(s,sc);
+  const col=i%5,row=Math.floor(i/5); const x=20+col*248, y=10+row*285;
+  g.drawImage(cv,x+(228-cv.width)/2,y+(230-cv.height)); g.fillText(n,x+114,y+258); i++; }
+</script>

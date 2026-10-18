@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="반지 원정">
+<meta name="theme-color" content="#2b2f3a">
+<title>반지 원정</title>
+<style>
+@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+:root{--body:#c9c5bc;--body2:#b7b2a8;--ink:#2b2f3a;--btn:#8b2c4a;--bezel:#5d6170;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--body);font-family:Galmuri9,-apple-system,"Apple SD Gothic Neo",sans-serif;color:var(--ink);
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:manipulation}
+.gb{max-width:560px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:calc(6px + var(--safe-t)) 6px calc(8px + var(--safe-b))}
+.bezel{background:var(--bezel);border-radius:8px 8px 22px 8px;padding:8px 8px 4px;box-shadow:inset 0 2px 0 rgba(255,255,255,.12)}
+/* 화면은 남는 높이에 맞춰 최대한 크게 (버튼 영역 약 200px 남김) */
+canvas{display:block;width:min(100%, calc((100dvh - 250px - var(--safe-t) - var(--safe-b)) * 160 / 144));margin:0 auto;aspect-ratio:160/144;image-rendering:pixelated;background:#f8f8f0;border-radius:2px}
+.brand{color:#d8d4ca;font-size:10px;letter-spacing:.08em;margin-top:3px;opacity:.8}
+.pad{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8px 10px 0;gap:4px 0}
+.dpad{position:relative;width:126px;height:126px}
+.dpad button{position:absolute;width:42px;height:42px;background:#2b2f3a;border:0;border-radius:6px;box-shadow:0 3px 0 #15171d}
+.dpad .u{left:42px;top:0}.dpad .d{left:42px;bottom:0}.dpad .l{left:0;top:42px}.dpad .r{right:0;top:42px}
+.dpad .c{left:42px;top:42px;width:42px;height:42px;background:#2b2f3a;position:absolute}
+.ab{justify-self:end;position:relative;width:140px;height:100px;transform:rotate(-24deg)}
+.ab button{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--btn);border:0;color:#f0e6ea;font:bold 18px Galmuri9,sans-serif;box-shadow:0 4px 0 #57182c}
+.ab .a{right:0;top:0}.ab .b{left:0;top:32px}
+.ss{grid-column:1/3;display:flex;justify-content:center;gap:26px}
+.ss button{width:56px;height:14px;border-radius:7px;border:0;background:#6d7180;transform:rotate(-24deg);box-shadow:0 2px 0 #44474f}
+.ss span{display:block;font-size:9px;text-align:center;margin-top:6px;color:#6d7180;letter-spacing:.06em}
+button:active,button.on{filter:brightness(1.35);transform-origin:center}
+</style>
+</head>
+<body>
+<div class="gb">
+  <div class="bezel"><canvas id="cv" width="160" height="144"></canvas><div class="brand">반지 원정 · 비공식 팬 게임</div></div>
+  <div class="pad">
+    <div class="dpad"><button class="u" data-k="up"></button><button class="l" data-k="left"></button><div class="c"></div><button class="r" data-k="right"></button><button class="d" data-k="down"></button></div>
+    <div class="ab"><button class="b" data-k="b">B</button><button class="a" data-k="a">A</button></div>
+    <div class="ss"><div><button data-k="select"></button><span>SELECT</span></div><div><button data-k="start"></button><span>START</span></div></div>
+  </div>
+</div>
+<script src="ai/sprites.js"></script>
+<script>
+'use strict';
+// ═════════ 화면·그리기 ═════════
+const PAL = ['#f8f8f0', '#b0b0a8', '#606060', '#181818'];
+const cv = document.getElementById('cv'), g = cv.getContext('2d');
+g.imageSmoothingEnabled = false;
+const sprCache = {};
+function sprite(name) {
+  if (sprCache[name]) return sprCache[name];
+  const t = AISPR[name], h = t.length, w = t[0].length, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const x2 = c.getContext('2d'); const im = x2.createImageData(w, h);
+  const rgb = PAL.map(p => [parseInt(p.slice(1, 3), 16), parseInt(p.slice(3, 5), 16), parseInt(p.slice(5, 7), 16)]);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const v = t[y][x], i = (y * w + x) * 4; if (v >= 0) { im.data[i] = rgb[v][0]; im.data[i + 1] = rgb[v][1]; im.data[i + 2] = rgb[v][2]; im.data[i + 3] = 255; } }
+  x2.putImageData(im, 0, 0); return (sprCache[name] = c);
+}
+function flashSprite(name) {   // 맞았을 때 하얗게
+  const k = name + '#w'; if (sprCache[k]) return sprCache[k];
+  const s = sprite(name), c = document.createElement('canvas'); c.width = s.width; c.height = s.height; const x2 = c.getContext('2d');
+  x2.drawImage(s, 0, 0); x2.globalCompositeOperation = 'source-in'; x2.fillStyle = PAL[0]; x2.fillRect(0, 0, c.width, c.height);
+  return (sprCache[k] = c);
+}
+const txtCache = {};
+function textImg(s, col) {
+  const k = s + '|' + col; if (txtCache[k]) return txtCache[k];
+  const c = document.createElement('canvas'), x2 = c.getContext('2d'); x2.font = '10px Galmuri9';
+  const w = Math.ceil(x2.measureText(s).width) + 2; c.width = Math.max(1, w); c.height = 13;
+  x2.font = '10px Galmuri9'; x2.textBaseline = 'top'; x2.fillStyle = PAL[col ?? 3]; x2.fillText(s, 0, 1);
+  const d = x2.getImageData(0, 0, c.width, 13); for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0; x2.putImageData(d, 0, 0);
+  return (txtCache[k] = c);
+}
+const text = (s, x, y, col) => g.drawImage(textImg(s, col), x, y);
+const tw = s => textImg(s, 3).width - 2;
+function rect(x, y, w, h, c) { g.fillStyle = PAL[c]; g.fillRect(x, y, w, h); }
+function box(x, y, w, h) { rect(x, y, w, h, 3); rect(x + 1, y + 1, w - 2, h - 2, 0); rect(x + 3, y + 3, w - 6, 1, 3); rect(x + 3, y + h - 4, w - 6, 1, 3); rect(x + 3, y + 3, 1, h - 6, 3); rect(x + w - 4, y + 3, 1, h - 6, 3); }
+function wrap(s, maxw) {
+  const out = []; for (const para of s.split('\n')) {
+    let line = ''; for (const word of para.split(' ')) {
+      const t2 = line ? line + ' ' + word : word;
+      if (tw(t2) <= maxw) line = t2; else { if (line) out.push(line); line = word; while (tw(line) > maxw) { let i = line.length; while (i > 1 && tw(line.slice(0, i)) > maxw) i--; out.push(line.slice(0, i)); line = line.slice(i); } }
+    } out.push(line);
+  } return out;
+}
+// 받침에 따른 조사
+function josa(w, a, b) { const c = w.charCodeAt(w.length - 1); if (c < 0xac00 || c > 0xd7a3) return w + b; return w + ((c - 0xac00) % 28 ? a : b); }
+
+// ═════════ 입력 ═════════
+const held = {}; let keyWaiters = [];
+function press(k) { const ws = keyWaiters; keyWaiters = []; ws.forEach(f => f(k)); }
+document.querySelectorAll('[data-k]').forEach(b => {
+  const k = b.dataset.k;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); b.classList.add('on'); press(k); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => b.classList.remove('on')));
+});
+cv.addEventListener('pointerdown', e => { e.preventDefault(); press('a'); });
+const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', Enter: 'start', x: 'b', X: 'b', ' ': 'a', Backspace: 'b', Shift: 'select' };
+addEventListener('keydown', e => { const k = KEYMAP[e.key]; if (k) { e.preventDefault(); press(k); } });
+const nextKey = () => new Promise(r => keyWaiters.push(r));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// ═════════ 장면 (그리기 함수만 바꿔 끼움) ═════════
+let scene = () => rect(0, 0, 160, 144, 0);
+let msg = null;          // {lines, shown}
+let menu = null;         // 그리기 콜백
+function frame(t) { g.clearRect(0, 0, 160, 144); scene(t); if (menu) menu(t); else if (msg) drawMsg(t); requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+function drawMsg(t) {
+  box(0, 96, 160, 48);
+  const [a, b] = msg.lines; let left = Math.floor(msg.shown);
+  const a2 = (a || '').slice(0, left); left -= (a || '').length; const b2 = left > 0 ? (b || '').slice(0, left) : '';
+  if (a2) text(a2, 8, 105); if (b2) text(b2, 8, 121);
+  msg.shown += 1.2;
+  if (msg.shown >= (a || '').length + (b || '').length && msg.more && Math.floor(t / 300) % 2) { rect(148, 133, 5, 2, 3); rect(149, 135, 3, 1, 3); rect(150, 136, 1, 1, 3); }
+}
+// 대사: 두 줄씩 넘기며 보여 줌
+async function say(s, opt) {
+  const lines = wrap(s, 144);
+  for (let i = 0; i < lines.length; i += 2) {
+    msg = { lines: [lines[i], lines[i + 1]], shown: 0, more: true };
+    for (;;) { const k = await nextKey(); if (k === 'a' || k === 'b') { const full = (lines[i] || '').length + (lines[i + 1] || '').length; if (msg.shown < full) msg.shown = full; else break; } }
+  }
+  if (!(opt && opt.keep)) msg = null;
+}
+async function sayAuto(s, ms) { const lines = wrap(s, 144); msg = { lines: [lines[0], lines[1]], shown: 999, more: false }; await wait(ms || 700); msg = null; }
+// 고르기 (대사창 위 오른쪽 상자)
+async function choose(question, opts, cancel) {
+  const ql = question ? wrap(question, 144) : [];
+  let i = 0; const w = Math.max(...opts.map(tw)) + 22, h = opts.length * 14 + 10, x = 160 - w, y = 96 - h;
+  menu = () => { box(0, 96, 160, 48); if (question) { if (ql[0]) text(ql[0], 8, 105); if (ql[1]) text(ql[1], 8, 121); }
+    box(x, y, w, h); opts.forEach((o, k) => { text(o, x + 14, y + 6 + k * 14); if (k === i) text('▶', x + 5, y + 6 + k * 14); }); };
+  for (;;) { const k = await nextKey();
+    if (k === 'up') i = (i + opts.length - 1) % opts.length; else if (k === 'down') i = (i + 1) % opts.length;
+    else if (k === 'a' || k === 'start') { menu = null; return i; } else if (k === 'b' && cancel !== undefined) { menu = null; return cancel; } }
+}
+
+// ═════════ 자료: 인물·기술·적 ═════════
+const HEROES = {
+  frodosam: { name: '프로도·샘', full: '프로도와 샘', hp: 30, atk: 10, def: 9, spd: 9, desc: ['반지를 맡은 호빗과', '끝까지 곁을 지키는 정원사'],
+    moves: ['staff', 'pan', 'ring', 'stand'] },
+  aragorn: { name: '아라곤', full: '아라곤', hp: 36, atk: 14, def: 11, spd: 11, desc: ['북쪽의 순찰자', '성큼걸이라 불리는 사내'], moves: ['slash', 'strider', 'athelas', 'torch'] },
+  legolas: { name: '레골라스', full: '레골라스', hp: 30, atk: 13, def: 9, spd: 15, desc: ['어둠숲 요정 왕의 아들', '활을 쏘면 빗나가지 않는다'], moves: ['twin', 'aim', 'elfeye', 'knife'] },
+  gimli: { name: '김리', full: '김리', hp: 40, atk: 15, def: 14, spd: 7, desc: ['외로운 산의 난쟁이 전사', '도끼 한 자루면 충분하다'], moves: ['chop', 'stubborn', 'headbutt', 'roar'] },
+  gandalf: { name: '간달프', full: '간달프', hp: 34, atk: 12, def: 10, spd: 10, desc: ['회색의 마법사', '반지의 비밀을 쫓는다'], moves: ['light', 'glamdring', 'fire', 'cleanse'] },
+};
+// kind: hit(피해) / heal / buff / hide(반지) ; elem: 보통·불·빛
+const MOVES = {
+  staff: { name: '지팡이 휘두르기', pow: 9, acc: 95 }, stingM: { name: '스팅', pow: 14, acc: 95, elem: '요정' }, pan: { name: '프라이팬', pow: 12, acc: 85, line: '샘이 프라이팬을 힘껏 휘둘렀다!' },
+  ring: { name: '반지 끼기', kind: 'hide' }, stand: { name: '함께 버티기', kind: 'buff', stat: 'def', line: '둘이 등을 맞대고 버틴다!' },
+  slash: { name: '장검 베기', pow: 13, acc: 95 }, strider: { name: '성큼걸이 일격', pow: 10, acc: 90, crit: 35 },
+  athelas: { name: '아셀라스', kind: 'heal', amt: 0.45, line: '향긋한 풀잎으로 상처를 다스렸다.' }, torch: { name: '횃불', pow: 10, acc: 90, elem: '불' },
+  twin: { name: '두 발 쏘기', pow: 7, acc: 90, hits: 2 }, aim: { name: '정조준', pow: 14, acc: 100 },
+  elfeye: { name: '요정의 눈', kind: 'buff', stat: 'atk', line: '날카로운 눈이 빈틈을 찾는다!' }, knife: { name: '긴 칼', pow: 11, acc: 95 },
+  chop: { name: '도끼 내리찍기', pow: 17, acc: 75 }, stubborn: { name: '난쟁이 고집', kind: 'buff', stat: 'def', line: '김리는 꿈쩍도 하지 않는다!' },
+  headbutt: { name: '투구 박치기', pow: 10, acc: 95 }, roar: { name: '함성', kind: 'buff', stat: 'atk', line: '크하자드둠을 향해 외쳤다!' },
+  light: { name: '지팡이 빛', pow: 10, acc: 100, elem: '빛' }, glamdring: { name: '글람드링', pow: 13, acc: 95 },
+  fire: { name: '불꽃', pow: 11, acc: 90, elem: '불' }, cleanse: { name: '정화', kind: 'heal', amt: 0.35, line: '맑은 빛이 상처를 감싼다.', cure: true },
+  // 적 기술
+  bite: { name: '물기', pow: 8, acc: 90 }, growl: { name: '으르렁', kind: 'debuff', stat: 'def', line: '이빨을 드러내며 으르렁댔다!' },
+  root: { name: '뿌리 조르기', pow: 9, acc: 90, bind: 35 }, lull: { name: '졸음의 노래', kind: 'sleep', acc: 45, line: '나른한 노래가 귓가를 맴돈다...' },
+  cold: { name: '차가운 손', pow: 11, acc: 90, weaken: 40 }, dirge: { name: '무덤의 노래', kind: 'sleep', acc: 40, line: '오래된 주문이 안개 속에 울린다...' },
+  morgul: { name: '모르굴 칼', pow: 18, acc: 90 }, shriek: { name: '날카로운 비명', kind: 'debuff', stat: 'atk', line: '귀를 찢는 비명이 울려 퍼졌다!' },
+  scratch: { name: '할퀴기', pow: 9, acc: 95 }, strangle: { name: '목 조르기', pow: 12, acc: 80 },
+  tentacle: { name: '촉수 휘감기', pow: 12, acc: 85, bind: 40 }, splash: { name: '물보라', kind: 'debuff', stat: 'atk', line: '시커먼 물이 쏟아져 내렸다!' },
+  rusty: { name: '녹슨 칼', pow: 10, acc: 90 }, swarm: { name: '떼로 덤비기', pow: 6, acc: 90, hits: 2 },
+  club: { name: '몽둥이 내리치기', pow: 20, acc: 75 }, stomp: { name: '짓밟기', pow: 14, acc: 90 }, roarT: { name: '포효', kind: 'debuff', stat: 'def', line: '동굴이 쩌렁쩌렁 울린다!' },
+  whip: { name: '불채찍', pow: 22, acc: 90, bind: 30 }, flame: { name: '불칼', pow: 28, acc: 80 }, wings: { name: '그림자 날개', kind: 'debuff', stat: 'atk', line: '어둠과 불길이 날개처럼 펼쳐졌다!' },
+  cleave: { name: '언월도', pow: 18, acc: 85 }, bash: { name: '방패 밀치기', pow: 12, acc: 95 },
+  mace: { name: '가시 철퇴', pow: 24, acc: 85 }, wraithfire: { name: '망령의 불칼', pow: 20, acc: 90, weaken: 40 }, dread: { name: '공포', kind: 'debuff', stat: 'def', line: '숨이 막히는 공포가 덮쳐 온다!' },
+  voice: { name: '사루만의 목소리', kind: 'sleep', acc: 50, line: '달콤하고 그럴듯한 목소리가 마음을 흐린다...' }, bolt: { name: '번개 주문', pow: 18, acc: 90 }, staffS: { name: '지팡이 내리치기', pow: 12, acc: 95 },
+  sting: { name: '독침', pow: 16, acc: 85, bind: 45 }, web: { name: '거미줄', kind: 'debuff', stat: 'def', line: '끈적한 거미줄이 온몸을 휘감는다!' }, fang: { name: '송곳니', pow: 20, acc: 80 },
+  peck: { name: '쪼아대기', pow: 6, acc: 95, hits: 3 }, spy: { name: '정찰', kind: 'debuff', stat: 'def', line: '까마귀들이 빙빙 돌며 빈틈을 살핀다!' },
+};
+const FOES = {
+  dog: { name: '송곳니', spr: 'dog', lv: 3, hp: 22, atk: 8, def: 6, spd: 10, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  willow: { name: '버드나무 영감', spr: 'willow', lv: 6, hp: 70, atk: 7, def: 11, spd: 4, type: '나무', boss: true, moves: ['root', 'root', 'lull'] },
+  wight: { name: '무덤 악령', spr: 'wight', lv: 7, hp: 44, atk: 10, def: 9, spd: 8, type: '망령', boss: true, moves: ['cold', 'cold', 'dirge'] },
+  rider: { name: '검은 기사', spr: 'rider', lv: 15, hp: 95, atk: 19, def: 15, spd: 12, type: '어둠', boss: true, moves: ['morgul', 'morgul', 'shriek'] },
+  gollum: { name: '골룸', spr: 'gollum', lv: 8, hp: 42, atk: 11, def: 8, spd: 14, type: '짐승', moves: ['scratch', 'strangle', 'scratch'] },
+  watcher: { name: '호수의 감시자', spr: 'watcher', lv: 11, hp: 72, atk: 13, def: 11, spd: 8, type: '짐승', boss: true, moves: ['tentacle', 'tentacle', 'splash'] },
+  goblin: { name: '모리아 고블린', spr: 'goblin', lv: 9, hp: 30, atk: 11, def: 8, spd: 13, type: '오크', moves: ['rusty', 'swarm', 'rusty'] },
+  troll: { name: '동굴 트롤', spr: 'troll', lv: 13, hp: 95, atk: 17, def: 13, spd: 5, type: '짐승', boss: true, moves: ['club', 'stomp', 'roarT'] },
+  balrog: { name: '발로그', spr: 'balrog', lv: 30, hp: 240, atk: 28, def: 22, spd: 12, type: '어둠', boss: true, moves: ['whip', 'flame', 'wings'] },
+  riders5: { name: '검은 기사 다섯', spr: 'rider', lv: 12, hp: 120, atk: 16, def: 13, spd: 10, type: '어둠', boss: true, moves: ['morgul', 'shriek', 'morgul'] },
+  warg: { name: '와르그', spr: 'warg', lv: 13, hp: 60, atk: 16, def: 10, spd: 14, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  crebain: { name: '크레바인 떼', spr: 'crebain', lv: 9, hp: 36, atk: 10, def: 8, spd: 18, type: '짐승', moves: ['peck', 'peck', 'spy'] },
+  saruman: { name: '사루만', spr: 'saruman', lv: 26, hp: 160, atk: 22, def: 18, spd: 12, type: '마법사', boss: true, moves: ['bolt', 'voice', 'staffS'] },
+  shelob: { name: '쉴로브', spr: 'shelob', lv: 28, hp: 190, atk: 24, def: 20, spd: 10, type: '짐승', boss: true, moves: ['sting', 'fang', 'web'] },
+  witchking: { name: '마술사왕', spr: 'witchking', lv: 34, hp: 260, atk: 30, def: 24, spd: 13, type: '어둠', boss: true, moves: ['mace', 'wraithfire', 'dread'] },
+  fellbeast: { name: '날짐승 탄 나즈굴', spr: 'fellbeast', lv: 24, hp: 140, atk: 22, def: 16, spd: 15, type: '어둠', boss: true, moves: ['shriek', 'morgul', 'peck'] },
+  mouth: { name: '사우론의 입', spr: 'mouth', lv: 30, hp: 150, atk: 20, def: 20, spd: 10, type: '어둠', boss: true, moves: ['voice', 'shriek', 'morgul'] },
+  gollumB: { name: '골룸', spr: 'gollum', lv: 14, hp: 62, atk: 15, def: 11, spd: 18, type: '짐승', moves: ['scratch', 'strangle', 'strangle'] },
+  orc: { name: '모르도르 오크', spr: 'orc', lv: 14, hp: 64, atk: 16, def: 13, spd: 10, type: '오크', moves: ['rusty', 'cleave', 'bash'] },
+  mumak: { name: '무마킬', spr: 'mumak', lv: 22, hp: 200, atk: 24, def: 20, spd: 6, type: '짐승', boss: true, moves: ['stomp', 'club', 'roarT'] },
+  orcT: { name: '탑의 오크', spr: 'orc', lv: 18, hp: 75, atk: 18, def: 14, spd: 11, type: '오크', moves: ['rusty', 'cleave', 'cleave'] },
+  gollumF: { name: '골룸', spr: 'gollum', lv: 22, hp: 90, atk: 20, def: 14, spd: 20, type: '짐승', boss: true, moves: ['strangle', 'scratch', 'strangle'] },
+  sharkey: { name: '샤키', spr: 'sharkey', lv: 22, hp: 110, atk: 18, def: 14, spd: 10, type: '마법사', boss: true, moves: ['voice', 'staffS', 'bolt'] },
+  dogW: { name: '들개', spr: 'dog', lv: 3, hp: 18, atk: 7, def: 5, spd: 9, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  dogT: { name: '테드의 사냥개', spr: 'dog', lv: 5, hp: 30, atk: 9, def: 6, spd: 10, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  rootW: { name: '성난 나무뿌리', spr: 'willow', lv: 6, hp: 28, atk: 9, def: 9, spd: 4, type: '나무', moves: ['root', 'root', 'lull'] },
+  wightW: { name: '무덤 안개', spr: 'wight', lv: 7, hp: 26, atk: 9, def: 7, spd: 8, type: '망령', moves: ['cold', 'dirge', 'cold'] },
+  fernyT: { name: '빌 퍼니의 들개', spr: 'dog', lv: 8, hp: 40, atk: 12, def: 8, spd: 11, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  wolfW: { name: '굶주린 늑대', spr: 'warg', lv: 8, hp: 34, atk: 12, def: 8, spd: 13, type: '짐승', moves: ['bite', 'bite', 'growl'] },
+  goblinW: { name: '길 잃은 고블린', spr: 'goblin', lv: 9, hp: 30, atk: 11, def: 8, spd: 12, type: '오크', moves: ['rusty', 'swarm', 'rusty'] },
+  trollW: { name: '어린 바위 트롤', spr: 'troll', lv: 10, hp: 60, atk: 14, def: 12, spd: 5, type: '짐승', moves: ['club', 'stomp', 'roarT'] },
+  crowW: { name: '까마귀 떼', spr: 'crebain', lv: 4, hp: 16, atk: 7, def: 4, spd: 13, type: '짐승', moves: ['peck', 'peck', 'spy'] },
+  urukS: { name: '우루크하이 척후병', spr: 'uruk', lv: 12, hp: 55, atk: 15, def: 12, spd: 11, type: '오크', moves: ['cleave', 'bash', 'bash'] },
+  uruk: { name: '우루크하이', spr: 'uruk', lv: 16, hp: 105, atk: 18, def: 15, spd: 11, type: '오크', boss: true, moves: ['cleave', 'bash', 'cleave'] },
+};
+const EFFECT = { '불': { '나무': 2, '어둠': 2 }, '빛': { '망령': 2, '어둠': 2 }, '요정': { '오크': 2 } };   // 스팅은 오크·고블린에게 강하다   // 나즈굴은 불을 두려워한다
+
+// ═════════ 저장 ═════════
+const SAVE_KEY = 'ring-save-v1';
+let S = null;   // 진행 상태
+function newState(hero) {
+  const h = HEROES[hero]; return { hero, lead: hero, party: [hero], mem: {}, lv: 5, xp: 0, hp: h.hp, items: { lembas: 3, herb: 2 }, shadow: 0, dagger: false, wound: false, step: 0, buff: { atk: 0, def: 0 } };
+}
+function statOf(id, lv, k) { const h = HEROES[id]; const base = { hp: h.hp, atk: h.atk, def: h.def, spd: h.spd }[k]; const grow = { hp: 4, atk: 2, def: 2, spd: 1 }[k];
+  let v = base + grow * (lv - 5) + (k === 'atk' && id === 'frodosam' && S.dagger ? 3 : 0) + (k === 'def' && id === 'frodosam' && S.mithril ? 5 : 0) + (k === 'def' && S.cloak ? 2 : 0);
+  if (k === 'hp' && id === 'frodosam' && S.wound) v = Math.round(v * 0.7);     // 모르굴 칼의 상처: 최대 체력 감소
+  return v; }
+function stat(k) { return statOf(S.hero, S.lv, k); }
+// 장비에 따라 기술이 바뀜: 스팅을 얻으면 지팡이 → 스팅
+function heroMoves(id) { const m = HEROES[id].moves.slice(); if (id === 'frodosam' && S.sting) m[0] = 'stingM'; return m; }
+function removeMember(id) { if (S.hero === id) { const other = S.party.find(x => x !== id); if (other) swapTo(other); } S.party = S.party.filter(x => x !== id); }
+// 동료: 지금 싸우는 인물은 S.hero/S.lv/S.xp/S.hp, 나머지는 S.mem 에 보관
+function swapTo(id) { S.mem[S.hero] = { lv: S.lv, xp: S.xp, hp: S.hp }; const m = S.mem[id]; delete S.mem[id]; S.hero = id; S.lv = m.lv; S.xp = m.xp; S.hp = m.hp; }
+function addMember(id, lv) { if (S.party.includes(id)) return; S.party.push(id); S.mem[id] = { lv, xp: 0, hp: statOf(id, lv, 'hp') }; }
+function healAll() { S.hp = stat('hp'); for (const id in S.mem) S.mem[id].hp = statOf(id, S.mem[id].lv, 'hp'); }
+function fix(s) { s.lead = s.lead || s.hero; s.party = s.party || [s.hero]; s.mem = s.mem || {}; return s; }
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+function load() { try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); return s && HEROES[s.hero] ? fix(s) : null; } catch (e) { return null; } }
+
+// ═════════ 전투 ═════════
+let B = null;
+function drawBar(x, y, cur, max) {
+  rect(x, y, 50, 4, 3); rect(x + 1, y + 1, 48, 2, 0);
+  const w = Math.max(0, Math.round(48 * cur / max)); rect(x + 1, y + 1, w, 2, cur / max < 0.25 ? 3 : 2);
+}
+function battleScene(t) {
+  rect(0, 0, 160, 144, 0);
+  // 적 발판과 적
+  g.fillStyle = PAL[1]; for (let y = 0; y < 6; y++) { const w = Math.round(34 * Math.sqrt(1 - ((y - 2.5) / 3) ** 2)); g.fillRect(124 - w, 58 + y, w * 2, 1); }
+  if (B.foeShow) {
+    const s = B.foeFlash && Math.floor(t / 60) % 2 ? flashSprite(B.foe.spr) : sprite(B.foe.spr);
+    const sx = 160 - s.width - 4 + B.foeX + (B.shake ? Math.round(Math.sin(t / 25) * 2) : 0);
+    g.globalAlpha = B.foeFade; g.drawImage(s, sx, 64 - s.height); g.globalAlpha = 1;
+  }
+  // 내 인물 (아래는 대사창에 가려짐)
+  const ps = B.heroFlash && Math.floor(t / 60) % 2 ? flashSprite(S.hero + '_back') : sprite(S.hero + '_back');
+  g.drawImage(ps, 2 + B.heroX, 104 - ps.height);
+  // 적 상태창
+  if (B.foeShow && B.foeFade > 0.5) {
+    text(B.foe.name, 4, 3); if (tw(B.foe.name) < 46) text('Lv' + B.foe.lv, 54, 3);
+    text('HP', 6, 13, 3); drawBar(22, 17, B.foeHpShown, B.foe.maxhp); rect(4, 23, 72, 1, 3); rect(75, 15, 1, 9, 3);
+  }
+  // 내 상태창
+  rect(86, 62, 74, 34, 0);
+  text(HEROES[S.hero].name, 89, 62); text('Lv' + S.lv, 139, 62);
+  text('HP', 90, 72); drawBar(106, 76, B.heroHpShown, stat('hp'));
+  const hpS = String(Math.max(0, Math.round(B.heroHpShown))).padStart(3, ' ') + '/' + String(stat('hp')).padStart(3, ' ');
+  text(hpS, 106, 82); rect(86, 94, 72, 1, 3); rect(86, 72, 1, 23, 3);
+  if (S.shadow > 0) for (let i = 0; i < Math.min(S.shadow, 5); i++) rect(150 - i * 4, 90, 2, 2, 3);   // 그림자 쌓임 표시
+  // 수치 따라가기
+  B.foeHpShown += (B.foe.hp - B.foeHpShown) * 0.15; if (Math.abs(B.foe.hp - B.foeHpShown) < 0.3) B.foeHpShown = B.foe.hp;
+  B.heroHpShown += (S.hp - B.heroHpShown) * 0.15; if (Math.abs(S.hp - B.heroHpShown) < 0.3) B.heroHpShown = S.hp;
+}
+async function tween(obj, key, to, ms) { const from = obj[key], t0 = performance.now(); for (;;) { const k = Math.min(1, (performance.now() - t0) / ms); obj[key] = from + (to - from) * k; if (k >= 1) break; await wait(16); } }
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function dmgCalc(mv, atkStat, defStat, lv, target) {
+  let m = (EFFECT[mv.elem] || {})[target] || 1;
+  const crit = Math.random() * 100 < (mv.crit || 6);
+  const d = Math.max(1, Math.round(mv.pow * (atkStat / defStat) * (0.6 + lv / 12) * rnd(0.85, 1) * m * (crit ? 1.5 : 1)));
+  return { d, m, crit };
+}
+async function battle(foeId, opt) {
+  opt = opt || {};
+  const F = FOES[foeId];
+  B = { foe: { ...F, maxhp: F.hp, hp: F.hp, buff: { atk: 0, def: 0 } }, foeX: 120, foeShow: true, foeFade: 1, foeHpShown: F.hp, heroX: -90, heroHpShown: S.hp,
+        st: { heroSleep: 0, heroBind: 0, hide: false, foeSleep: 0 } };
+  S.buff = { atk: 0, def: 0 };
+  scene = battleScene;
+  await Promise.all([tween(B, 'foeX', 0, 600), tween(B, 'heroX', 0, 600)]);
+  await say(F.boss ? josa(F.name, '이', '가') + ' 앞을 가로막았다!' : '야생의 ' + josa(F.name, '이', '가') + ' 덤벼들었다!');
+  if (S.sting && F.type === '오크' && S.party.includes('frodosam')) await say('스팅의 칼날이 푸르게 빛난다! 오크가 가까이 있다.');
+  let turn = 0;
+  for (;;) {
+    const H = HEROES[S.hero];
+    if (opt.rescue && turn >= opt.rescue.turns) { for (const l of opt.rescue.lines) await say(l); await tween(B, 'foeFade', 0, 600); B.foeShow = false; const gain = B.foe.lv * 8; S.xp += gain; await say(`경험치를 ${gain} 얻었다.`); return 'win'; }
+    turn++;
+    if (opt.rescue && turn === 1) await say(opt.rescue.hint);
+    // ── 내 차례 고르기 ──
+    let act = null;
+    while (!act) {
+      const c = await choose(josa(H.name, '은', '는') + ' 어떻게 할까?', ['싸운다', '가방', '동료', '도망']);
+      if (c === 0) {
+        const mv = heroMoves(S.hero), opts = mv.map(m => MOVES[m].name); const k = await choose(null, opts.concat(['돌아가기']), opts.length);
+        if (k < opts.length) act = { type: 'move', id: mv[k] };
+      } else if (c === 1) {
+        const it = S.items, list = [`렘바스 ×${it.lembas}`, `약초 ×${it.herb}`]; if (S.phial) list.push(B.phialUsed ? '빛의 병 (빛이 약해짐)' : '빛의 병');
+        const n = list.length; const k = await choose(null, list.concat(['돌아가기']), n);
+        if (k === 0 && it.lembas > 0) act = { type: 'item', id: 'lembas' };
+        else if (k === 1 && it.herb > 0) act = { type: 'item', id: 'herb' };
+        else if (k === 2 && S.phial && !B.phialUsed) act = { type: 'item', id: 'phial' };
+        else if (k === 2 && S.phial) await say('빛의 병은 한 싸움에 한 번만 밝게 빛난다.');
+        else if (k < n) await say('가방에 남아 있지 않다.');
+      } else if (c === 2) {
+        const others = S.party.filter(id => id !== S.hero);
+        if (!others.length) { await say(S.hero === 'frodosam' ? '프로도와 샘은 서로를 바라보았다. 지금은 둘뿐이다.' : '지금은 함께할 동료가 없다.'); continue; }
+        const k = await choose('누구와 교대할까?', others.map(id => `${HEROES[id].name} ${S.mem[id].hp}/${statOf(id, S.mem[id].lv, 'hp')}`).concat(['돌아가기']), others.length);
+        if (k < others.length) { if (S.mem[others[k]].hp <= 0) await say('쓰러져 있어서 나설 수 없다.'); else { await switchIn(others[k]); act = { type: 'none' }; } }
+      }
+      else {
+        if (F.boss || opt.noRun) await say('도망칠 수 없다!');
+        else if (Math.random() < 0.75) { await say('무사히 도망쳤다!'); return 'run'; }
+        else { await say('도망치지 못했다!'); act = { type: 'none' }; }
+      }
+    }
+    const heroFirst = stat('spd') >= B.foe.spd || act.type === 'item';
+    const order = heroFirst ? ['hero', 'foe'] : ['foe', 'hero'];
+    for (const who of order) {
+      if (who === 'hero') { const r = await heroTurn(act); if (r) return r; }
+      else { const r = await foeTurn(); if (r === 'swapped') break; if (r) return r; }
+    }
+  }
+}
+async function switchIn(id, forced) {
+  if (!forced) { await say(HEROES[S.hero].name + ', 물러서!'); await tween(B, 'heroX', -100, 350); }
+  swapTo(id); B.heroHpShown = S.hp; S.buff = { atk: 0, def: 0 }; B.st.heroSleep = 0; B.st.heroBind = 0; B.st.hide = false;
+  await tween(B, 'heroX', 0, 400); await say('가라, ' + HEROES[id].name + '!');
+}
+async function heroTurn(act) {
+  const H = HEROES[S.hero], st = B.st;
+  if (st.heroSleep > 0) { st.heroSleep--; await say(st.heroSleep ? josa(H.name, '은', '는') + ' 깊이 잠들어 있다...' : josa(H.name, '이', '가') + ' 퍼뜩 정신을 차렸다!'); if (st.heroSleep) return; }
+  if (st.heroBind > 0) { st.heroBind--; await say('뿌리에 묶여 움직일 수 없다!'); return; }
+  if (act.type === 'none') return;
+  if (act.type === 'item') {
+    if (act.id === 'lembas') { S.items.lembas--; const before = S.hp; S.hp = Math.min(stat('hp'), S.hp + 20); await say(`렘바스를 한 입 먹었다. 체력이 ${S.hp - before} 회복됐다.`); }
+    else if (act.id === 'phial') { B.phialUsed = true; const t = ['어둠', '짐승', '망령'].includes(B.foe.type) ? 2 : 1; B.st.foeSleep = t;
+      await say('빛의 병을 높이 들었다! 별빛이 쏟아진다!'); await say(josa(B.foe.name, '이', '가') + ` 눈을 가리고 물러섰다! (${t}턴 움직이지 못함)`); }
+    else { S.items.herb--; st.heroSleep = 0; st.heroBind = 0; S.buff.atk = Math.max(0, S.buff.atk); await say('약초를 씹었다. 몸이 가뿐해졌다.'); }
+    return;
+  }
+  const mv = MOVES[act.id];
+  await say(H.name + '의 ' + mv.name + '!', { keep: true });
+  if (mv.line) await say(mv.line, { keep: true });
+  if (mv.kind === 'hide') {
+    S.shadow++; st.hide = true;
+    await say('프로도가 반지를 끼자 모습이 사라졌다!', { keep: true });
+    if (S.shadow >= 3) { const d = 3 + S.shadow; S.hp = Math.max(1, S.hp - d); await say(`반지가 무겁게 짓누른다... (그림자 ${S.shadow})`); }
+    return;
+  }
+  if (mv.kind === 'buff') { S.buff[mv.stat] = Math.min(3, S.buff[mv.stat] + 1); await say((mv.stat === 'atk' ? '공격' : '방어') + '이 올라갔다!'); return; }
+  if (mv.kind === 'heal') { const before = S.hp; S.hp = Math.min(stat('hp'), S.hp + Math.round(stat('hp') * mv.amt)); if (mv.cure) { st.heroSleep = 0; st.heroBind = 0; } await say(`체력이 ${S.hp - before} 회복됐다.`); return; }
+  const hits = mv.hits || 1;
+  for (let i = 0; i < hits; i++) {
+    if (Math.random() * 100 > mv.acc) { await say('빗나갔다!'); continue; }
+    const r = dmgCalc(mv, stat('atk') * (1 + S.buff.atk * 0.25), B.foe.def * (1 + B.foe.buff.def * 0.25), S.lv, B.foe.type);
+    B.foeFlash = true; await wait(380); B.foeFlash = false;
+    B.foe.hp = Math.max(0, B.foe.hp - r.d); await wait(350);
+    if (r.crit) await say('급소에 맞았다!', { keep: true });
+    if (r.m > 1) await say('효과가 굉장했다!', { keep: true });
+    if (B.foe.hp <= 0) break;
+  }
+  msg = null;
+  if (B.foe.hp <= 0) {
+    await tween(B, 'foeFade', 0, 500); B.foeShow = false;
+    await say(josa(B.foe.name, '을', '를') + ' 쓰러뜨렸다!');
+    const gain = B.foe.lv * 12; S.xp += gain; await say(`경험치를 ${gain} 얻었다.`);
+    while (S.xp >= S.lv * 10) { S.xp -= S.lv * 10; const oldMax = stat('hp'); S.lv++; S.hp += stat('hp') - oldMax; await say(`레벨이 올랐다! 이제 Lv${S.lv}이다.`); }
+    return 'win';
+  }
+}
+async function foeTurn() {
+  const F = B.foe, st = B.st, H = HEROES[S.hero];
+  if (st.foeSleep > 0) { st.foeSleep--; await say(josa(F.name, '은', '는') + ' 움직이지 않는다.'); return; }
+  const mv = MOVES[F.moves[Math.floor(Math.random() * F.moves.length)]];
+  await say(F.name + '의 ' + mv.name + '!', { keep: true });
+  if (mv.line) await say(mv.line, { keep: true });
+  if (st.hide && mv.kind !== 'debuff') { st.hide = false; await say('하지만 아무도 보이지 않는다! 공격이 빗나갔다.'); return; }
+  if (mv.kind === 'debuff') { S.buff[mv.stat] = Math.max(-2, S.buff[mv.stat] - 1); await say((mv.stat === 'atk' ? '공격' : '방어') + '이 떨어졌다!'); return; }
+  if (mv.kind === 'sleep') { if (Math.random() * 100 < mv.acc) { st.heroSleep = 1 + (Math.random() < 0.4 ? 1 : 0); await say(josa(H.name, '은', '는') + ' 스르르 잠이 들었다...'); } else await say('하지만 정신을 붙잡았다!'); return; }
+  if (Math.random() * 100 > mv.acc) { await say('빗나갔다!'); return; }
+  const r = dmgCalc(mv, F.atk * (1 + F.buff.atk * 0.25), stat('def') * (1 + S.buff.def * 0.25), F.lv, '');
+  B.heroFlash = true; await wait(380); B.heroFlash = false;
+  S.hp = Math.max(0, S.hp - r.d); await wait(350); msg = null;
+  if (r.crit) await say('급소에 맞았다!');
+  if (mv.bind && Math.random() * 100 < mv.bind && S.hp > 0) { st.heroBind = 1; await say('뿌리가 다리를 휘감았다!'); }
+  if (mv.weaken && Math.random() * 100 < mv.weaken && S.hp > 0) { S.buff.atk = Math.max(-2, S.buff.atk - 1); await say('냉기에 힘이 빠졌다... 공격이 떨어졌다.'); }
+  if (S.hp <= 0) {
+    await tween(B, 'heroX', -100, 500); await say(josa(H.name, '은', '는') + ' 쓰러지고 말았다...');
+    const alive = S.party.filter(id => id !== S.hero && S.mem[id].hp > 0);
+    if (!alive.length) return 'lose';
+    const k = alive.length > 1 ? await choose('누가 나설까?', alive.map(id => HEROES[id].name)) : 0;
+    await switchIn(alive[k], true); return 'swapped';
+  }
+}
+
+// ═════════ 이야기 화면 ═════════
+function storyScene(place, sprName) {
+  return t => {
+    rect(0, 0, 160, 144, 0);
+    if (place) { box(0, 0, 160, 20); text(place, 80 - tw(place) / 2, 5); }
+    if (sprName) { const s = sprite(sprName); g.drawImage(s, 80 - s.width / 2, 92 - s.height); }
+  };
+}
+async function story(place, spr, lines) { scene = storyScene(place, spr); for (const l of lines) await say(l); }
+async function chapterTitle(a, b) {
+  scene = () => { rect(0, 0, 160, 144, 3); text(a, 80 - tw(a, 0) / 2, 56, 0); text(b, 80 - tw(b) / 2, 72, 1); };
+  msg = null; await wait(400); await nextKey();
+}
+async function lose() {
+  scene = () => { rect(0, 0, 160, 144, 3); text('눈앞이 캄캄해졌다...', 30, 60, 0); };
+  msg = null; await wait(600); await nextKey();
+  healAll(); save();   // 마지막 쉼터에서 다시
+}
+
+// ═════════ 1장 — 프로도와 샘 (영화 흐름 + 원작 대목) ═════════
+const CH1 = [
+  async () => {
+    await chapterTitle('제1장', '샤이어를 떠나다');
+    await story('호빗골 · 골목쟁이집', 'gandalf_front', [
+      '빌보가 생일잔치에서 감쪽같이 사라진 뒤, 그의 반지는 프로도의 손에 남았다.',
+      '오랜만에 찾아온 간달프가 난롯불에 반지를 던져 넣었다. 식은 반지 표면에 불꽃 같은 글자가 떠올랐다.',
+      '간달프: 이건 보통 반지가 아닐세. 어둠의 군주가 온 힘을 다해 찾고 있는 바로 그 반지야.',
+      '간달프: 샤이어에 오래 둘 수 없네. 브리의 「달리는 조랑말」로 가게. 거기서 나를 기다리게.',
+      '창밖에서 엿듣던 샘이 붙잡혔다. 벌로 샘도 길동무가 되었다.',
+    ]);
+    S.step = 1; save();
+  },
+  async () => {
+    await story('매곳 농장 지름길', 'frodosam_front', [
+      '샘: 프로도 나리, 농부 매곳네 밭을 가로지르면 훨씬 빨라요.',
+      '프로도: 그 집 개들은 어릴 때 나를 쫓아다니던 녀석들인데...',
+      '울타리 너머에서 사나운 짖는 소리가 들려왔다!',
+    ]);
+    const r = await battle('dog'); if (r === 'lose') return lose();
+    await story('매곳 농장 지름길', 'frodosam_front', ['농부 매곳의 고함 소리가 들리기 전에 서둘러 밭을 빠져나왔다.', '밭고랑에서 튀어나온 메리와 피핀이 합류했다. 넷은 나루터를 향해 달렸다.']);
+    S.step = 2; save();
+  },
+  async () => {
+    await story('숲길', 'rider', [
+      '길 저편에서 말발굽 소리가 다가온다. 검은 옷의 기사가 킁킁 냄새를 맡고 있다.',
+      '샘: 나리, 길에서 벗어나요! 어서요!',
+    ]);
+    const c = await choose('어떻게 할까?', ['나무뿌리 밑에 숨는다', '맞선다']);
+    if (c === 0) {
+      await say('모두 길가 나무뿌리 아래로 몸을 숨겼다. 기사가 바로 위에서 멈춰 섰다.');
+      await say('주머니 속 반지가 손가락을 부르는 것만 같다...');
+      const c2 = await choose('반지를...', ['낀다', '참는다']);
+      if (c2 === 0) { S.shadow++; await say('반지를 끼려는 순간 기사가 고개를 돌렸다. 겨우 지나갔지만 마음 한구석이 서늘하다. (그림자 +1)'); }
+      else await say('샘이 프로도의 손을 꼭 붙잡았다. 기사는 아무것도 찾지 못하고 떠났다.');
+    } else {
+      const r = await battle('rider', { noRun: true });
+      if (r === 'lose') { await story('숲길', null, ['정신을 차려 보니 샘이 프로도를 끌고 나무뿌리 밑에 숨어 있었다.', '샘: 저런 걸 이길 순 없어요, 나리. 지금은 피하는 게 상책이에요.']); S.hp = Math.max(1, Math.round(stat('hp') / 2)); }
+      else await say('기사가 비명을 지르며 물러났다! 하지만 다시 올 것이다.');
+    }
+    await story('노루말 나루', 'frodosam_front', ['간신히 나룻배에 올라 강을 건넜다. 건너편 둑에서 검은 기사가 멈춰 섰다.', '프로도: 큰길은 위험해. 묵은숲을 지나가자.']);
+    S.step = 3; save();
+  },
+  async () => {
+    await story('묵은숲', 'willow', [
+      '묵은숲은 나무들이 서로 수군대는 것 같은 곳이었다. 길은 자꾸만 강가로 이어졌다.',
+      '늙은 버드나무 아래에서 졸음이 쏟아진다. 줄기 틈이 입처럼 벌어졌다!',
+    ]);
+    const r = await battle('willow', { rescue: { turns: 4, hint: '(누군가 올 때까지 버텨야 한다!)', lines: ['어디선가 흥겨운 노랫소리가 들려온다...', '파란 웃옷에 노란 장화를 신은 사람이 버드나무를 꾸짖었다!'] } }); if (r === 'lose') return lose();
+    await story('톰 봄바딜의 집', 'tom_front', [
+      '그는 톰 봄바딜. 숲의 가장 오래된 주인이었다.',
+      '톰이 노래 몇 소절을 부르자 버드나무가 스르르 뿌리를 거두었다.',
+      '그날 밤 톰과 골드베리의 집에서 푹 쉬었다. 체력이 모두 회복됐다!',
+    ]);
+    S.hp = stat('hp'); S.items.lembas = Math.max(S.items.lembas, 3); S.step = 4; save();
+  },
+  async () => {
+    await story('무덤 언덕', 'wight', [
+      '짙은 안개 속에 고대 왕들의 무덤이 늘어서 있다. 길을 잃고 말았다.',
+      '차가운 손이 어깨를 붙잡았다. 금관을 쓴 해골이 속삭이는 노래를 부른다!',
+    ]);
+    const r = await battle('wight'); if (r === 'lose') return lose();
+    await story('무덤 언덕', null, [
+      '아침 햇살이 무덤 안으로 쏟아지자 악령은 비명을 지르며 흩어졌다.',
+      '무덤 속에서 오래된 서쪽나라의 단검을 찾았다. 공격이 3 올랐다!',
+      '이제 브리로 간다. 거기서 간달프를... 아니면 다른 누군가를 만나게 될 것이다.',
+    ]);
+    S.dagger = true; S.step = 5; save();
+  },
+  async () => {
+    await chapterTitle('제2장', '브리와 바람마루');
+    await story('브리 · 「달리는 조랑말」', 'frodosam_front', [
+      '사람들로 북적이는 여관. 간달프는 오지 않았다. 여관 주인 버터버는 간달프가 맡긴 편지를 깜빡 잊고 있었다며 뒤늦게 내밀었다.',
+      '피핀이 떠들다 「골목쟁이」라는 이름을 꺼냈다. 말리려고 일어서던 프로도가 넘어지며... 반지가 손가락에 끼워졌다!',
+      '프로도의 모습이 사라졌다. 어딘가에서 불타는 눈이 이쪽을 보는 것 같다. (그림자 +1)',
+    ]);
+    S.shadow++;
+    await story('브리 · 구석 자리', 'aragorn_front', [
+      '반지를 빼자마자 누군가 프로도의 팔을 낚아챘다. 두건을 쓴 순찰자, 사람들은 그를 「성큼걸이」라 불렀다.',
+      '성큼걸이: 조심성이 없군. 그 물건은 장난감이 아니오. 놈들이 이미 브리에 와 있소.',
+    ]);
+    const c = await choose('성큼걸이를...', ['믿는다', '의심한다']);
+    if (c === 1) await say('샘이 의자를 들고 막아섰다. 성큼걸이가 조용히 부러진 칼자루를 보여 주었다. 간달프의 편지에 적힌 그 증표였다.');
+    else await say('프로도는 그의 눈을 오래 바라보았다. 거칠어 보여도 나쁜 사람의 눈은 아니었다.');
+    await story('브리 · 한밤중', 'rider', [
+      '밤이 깊자 검은 기사들이 여관 방에 들이닥쳐 빈 침대를 마구 내리쳤다. 호빗들은 성큼걸이가 마련한 다른 방에 숨어 있었다.',
+      '성큼걸이: 날이 밝으면 큰길을 버리고 들판을 가로지른다. 나를 따르시오.',
+      '아라곤(성큼걸이)이 동료가 되었다! 전투 중 「동료」로 교대할 수 있다.',
+    ]);
+    addMember('aragorn', 7); S.step = 6; save();
+  },
+  async () => {
+    await story('미지워터 늪', 'frodosam_front', [
+      '모기가 구름처럼 들끓는 늪을 며칠이나 헤맸다. 샘은 투덜대며 쉴 새 없이 목덜미를 때렸다.',
+      '피핀: 저 녀석들은 호빗이 없을 땐 뭘 먹고 사는 걸까요?',
+      '모두 지치고 가려워 체력이 조금 줄었다.',
+    ]);
+    S.hp = Math.max(1, S.hp - 4); S.step = 7; save();
+  },
+  async () => {
+    await story('바람마루', 'aragorn_front', [
+      '옛 봉화대가 무너진 언덕 꼭대기. 아라곤이 정찰을 나간 사이 호빗들이 불을 피웠다.',
+      '아래쪽 어둠 속에서 검은 형체 다섯이 천천히 올라온다!',
+      '샘: 나리 뒤에 붙으세요! 횃불, 횃불을 들어요!',
+    ]);
+    if (S.hero !== 'frodosam' && S.party.includes('frodosam')) swapTo('frodosam');
+    const r = await battle('riders5');
+    await story('바람마루', 'rider', [
+      '우두머리 기사가 칼을 높이 들었다. 겁에 질린 프로도의 손이 저도 모르게 반지를 향했다.',
+      '반지를 낀 순간 세상이 잿빛으로 바뀌고, 왕관을 쓴 창백한 형상이 프로도의 어깨에 칼을 꽂았다!',
+      r === 'win' ? '불길 속에서 기사들이 물러났다. 하지만 상처는 얼음처럼 차갑게 번져 간다.' : '아라곤이 양손에 횃불을 들고 뛰어들어 기사들을 쫓아냈다.',
+      '프로도가 모르굴 칼에 다쳤다. 깊은골에 닿기 전까지 최대 체력이 줄어든다. (그림자 +1)',
+    ]);
+    S.shadow++; S.wound = true;
+    if (r === 'lose') { S.hp = Math.max(S.hp, Math.round(stat('hp') / 3)); for (const id in S.mem) S.mem[id].hp = Math.max(S.mem[id].hp, Math.round(statOf(id, S.mem[id].lv, 'hp') / 3)); }
+    if (S.hero === 'frodosam') S.hp = Math.min(S.hp, stat('hp')); else if (S.mem.frodosam) S.mem.frodosam.hp = Math.min(S.mem.frodosam.hp, statOf('frodosam', S.mem.frodosam.lv, 'hp'));
+    S.step = 8; save();
+  },
+  async () => {
+    await story('트롤숲', null, [
+      '숲속 빈터에 거대한 트롤 셋이 돌이 된 채 서 있었다.',
+      '샘: 이거 빌보 나리 이야기에 나오는 그 트롤들이잖아요! 정말 있었네!',
+      '아라곤이 「아셀라스」 풀을 찾아와 프로도의 상처를 달랬다. 열이 조금 내렸다.',
+    ]);
+    if (S.hero === 'frodosam') S.hp = stat('hp'); else if (S.mem.frodosam) S.mem.frodosam.hp = statOf('frodosam', S.mem.frodosam.lv, 'hp');
+    S.step = 9; save();
+  },
+  async () => {
+    await story('브루이넨 여울', 'arwen_front', [
+      '빛나는 요정 아르웬이 말을 타고 나타나 프로도를 안장에 태웠다.',
+      '검은 기사 아홉이 바짝 뒤쫓는다. 여울 건너편에 닿자 그녀가 몸을 돌렸다.',
+    ]);
+    const c = await choose('프로도는...', ['칼을 뽑아 든다', '반지를 움켜쥔다']);
+    if (c === 1) { S.shadow++; await say('반지가 속삭인다... 하지만 끝내 끼지 않았다. (그림자 +1)'); }
+    else await say('떨리는 손으로 작은 칼을 뽑았다. 「돌아가라! 반지는 너희 것이 아니다!」');
+    await story('브루이넨 여울', null, [
+      '강물이 굉음과 함께 솟구쳤다. 흰 말 떼 같은 물결이 기사들을 집어삼키고 휩쓸어 갔다.',
+      '프로도는 정신을 잃었다...',
+    ]);
+    S.step = 10; save();
+  },
+  async () => {
+    await story('깊은골', 'gandalf_front', [
+      '눈을 떠 보니 부드러운 침대 위였다. 곁에 간달프가 앉아 있었다.',
+      '간달프: 엘론드가 자네 어깨에서 칼끝 조각을 빼냈다네. 조금만 늦었어도 위험했어.',
+      '상처가 나았다! 모두의 체력이 회복됐다.',
+    ]);
+    S.wound = false; healAll(); S.step = 11; save();
+  },
+  async () => {
+    await chapterTitle('제3장', '깊은골의 회의');
+    await story('깊은골', 'bilbo_front', [
+      '폭포 소리가 들리는 요정들의 골짜기. 늙은 빌보가 반갑게 프로도를 맞았다.',
+      '빌보: 이걸 가져가거라. 내 작은 칼 「스팅」이란다. 오크가 다가오면 푸르게 빛나지.',
+      '빌보는 은빛 쇠사슬 갑옷도 꺼냈다. 깃털처럼 가볍지만 어떤 칼도 뚫지 못하는 미스릴이었다.',
+      '스팅과 미스릴 갑옷을 얻었다! 프로도·샘의 「지팡이 휘두르기」가 「스팅」으로 바뀌고 방어가 5 올랐다.',
+    ]);
+    S.sting = true; S.mithril = true; S.step = 12; save();
+  },
+  async () => {
+    await story('깊은골 · 엘론드의 회의', 'elrond_front', [
+      '요정, 난쟁이, 사람이 한자리에 모였다. 엘론드가 말했다. 반지는 오직 그것이 만들어진 운명의 산의 불 속에서만 녹일 수 있다고.',
+      '곤도르의 보로미르는 반지를 무기로 쓰자고 했고, 김리와 레골라스는 서로를 노려보며 언성을 높였다.',
+      '다툼 속에서 프로도가 일어섰다. 「제가 가져가겠습니다. 길은 모르지만요.」',
+      '샘이 뛰어나왔다. 「나리는 저 없이는 아무 데도 못 가요!」 메리와 피핀도 뒤따랐다.',
+      '그렇게 아홉 명의 원정대가 꾸려졌다.',
+    ]);
+    addMember('legolas', 10); addMember('gimli', 10); addMember('gandalf', 13);
+    await say('레골라스, 김리, 간달프가 동료가 되었다! (보로미르·메리·피핀도 함께한다)');
+    await story('깊은골', null, [
+      '길을 떠나기 전 두 달 동안 정찰대가 사방을 살피고 돌아왔다. 검은 기사들의 말은 강에서 모두 떠내려갔다고 한다.',
+      '원정대가 길을 나서는 날, 요정들이 문 앞에 나와 조용히 배웅했다.',
+      '가방을 다시 채웠다. 렘바스 5개, 약초 3개.',
+    ]);
+    S.items.lembas = Math.max(S.items.lembas, 5); S.items.herb = Math.max(S.items.herb, 3); healAll(); S.step = 13; save();
+  },
+  async () => {
+    await story('홀린의 바위 언덕', 'crebain', [
+      '남쪽으로 내려가던 길. 하늘 저편에서 검은 구름 같은 것이 빠르게 다가온다.',
+      '아라곤: 크레바인이다! 던랜드의 까마귀 떼야. 사루만의 눈이 되어 우리를 찾고 있다!',
+    ]);
+    const r = await battle('crebain', { noRun: true }); if (r === 'lose') return lose();
+    await story('홀린의 바위 언덕', 'gandalf_front', ['간달프: 남쪽 길도 감시당하고 있군. 카라드라스를 넘어야겠네.']);
+    S.step = 14; save();
+  },
+  async () => {
+    await story('카라드라스', 'gandalf_front', [
+      '눈보라가 몰아치는 산길. 바람 속에서 누군가 주문을 외는 목소리가 들린다.',
+      '레골라스: 저건 바람 소리가 아니오. 산 위에서 누군가 우리를 막고 있소!',
+      '눈사태가 쏟아져 길이 막혔다. 모두 지쳐 체력이 줄었다.',
+      '김리: 산 밑으로 가면 되지 않소! 내 사촌 발린이 다스리는 모리아로!',
+      '간달프는 모리아라는 말에 얼굴이 어두워졌다. 「반지 지기가 정하게.」',
+    ]);
+    S.hp = Math.max(1, S.hp - 8); for (const id in S.mem) S.mem[id].hp = Math.max(1, S.mem[id].hp - 8);
+    const c = await choose('프로도는...', ['모리아로 간다', '로한 협곡으로 돌아간다']);
+    if (c === 1) await say('간달프: 그 길은 사루만의 땅에 너무 가깝네... 그래도 결국 모리아밖에 없겠군.');
+    await say('원정대는 안개산맥 아래, 모리아로 향했다.');
+    S.step = 15; save();
+  },
+  async () => {
+    await chapterTitle('제4장', '모리아의 어둠');
+    await story('모리아 서문 · 거울 호수', 'gandalf_front', [
+      '절벽에 달빛이 비치자 은빛 선으로 된 문이 떠올랐다. 문 위에 요정 글자가 새겨져 있다.',
+      '간달프가 온갖 주문을 외워 봤지만 문은 열리지 않았다. 한참 뒤 프로도가 말했다.',
+      '프로도: 혹시 수수께끼 아닐까요? 「친구」를 요정 말로 하면 뭐예요?',
+    ]);
+    for (;;) {
+      const c = await choose('요정 말로 「친구」는?', ['열려라', '두린', '멜론']);
+      if (c === 2) { await say('「멜론!」 문이 소리 없이 열렸다.'); break; }
+      await say('아무 일도 일어나지 않았다...');
+    }
+    await story('모리아 서문 · 거울 호수', 'watcher', [
+      '그 순간 호수가 끓어오르더니 긴 촉수가 프로도의 발목을 낚아챘다!',
+      '샘: 나리를 놔! 이 괴물아!',
+    ]);
+    const r = await battle('watcher'); if (r === 'lose') return lose();
+    await say('촉수가 물러난 틈에 모두 문 안으로 뛰어들었다. 등 뒤에서 문이 무너져 내렸다. 이제 돌아갈 길은 없다.');
+    S.step = 16; save();
+  },
+  async () => {
+    await story('모리아 · 어둠 속 광산', 'goblin', [
+      '간달프의 지팡이 끝 희미한 빛만이 길을 비춘다. 난쟁이들의 거대한 기둥이 어둠 속으로 끝없이 이어진다.',
+      '어둠 속에서 무언가 졸졸 따라오는 기척이 있다. 그리고 벽 틈에서 노란 눈들이 번뜩였다!',
+    ]);
+    let r = await battle('goblin'); if (r === 'lose') return lose();
+    await say('한 마리가 아니었다. 또 다른 고블린이 기둥을 타고 내려온다!');
+    r = await battle('goblin'); if (r === 'lose') return lose();
+    await story('모리아 · 갈림길', 'gandalf_front', [
+      '세 갈래 길 앞에서 간달프가 한참 생각에 잠겼다.',
+      '간달프: 의심스러울 땐 코를 따르라 했지. 이쪽 공기가 덜 퀴퀴하군.',
+    ]);
+    S.step = 17; save();
+  },
+  async () => {
+    await story('마자르불의 방', 'gimli_front', [
+      '먼지 쌓인 방 한가운데 돌무덤이 있었다. 「발린, 모리아의 주인」.',
+      '김리가 무릎을 꿇고 오래도록 울었다.',
+      '그때 피핀이 우물가 해골을 건드렸다. 와르르 떨어지는 소리가 광산 깊숙이 울려 퍼졌다.',
+      '둥... 둥... 땅속 깊은 곳에서 북소리가 대답했다. 문을 막아라!',
+    ]);
+    let r = await battle('goblin'); if (r === 'lose') return lose();
+    await story('마자르불의 방', 'troll', ['문짝이 부서지며 거대한 동굴 트롤이 사슬을 끌고 들어왔다!']);
+    r = await battle('troll'); if (r === 'lose') return lose();
+    await story('마자르불의 방', 'gandalf_front', [
+      '트롤이 쓰러졌다. 창에 찔린 줄 알았던 프로도가 숨을 몰아쉬며 일어났다. 미스릴 갑옷이 막아 준 것이다!',
+      '모두가 빠져나가자 간달프가 문에 봉인 주문을 걸었다. 문 너머에서 무시무시한 힘이 주문을 맞받아쳤다.',
+      '간달프: 내 평생 이런 맞수는 처음이군... 서두르게! 다리로!',
+    ]);
+    healAll(); S.step = 18; save();
+  },
+  async () => {
+    await story('크하자드둠의 다리', 'balrog', [
+      '고블린들이 갑자기 비명을 지르며 흩어졌다. 붉은 불빛이 벽을 타고 번져 온다.',
+      '간달프: 발로그... 옛 세상의 악마일세. 자네들 칼로는 상대가 안 돼. 달려라!',
+      '좁은 돌다리 위. 간달프가 홀로 돌아서서 지팡이를 들었다.',
+    ]);
+    if (S.party.includes('gandalf') && S.hero !== 'gandalf') swapTo('gandalf');
+    await battle('balrog', { noRun: true, rescue: { turns: 3, hint: '(간달프가 원정대가 건널 시간을 벌어야 한다!)', lines: ['간달프가 지팡이로 다리를 내리찍었다!', '「이곳은 지나갈 수 없다!」 다리가 무너지며 발로그가 불길 속으로 떨어졌다...'] } });
+    await story('크하자드둠의 다리', null, [
+      '그러나 떨어지던 발로그의 채찍 끝이 간달프의 발목을 휘감았다.',
+      '간달프: 달아나라, 이 바보들아!',
+      '간달프는 어둠 속으로 사라졌다...',
+    ]);
+    removeMember('gandalf'); healAll(); S.step = 19; save();
+  },
+  async () => {
+    await story('어둔내 골짜기', 'frodosam_front', [
+      '햇빛 아래로 빠져나온 원정대는 아무 말도 하지 못했다. 샘이 소리 없이 울었다.',
+      '아라곤: 슬퍼할 시간이 없소. 해가 지면 이 언덕은 오크로 뒤덮일 거요. 로스로리엔으로 가야 하오.',
+    ]);
+    S.step = 20; save();
+  },
+  async () => {
+    await chapterTitle('제5장', '황금 숲과 대강');
+    await story('로스로리엔 · 숲 경계', 'legolas_front', [
+      '황금빛 잎이 지지 않는 숲. 나무 위에서 요정 경비대장 할디르가 화살을 겨눈 채 내려왔다.',
+      '할디르: 난쟁이는 눈을 가리고 들어가야 하오.',
+      '김리가 버럭 화를 냈다. 결국 아라곤이 「그럼 모두 눈을 가리겠소」 하고 나서자, 레골라스도 함께 눈을 가렸다.',
+      '눈을 가린 채 손을 잡고 걷는 사이, 레골라스와 김리 사이의 날 선 기운이 조금 누그러졌다.',
+    ]);
+    await story('카라스 갈라돈', 'galadriel_front', [
+      '거대한 나무 위 도시. 빛나는 갈라드리엘이 원정대를 내려다보았다. 누구도 그녀의 눈을 오래 마주하지 못했다.',
+      '그날 밤 그녀는 프로도를 은빛 물그릇 앞으로 데려갔다. 「들여다보겠느냐?」',
+    ]);
+    let c = await choose('거울을...', ['들여다본다', '들여다보지 않는다']);
+    if (c === 0) await say('물 위에 불타는 샤이어가 비쳤다. 쓰러진 굴뚝, 끌려가는 호빗들... 그리고 불꽃에 휩싸인 거대한 눈. 프로도는 비틀거리며 물러났다.');
+    await say('프로도가 반지를 꺼냈다. 「이걸... 당신이 가져 주시겠어요?」');
+    c = await choose('반지를...', ['갈라드리엘에게 내민다', '다시 넣는다']);
+    if (c === 0) { await say('한순간 그녀가 무섭도록 크고 아름다워졌다. 그러나 곧 원래 모습으로 돌아와 고개를 저었다. 「시험을 이겨 냈구나. 나는 작아져 서쪽으로 가겠다.」'); S.shadow = Math.max(0, S.shadow - 1); await say('마음이 조금 가벼워졌다. (그림자 −1)'); }
+    else await say('갈라드리엘이 희미하게 웃었다. 「그것은 너에게 맡겨진 짐이다.」');
+    await story('로스로리엔 · 떠나는 날', 'galadriel_front', [
+      '갈라드리엘이 선물을 나눠 주었다. 모두에게 잎사귀 브로치가 달린 요정 망토(방어 +2), 넉넉한 렘바스.',
+      '프로도에게는 에아렌딜의 별빛을 담은 「빛의 병」. 「다른 모든 빛이 꺼진 어둠 속에서 너를 비춰 줄 것이다.」',
+      '김리는 머리카락 한 올을 청했다가 세 올을 받고는 감격해서 말을 잇지 못했다.',
+      '빛의 병을 얻었다! 전투 중 가방에서 쓰면 적이 눈부셔 움직이지 못한다. (한 싸움에 한 번)',
+    ]);
+    S.cloak = true; S.phial = true; S.items.lembas = Math.max(S.items.lembas, 6); S.items.herb = Math.max(S.items.herb, 3); healAll(); S.step = 21; save();
+  },
+  async () => {
+    await story('대강', 'fellbeast', [
+      '요정 배 세 척에 나눠 타고 대강을 따라 내려갔다. 밤마다 무언가 뒤를 쫓는 기척이 있었다. 통나무에 매달려 헤엄치는 골룸이었다.',
+      '어느 밤, 남쪽 하늘에서 거대한 날개 달린 그림자가 다가왔다. 차가운 공포가 배 위를 덮쳤다.',
+      '레골라스가 갈라드리엘에게 받은 활을 당겼다. 화살 한 대에 그림자가 비명을 지르며 강 건너로 떨어졌다.',
+      '김리: 훌륭하오, 요정 친구! 이번만큼은 인정하지.',
+    ]);
+    await story('아르고나스', 'aragorn_front', [
+      '강 양쪽에 손을 치켜든 거대한 왕들의 석상이 서 있었다. 곤도르의 옛 국경이다.',
+      '아라곤이 고개를 들고 조용히 석상을 바라보았다. 그는 이실두르의 후손이었다.',
+    ]);
+    S.step = 22; save();
+  },
+  async () => {
+    await story('아몬 헨', 'boromir_front', [
+      '원정대는 강가 언덕에서 길을 정해야 했다. 동쪽 모르도르로, 아니면 보로미르가 바라는 곤도르로.',
+      '홀로 생각에 잠긴 프로도를 보로미르가 따라왔다. 「반지를 나에게 빌려주게. 곤도르를 지킬 수 있는 힘이야!」',
+      '그의 눈빛이 이상하게 번들거렸다.',
+    ]);
+    let c = await choose('프로도는...', ['반지를 끼고 달아난다', '말로 설득한다']);
+    if (c === 0) { S.shadow++; await say('반지를 끼자 세상이 잿빛으로 변했다. 언덕 꼭대기에서 불타는 눈이 이쪽을 꿰뚫어 보았다! (그림자 +1)'); }
+    else await say('「보로미르, 당신은 지금 당신이 아니에요!」 보로미르가 덤벼들었고, 프로도는 몸을 비틀어 겨우 빠져나왔다.');
+    await say('정신을 차린 보로미르가 무릎을 꿇었다. 「내가 무슨 짓을...」 그러나 프로도는 이미 사라진 뒤였다.');
+    await story('아몬 헨 · 숲속', 'uruk', ['그때 숲 사이로 흰 손 표식을 단 거대한 오크들이 쏟아져 나왔다. 사루만의 우루크하이다!']);
+    let r = await battle('urukS'); if (r === 'lose') return lose();
+    await story('아몬 헨 · 숲속', 'boromir_front', [
+      '숲 저편에서 곤도르의 뿔나팔 소리가 길게 울렸다. 보로미르가 메리와 피핀을 지키며 홀로 싸우고 있었다!',
+      '검은 화살이 한 대, 또 한 대 그의 몸에 꽂혔다. 그래도 보로미르는 쓰러지지 않았다.',
+    ]);
+    await story('아몬 헨 · 숲속', 'uruk', ['우루크하이 대장이 마지막 화살을 메기며 돌아섰다!']);
+    r = await battle('uruk', { noRun: true }); if (r === 'lose') return lose();
+    await story('아몬 헨 · 숲속', 'boromir_front', [
+      '그러나 메리와 피핀은 이미 우루크하이에게 끌려간 뒤였다.',
+      '보로미르가 아라곤의 팔에 기대어 말했다. 「반지를 빼앗으려 했소... 미안하오. 내 백성을... 지켜 주시오.」',
+      '아라곤: 그대의 도시는 무너지지 않을 거요. 약속하겠소, 형제여.',
+      '곤도르의 용사는 그렇게 눈을 감았다. 원정대는 그를 요정 배에 눕혀 라우로스 폭포로 떠나보냈다.',
+    ]);
+    S.step = 23; save();
+  },
+  async () => {
+    await story('파르스 갈렌 · 강가', 'frodosam_front', [
+      '프로도는 혼자 배를 밀어냈다. 반지는 결국 모두를 망가뜨릴 것이다. 혼자 가야 한다.',
+      '샘: 나리! 기다려요! 저 헤엄 못 쳐요!',
+      '첨벙거리며 물에 빠진 샘을 프로도가 손을 뻗어 건져 올렸다.',
+      '샘: 약속했잖아요. 끝까지 함께한다고. 감지 할아버지한테도 그렇게 말하고 왔다고요.',
+      '프로도는 웃으며 울었다. 둘은 함께 동쪽 강둑으로 노를 저었다.',
+    ]);
+    await story('아몬 헨', 'aragorn_front', [
+      '언덕 위에서 아라곤은 멀어지는 배를 바라보았다. 그리고 쫓아가지 않았다.',
+      '아라곤: 프로도의 운명은 이제 우리 손을 떠났네. 하지만 메리와 피핀이 끌려가 고문당하게 둘 수는 없지.',
+      '레골라스·김리: 그럼 오크를 쫓아야겠군!',
+    ]);
+    // 반지 갈래: 프로도와 샘만 남는다
+    for (const id of ['aragorn', 'legolas', 'gimli']) removeMember(id);
+    if (S.hero !== 'frodosam') swapTo('frodosam');
+    healAll(); S.step = 24; save();
+  },
+  async () => {
+    await chapterTitle('제1부 「반지 원정대」 끝', '이어서 제2부 「두 개의 탑」');
+    S.step = 25; save();
+  },
+  async () => {
+    await chapterTitle('제6장', '두 개의 탑 · 반지의 길');
+    await story('에민 무일', 'frodosam_front', [
+      '날카로운 바위산이 미로처럼 얽힌 에민 무일. 며칠째 같은 자리를 맴도는 것 같다.',
+      '절벽을 내려가다 샘이 로리엔에서 받은 밧줄을 묶었다. 다 내려와서 아쉬워하자, 매듭이 저절로 풀려 밧줄이 툭 떨어졌다.',
+      '샘: 제가 묶은 매듭이 풀릴 리가 없는데... 요정 밧줄이 돌아오고 싶었나 봐요.',
+      '그날 밤. 절벽을 거꾸로 기어 내려오는 그림자가 있었다. 「도둑놈들... 우리 보물을 훔쳐 간 도둑놈들!」',
+    ]);
+    const r = await battle('gollumB', { noRun: true }); if (r === 'lose') return lose();
+    await story('에민 무일', 'gollum', [
+      '샘이 요정 밧줄로 골룸을 꽁꽁 묶었다. 밧줄이 닿은 곳마다 골룸은 데인 듯 비명을 질렀다.',
+      '골룸: 아파! 차가워! 풀어 줘, 착한 호빗... 길을 안내할게. 모르도르로 가는 비밀 길을 알아!',
+      '프로도는 빌보가 했던 말을 떠올렸다. 그때 골룸을 죽이지 않은 건 연민 때문이었다고.',
+    ]);
+    const c = await choose('골룸을...', ['밧줄을 풀어 준다', '묶은 채 끌고 간다']);
+    if (c === 0) await say('프로도: 반지에 걸고 맹세해. 우리를 해치지 않겠다고. 골룸은 엎드려 「보물에 걸고」 맹세했다.');
+    else { await say('묶인 골룸이 울며 버둥댔다. 결국 프로도가 마음이 약해져 밧줄을 풀었다. 골룸은 「보물에 걸고」 맹세했다.'); }
+    await say('골룸(스메아골)이 길잡이가 되었다. 싸우지는 않지만 길을 안내한다.');
+    S.gollum = true; S.step = 26; save();
+  },
+  async () => {
+    await story('죽음늪', 'gollum', [
+      '물 위에 희미한 불빛들이 떠 있다. 물속을 들여다보니 오래전 전쟁에서 죽은 이들의 얼굴이 잠겨 있다.',
+      '골룸: 불빛을 보지 마. 따라가면 그들과 함께 잠들게 돼.',
+    ]);
+    const c = await choose('물속 얼굴이 부른다...', ['눈을 돌린다', '들여다본다']);
+    if (c === 1) { await say('프로도가 홀린 듯 물속으로 빠졌다! 창백한 손들이 뻗어 온다... 골룸이 뛰어들어 프로도를 끌어냈다.'); S.shadow++; await say('(그림자 +1)'); }
+    else await say('샘이 프로도의 손을 꼭 잡고 앞만 보고 걸었다.');
+    await story('죽음늪', 'fellbeast', [
+      '하늘에서 끔찍한 비명. 날개 달린 짐승을 탄 나즈굴이 머리 위를 지나간다.',
+      '셋은 진흙 속에 납작 엎드렸다. 다행히 그림자는 서쪽으로 사라졌다.',
+    ]);
+    S.step = 27; save();
+  },
+  async () => {
+    await story('검은 문 · 모란논', 'orc', [
+      '거대한 쇠문 앞. 남쪽에서 온 군대가 줄지어 문 안으로 들어간다. 경비병 하나가 바위 쪽으로 다가온다!',
+    ]);
+    const r = await battle('orc', { noRun: true }); if (r === 'lose') return lose();
+    await story('검은 문 · 모란논', 'gollum', [
+      '이 문으로는 절대 들어갈 수 없다.',
+      '골룸: 다른 길이 있어. 남쪽, 무서운 도시 옆으로... 계단을 오르고, 터널을 지나... 아무도 지키지 않는 길.',
+      '샘은 골룸의 눈빛이 영 마음에 들지 않았다.',
+    ]);
+    S.step = 28; save();
+  },
+  async () => {
+    await story('이실리엔', 'frodosam_front', [
+      '모르도르 가장자리인데도 아직 꽃과 허브가 자라는 숲. 샘이 오랜만에 신이 났다.',
+      '골룸이 잡아 온 토끼 두 마리로 샘이 스튜를 끓였다. 「감자만 있었으면!」 골룸은 날것이 최고라며 혀를 찼다.',
+      '그때 숲속에서 함성과 함께 땅이 울렸다. 남쪽 하라드림 군대와 곤도르 순찰대가 맞붙었다!',
+      '나무를 부러뜨리며 거대한 짐승이 돌진해 온다!',
+    ]);
+    await battle('mumak', { noRun: true, rescue: { turns: 3, hint: '(순찰대가 쓰러뜨릴 때까지 버텨야 한다!)', lines: ['곤도르 순찰대의 화살이 비처럼 쏟아졌다!', '거대한 짐승이 비틀거리다 숲 저편으로 쓰러졌다.'] } });
+    await story('이실리엔', 'faramir_front', [
+      '샘: 올리펀트다! 진짜 올리펀트를 봤어! 아무도 안 믿을 거야!',
+      '녹색 두건을 쓴 순찰대가 둘을 둘러쌌다. 대장은 보로미르의 동생, 파라미르였다.',
+    ]);
+    S.step = 29; save();
+  },
+  async () => {
+    await story('헨네스 안눈 · 해 지는 창', 'faramir_front', [
+      '폭포 뒤에 숨은 동굴. 파라미르가 곤도르의 오래된 이야기를 들려주었다. 바다 건너 사라진 왕들의 나라, 흰 나무, 그리고 보로미르.',
+      '파라미르: 형의 뿔나팔이 두 동강 난 채 강물에 떠내려왔소. 형에게 무슨 일이 있었던 거요?',
+      '프로도는 반지에 대해서는 끝내 말하지 않았다.',
+      '밤에 순찰대가 금지된 못에서 물고기를 잡는 골룸을 발견했다. 들어온 자는 죽음뿐인 곳이다.',
+    ]);
+    const c = await choose('골룸을...', ['직접 불러 데려온다', '순찰대에 맡긴다']);
+    if (c === 0) await say('프로도가 부르자 골룸은 순순히 다가왔다가 그대로 붙잡혔다. 골룸의 눈에 배신감이 번졌다. 「주인님이... 우리를 속였어...」');
+    else { await say('순찰대가 골룸을 쏘려 하자 프로도가 끝내 앞을 막았다. 골룸은 붙잡혔지만 살았다.'); }
+    await say('샘이 그만 입을 잘못 놀렸다. 「나리는 그 반지를...!」 파라미르의 눈빛이 변했다.');
+    await say('파라미르: 곤도르를 구할 기회로군. 반지를 미나스 티리스로 가져가겠소.');
+    S.step = 30; save();
+  },
+  async () => {
+    await story('오스길리아스', 'fellbeast', [
+      '불타는 폐허 도시. 오크들이 강을 건너 몰려오고 있다.',
+      '하늘에서 비명과 함께 날짐승을 탄 나즈굴이 내려앉았다. 프로도가 홀린 듯 걸어 나가 반지를 들어 올린다!',
+    ]);
+    await battle('fellbeast', { noRun: true, rescue: { turns: 3, hint: '(프로도가 정신을 차릴 때까지 버텨야 한다!)', lines: ['샘이 몸을 날려 프로도를 덮쳤다!', '둘이 계단 아래로 굴렀다. 파라미르의 화살에 날짐승이 놀라 날아올랐다.'] } });
+    await say('정신이 나간 프로도가 샘의 목에 스팅을 겨누었다... 그리고 손을 떨구었다. 「난 못 하겠어, 샘.」');
+    const c = await choose('샘은...', ['이야기를 꺼낸다', '말없이 곁에 앉는다']);
+    if (c === 0) await say('샘: 옛날이야기 속 영웅들도 돌아갈 기회가 많았대요. 그래도 계속 갔대요. 세상에 아직 지킬 만한 좋은 게 있다고 믿어서요.');
+    else await say('샘은 아무 말 없이 프로도의 어깨에 손을 얹었다. 그 손이 무엇보다 따뜻했다.');
+    await story('오스길리아스', 'faramir_front', [
+      '그 모습을 지켜보던 파라미르가 마침내 칼을 거두었다.',
+      '파라미르: 가시오. 곤도르의 장수가 어떤 사람인지 보여 줄 때요. 그 대가는 내가 치르겠소.',
+      '프로도와 샘, 골룸은 다시 동쪽으로, 그림자의 산맥으로 향했다.',
+    ]);
+    S.shadow = Math.max(0, S.shadow - 1); healAll(); S.step = 31; save();
+  },
+  async () => {
+    await chapterTitle('제2부 「두 개의 탑」 끝', '이어서 제3부 「왕의 귀환」');
+    S.step = 32; save();
+  },
+  async () => {
+    await chapterTitle('제7장', '키리스 웅골');
+    await story('쓰러진 왕의 갈림길', 'frodosam_front', [
+      '네 갈래 길이 만나는 곳에 머리가 깨진 옛 왕의 석상이 서 있었다. 오크들이 낙서를 해 놓았다.',
+      '그때 구름 사이로 저녁 햇살이 비쳤다. 바닥에 굴러떨어진 석상의 머리 위에 하얀 꽃덩굴이 왕관처럼 감겨 있었다.',
+      '프로도: 봐, 샘. 저들이 영원히 이기지는 못해.',
+    ]);
+    await story('미나스 모르굴', 'witchking', [
+      '골짜기 건너편에 푸르스름한 빛을 내뿜는 죽음의 도시가 있다. 쳐다보기만 해도 반지가 무거워진다.',
+      '땅이 울리며 성문이 열리고, 끝없는 군대가 쏟아져 나왔다. 맨 앞에 왕관을 쓴 기사, 마술사왕이다.',
+      '그가 문득 이쪽을 돌아보았다. 숨이 멎을 것 같다...',
+    ]);
+    const c = await choose('프로도는...', ['반지를 움켜쥔다', '빛의 병을 쥔다']);
+    if (c === 0) { S.shadow++; await say('반지를 끼고 싶은 마음을 간신히 눌렀다. 마술사왕은 고개를 돌려 미나스 티리스 쪽으로 떠났다. (그림자 +1)'); }
+    else await say('주머니 속 빛의 병이 손바닥을 따뜻하게 했다. 마술사왕은 고개를 돌려 미나스 티리스 쪽으로 떠났다.');
+    S.step = 33; save();
+  },
+  async () => {
+    await story('키리스 웅골의 계단', 'gollum', [
+      '끝없이 가파른 계단. 밤에 샘은 골룸이 혼잣말하는 것을 들었다. 「그녀가 해치우게 하자... 그리고 보물은 우리 거야.」',
+      '아침이 되자 렘바스가 사라져 있었다. 골룸은 샘의 옷에 묻은 부스러기를 가리키며 샘이 먹었다고 우겼다.',
+      '샘이 골룸에게 덤벼들자 지친 프로도가 소리쳤다. 「샘, 집으로 돌아가.」',
+      '샘은 울면서 계단을 내려갔다. 프로도는 골룸을 따라 어둠 속 굴로 들어갔다.',
+    ]);
+    await story('쉴로브의 굴', 'shelob', [
+      '썩은 냄새가 코를 찌르는 터널. 골룸은 어느새 사라졌다. 끈적한 줄이 얼굴에 감긴다.',
+      '어둠 속에서 수많은 눈이 하나씩 켜졌다...',
+    ]);
+    await battle('shelob', { noRun: true, rescue: { turns: 2, hint: '(빛의 병을 들어 버텨라! 가방에서 쓸 수 있다)', lines: ['프로도가 굴 밖으로 달아났다. 그러나 등 뒤에서 거대한 독침이...', '프로도가 쓰러졌다.'] } });
+    await story('쉴로브의 굴 · 출구', 'frodosam_front', [
+      '계단을 내려가던 샘은 굴러떨어진 렘바스 부스러기를 보고 모든 걸 깨달았다. 샘은 다시 뛰어 올라왔다.',
+      '거미줄에 꽁꽁 감긴 프로도 앞에서, 샘이 스팅과 빛의 병을 들고 거대한 거미 앞을 막아섰다!',
+    ]);
+    healAll();
+    const r = await battle('shelob', { noRun: true }); if (r === 'lose') return lose();
+    await story('쉴로브의 굴 · 출구', 'frodosam_front', [
+      '쉴로브는 비틀거리며 어둠 속으로 기어 들어갔다.',
+      '샘이 프로도를 흔들었지만 대답이 없었다. 차갑게 식은 얼굴... 샘은 프로도가 죽었다고 생각했다.',
+      '샘: 끝내야 해요. 나리가 못 한 일을 제가 해야 해요. 샘은 반지를 자기 목에 걸었다.',
+    ]);
+    await say('반지가 속삭인다. 이 산맥의 주인이 되어 모르도르를 거대한 정원으로 바꿀 수 있다고. 샘이 다스리는 끝없는 꽃밭...');
+    const c = await choose('샘은...', ['환상을 비웃는다', '잠깐 그 꿈을 떠올린다']);
+    if (c === 0) await say('샘: 나한테 필요한 건 작은 정원 하나면 돼요. 남의 손을 빌린 큰 정원 따윈 필요 없어요.');
+    else { S.shadow++; await say('달콤한 꿈이 스쳤다. 하지만 샘은 고개를 저었다. 정원사의 손은 자기 손으로 흙을 만지는 손이다. (그림자 +1)'); }
+    await say('그때 오크들이 몰려와 프로도를 메고 갔다. 「아직 살아 있어! 독에 마비된 것뿐이야!」 샘은 주먹을 쥐었다. 나리는 살아 있다!');
+    S.step = 34; save();
+  },
+  async () => {
+    await story('키리스 웅골의 탑', 'orc', [
+      '탑 안에서 오크들끼리 미스릴 갑옷을 두고 다투다 서로를 베고 있었다. 샘은 칼을 들고 계단을 뛰어올랐다.',
+    ]);
+    let r = await battle('orcT'); if (r === 'lose') return lose();
+    await say('위층에서 또 다른 오크가 채찍을 들고 내려온다!');
+    r = await battle('orcT'); if (r === 'lose') return lose();
+    await story('키리스 웅골의 탑 · 꼭대기', 'frodosam_front', [
+      '꼭대기 방에 프로도가 묶여 있었다. 샘을 보자 프로도가 울음을 터뜨렸다. 「반지를 빼앗겼어, 샘! 다 끝났어!」',
+      '샘: 아니에요. 제가 가지고 있어요. 죄송해요, 나리.',
+    ]);
+    await say('프로도가 반지를 낚아채듯 받아 들었다. 「도둑!」 ... 그러고는 곧 자기 말에 소스라쳤다. 「미안해, 샘. 이게 나를 이렇게 만들어.」');
+    await say('둘은 죽은 오크들의 갑옷을 걸치고 탑을 빠져나왔다. 프로도가 반지를 다시 지녔다.');
+    S.shadow++; healAll(); S.step = 35; save();
+  },
+  async () => {
+    await story('그 시각 · 미나스 티리스', 'gandalfw_front', [
+      '흰 옷을 입고 돌아온 간달프가 무너져 가는 하얀 도시를 지키고 있었다. 하늘에는 날짐승을 탄 나즈굴들이 맴돈다.',
+      '펠렌노르 들판에서는 로한의 기병들이 함성과 함께 달려들었고, 아라곤은 망자의 길을 지나 검은 배를 이끌고 나타났다.',
+    ]);
+    await story('펠렌노르 들판', 'eowyn_front', [
+      '쓰러진 세오덴 왕 앞에 마술사왕이 내려앉았다. 「어떤 사내도 나를 죽일 수 없다.」',
+      '방패를 든 로한의 아가씨가 투구를 벗었다. 에오윈이었다. 「나는 사내가 아니다!」 그녀의 칼이 왕관 아래를 꿰뚫었다.',
+    ]);
+    await story('그 시각 · 검은 문 앞', 'mouth', [
+      '서부의 군대가 검은 문 앞에 섰다. 모르도르의 눈을 프로도에게서 돌리기 위해서였다.',
+      '문이 열리고 투구에 입만 드러낸 사자가 다가왔다. 그가 프로도의 미스릴 갑옷을 흔들어 보였다.',
+      '아라곤: 거짓말이다. 나는 믿지 않는다.',
+    ]);
+    // 막간: 아라곤으로 사우론의 입과 싸움
+    const keep = { hero: S.hero, lv: S.lv, xp: S.xp, hp: S.hp, party: S.party.slice(), mem: JSON.parse(JSON.stringify(S.mem)) };
+    S.hero = 'aragorn'; S.lv = 30; S.xp = 0; S.party = ['aragorn']; S.mem = {}; S.hp = stat('hp');
+    const r = await battle('mouth', { noRun: true });
+    if (r !== 'win') await say('아라곤이 쓰러지는 척하다 단숨에 칼을 휘둘렀다. 사자가 말에서 떨어졌다.');
+    Object.assign(S, keep);
+    await say('아라곤: 서부의 사람들이여, 오늘 우리는 반지 지기를 위해 싸운다! 검은 문이 열리고, 군대가 쏟아져 나왔다.');
+    S.step = 36; save();
+  },
+  async () => {
+    await chapterTitle('제8장', '운명의 산');
+    await story('고르고로스 평원', 'frodosam_front', [
+      '불타는 산까지 끝없이 이어진 재의 평원. 물도 렘바스도 거의 바닥났다.',
+      '샘은 가방의 냄비를 내려놓았다. 한참을 바라보다가 조용히 돌무더기 위에 두고 왔다.',
+      '프로도는 이제 물 한 모금 넘기기도 힘들어했다. 반지가 맷돌처럼 목을 짓누른다.',
+    ]);
+    S.items.lembas = Math.min(S.items.lembas, 2);
+    await story('운명의 산 · 비탈', 'frodosam_front', [
+      '마지막 비탈에서 프로도가 쓰러졌다. 「반지 무게가... 더는 못 가겠어, 샘.」',
+      '샘: 반지는 대신 들어 드릴 수 없지만, 나리는 업어 드릴 수 있어요!',
+    ]);
+    await story('운명의 산 · 비탈', 'samfrodo_front', ['샘이 프로도를 등에 업고 한 걸음씩 산을 올랐다.', '발밑에서 뜨거운 재가 부서졌다. 샘은 이를 악물었다.']);
+    await story('운명의 산 · 비탈', 'gollum', ['그때 바위 뒤에서 골룸이 덮쳐 왔다! 「보물! 우리 보물!」']);
+    const r = await battle('gollumF', { noRun: true }); if (r === 'lose') return lose();
+    S.step = 37; save();
+  },
+  async () => {
+    await story('운명의 틈', 'frodosam_front', [
+      '산 안쪽, 끓어오르는 불의 틈 앞. 반지가 만들어진 곳이다.',
+      '샘: 던져요, 나리! 불 속으로!',
+    ]);
+    await say('프로도가 반지를 들어 올렸다. 그리고 천천히 돌아섰다.');
+    const c = await choose('프로도는...', ['반지를 던진다', '반지는 내 것이다']);
+    if (c === 0) await say('프로도는 팔을 뻗었다... 하지만 손가락이 펴지지 않았다. 「못 하겠어... 이건 내 거야.」');
+    await story('운명의 틈', 'eye', ['프로도가 반지를 꼈다. 모르도르 전체가 그를 향해 눈을 돌렸다.']);
+    await story('운명의 틈', 'gollum', ['보이지 않는 프로도에게 골룸이 달려들어 손가락을 물어뜯었다! 반지를 되찾은 골룸이 기뻐 날뛰다... 발을 헛디뎠다.']);
+    await story('운명의 틈', 'ring_item', ['골룸과 반지가 함께 불 속으로 떨어졌다. 반지가 녹아내리며 마지막으로 빛났다.']);
+    await story('운명의 산', 'eye', ['땅이 흔들리고 바랏두르의 탑이 무너져 내렸다. 거대한 눈이 꺼졌다.']);
+    await story('운명의 산', 'frodosam_front', [
+      '용암이 흐르는 바위 위에서 프로도와 샘은 서로 손을 잡았다.',
+      '프로도: 함께 있어서 다행이야, 샘. 모든 게 끝나는 곳에서.',
+    ]);
+    await story('운명의 산', 'gandalfw_front', ['그때 하늘에서 큰독수리들이 내려왔다. 그 등에는 흰 옷의 간달프가 타고 있었다.']);
+    S.step = 38; save();
+  },
+  async () => {
+    await story('미나스 티리스', 'gandalfw_front', ['눈을 뜨자 간달프가 웃고 있었다. 프로도도 따라 웃었다.']);
+    await story('미나스 티리스', 'aragorn_front', [
+      '이어 메리, 피핀, 레골라스, 김리가 문을 열고 뛰어들었다.',
+      '아라곤이 곤도르의 왕관을 썼다. 그리고 네 호빗 앞에서 무릎을 꿇었다. 「그대들은 누구에게도 고개 숙일 필요가 없소.」',
+      '온 도시가 따라 무릎을 꿇었다.',
+    ]);
+    await chapterTitle('제3부 「왕의 귀환」 끝', '반지는 사라졌다');
+    S.step = 39; save();
+  },
+  async () => {
+    await chapterTitle('덧붙이는 장', '샤이어 소탕');
+    await story('브랜디와인 다리', 'merrypippin_front', [
+      '네 호빗이 고향으로 돌아왔다. 그런데 다리에 낯선 문이 세워져 있고, 「샤키 두목의 명령」이라는 팻말이 붙어 있었다.',
+      '나무는 베이고, 굴뚝마다 시커먼 연기. 거울에서 본 그대로였다.',
+      '메리: 원정에서 배운 게 하나 있다면, 이런 건 그냥 두면 안 된다는 거지.',
+      '메리가 로한의 뿔나팔을 불었다. 샤이어 곳곳의 호빗들이 쇠스랑과 몽둥이를 들고 모여들었다.',
+    ]);
+    await story('골목쟁이집 앞', 'sharkey', [
+      '골목쟁이집 앞에 지저분한 옷을 입은 노인이 서 있었다. 몰락한 사루만, 「샤키」였다.',
+      '샤키: 어서 오게, 반지 지기. 자네 고향을 내 마음대로 바꿔 보았지.',
+    ]);
+    const r = await battle('sharkey', { noRun: true }); if (r === 'lose') return lose();
+    await story('골목쟁이집 앞', 'frodosam_front', [
+      '호빗들이 사루만을 둘러쌌다. 프로도가 손을 들어 막았다. 「죽이지 마. 그는 한때 위대했어. 이제는 그저 가엾을 뿐이야.」',
+      '사루만은 아무 말 없이 떠났고, 그날로 샤이어에서 사라졌다.',
+      '샘은 갈라드리엘에게 받은 흙 상자를 열어 베어진 나무 자리마다 한 줌씩 뿌렸다. 이듬해 봄, 샤이어는 그 어느 때보다 푸르렀다.',
+    ]);
+    S.step = 40; save();
+  },
+  async () => {
+    await story('회색 항구', 'galadriel_front', [
+      '몇 해 뒤. 바람마루의 상처는 해마다 같은 날이면 다시 아려 왔다.',
+      '프로도는 빌보, 간달프, 요정들과 함께 바다 건너 서쪽으로 떠나기로 했다.',
+      '프로도: 샤이어를 지켜 냈어, 샘. 하지만 나를 위해서는 아니었나 봐.',
+      '프로도는 샘에게 붉은 책을 건넸다. 「남은 쪽은 네가 채워 줘.」',
+      '배가 수평선 너머로 사라졌다. 샘은 집으로 돌아가 문을 열었다. 「다녀왔어.」',
+    ]);
+    await chapterTitle('반지 원정 · 끝', `여정의 그림자 ${S.shadow} · 레벨 ${S.lv}`);
+    await say('끝까지 함께해 주셔서 고맙습니다. 저장되었습니다.');
+    S.step = 41; S.done = true; save();
+  },
+];
+const PRACTICE_INTRO = {
+  aragorn: ['브리의 「달리는 조랑말」 구석 자리. 두건을 깊이 쓴 순찰자가 문 쪽을 지켜보고 있다.', '그의 이야기는 아직 준비 중이다. 대신 연습 전투를 해 보자.'],
+  legolas: ['어둠숲 요정 왕의 궁전. 붙잡아 두었던 골룸이 달아났다는 소식이 들어왔다.', '그의 이야기는 아직 준비 중이다. 대신 연습 전투를 해 보자.'],
+  gimli: ['외로운 산. 모르도르에서 온 사자가 난쟁이 왕에게 반지를 캐물었다.', '그의 이야기는 아직 준비 중이다. 대신 연습 전투를 해 보자.'],
+  gandalf: ['미나스 티리스의 서고. 먼지 쌓인 두루마리에서 반지의 비밀을 찾아냈다.', '그의 이야기는 아직 준비 중이다. 대신 연습 전투를 해 보자.'],
+};
+async function practice() {
+  await story(null, S.hero + '_front', PRACTICE_INTRO[S.hero]);
+  for (;;) {
+    scene = storyScene('연습 전투', S.hero + '_front');
+    const ids = Object.keys(FOES).sort((a, b) => FOES[a].lv - FOES[b].lv);
+    const k = await choose('누구와 겨뤄 볼까?', ids.map(i => FOES[i].name + ' ' + FOES[i].lv).concat(['그만하기']));
+    if (k === ids.length) return;
+    const r = await battle(ids[k]);
+    if (r === 'lose') { await lose(); }
+    S.hp = stat('hp'); save();
+  }
+}
+
+// ═════════ 제목·인물 선택 ═════════
+async function title() {
+  const has = load();
+  let blink = 0;
+  scene = t => {
+    rect(0, 0, 160, 144, 0);
+    const big = '반지 원정'; g.save(); g.scale(2, 2); g.drawImage(textImg(big, 3), 40 - tw(big) / 2, 8); g.restore();
+    text('— 가운데땅 팬 게임 —', 80 - tw('— 가운데땅 팬 게임 —') / 2, 40, 2);
+    const s = sprite('ring_item'); g.drawImage(s, 80 - s.width / 2, 108 - s.height);
+    if (Math.floor(t / 500) % 2) text('START', 80 - tw('START') / 2, 126);
+  };
+  msg = null;
+  for (;;) { const k = await nextKey(); if (k === 'start' || k === 'a') break; }
+  if (has) { const c = await choose(null, ['이어하기', '새로 시작']); if (c === 0) { S = has; return; } }
+  S = newState(await pickHero());
+  save();
+}
+async function pickHero() {
+  const ids = Object.keys(HEROES); let i = 0;
+  scene = t => {
+    rect(0, 0, 160, 144, 0);
+    box(0, 0, 160, 20); const h = HEROES[ids[i]]; text('누구의 이야기를 따라갈까?', 80 - tw('누구의 이야기를 따라갈까?') / 2, 5);
+    const s = sprite(ids[i] + '_front'); g.drawImage(s, 80 - s.width / 2, 92 - s.height);
+    text('◀', 4, 56); text('▶', 148, 56);
+    box(0, 96, 160, 48); text(h.full, 8, 102); text(h.desc[0], 8, 116, 2); text(h.desc[1], 8, 128, 2);
+    for (let k = 0; k < ids.length; k++) rect(70 + k * 5, 90, 3, 3, k === i ? 3 : 1);
+  };
+  msg = null;
+  for (;;) {
+    const k = await nextKey();
+    if (k === 'left') i = (i + ids.length - 1) % ids.length; else if (k === 'right') i = (i + 1) % ids.length;
+    else if (k === 'a' || k === 'start') { const nm = HEROES[ids[i]].full, cc = nm.charCodeAt(nm.length - 1), ro = (cc - 0xac00) % 28 && (cc - 0xac00) % 28 !== 8 ? '으로' : '로';
+      const c = await choose(nm + ro + ' 시작할까?', ['예', '아니오'], 1); if (c === 0) return ids[i]; }
+  }
+}
+
+// ═════════ 시작 ═════════
+(async function main() {
+  await document.fonts.load('10px Galmuri9');
+  for (;;) {
+    await title();
+    if (S.lead === 'frodosam') {
+      while (S.step < CH1.length) { const before = S.step; await CH1[S.step](); if (S.step === before) { /* 패배: 같은 장면 다시 */ } }
+      await say('START를 누르면 제목으로 돌아갑니다.'); await nextKey();
+    } else await practice();
+  }
+})();
+</script>
+</body>
+</html>

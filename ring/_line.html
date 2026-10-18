@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#e6e6ee;font:14px Galmuri9,sans-serif;width:900px}
+.row{display:flex;gap:14px;padding:10px 12px;align-items:flex-end}.c{text-align:center}
+canvas{image-rendering:pixelated;background:#f8f8f0;display:block}</style>
+<div class="row" id="r"></div><div class="row" id="r2"></div>
+<script src="gb32.js"></script><script src="gb32foes.js"></script><script src="gbline.js"></script>
+<script>
+const L=RingLine, add=(el,cv,t)=>{const d=document.createElement('div');d.className='c';d.appendChild(cv);d.append(t);document.getElementById(el).appendChild(d);};
+add('r',L.toCanvas(L.balrog(),6),'발로그 — 새 방식');
+add('r',L.toCanvas(L.gollum(),6),'골룸 — 새 방식');
+add('r2',RingGB32.toCanvas(RingGB32Foes.bosses[0].make(),3),'이전 발로그');
+add('r2',RingGB32.toCanvas(RingGB32Foes.foes[1].make(),3),'이전 골룸');
+add('r2',L.toCanvas(L.balrog(),2),'새 발로그 실제 2배');
+add('r2',L.toCanvas(L.gollum(),2),'새 골룸 실제 2배');
+</script>

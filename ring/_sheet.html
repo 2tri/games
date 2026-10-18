@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f4f1e8">
+<canvas id="c" width="1100" height="560"></canvas>
+<script src="sprites.js"></script>
+<script>
+const {HERO,FOE,toCanvas}=RingSprites, c=document.getElementById('c'), g=c.getContext('2d');
+g.imageSmoothingEnabled=false; g.font='bold 20px sans-serif'; g.fillStyle='#222';
+const names={frodo:'프로도',sam:'샘',aragorn:'아라곤',legolas:'레골라스',gimli:'김리',gandalf:'간달프'};
+let x=20; for(const k of Object.keys(HERO)){ const s=HERO[k](); g.drawImage(toCanvas(s,7),x,20); g.fillText(names[k],x+40,210); x+=178; }
+x=40; for(const k of Object.keys(FOE)){ const s=FOE[k](); g.drawImage(toCanvas(s,6),x,250); x+=300; }
+// 실제 크기(1배)와 게임 화면 배율(2배)도 같이
+x=680; let y=270; g.fillText('실제 크기 1배',x,y-6); let xx=x; for(const k of Object.keys(HERO)){ g.drawImage(toCanvas(HERO[k](),1),xx,y); xx+=30; }
+y=330; g.fillText('폰 화면에서 보이는 크기(약 3배)',x,y-6); xx=x; for(const k of Object.keys(HERO)){ g.drawImage(toCanvas(HERO[k](),3),xx,y); xx+=74; }
+</script>

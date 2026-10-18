@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#e6e6ee;font:15px Galmuri9,sans-serif;width:1200px}
+.grid{display:grid;grid-template-columns:repeat(6,192px);gap:8px;padding:12px 12px 0}
+.cell{text-align:center}.cell div{margin:2px 0 4px}
+canvas{image-rendering:pixelated;display:block;margin:0 auto;background:#f4f2e8}
+.small{display:flex;flex-wrap:wrap;gap:2px;padding:8px 6px;align-items:center}
+.small canvas{background:#f4f2e8}</style>
+<div class="grid" id="g"></div>
+<div style="padding:8px 12px 0">실제 게임 크기(×2)</div><div class="small" id="sm"></div>
+<script src="art48.js"></script><script src="heroes48.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('15px Galmuri9');
+  const g=document.getElementById('g'), sm=document.getElementById('sm');
+  for (const view of ['front','back']) for (const h of RingHeroes) {
+    const d=document.createElement('div'); d.className='cell';
+    const c=RingArt.toCanvas(h[view](),4); d.appendChild(c);
+    const t=document.createElement('div'); t.textContent=h.name+(view==='front'?' · 앞':' · 뒤'); d.appendChild(t); g.appendChild(d);
+  }
+  for (const h of RingHeroes) for (const view of ['front','back']) { const c=RingArt.toCanvas(h[view](),2); sm.appendChild(c); }
+})();
+</script>

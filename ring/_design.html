@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#e6e6ee;font:15px/1.5 Galmuri9,sans-serif;width:640px}
+.r{display:flex;gap:10px;padding:10px 12px;border-bottom:1px solid #333a44;align-items:center}
+canvas{image-rendering:pixelated;background:#f8f8f0}
+.t b{display:block;font-size:17px;color:#fff;margin-bottom:4px}.t{font-size:13px;color:#c8ccd4}</style>
+<div id="w"></div>
+<script src="gb32.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('15px Galmuri9');
+  const A=RingGB32, notes={
+    '프로도와 샘':['헝클어진 짙은 앞머리의 프로도 + 모랫빛 곱슬머리 샘','셔츠·조끼 차림, 샘은 냄비 매단 큰 등짐','로리엔 뒤에는 잎사귀 브로치 요정 망토로 바뀜'],
+    '아라곤':['어깨까지 오는 헝클어진 검은 머리, 수염 그늘','어두운 긴 외투, 깃 세운 가죽 웃옷','가슴 앞으로 비껴 든 장검'],
+    '레골라스':['허리까지 늘어뜨린 은빛 금발, 관자놀이 땋은 머리','뾰족한 귀, 초록 옷, 등의 화살통','키만 한 장궁'],
+    '김리':['둥근 투구 + 볼가리개','두 갈래로 땋아 고리 단 붉은 수염','사슬갑옷, 크고 번쩍이는 도끼'],
+    '간달프':['끝이 꺾인 회색 챙모자','회색 망토, 긴 회백 수염','끝이 말린 옹이 지팡이'],
+  };
+  const w=document.getElementById('w');
+  for(const h of A.heroes){
+    const r=document.createElement('div'); r.className='r';
+    const f=h.front(), b=h.back(), sc=f.w>32?4:5;
+    r.appendChild(A.toCanvas(f,sc)); r.appendChild(A.toCanvas(b,sc));
+    const t=document.createElement('div'); t.className='t'; t.innerHTML='<b>'+h.name+'</b>'+notes[h.name].join('<br>'); r.appendChild(t); w.appendChild(r);
+  }
+})();
+</script>

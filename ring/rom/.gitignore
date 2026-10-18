@@ -1,0 +1,5 @@
+obj/
+*.ihx
+*.map
+*.noi
+__pycache__/

@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face{font-family:Galmuri9;src:url(Galmuri9.woff2) format('woff2')}
+body{margin:0;background:#20242a;color:#e6e6ee;font:14px/1.4 Galmuri9,sans-serif;width:900px}
+h3{margin:10px 12px 2px;font-size:15px;color:#fff}
+.row{display:flex;gap:12px;padding:6px 12px;align-items:flex-end;flex-wrap:wrap}
+.c{text-align:center}canvas{image-rendering:pixelated;background:#f8f8f0;display:block}</style>
+<h3>우두머리 (56×56)</h3><div class="row" id="b"></div>
+<h3>적 (40×40)</h3><div class="row" id="f"></div>
+<h3>주요 인물 (32×32) · 실제 전투 화면</h3><div class="row" id="p"></div>
+<script src="gb32.js"></script><script src="gb32foes.js"></script>
+<script>
+(async function(){
+  await document.fonts.load('10px Galmuri9');
+  const A=RingGB32, F=RingGB32Foes, P=A.GB;
+  const add=(el,list,sc)=>{for(const it of list){const d=document.createElement('div');d.className='c';d.appendChild(A.toCanvas(it.make(),sc));d.append(it.name);document.getElementById(el).appendChild(d);}};
+  add('b',F.bosses,5); add('f',F.foes,5); add('p',F.people,5);
+  // 실제 전투 화면: 간달프 vs 발로그
+  const cv=document.createElement('canvas');cv.width=160;cv.height=144;cv.style.width='320px';cv.style.height='288px';
+  const d=document.createElement('div');d.className='c';d.appendChild(cv);d.append('간달프 vs 발로그 (실제 크기 ×2)');document.getElementById('p').appendChild(d);
+  const c=cv.getContext('2d');
+  function text(str,x,y){const k=document.createElement('canvas');k.width=160;k.height=14;const t=k.getContext('2d');t.font='10px Galmuri9';t.textBaseline='top';t.fillStyle=P[3];t.fillText(str,0,1);const im=t.getImageData(0,0,160,14);for(let i=3;i<im.data.length;i+=4)im.data[i]=im.data[i]>110?255:0;t.putImageData(im,0,0);c.drawImage(k,x,y);}
+  function hp(x,y){text('HP',x,y-4);c.fillStyle=P[3];c.fillRect(x+16,y,52,4);c.fillStyle=P[2];c.fillRect(x+17,y+1,50,2);}
+  c.fillStyle=P[0];c.fillRect(0,0,160,144);
+  c.fillStyle=P[1];for(let y=0;y<6;y++){const w=Math.round(30*Math.sqrt(1-((y-2.5)/3)**2));c.fillRect(126-w,52+y,w*2,1);}
+  c.drawImage(A.toCanvas(F.bosses[0].make(),1),98,0);
+  c.drawImage(A.toCanvas(A.heroes[4].back(),2),10,32);
+  text('발로그',4,4);text('Lv40',56,4);c.fillStyle=P[3];c.fillRect(4,22,74,1);c.fillRect(77,14,1,9);hp(6,16);
+  text('간달프',92,58);text('Lv38',132,58);c.fillStyle=P[3];c.fillRect(88,92,70,1);c.fillRect(88,66,1,27);hp(90,70);text('96/ 96',114,78);
+  c.fillStyle=P[3];c.fillRect(0,96,160,48);c.fillStyle=P[0];c.fillRect(1,97,158,46);c.fillStyle=P[3];c.fillRect(3,99,154,1);c.fillRect(3,140,154,1);c.fillRect(3,99,1,42);c.fillRect(156,99,1,42);
+  text('불꽃과 그림자의 악마가',8,106);text('다리 위로 다가온다!',8,122);
+})();
+</script>
