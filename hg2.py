@@ -464,23 +464,60 @@ def main():
             elif slot[src_] in expect: expect[slot[src_]].pop('evo_add', None)
         say('진화 표 적용: 출발 종 %d (표 우선, 초안 진화는 덮음)' % nwrite)
 
-    # ---- 같은 레벨에 기술 2개 막기 (10/19 사용자: 「Lv12 에 두 개를 동시에 배움 — 그런 일 없어야」)
-    #      Lv1 은 그대로(시작 기술). 그 밖에는 레벨마다 1개 — 필살기는 제 레벨에 두고, 겹친 기술을 바로 뒤 빈 레벨(+1, +2 …)로 옮김
-    moved_n = [0, 0]
+    # ---- 같은 레벨에 기술 2개 막기 (10/19 사용자: 「Lv12 에 두 개를 동시에 배움 — 그런 일 없어야. 무조건 옆 레벨로 옮기지 말고 판단해서
+    #      살릴 건 적당한 빈 자리로, 필요 없으면 날려라. 배우는 때가 너무 붙어도 안 됨」)
+    #      판단 규칙 (Lv1 시작 기술은 그대로):
+    #       1) 같은 레벨에 둘이면 남길 쪽 = 필살기 > 그 디지몬다운 기술(KEEP) > 위력 높은 공격 > 보조
+    #       2) 밀린 기술이 공격 기술이고, 남는 쪽과 타입이 같고 위력이 같거나 약하면 → 날림 (필살기·더 센 기술이 대신함)
+    #       3) 이미 같은 타입·같은 분류에서 더 센 기술을 그보다 앞 레벨에 배우면 → 날림 (늦게 배워도 쓸 일 없음)
+    #       4) 그 밖(다른 타입 공격·보조 기술)은 살림: 그 종 기술표에서 앞뒤 기술과 3레벨 이상 떨어진 가장 넓은 빈 구간의 가운데로.
+    #          약한 공격 기술이 6레벨 넘게 뒤로 밀려야만 자리가 나면 → 날림 (늦게 배우는 약한 기술은 쓸모없음)
+    KEEP_THEME = {'불꽃세례', '우드해머', '앵콜', '일렉트릭네트', '트릭', '집단구타'}
+    def mvinfo(m):
+        try:
+            d = wf[m]; return d[2], d[3], d[4]          # 분류(0 물리·1 특수·2 보조), 위력, 타입
+        except Exception: return 2, 0, -1
+    def mname(m):
+        try: return mvnames[m] if isinstance(mvnames[m], str) else CM.dec(mvnames[m])
+        except Exception: return '#%d' % m
+    def rank(m):
+        c, pw, _ = mvinfo(m)
+        return (m in SPECIAL_DI, mname(m) in KEEP_THEME, c != 2, pw)
+    lv_log = []; n_drop = n_move = n_sp = 0
     for s_ in range(len(learn)):
         ls_ = hg1.learnset(learn[s_])
         if not ls_: continue
-        lv1 = [x for x in ls_ if x[0] <= 1]; rest = [x for x in ls_ if x[0] > 1]
-        if len(set(l for l, _ in rest)) == len(rest): continue
-        rest.sort(key=lambda x: (x[0], 0 if x[1] in SPECIAL_DI else 1))
-        taken = set(); fixed = []
-        for l, m in [x for x in rest if x[1] in SPECIAL_DI] + [x for x in rest if x[1] not in SPECIAL_DI]:
-            for d in list(range(0, 20)) + [-1, -2, -3]:      # 뒤로 옮김(진화 전 레벨로 당기면 진화한 종은 못 배움)
-                if 2 <= l + d <= 100 and l + d not in taken: break
-            if d: moved_n[0] += 1
-            taken.add(l + d); fixed.append((l + d, m))
-        fixed.sort(key=lambda x: x[0]); learn[s_] = enc_learn(lv1 + fixed); moved_n[1] += 1
-    say('같은 레벨 기술 정리: %d종에서 %d개를 옆 레벨로 옮김 (필살기는 제자리)' % (moved_n[1], moved_n[0]))
+        lv1 = [x for x in ls_ if x[0] <= 1]; rest = sorted([x for x in ls_ if x[0] > 1])
+        by = collections.defaultdict(list)
+        for l, m in rest: by[l].append(m)
+        if all(len(v) == 1 for v in by.values()): continue
+        n_sp += 1
+        keep = {}; loser = []
+        for l, ms in by.items():
+            ms = sorted(ms, key=rank, reverse=True); keep[l] = ms[0]; loser += [(l, m, ms[0]) for m in ms[1:]]
+        for l, m, win in sorted(loser):
+            c, pw, t = mvinfo(m); wc, wpw, wt = mvinfo(win); nm = mname(m)
+            why = None
+            if nm not in KEEP_THEME and c != 2:
+                if wc != 2 and wt == t and pw > 1 and wpw >= pw: why = '같은 레벨의 %s(같은 타입·위력 %d≥%d)이 대신함' % (mname(win), wpw, pw)
+                elif any(L < l and mvinfo(M)[2] == t and mvinfo(M)[0] == c and mvinfo(M)[1] > pw for L, M in keep.items()):
+                    why = '앞 레벨에 같은 타입 더 센 기술이 있음'
+            if why is None:
+                # 자리 찾기: l 다음부터 8레벨 안에서, 앞뒤 기술과 3레벨 이상 → 없으면 2레벨 이상 떨어진 가장 이른 레벨.
+                #           그 디지몬다운 기술(KEEP)은 그래도 없으면 1레벨 간격까지 허용. 그래도 없으면 날림
+                def gap_ok(p_, need):
+                    return 2 <= p_ <= 100 and all(abs(p_ - L) >= need for L in keep)
+                nl = None
+                for need in ((3, 2, 1) if nm in KEEP_THEME else (3, 2)):
+                    nl = next((p_ for p_ in range(l + 1, l + 9) if gap_ok(p_, need)), None)
+                    if nl: break
+                if nl is None: why = '%s — 가까운(8레벨 안) 자리에 넣으면 다른 기술과 너무 붙음' % ('보조 기술' if c == 2 else '공격 기술')
+                else:
+                    keep[nl] = m; n_move += 1; lv_log.append('칸 %d: %s Lv%d → Lv%d (살림: %s)' % (s_, nm, l, nl, '보조 기술' if c == 2 else ('그 디지몬다운 기술' if nm in KEEP_THEME else '다른 타입 공격'))); continue
+            n_drop += 1; lv_log.append('칸 %d: %s Lv%d 날림 (%s)' % (s_, nm, l, why))
+        learn[s_] = enc_learn(lv1 + sorted(keep.items()))
+    say('같은 레벨 기술 정리: %d종 — 옮김 %d · 날림 %d (자세히는 아래)' % (n_sp, n_move, n_drop))
+    for x in lv_log: say('  ' + x)
 
     # ---- 쓰기
     def rebuild(key, files):
