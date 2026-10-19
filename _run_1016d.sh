@@ -16,7 +16,8 @@ run ti python $T/inject_title.py _a7.nds _a8.nds
 run bd python $T/inject_badges.py _a8.nds _a9.nds
 run ro python $T/inject_roamer.py _a9.nds _a10.nds
 run an python $T/inject_animfix.py _a10.nds _a11.nds
-cp _a11.nds 최종_오늘.nds
+run at python hg_attr.py _a11.nds _a12.nds --base "$ROM"      # 10/19 속성 상성(백신>바이러스>데이터>백신, ×1.2/×0.8)
+cp _a12.nds 최종_오늘.nds
 run rc1 python rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 run 9b python hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python hg_song.py 최종_오늘.nds --out 최종_노래.nds
