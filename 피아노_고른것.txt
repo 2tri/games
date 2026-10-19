@@ -1,0 +1,50 @@
+
+## Butter-Fly — GBC 구간 4개: Butter-Fly, Butter-Fly_전체, 찬란한 빛, Butter-Fly_피아노판, Butter-Fly피아노판동굴
+  후보 0 실패: https://www.youtube.com/watch?v=E5tR0ao9rrA | 영상이 55분이라 건너뜀(8분 넘음)
+  후보 1: 평균 맞음 0.80 [0.88, 0.89, 0.75, 0.68] | Butter-Fly - Digimon Adventure OP [Piano] | https://www.youtube.com/watch?v=T_D_pp283nw | 채보 piano_transcription_inference
+  후보 2: 평균 맞음 0.85 [0.9, 0.92, 0.88, 0.71] | 【楽譜あり】Butter-Fly/アニメ『デジモンアドベンチャー』オープニングテーマ（ピアノソロ中級～上級）和田光司【ピアノアレンジ楽譜】 | https://www.youtube.com/watch?v=7lH51h2Qr4s | 채보 piano_transcription_inference
+  → 고름: 【楽譜あり】Butter-Fly/アニメ『デジモンアドベンチャー』オープニングテーマ（ピアノソロ中級～上級）和田光司【ピアノアレンジ楽譜】 (https://www.youtube.com/watch?v=7lH51h2Qr4s)
+     Butter-Fly.mid: 맞음 0.90, 피아노 94.4~131.1초, 반복 시작 0.0초, 음 450개
+     Butter-Fly_전체.mid: 맞음 0.92, 피아노 21.8~82.5초, 반복 시작 0.0초, 음 733개
+     찬란한 빛.mid: 맞음 0.88, 피아노 73.5~81.7초, 반복 시작 0.0초, 음 98개
+     Butter-Fly_피아노판.mid: 맞음 0.71, 피아노 83.6~117.3초, 반복 시작 0.0초, 음 380개
+
+## Brave Heart — GBC 구간 3개: Brave Heart, Brave Heart_체육관, Power Up!
+  후보 0: 평균 맞음 0.85 [0.83, 0.89, 0.83] | brave Heart【デジモンアドベンチャー(Digimon Adventure) 挿入歌】/ 宮崎歩(Ayumi Miyazaki) -Piano Cover- | https://www.youtube.com/watch?v=B9HrBMaThJQ | 채보 piano_transcription_inference
+  후보 1: 평균 맞음 0.81 [0.7, 0.91, 0.83] | Digimon Adventure「Brave Heart」Ru's Piano Cover | https://www.youtube.com/watch?v=3a2pnGdCAWI | 채보 piano_transcription_inference
+  → 고름: brave Heart【デジモンアドベンチャー(Digimon Adventure) 挿入歌】/ 宮崎歩(Ayumi Miyazaki) -Piano Cover- (https://www.youtube.com/watch?v=B9HrBMaThJQ)
+     Brave Heart.mid: 맞음 0.83, 피아노 17.2~66.7초, 반복 시작 0.0초, 음 478개
+     Brave Heart_체육관.mid: 맞음 0.89, 피아노 68.5~109.6초, 반복 시작 0.0초, 음 394개
+     Power Up!.mid: 맞음 0.83, 피아노 54.1~95.6초, 반복 시작 13.1초, 음 448개
+
+## Target — GBC 구간 1개: Target
+  후보 0: 평균 맞음 0.90 [0.9] | ターゲット〜赤い衝撃〜 - 和田光司 『デジモンアドベンチャー02』 OP TVSize piano 【Sheet Music】 | https://www.youtube.com/watch?v=VYgZcK0F5W4 | 채보 piano_transcription_inference
+  후보 1: 평균 맞음 0.82 [0.82] | Piano楽譜) Digimon02ターゲット ～赤い衝撃～/ 파워디지몬 OP 피아노악보 / Target sheet | https://www.youtube.com/watch?v=PgHgNiGcUyk | 채보 piano_transcription_inference
+  → 고름: ターゲット〜赤い衝撃〜 - 和田光司 『デジモンアドベンチャー02』 OP TVSize piano 【Sheet Music】 (https://www.youtube.com/watch?v=VYgZcK0F5W4)
+     Target.mid: 맞음 0.90, 피아노 11.6~38.3초, 반복 시작 0.0초, 음 278개
+
+## The Biggest Dreamer — GBC 구간 1개: The Biggest Dreamer
+  후보 0: 평균 맞음 0.91 [0.91] | Digimon Tamers『The Biggest Dreamer』Ru's Piano | Digimon OP3 | https://www.youtube.com/watch?v=NkiNBJPkOis | 채보 piano_transcription_inference
+  후보 1: 평균 맞음 0.90 [0.9] | Digimon Tamers OP「The Biggest Dreamer」Ru's Piano Cover | Wada Koji | https://www.youtube.com/watch?v=y8s8TeUG_RI | 채보 piano_transcription_inference
+  → 고름: Digimon Tamers『The Biggest Dreamer』Ru's Piano | Digimon OP3 (https://www.youtube.com/watch?v=NkiNBJPkOis)
+     The Biggest Dreamer.mid: 맞음 0.91, 피아노 0.6~51.8초, 반복 시작 10.3초, 음 734개
+
+## 내일은 나의 바람이 분다 — GBC 구간 2개: 내일은 나의 바람이 분다, 내일은 나의 바람이 분다_뒷부분
+  후보 0 실패: https://www.youtube.com/watch?v=A4ACeAlwEkk | ime has been deprecated, and some formats may be missing. See  https://github.com/yt-dlp/yt-dlp/wiki/EJS  for details on installing one
+ERROR: unable to download video data: HTTP Error 403: Forbidden
+
+  후보 1: 평균 맞음 0.48 [0.52, 0.43] | 내일 | https://www.youtube.com/watch?v=jPsmyN4pvZI | 채보 piano_transcription_inference
+  → 못 찾음(가장 높은 점수 0.48). 사용자에게 이 곡 피아노 영상 링크를 받아 NDS_피아노출처.tsv 「링크」에 넣고 --only 로 다시
+
+## 안녕 디지몬 — GBC 구간 1개: 안녕 디지몬
+  후보 0: 평균 맞음 0.91 [0.91] | 디지몬 어드벤처 ED - 안녕! 디지몬 피아노 커버&악보 | Piano Cover | https://www.youtube.com/watch?v=qAXCHqS9nwY | 채보 piano_transcription_inference
+  후보 1: 평균 맞음 0.98 [0.98] | 디지몬 어드벤처 OST (Korean Ver.) : 안녕! 디지몬  | Piano cover 피아노 커버 | https://www.youtube.com/watch?v=lJ65bAZloHY | 채보 piano_transcription_inference
+  → 고름: 디지몬 어드벤처 OST (Korean Ver.) : 안녕! 디지몬  | Piano cover 피아노 커버 (https://www.youtube.com/watch?v=lJ65bAZloHY)
+     안녕 디지몬.mid: 맞음 0.98, 피아노 7.6~24.3초, 반복 시작 1.7초, 음 107개
+
+## digimon 록 — GBC 구간 2개: digimon 록, digimon 록_눈마주침
+  후보 0: 평균 맞음 0.59 [0.65, 0.53] | 디지몬 어드벤처 Digimon Adventure OP : "Butterfly" Piano cover 피아노 커버 | https://www.youtube.com/watch?v=B6uHEmeT5Jo | 채보 piano_transcription_inference
+  후보 1: 평균 맞음 0.68 [0.8, 0.57] | Butter-Fly - Digimon Adventure OP [Piano] | https://www.youtube.com/watch?v=T_D_pp283nw | 채보 piano_transcription_inference
+  → 못 찾음(가장 높은 점수 0.68). 사용자에게 이 곡 피아노 영상 링크를 받아 NDS_피아노출처.tsv 「링크」에 넣고 --only 로 다시
+
+피아노판 없이 GBC 판 그대로 쓴 구간 0: 

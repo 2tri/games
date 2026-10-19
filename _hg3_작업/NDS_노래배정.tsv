@@ -1,0 +1,21 @@
+우리 칸	곡	롬 곡 이름 규칙(SEQ_GS_… 접두어, 쉼표 = 여럿)	메모
+# 10/14 오후: GBC(1부) 배정을 그대로 따름. 곡 = GBC 세션이 올린 digimon/music/nds_midi/<곡>.mid 파일 이름. 위 줄이 먼저 잡음.
+# 규칙: 「_」로 끝나면 앞머리, 「~」로 시작하면 정규식(SEQ_GS_ 뗀 이름에), 나머지는 이름 안에 든 글자. 롬 곡 이름(일본어 지명)은 오늘 밤 sdat_목록.txt 로 확인해 내일 고침
+짧은 소리	그대로	ME_,FANFARE,LVUP,LEVELUP,HEAL,GET,KAIFUKU	바꾸지 않음
+눈 마주침	digimon 록_눈마주침	EYE_,EYE	트레이너와 눈이 마주칠 때
+승리	찬란한 빛	WIN	(= Butter-Fly 뒷부분)
+진화	Power Up!	SHINKA,EVOLUTION	(= Brave Heart 전주+후렴)
+타이틀	Butter-Fly	TITLE,OPENING,DENDOU	타이틀·오프닝·명예의 전당
+엔딩	안녕 디지몬	ENDING,STAFF,CREDIT
+보스전	Brave Heart	VS_GYM,VS_LEADER,VS_RIVAL,VS_ROCKET,VS_CHAMP,VS_SHITENNOU,VS_RED,VS_BOSS,VS_DENSETSU,VS_HOUOU,VS_LUGIA,VS_RUGIA,VS_SUICUNE,VS_SUIKUN	수호자·라이벌·간부·사천왕·챔피언·전설
+야생 전투	digimon 록	VS_NORA,VS_WILD
+트레이너 전투	Butter-Fly_전체	VS_	나머지 전투
+체육관·아지트	Brave Heart_체육관	GYM,AJITO,CHAMPROAD,C_ROAD,LEAGUE	체육관·아지트·챔피언 로드
+파도타기·자전거	Target	NAMINORI,SURF,BICYCLE,CYCLING,JITENSHA,MUSHITORI	벌레잡기 포함
+첫 마을	안녕 디지몬	WAKABA,STARTING,MOTHER,MAMA	연두마을·엄마·메뉴
+관동 도시	내일은 나의 바람이 분다_뒷부분	KANTO,MASARA,TOKIWA,NIBI,HANADA,KUCHIBA,SHION,TAMAMUSHI,YAMABUKI,SEKICHIKU,GUREN,FUNE,SHIP,GAME,SLOT	관동 도시·배·게임코너
+큰 도시·센터	Butter-Fly_피아노판	HIWADA,KOGANE,ENJU,POKECEN,CENTER,PC_	도라지·금빛·인주·디지몬센터
+성도 마을	내일은 나의 바람이 분다	T_,RABO,UTSUGI,OOKIDO,YOSHINO,KIKYOU,ASAGI,TANBA,CHOUJI,FUSUBE,HOUSE,SHOP	성도 마을·연구소
+동굴·탑·유적	Butter-Fly피아노판동굴	D_,CAVE,TOWER,TOU,ISEKI,DOUKUTSU,DUNGEON
+앞쪽 도로	Butter-Fly_전체	~^R_?(29|3[0-6])(\D|$)	29~36번 도로
+뒤쪽 도로	The Biggest Dreamer	R_,ROAD	나머지 도로(관동 포함)

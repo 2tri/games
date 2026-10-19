@@ -1,0 +1,12 @@
+받음 1, 이미 있음 111, 못 찾음·실패 10 / 전체 122
+에렉몬 (Elecmon): 못 찾음 — 시도한 제목 ['Elecmon']
+메라몬 (Meramon): 못 찾음 — 시도한 제목 ['Meramon']
+츄몬 (Tyumon): 못 찾음 — 시도한 제목 ['Chuumon', 'Tyumon']
+펌프몬 (Pumpmon): 못 찾음 — 시도한 제목 ['Pumpmon']
+가지몬 (Gazimon): 못 찾음 — 시도한 제목 ['Gazimon']
+다크퍼펫몬 (Waru Monzaemon): 못 찾음 — 시도한 제목 ['WaruMonzaemon', 'Waru_Monzaemon']
+데드메라몬 (Death Meramon): 못 찾음 — 시도한 제목 ['DeathMeramon', 'Death_Meramon']
+고래몬 (Whamon): 못 찾음 — 시도한 제목 ['Whamon']
+스컬사탄몬 (Skull Satamon): 못 찾음 — 시도한 제목 ['SkullSatamon', 'Skull_Satamon']
+고릴라몬 (Gorimon): 못 찾음 — 시도한 제목 ['Gorillamon', 'Gorimon']
+블랙워가루몬: OK (BlackWereGarurumon, 맵, 공격 자세)

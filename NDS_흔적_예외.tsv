@@ -1,0 +1,4 @@
+파일	오프셋	이유
+# rom_check 「포켓몬 흔적」에서 스크립트 줄이 실제 명령이 아닌 자료로 확인된 자리(집에서 스크립트를 풀어 확인한 것만)
+91	1F8	앞으로 읽기 실패 — 4D 02 뒤 11 00(CompareVarToValue)이 이어져 WildBattle(7바이트)로 읽으면 어긋남. 바로 앞이 LatiCaughtCheck(0x24C) 인자인 자료 속 우연(수정판_시험/script_disasm.py)
+832	199	명령 0x02BD 는 HGSS 에서 MonHasItem(WildBattle2 아님, pokeheartgold script.inc). 원본 롬과 같은 바이트(파일 832 길이·내용 동일)
