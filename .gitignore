@@ -1,0 +1,8 @@
+__pycache__/
+_a[0-9]*.nds
+_로그/
+hg*_out/
+nds_art/
+nds_art_prev/
+최종_*.nds
+최종_*.bps
