@@ -555,6 +555,14 @@ def main():
         for l, m in rest:
             if m in SPECIAL_DI and l not in placed: placed[l] = m
         changed_ = False
+        # 핵심 기술을 먼저 자리 잡고(원래 차례 기준으로 판정), 나머지 기술은 남는 자리에 — 나중 기술이 앞 기술에 밀려 몰리지 않게
+        sp_types = set(pers[s_][6:8]) if s_ < len(pers) and len(pers[s_]) >= 8 else set()
+        core_set = set()
+        for i_, (l, m) in enumerate(rest):
+            c, pw, t = mvinfo(m); nm = mname(m)
+            if nm in KEEP_THEME or (t in sp_types and (c == 2 or not any(mvinfo(M)[2] == t and mvinfo(M)[0] != 2 and mvinfo(M)[1] >= pw for L, M in rest[:i_] + lv1))):
+                core_set.add((l, m))
+        rest = [x for x in rest if x in core_set] + [x for x in rest if x not in core_set]
         for l, m in rest:
             if m in SPECIAL_DI and placed.get(l) == m: continue
             c, pw, t = mvinfo(m); nm = mname(m)
@@ -563,7 +571,20 @@ def main():
                 return 2 <= p_ <= lim and p_ not in placed and all(abs(p_ - L) >= need for L in placed)
             def best_before(p_): return max([mvinfo(M)[1] for L, M in list(placed.items()) + lv1 if L < p_ and mvinfo(M)[0] != 2] + [0])
             def last_atk(p_): return max([L for L, M in placed.items() if L < p_ and mvinfo(M)[0] != 2 and mvinfo(M)[1] > 1] + [0])
+            # 10/19 사용자 「너무 없는 것도 그래」: 핵심 기술은 날리지 않음 — 그 디지몬다운 기술(KEEP), 제 타입의 첫 공격 기술, 제 타입 보조 기술
+            core = (l, m) in core_set
             if ok(l, 3): p_ = l
+            elif core:
+                near = sorted(range(max(2, l - 4), l + 7), key=lambda q: (abs(q - l), q > l))
+                free = lambda q, need: q not in placed and all(abs(q - L) >= need for L in placed)
+                def gap_(q): return min([abs(q - L) for L in placed] + [99])
+                def score(q): g = gap_(q); return abs(q - l) + (0 if g >= 3 else 2 if g == 2 else 5)   # 원래 레벨과 가깝고, 앞뒤 간격이 넓을수록 좋음
+                inside = [q for q in near if q <= lim and q not in placed]
+                outside = [q for q in near if q > lim and q not in placed]
+                p_ = min(inside, key=score) if inside else (min(outside, key=score) if outside else None)   # 진화 전 범위 안에서 먼저, 없을 때만 진화 뒤로
+                if p_ is None: p_ = next((q for q in sorted(range(2, 101), key=lambda q: abs(q - l)) if q not in placed), l)
+                if p_ != l: g_move += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (핵심 기술이라 살림)' % (s_, nm, l, p_))
+                else: g_log.append('칸 %d: %s Lv%d 그대로 (핵심 기술)' % (s_, nm, l))
             else:
                 dom = c != 2 and nm not in KEEP_THEME and any(L < l and mvinfo(M)[2] == t and mvinfo(M)[0] == c and mvinfo(M)[1] >= pw for L, M in placed.items())
                 if dom:
