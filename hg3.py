@@ -300,7 +300,8 @@ def main():
     def nearest(x):
         p = pers[x] if x < len(pers) and pers[x] else None
         t = p['type'][0] if p else None; b = bst(x)
-        cand = [s for s in eligible if pers[s]['type'][0] == t] or eligible
+        pool = [s for s in eligible if not grade_of.get(s, '').startswith('유년기')] or eligible      # 10/19 v2: 유년기는 정한 초반 자리에만(포켓몬 번호를 비슷한 종으로 바꿀 때 유년기를 고르지 않음)
+        cand = [s for s in pool if pers[s]['type'][0] == t] or pool
         return min(cand, key=lambda s: (abs(bst(s) - b), s))
     DEX = {int(r['번호']): r['우리 종'] for r in dexmap}
     # ---- 레벨 안전장치: 진화 단계가 레벨에 비해 높으면 진화 전 종으로 내림(롬에 써진 진화표 기준)
@@ -309,6 +310,7 @@ def main():
     prevo, minlvl = {}, {}
     for src_i, f in enumerate(N['evo'].files):
         if src_i not in ours: continue                 # 10/13: 우리 종이 아닌 칸(포켓몬)의 진화는 안 봄 — 이브이→샤미드 자리 같은 데서 포켓몬으로 내려가던 문제
+        if grade_of.get(src_i, '').startswith('유년기'): continue      # 10/19 v2: 유년기(Lv8 진화)로는 내리지 않음 — Lv3 파피몬이 뿔몬이 되던 것. 유년기는 NDS_야생_유년기.tsv 자리에만
         for m, prm, t in hg1.evos(f):
             if t in prevo or t not in ours: continue
             prevo[t] = src_i
@@ -770,6 +772,23 @@ def main():
             if y_ not in now_sp:                                       # 진화형으로만 바뀌어 얻을 길이 사라진 종(추추몬·프리지몬 등) → 가장 낮은 레벨 자리에 되살림
                 bb = bytearray(enc_files[i_]); struct.pack_into('<H', bb, off_, y_); enc_files[i_] = bytes(bb); var_log['마지막 자리라 되살림'] += 1; now_sp.add(y_)
         say('야생 다양성·적재적소(10/16 저녁): %s' % (', '.join('%s %d' % kv for kv in var_log.most_common()) or '바꿀 것 없음'))
+        # ---- 10/19 v2 유년기: NDS_야생_유년기.tsv 의 초반 자리에만 넣음(자동 규칙으로는 안 나옴 — NDS_귀한종 「안 나옴」). 아래 「얻을 길 없는 종」이 덮은 종을 다시 살림
+        bp_ = os.path.join(here, 'NDS_야생_유년기.tsv'); baby_log = []
+        if os.path.exists(bp_):
+            TOFF = {'아침': 0x14, '낮': 0x2C, '밤': 0x44}
+            for r_ in csv.DictReader((l for l in open(bp_, encoding='utf-8') if not l.startswith('#')), delimiter='\t'):
+                try: fi_, k_, lv_ = int(r_['파일']), int(r_['칸']), int(r_['Lv'])
+                except (ValueError, TypeError): continue
+                nm_ = (r_.get('종') or '').strip()
+                if nm_ not in slot or not (0 <= fi_ < len(enc_files)) or len(enc_files[fi_]) != ENC_SIZE or not (0 <= k_ < 12):
+                    P('야생 유년기 줄 건너뜀(종 칸·파일·칸 번호):', r_); continue
+                bb = bytearray(enc_files[fi_]); bb[8 + k_] = max(1, min(100, lv_)); gone_ = []
+                for tm in [x.strip() for x in r_['시간'].split(',') if x.strip()]:
+                    if tm not in TOFF: P('야생 유년기 시간 이름 틀림:', r_); continue
+                    o_ = TOFF[tm] + 2 * k_; gone_.append(struct.unpack_from('<H', bb, o_)[0]); struct.pack_into('<H', bb, o_, slot[nm_])
+                enc_files[fi_] = bytes(bb)
+                baby_log.append('%s → 야생 파일 %d 걷기 %d번 칸(%s) Lv%d, 덮은 종 %s' % (nm_, fi_, k_, r_['시간'], lv_, sorted({x_ for x_ in gone_})))
+            say('야생 유년기(NDS_야생_유년기.tsv) %d줄:' % len(baby_log)); [say('  ' + x_) for x_ in baby_log]
         # ---- 얻을 길 없는 종 → 걷기 칸 6·7번(5%+5%, 아침·낮·밤 모두)에 넣음(교차 검증 10/8: 골레몬·스타몬 등 10종)
         def present_species():
             got = set()
@@ -965,7 +984,7 @@ def main():
             done = 0
             for key, rows_ in groups.items():
                 if key.startswith('Rival'):
-                    targets = rival_slots[:15] if key == 'Rival1' else rival_slots[15:21]
+                    targets = rival_slots[:15] if key == 'Rival1' else rival_slots[15:21] if key == 'Rival2' else rival_slots[21:24]   # 10/19 v2: Rival3 = 8번째 묶음(용의 굴 파트너 735~737)
                     pairs = [(t_, r_) for t_, r_ in zip(targets, sorted(rows_, key=lambda r: int(r['키'].split('#')[1]))) if t_ is not None]
                 elif all(re.match(r'^[^#()]+#\d+$', r_['하트골드 이름'].strip()) for r_ in rows_):
                     # 「아폴로#1」 = 하트골드 이름이 아폴로인 트레이너 중 번호 순 첫 번째(10/14: 간부는 사람마다 직업이 달라 이름으로 짝지음)

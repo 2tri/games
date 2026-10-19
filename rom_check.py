@@ -254,6 +254,44 @@ def check_traces(rom, base, slots):
             o_ = narc(rom, 'a/1/1/4')
             if o_ and len(o_) > 157 and (o_[155] != g[172 * 6 + 3] or o_[154] != g[172 * 6 + 1]): trace('전투 그림: 칸 172 는 otherpoke(a/1/1/4 멤버 154·155)에서 읽는데 새 그림과 다름 — 원래 피츄가 나옴')
 
+def check_move_names(rom, base):
+    """10/19 v2: 기술 이름표와 전투 글(「X의\n기술!」, 기술마다 3줄)이 같은 이름인지 — v1 에서 꼬마불꽃이 전투에서 「사념의박치기」로 나옴"""
+    import csv as _csv
+    a = narc(rom, P['msg'])
+    if not a: return
+    MSG = []
+    for f in a:
+        try: MSG.append(hg1.msg_decode(f))
+        except Exception: MSG.append((0, []))
+    dp = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'NDS_종_초안.tsv')
+    names = {r['이름'] for r in _csv.DictReader(open(dp, encoding='utf-8'), delimiter='\t')} if os.path.exists(dp) else set()
+    res = hg1.infer_charmap(MSG, names)
+    if not res: note('기술 이름 대조: 글자표를 못 찾아 건너뜀'); return
+    CM = res[0]
+    def dec(e):
+        try: return CM.dec(e)
+        except Exception: return ''
+    best = None
+    for bi, (_, be) in enumerate(MSG):                     # 전투 글: 기술 수 × 3줄, 거의 모두 「…의\n…!」
+        if not (1200 <= len(be) <= 1800) or len(be) % 3: continue
+        bd = [dec(e) for e in be]
+        if sum(1 for x in bd if '의' + chr(92) + 'n' in x) < len(bd) * 0.6: continue
+        n = len(be) // 3
+        for fi, (_, ent) in enumerate(MSG):
+            if len(ent) != n: continue
+            nm = [dec(e) for e in ent]
+            hit = sum(1 for m in range(1, n) if nm[m] and nm[m] in bd[3 * m])
+            if best is None or hit > best[0]: best = (hit, fi, bi, nm)
+    if not best: fail('기술 이름 대조: 기술 이름표·전투 글 파일 짝을 못 찾음'); return
+    _, fi, bi, nm = best; bad = []
+    be = MSG[bi][1]
+    for m in range(1, len(nm)):
+        if not nm[m] or nm[m].startswith('{'): continue
+        for k in range(3):
+            if nm[m] not in dec(be[3 * m + k]): bad.append('%d %s(줄%d: %s)' % (m, nm[m], k, dec(be[3 * m + k])[-24:]))
+    if bad: fail('기술 이름표(msg %d)와 전투 글(msg %d)이 다른 기술 %d줄: %s' % (fi, bi, len(bad), '; '.join(bad[:15])))
+    note('기술 이름 대조: 이름표 msg %d · 전투 글 msg %d, 다른 줄 %d' % (fi, bi, len(bad)))
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('rom'); ap.add_argument('--base'); ap.add_argument('--quiet', action='store_true'); ap.add_argument('--out', default='롬검사.txt'); ap.add_argument('--slots', default='hg2_out/칸표.tsv')
     A = ap.parse_args()
@@ -261,7 +299,7 @@ def main():
     for fn in (check_fs, ):
         fn(rom)
     if base: check_counts(rom, base)
-    for fn in (check_data, check_scripts, check_msgs, check_sound):
+    for fn in (check_data, check_scripts, check_msgs, check_sound, check_move_names):
         try: fn(rom, base)
         except Exception as ex: fail('%s 중 오류: %s' % (fn.__name__, ex))
     try: check_traces(rom, base, load_slots(A.slots))

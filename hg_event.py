@@ -114,6 +114,51 @@ def real_cmd(d, o, cmd):
     return True
 CMDS_EGG = {0x008A: ('GiveEgg', 0)}   # 알 주기(종, 장소) — 레벨 칸 없음
 
+# 10/19 v2: 수수께끼의 알(토게피 175)은 스크립트 값이 아니라 오버레이 1 의 ScrCmd_GiveTogepiEgg 코드에 박혀 있음
+#   (pret pokeheartgold: SetEggStats(mon, SPECIES_TOGEPI, 1, …) 뒤 빈 기술 칸에 MOVE_EXTRASENSORY(326) — 한국판 ov1 압축 푼 0x1C806 근처)
+#   원래 Thumb: movs r1,#3 / str r1,[sp] / str r0,[sp,#4] / adds r0,r5,#0 / movs r1,#0xAF / movs r2,#1 / adds r3,r4,#0 / bl SetEggStats
+#   고침: movs r1,#0xAF → ldr r1,[pc,#n] (신통력 326 이 있던 문자 풀 칸을 종 번호로 바꿔 씀 — 종 번호가 255 를 넘어도 됨),
+#         신통력을 넣던 ldr r1,[pc,#n] → movs r1,#EGG_MOVE (알에서 나올 때 더 아는 기술)
+EGG_CODE = bytes.fromhex('032100910190281caf210122231c')
+EGG_MOVE = 44          # 물기(4세대 번호 44) — 토코몬 도감 「송곳니로 물어 버린다」. 신통력(326, 에스퍼 위력 80)은 유년기에게 너무 셈
+STARTER_OLD = ({152, 287}, {155, 252}, {158, 261})     # (풀·불꽃·물) 칸: 하트골드 원래 · 디지골드(브이몬 287·아구몬 252·파피몬 261)
+
+def egg_patch(dec, species, move=EGG_MOVE):
+    """압축 푼 오버레이 → (새 바이트 또는 None, 설명)"""
+    i = dec.find(EGG_CODE)
+    if i < 0 or dec.find(EGG_CODE, i + 1) >= 0: return None, '알 코드 모양을 %s' % ('못 찾음' if i < 0 else '둘 이상 찾음')
+    mi = i + 8                                                        # movs r1,#0xAF
+    lit = None
+    for k in range(mi + 2, mi + 0x60, 2):                             # 뒤의 ldr r1,[pc,#n] 중 값이 326 인 것
+        h = struct.unpack_from('<H', dec, k)[0]
+        if h >> 8 == 0x49:
+            t = ((k + 4) & ~3) + (h & 0xFF) * 4
+            if t + 4 <= len(dec) and struct.unpack_from('<I', dec, t)[0] == 326: lit = (k, t); break
+    if lit is None: return None, '신통력(326) 문자 풀을 못 찾음'
+    k, t = lit; base = (mi + 4) & ~3
+    if (t - base) % 4 or not (0 <= (t - base) // 4 < 256): return None, '문자 풀이 ldr 범위 밖'
+    d = bytearray(dec)
+    struct.pack_into('<H', d, mi, 0x4900 | ((t - base) // 4))       # ldr r1,[pc,#n] → 종 번호
+    struct.pack_into('<I', d, t, species)
+    struct.pack_into('<H', d, k, 0x2100 | (move & 0xFF))              # movs r1,#기술
+    return bytes(d), '알 코드 @0x%X: 종 175 → %d (문자 풀 @0x%X), 알 기술 신통력 326 → %d (@0x%X)' % (i, species, t, move, k)
+
+def starter_cmp_patch(f, new3):
+    """GetStarterChoice(0x00CE var) 뒤 0x200 바이트 안 Compare(0x0011) var,옛 스타팅 → 새 칸. → (새 바이트, 바꾼 수)"""
+    d = bytearray(f); n = 0; p = 0
+    while True:
+        p = d.find(b'\xce\x00', p)
+        if p < 0 or p + 4 > len(d): break
+        var = struct.unpack_from('<H', d, p + 2)[0]
+        if var >= 0x4000:
+            for k in range(p + 4, min(len(d) - 6, p + 0x200)):
+                if d[k] == 0x11 and d[k + 1] == 0 and struct.unpack_from('<H', d, k + 2)[0] == var:
+                    v = struct.unpack_from('<H', d, k + 4)[0]
+                    for olds, nv in zip(STARTER_OLD, new3):
+                        if v in olds and v != nv: struct.pack_into('<H', d, k + 4, nv); n += 1
+        p += 2
+    return bytes(d), n
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('rom'); ap.add_argument('--base', required=True); ap.add_argument('--out', default='hg_ev_out'); ap.add_argument('--apply', action='store_true')
     ap.add_argument('--draft', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'NDS_종_초안.tsv'))
@@ -213,10 +258,39 @@ def main():
                 if nd and A.apply: files[fi] = nd; bill_fi = fi
                 if nd: break
         else: say('빌: 이브이 주는 스크립트를 못 찾음')
+    # 10/19 v2: 라이벌 고르는 스크립트(GetStarterChoice → Compare 풀 칸·불꽃 칸, 아니면 물)를 지금 스타팅 칸으로.
+    #   디지골드가 287(브이몬)·252 로 바꿔 둔 것이 v1 스타팅(파닥몬 277)과 안 맞아, 풀 칸을 고르면 물 칸 라이벌이 나왔음. 파일 819(마지막 라이벌)는 하트골드 152·155 그대로였음
+    stv = {int(r['번호']): slot[r['우리 종'].strip()] for r in ev if r['종류'].strip() == '스타팅' and r['번호'].strip() in ('152', '155', '158') and r['우리 종'].strip() in slot}
+    cmp_fi = []
+    if len(stv) == 3:
+        new3 = (stv[152], stv[155], stv[158])
+        for fi, f in enumerate(files):
+            if b'\xce\x00' not in f: continue
+            nf, n = starter_cmp_patch(f, new3)
+            if n: cmp_fi.append('%d(%d곳)' % (fi, n)); files[fi] = nf if A.apply else f
+        say('라이벌 스타팅 비교(GetStarterChoice 뒤 Compare) → 풀 %d·불꽃 %d·물 %d: 파일 %s' % (new3 + (', '.join(cmp_fi) or '없음',)))
+    else: say('스타팅 줄이 3개가 아니라 라이벌 스타팅 비교는 건너뜀')
     if not A.apply:
         open(os.path.join(A.out, 'report.txt'), 'w', encoding='utf-8').write('\n'.join(R) + '\n'); return
     if [len(f) for i, f in enumerate(files) if i not in (bill_fi, lab_fi)] != [x for i, x in enumerate(sizes0) if i not in (bill_fi, lab_fi)]: raise SystemExit('실패: 스크립트 파일 크기가 바뀜 — 쓰지 않음')
     nar.files = files; out = NDS(raw); out.put(hg1.NARC_PATHS['script'], nar.build())
+    egg = next((r for r in ev if r['종류'].strip() == '알' and r['번호'].strip() == '175' and r['우리 종'].strip() in slot), None)
+    if egg:
+        import hg_scan, hg4_icons
+        sp_egg = slot[egg['우리 종'].strip()]; done_egg = None
+        d_ = out.d; y9o, y9s = struct.unpack_from('<II', d_, 0x50)
+        for k in range(y9s // 32):
+            e = list(struct.unpack_from('<8I', d_, y9o + 32 * k)); fid, flag = e[6], e[7]
+            s_, t_ = out.fat(fid); ob = bytes(d_[s_:t_])
+            dec = hg_scan.blz_decompress(ob) if flag & 0x01000000 else ob
+            if not dec or EGG_CODE not in dec: continue
+            nd, why = egg_patch(dec, sp_egg)
+            if nd:
+                how = hg4_icons.put_fid(out, fid, nd); e[7] = 0; struct.pack_into('<8I', out.d, y9o + 32 * k, *e)
+                done_egg = '오버레이 %d — %s (압축 풀어 %s)' % (e[0], why, how)
+            else: done_egg = '오버레이 %d — 못 고침: %s' % (e[0], why)
+            break
+        say('수수께끼의 알 → %s(칸 %d): %s' % (egg['우리 종'].strip(), sp_egg, done_egg or '알 코드(GiveTogepiEgg)를 오버레이에서 못 찾음 — 알은 그대로'))
     # 10/14 문장 값: 상점에서 파는 문장(심해의이빨 226)을 3000원으로(진화의 돌 2100보다 조금 비싸게). 궁극의 문장(227)은 안 팔지만 같이 맞춤
     ip, inar = find_itemdata(out)
     if inar is None: say('도구 자료(값)를 못 찾음 — 문장 값은 그대로')

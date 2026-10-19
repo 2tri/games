@@ -164,8 +164,9 @@ def main():
                 if mm and mm.group(1) in slot: NEXT[r['이름']].add(slot[mm.group(1)])
     pers = list(N['personal'].files); learn = list(N['learn'].files); evo = list(N['evo'].files)
     seed, names_ent = MSG[NAMEF]; names_ent = [list(e) for e in names_ent]
-    expect = {}; held_cleared = set(); dg_learn_n = [0]
+    expect = {}; held_cleared = set(); dg_learn_n = [0]; type_fixed = set()
     SPECIAL_DI = set()                     # 필살기로 쓴 기술 칸 (같은 레벨 정리에서 제자리 우선)
+    SPECIAL_INFO = {}                      # 칸 → (주인, 이름, 타입) — 기술 설명·전투 글용(10/19)
     for r in draft:
         ko = r['이름']
         if ko not in slot: continue
@@ -177,7 +178,7 @@ def main():
                 except ValueError as ex: P('이름 못 씀(글자표):', ko, RENAME_V2[ko], ex)
             if '스타팅 균형: 타입' in r['메모'] and s < len(pers):      # 10/19: 디지골드 종도 표의 타입으로 (스타팅 균형 고침만)
                 pb = bytearray(pers[s]); ts_ = r['타입'].split('/'); pb[6], pb[7] = TYPES.index(ts_[0]), TYPES.index(ts_[-1]); pers[s] = bytes(pb)
-                say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입']))
+                say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입'])); type_fixed.add(s)
             if ko in HELD_CLEAR and s < len(pers) and len(pers[s]) >= 16:      # 진화표 결정3·5: 야생이 지닌 진화 돌을 뺌(암흑·아머 갈래가 너무 일찍 열림)
                 pb = bytearray(pers[s]); held = struct.unpack_from('<HH', pb, 12)
                 if any(held): pb[12:16] = bytes(4); pers[s] = bytes(pb); held_cleared.add(s); say('야생이 지닌 물건 뺌: %s %s' % (ko, held))
@@ -350,7 +351,7 @@ def main():
             waza = NARC(rom.get('a/0/1/1')); wf = list(waza.files); wsizes = {len(f) for f in wf}
             if len(wf) < 468 or len(wsizes) != 1: raise ValueError('기술 자료 NARC 모양이 다름(파일 %d개, 크기 %s)' % (len(wf), sorted(wsizes)))
             if mvf is None: mvnames = list(mv[1]); mvf = [list(e) for e in MSG[mv[0]][1]]
-            STAGE_LV = {'유년기Ⅱ': 10, '유년기': 8, '성장기': 12, '성숙기': 22, '아머체': 24, '완전체': 34, '궁극체': 46}   # 10/16: 유년기Ⅱ(토코몬)가 없어 Lv20(=진화 Lv)에 배우던 것 고침
+            STAGE_LV = {'유년기Ⅱ': 5, '유년기': 5, '성장기': 12, '성숙기': 22, '아머체': 24, '완전체': 34, '궁극체': 46}   # 10/16: 유년기Ⅱ(토코몬)가 없어 Lv20(=진화 Lv)에 배우던 것 고침 · 10/19 v2: 유년기는 Lv8 에 진화 → 필살기 Lv5
             STAGE_PW = {'성장기': (50, 100, 15), '성숙기': (70, 100, 10), '아머체': (75, 100, 10), '완전체': (90, 95, 5), '궁극체': (110, 90, 5), '유년기Ⅱ': (30, 100, 20)}
             SPECIAL_TYPES = {10, 11, 12, 13, 14, 15, 16, 17}
             # 10/16 타입별 본보기 기술(4세대 번호, 한 마리 대상 공격): 노말 몸통박치기33 · 격투 깨트리다280 · 비행 날개치기17 · 독 독찌르기398 · 땅 뼈다귀치기125 · 바위 돌떨구기88
@@ -435,14 +436,14 @@ def main():
                 struct.pack_into('<H', d_, 0, 0); d_[2] = 1 if t_ in SPECIAL_TYPES else 0      # 효과 0 = 그냥 데미지 / 분류 0 물리 · 1 특수
                 d_[3] = min(255, pw_); d_[4] = t_; d_[5] = min(100, ac_); d_[6] = min(40, pp_); d_[7] = 0
                 wf[di] = bytes(d_); mvf[di] = enc_
-                SPECIAL_DI.add(di)
+                SPECIAL_DI.add(di); SPECIAL_INFO[di] = (owner, name_, t_)
                 if anim_files is not None and max(di, tpl) < len(anim_files): anim_files[di] = anim_files[tpl]; anim_n[0] += 1
                 lv = STAGE_LV.get(grade_of_.get(owner, ''), 20) + (8 if order_ == 2 else 0)
                 ls = hg1.learnset(learn[os_]); ls = [(l_, m_) for l_, m_ in ls if m_ != di] + [(lv, di)]
                 ls.sort(key=lambda x: x[0]); ls = ls[:20]
                 learn[os_] = enc_learn(ls)
                 if os_ in expect and 'nmoves' in expect[os_]: expect[os_]['nmoves'] = len(ls)
-                sp_log.append('%s → %s (칸 %d 「%s」 대신, Lv%d)' % (owner, name_, di, mvnames[di], lv)); mvnames[di] = name_
+                sp_log.append('%s → %s (칸 %d 「%s」 대신, Lv%d)' % (owner, name_, di, mvnames[di], lv)); mvnames[di] = name_[:8]
             waza.files = wf; waza_new = waza.build(); dexf[mv[0]] = mvf
             if anim_files is not None and anim_n[0]:
                 an_.files = anim_files; anim_new[0] = an_.build(); say('필살기 연출: %d개를 같은 타입 본보기 기술 연출로 바꿈(a/0/1/0)' % anim_n[0])
@@ -530,8 +531,112 @@ def main():
                     keep[nl] = m; n_move += 1; lv_log.append('칸 %d: %s Lv%d → Lv%d (살림: %s)' % (s_, nm, l, nl, '보조 기술' if c == 2 else ('그 디지몬다운 기술' if nm in KEEP_THEME else '다른 타입 공격'))); continue
             n_drop += 1; lv_log.append('칸 %d: %s Lv%d 날림 (%s)' % (s_, nm, l, why))
         learn[s_] = enc_learn(lv1 + sorted(keep.items()))
+        if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len(lv1) + len(keep)      # 10/19: 검산 기대값도 맞춤
     say('같은 레벨 기술 정리: %d종 — 옮김 %d · 날림 %d (자세히는 아래)' % (n_sp, n_move, n_drop))
     for x in lv_log: say('  ' + x)
+
+    # ---- 10/19 v2 사용자(v1 플레이): 「배우는 레벨이 1~2 차이로 붙어 있고(아구몬 Lv12 꼬마불꽃 → Lv13 메탈클로) 갑자기 세짐」
+    #   규칙(무조건 +1 로 밀지 않음): 필살기는 제자리 / 다른 기술은 앞뒤 기술과 3레벨 이상 떨어지게
+    #   1) 붙어 있으면: 앞 레벨에 같은 타입·같은 분류의 같거나 센 기술이 이미 있으면 → 날림(쓸모없음)
+    #   2) 아니면 뒤로 1~4레벨(진화 레벨 전까지) 중 3레벨 이상 떨어진 가장 이른 자리 → 없으면 (보조·약한 기술만) 앞으로 1~2레벨 → 없으면 2레벨 간격 → 없으면 날림
+    #   3) 위력 급상승: 공격 기술 위력이 그때까지 가장 센 기술보다 40 이상 높은데 앞 공격 기술과 4레벨 안이면 → 뒤로 1~4레벨(3레벨 간격 유지)
+    evo_cap = {}
+    for s_ in set(slot.values()):
+        if s_ < len(evo):
+            lvl_ = [prm for m_, prm, t_ in evos(evo[s_]) if m_ == EVO_LEVEL and prm]
+            if lvl_: evo_cap[s_] = min(lvl_) - 1
+    g_move = g_drop = g_spike = 0; g_log = []
+    for s_ in sorted(set(slot.values())):
+        if s_ >= len(learn): continue
+        ls_ = hg1.learnset(learn[s_])
+        lv1 = [x for x in ls_ if x[0] <= 1]; rest = sorted(x for x in ls_ if x[0] > 1)
+        if len(rest) < 2: continue
+        cap_ = evo_cap.get(s_, 100); placed = {}
+        for l, m in rest:
+            if m in SPECIAL_DI and l not in placed: placed[l] = m
+        changed_ = False
+        for l, m in rest:
+            if m in SPECIAL_DI and placed.get(l) == m: continue
+            c, pw, t = mvinfo(m); nm = mname(m)
+            lim = max(cap_, l)
+            def ok(p_, need):
+                return 2 <= p_ <= lim and p_ not in placed and all(abs(p_ - L) >= need for L in placed)
+            def best_before(p_): return max([mvinfo(M)[1] for L, M in list(placed.items()) + lv1 if L < p_ and mvinfo(M)[0] != 2] + [0])
+            def last_atk(p_): return max([L for L, M in placed.items() if L < p_ and mvinfo(M)[0] != 2 and mvinfo(M)[1] > 1] + [0])
+            if ok(l, 3): p_ = l
+            else:
+                dom = c != 2 and nm not in KEEP_THEME and any(L < l and mvinfo(M)[2] == t and mvinfo(M)[0] == c and mvinfo(M)[1] >= pw for L, M in placed.items())
+                if dom:
+                    g_drop += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d 날림 (붙어 있고, 앞에 같은 타입 같거나 센 기술)' % (s_, nm, l)); continue
+                # 가까운 자리부터(앞으로는 2레벨까지 — 앞당겨도 위력 급상승이 안 생길 때만, 뒤로는 4레벨까지). 붙은 기술을 하나씩 밀어 줄줄이 밀리는 것을 줄임
+                def early_ok(q): return c == 2 or pw < best_before(q) + 40
+                cands = sorted([q for q in range(l - 2, l + 5) if q != l and (q > l or early_ok(q))], key=lambda q: (abs(q - l), q < l))
+                p_ = next((q for need in (3, 2) for q in cands if ok(q, need)), None)
+                if p_ is None:
+                    g_drop += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d 날림 (앞뒤 기술과 3레벨 떨어진 자리가 없음)' % (s_, nm, l)); continue
+                g_move += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (붙어 있어 옮김)' % (s_, nm, l, p_))
+            if c != 2 and pw > 1:
+                bb_ = best_before(p_); la_ = last_atk(p_)
+                if bb_ and pw - bb_ >= 40 and la_ and p_ - la_ < 4:
+                    q_ = next((q for q in range(p_ + 1, p_ + 5) if q - la_ >= 4 and ok(q, 3)), None)   # 앞 공격 기술과 4레벨 이상 벌어질 때만 옮김(1레벨 밀기는 뜻 없음)
+                    if q_: g_spike += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (위력 급상승 %d→%d 완화)' % (s_, nm, p_, q_, bb_, pw)); p_ = q_
+            placed[p_] = m
+        if changed_:
+            learn[s_] = enc_learn((lv1 + sorted(placed.items()))[:20])
+            if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len((lv1 + sorted(placed.items()))[:20])
+    left_ = 0
+    for s_ in set(slot.values()):
+        r_ = sorted(x[0] for x in hg1.learnset(learn[s_]) if x[0] > 1) if s_ < len(learn) else []
+        left_ += sum(1 for a_, b_ in zip(r_, r_[1:]) if b_ - a_ <= 2)
+    spk_ = 0
+    for s_ in set(slot.values()):
+        if s_ >= len(learn): continue
+        bst_ = 0; la_ = 0
+        for l_, m_ in sorted(x for x in hg1.learnset(learn[s_]) if x[0] > 1):
+            c_, pw_, _t = mvinfo(m_)
+            if c_ == 2 or pw_ <= 1: continue
+            if bst_ and pw_ - bst_ >= 40 and l_ - la_ < 4: spk_ += 1
+            bst_ = max(bst_, pw_); la_ = l_
+    say('배우는 레벨 간격 정리(10/19): 옮김 %d · 날림 %d · 위력 급상승 완화 %d · 남은 2레벨 이하 간격 %d · 남은 위력 급상승(+40, 4레벨 안) %d' % (g_move, g_drop, g_spike, left_, spk_))
+    for x in g_log: say('  ' + x)
+    open(os.path.join(A.out, '기술간격.txt'), 'w', encoding='utf-8').write('\n'.join(g_log) + '\n')
+
+    # ---- 10/19 v2 사용자(v1 플레이): 기술 이름이 글 파일 여러 곳에 있음 — 「아구몬의 꼬마불꽃」 대신 「사념의박치기」가 나옴
+    #   ① 기술 이름표(mv) ② 전투 글 「X의\n기술!」(기술마다 3줄: 내 · 야생 · 상대, 원래 이름이 그대로 들어 있음) ③ 기술 설명(필살기는 빌린 기술 설명이 남음)
+    #   → ② 를 이름표에 맞춰 다시 쓰고, ③ 필살기 설명을 새로 씀. rom_check 가 ①② 를 대조함
+    if mv and 'mvnames' in dir():
+        nmv = len(mv[1]); bfi = None; dfi = None
+        for fi_, (_, ent_) in enumerate(MSG):
+            if len(ent_) == 3 * nmv and bfi is None:
+                hit_ = sum(1 for m_ in range(1, nmv) if mv[1][m_] and mv[1][m_] in CM.dec(ent_[3 * m_]))
+                if hit_ > nmv * 0.8: bfi = fi_
+            if len(ent_) == nmv and fi_ != mv[0] and dfi is None:
+                ds_ = [CM.dec(e_) for e_ in ent_[1:]]
+                if ds_ and sum(len(x_) for x_ in ds_) / len(ds_) > 20 and sum(1 for x_ in ds_ if NL_TOKEN in x_) > len(ds_) * 0.8: dfi = fi_
+        say('기술 글 파일: 이름표 msg %d, 전투 글 msg %s, 설명 msg %s' % (mv[0], bfi, dfi))
+        if bfi is None: P('전투 기술 글 파일(기술 수 × 3줄)을 못 찾음 — 전투에서 옛 기술 이름이 나올 수 있음')
+        else:
+            be_ = [list(e_) for e_ in MSG[bfi][1]]; nb_ = 0; miss_b = []
+            for m_ in range(1, nmv):
+                new_ = mvnames[m_] if isinstance(mvnames[m_], str) else CM.dec(mvnames[m_])
+                old_ = mv[1][m_]
+                if not new_ or new_ == old_: continue
+                for k_ in range(3):
+                    s0 = CM.dec(MSG[bfi][1][3 * m_ + k_])
+                    if old_ and old_ in s0:
+                        try: be_[3 * m_ + k_] = CM.enc(s0.replace(old_, new_)); nb_ += 1
+                        except ValueError as ex: miss_b.append('%s(%s)' % (new_, ex))
+                    else: miss_b.append('%d:%s 줄%d' % (m_, old_, k_))
+            dexf[bfi] = be_; say('전투 기술 글 맞춤: %d줄 (옛 이름을 못 찾은 줄 %d: %s)' % (nb_, len(miss_b), miss_b[:6]))
+        if dfi is not None and SPECIAL_INFO:
+            de_ = [list(e_) for e_ in MSG[dfi][1]]; nd_ = 0
+            for di_, (ow_, nm_, t_) in SPECIAL_INFO.items():
+                if di_ >= len(de_): continue
+                own_ = RENAME.get(ow_, ow_)
+                txt_ = NL_TOKEN.join([own_ + '의', '필살기.', TYPES[t_] + ' 타입의', '강력한 일격을', '날린다.'])
+                try: de_[di_] = CM.enc(txt_); nd_ += 1
+                except ValueError as ex: P('필살기 설명 못 씀:', nm_, ex)
+            dexf[dfi] = de_; say('필살기 설명 새로 씀: %d개 (msg %d)' % (nd_, dfi))
 
     # 종 칸·실제 타입·능력치 목록 (밸런스 검토용)
     with open(os.path.join(OUT_DIR if 'OUT_DIR' in globals() else 'hg2_out', 'slots.tsv'), 'w', encoding='utf-8') as f_:
@@ -571,7 +676,7 @@ def main():
     O = N['personal'].files
     for i in held_cleared:                                # 지닌 물건만 비고 나머지는 그대로인지
         if not (P2[i][:12] == O[i][:12] and P2[i][16:] == O[i][16:] and P2[i][12:16] == bytes(4)): P('지닌 물건 비우기 검산 실패:', i)
-    others = [i for i in range(len(pers)) if i not in expect and i not in held_cleared and i < len(P2) and P2[i] != O[i]]
+    others = [i for i in range(len(pers)) if i not in expect and i not in held_cleared and i not in type_fixed and i < len(P2) and P2[i] != O[i]]   # 10/19: 타입만 고친 칸(스타팅 균형)은 일부러 바꾼 것
     say('바꾸지 않은 칸 중 능력치가 달라진 칸: %d (0이어야 함)' % len(others))
     if others: P('엉뚱한 칸이 바뀜:', others[:20])
     # 10/15: 이름 → 칸 표(rom_check 의 「포켓몬 흔적」 검사가 씀). 새그림 = 이 칸의 전투 그림이 새로 들어가야 하는지(디지골드 자기 칸 디지몬은 원래 그림)
