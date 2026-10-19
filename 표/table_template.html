@@ -1,0 +1,368 @@
+<title>디지몬골드 종 도감표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 배치: 위에 검색·필터 막대(고정), 아래는 진화 계통 트리 / 전체 목록 / 점검 메모 세 면. 트리는 중첩 상자로 선을 그려 계통이 눈에 보이게 한다. */
+:root {
+  --bg: #f3f6f6; --surface: #ffffff; --surface2: #ecf1f2; --fg: #14201f; --muted: #566a69; --line: #d2dddc;
+  --accent: #0b7a82; --accent-soft: #d6edef; --accent-fg: #ffffff;
+  --vac: #1f5fa8; --vac-bg: #dbe8f7; --dat: #23753f; --dat-bg: #d8efe1; --vir: #84309f; --vir-bg: #ecdaf3; --neu: #566a69; --neu-bg: #e2e8e8;
+  --dark: #a93c27; --dark-bg: #f8ddd6; --star: #9a6200; --star-bg: #fbefd0;
+  --chip-bg-l: 90%; --chip-fg-l: 26%;
+  --font-ui: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1516; --surface: #151e1f; --surface2: #1b2627; --fg: #e5eeed; --muted: #92a6a5; --line: #29393a;
+    --accent: #4fc4cc; --accent-soft: #15383b; --accent-fg: #06191b;
+    --vac: #7fb4ee; --vac-bg: #17304d; --dat: #6fcf91; --dat-bg: #153a24; --vir: #cf9be6; --vir-bg: #3a1f48; --neu: #92a6a5; --neu-bg: #223031;
+    --dark: #f0937f; --dark-bg: #46231b; --star: #f0bd57; --star-bg: #3d2f10;
+    --chip-bg-l: 24%; --chip-fg-l: 86%; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1516; --surface: #151e1f; --surface2: #1b2627; --fg: #e5eeed; --muted: #92a6a5; --line: #29393a;
+  --accent: #4fc4cc; --accent-soft: #15383b; --accent-fg: #06191b;
+  --vac: #7fb4ee; --vac-bg: #17304d; --dat: #6fcf91; --dat-bg: #153a24; --vir: #cf9be6; --vir-bg: #3a1f48; --neu: #92a6a5; --neu-bg: #223031;
+  --dark: #f0937f; --dark-bg: #46231b; --star: #f0bd57; --star-bg: #3d2f10;
+  --chip-bg-l: 24%; --chip-fg-l: 86%; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; }
+.wrap { max-width: 1180px; margin: 0 auto; }
+h1 { font-size: 22px; font-weight: 600; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+.top { padding: 20px 0 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; }
+.top .sub { color: var(--muted); font-size: 12.5px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font-size: 12.5px; color: var(--muted); }
+.legend b { color: var(--fg); font-weight: 600; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding: 10px 0 8px; display: grid; gap: 8px; border-bottom: 1px solid var(--line); margin-top: 10px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.row1 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.tabs button { border: 0; background: transparent; color: var(--muted); padding: 7px 14px; font: inherit; font-weight: 500; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); }
+.tabs button + button { border-left: 1px solid var(--line); }
+input[type="search"], select { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; min-width: 0; }
+input[type="search"] { flex: 1 1 220px; }
+.btn { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 11px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chips .lab { color: var(--muted); font-size: 12px; margin-right: 2px; }
+.fchip { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.fchip[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.count { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; }
+.pill.vac { color: var(--vac); background: var(--vac-bg); } .pill.dat { color: var(--dat); background: var(--dat-bg); }
+.pill.vir { color: var(--vir); background: var(--vir-bg); } .pill.neu { color: var(--neu); background: var(--neu-bg); font-weight: 500; }
+.tchip { display: inline-block; font-size: 12px; border-radius: 4px; padding: 1px 6px; white-space: nowrap;
+  background: hsl(var(--h) 40% var(--chip-bg-l)); color: hsl(var(--h) 50% var(--chip-fg-l)); }
+.stg { font-size: 11.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+/* 트리 */
+.sec { margin-top: 22px; }
+.sec > h2 { display: flex; gap: 8px; align-items: baseline; }
+.sec > h2 small { color: var(--muted); font-weight: 400; font-size: 12.5px; }
+.node { position: relative; }
+.kids { margin-left: 11px; padding-left: 13px; border-left: 1px solid var(--line); }
+.kids > .node::before { content: ""; position: absolute; left: -13px; top: 22px; width: 11px; border-top: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) 78px 138px 104px 220px; gap: 4px 10px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; margin: 4px 0; cursor: pointer; }
+.row:hover { border-color: var(--accent); }
+.row[aria-expanded="true"] { border-color: var(--accent); background: var(--surface); }
+.row.ctx { opacity: .55; }
+.row.flash { animation: flash 1.4s ease-out; }
+@keyframes flash { 0% { background: var(--accent-soft); } 100% { background: var(--surface); } }
+@media (prefers-reduced-motion: reduce) { .row.flash { animation: none; background: var(--accent-soft); } }
+.c-name { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; min-width: 0; }
+.nm { font-weight: 600; }
+.dup { font-size: 11.5px; color: var(--muted); }
+.cond { font-size: 11.5px; font-family: var(--font-num); color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 0 6px; }
+.cond.dk { color: var(--dark); background: var(--dark-bg); }
+.fold { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 0 4px; font-size: 13px; line-height: 1; }
+.c-type { display: flex; flex-wrap: wrap; gap: 4px; }
+.c-stat { display: flex; align-items: center; gap: 6px; }
+.bst { height: 5px; flex: 1; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 20px; }
+.bst i { display: block; height: 100%; background: var(--accent); }
+.c-sp { font-size: 12.5px; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.star { color: var(--star); font-weight: 600; }
+.row.ref { grid-template-columns: 1fr; color: var(--muted); background: transparent; border-style: dashed; padding: 5px 10px; }
+.row.ref .nm { color: var(--fg); font-weight: 500; }
+.detail { background: var(--surface); border: 1px solid var(--accent); border-radius: 6px; padding: 12px 14px; margin: -2px 0 8px; display: grid; gap: 14px;
+  grid-template-columns: minmax(220px, 280px) 1fr; }
+.detail > * { min-width: 0; }
+.dcol { display: grid; gap: 12px; align-content: start; }
+.dh { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 4px; letter-spacing: .02em; }
+.stat { display: grid; grid-template-columns: 52px 34px 1fr; gap: 6px; align-items: center; font-size: 12.5px; }
+.stat .bar2 { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; } .stat .bar2 i { display: block; height: 100%; background: var(--accent); }
+.kv { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+.kv span:first-child { color: var(--muted); }
+.links a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); cursor: pointer; }
+.links li { margin: 2px 0; }
+ul.plain { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; background: var(--surface2); position: sticky; top: 0; }
+td.r, th.r { text-align: right; }
+tr.sp td { background: var(--star-bg); }
+.sortable th { cursor: pointer; user-select: none; } .sortable th[aria-sort] { color: var(--accent); }
+tr.lrow { cursor: pointer; } tr.lrow:hover td { background: var(--accent-soft); }
+.more { background: transparent; border: 0; color: var(--accent); cursor: pointer; font: inherit; padding: 2px 0; }
+.empty { padding: 28px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 6px; margin-top: 16px; }
+.memo { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; margin-top: 14px; }
+.memo h2 { margin-top: 2px; }
+.memo ul { margin: 6px 0 0; padding-left: 18px; } .memo li { margin: 4px 0; }
+.memo .ok { color: var(--dat); font-weight: 600; } .memo .warn { color: var(--dark); font-weight: 600; }
+[hidden] { display: none !important; }
+@media (max-width: 760px) {
+  .row { grid-template-columns: 1fr auto; }
+  .row .c-type { grid-column: 1 / 2; } .row .c-attr { grid-column: 2 / 3; grid-row: 1; justify-self: end; }
+  .row .c-stat { grid-column: 1 / 2; } .row .c-sp { grid-column: 1 / -1; }
+  .detail { grid-template-columns: 1fr; }
+  .kids { margin-left: 6px; padding-left: 9px; } .kids > .node::before { left: -9px; width: 7px; }
+}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <h1>디지몬골드 종 도감표</h1>
+    <span class="sub" id="stamp"></span>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="bar" id="bar">
+    <div class="row1">
+      <div class="tabs" role="tablist" aria-label="보기">
+        <button role="tab" id="tab-tree" aria-selected="true">진화 계통</button>
+        <button role="tab" id="tab-list" aria-selected="false">전체 목록</button>
+        <button role="tab" id="tab-memo" aria-selected="false">점검 메모</button>
+      </div>
+      <input type="search" id="q" placeholder="이름 또는 기술 이름 (예: 아구몬, 불꽃세례)" aria-label="검색">
+      <select id="jump" aria-label="계통 바로가기"><option value="">계통 바로가기</option></select>
+    </div>
+    <div class="chips" id="f-stage"><span class="lab">단계</span></div>
+    <div class="chips" id="f-attr"><span class="lab">속성</span></div>
+    <div class="row1">
+      <select id="f-type" aria-label="타입"><option value="">타입 전체</option></select>
+      <button class="btn" id="btn-collapse">계통 접기</button>
+      <button class="btn" id="btn-expand">계통 펼치기</button>
+      <button class="btn" id="btn-reset">필터 지우기</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <main id="main"></main>
+</div>
+
+<script>
+const DATA = __DATA__;
+(function () {
+  var SP = DATA.species, BY = new Map(SP.map(function (r) { return [r.i, r]; }));
+  var STAGES = ['유년기Ⅱ', '성장기', '성숙기', '아머체', '완전체', '궁극체'];
+  var ATTRS = ['백신', '데이터', '바이러스', '중립'];
+  var ACLS = { '백신': 'vac', '데이터': 'dat', '바이러스': 'vir', '중립': 'neu' };
+  var STAT_NAMES = ['HP', '공격', '방어', '특공', '특방', '스피드'];
+  var TYPE_H = {}; DATA.types.forEach(function (t, i) { TYPE_H[t] = Math.round(i * 360 / DATA.types.length); });
+  function si(s) { return STAGES.indexOf(s); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function tchip(t) { return '<span class="tchip" style="--h:' + (TYPE_H[t] || 0) + '">' + esc(t) + '</span>'; }
+  function apill(r) { var a = r.a; var txt = a === '중립' ? (r.ao && r.ao !== '중립' ? r.ao : '프리') : a; return '<span class="pill ' + ACLS[a] + '" title="' + (a === '중립' ? '상성 없음' : '백신>바이러스>데이터>백신') + '">' + esc(txt) + '</span>'; }
+  var cnt = {}; SP.forEach(function (r) { cnt[r.n] = (cnt[r.n] || 0) + 1; });
+  function dupTag(r) { return cnt[r.n] > 1 ? '<span class="dup" title="같은 이름의 종이 둘 있음">⟨' + esc(r.t.join('/')) + (r.d !== r.n ? ' · 설계명 ' + esc(r.d) : '') + '⟩</span>' : ''; }
+  var parents = {}; SP.forEach(function (r) { r.e.forEach(function (e) { (parents[e.t] = parents[e.t] || []).push({ id: r.i, c: e.c, k: e.k }); }); });
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---- 머리말
+  $('stamp').textContent = DATA.rom + ' · ' + SP.length + '종 · 진화 연결 ' + SP.reduce(function (a, r) { return a + r.e.length; }, 0) + ' · 롬에서 직접 읽음';
+  $('legend').innerHTML = '<b>속성 상성</b> <span class="pill vac">백신</span> → <span class="pill vir">바이러스</span> → <span class="pill dat">데이터</span> → <span class="pill vac">백신</span> 유리 ×1.2 · 불리 ×0.8 · 프리·언노운은 상성 없음 &nbsp;|&nbsp; <span class="cond dk">암흑</span> 어둠의돌·검은 톱니로 가는 진화 &nbsp;|&nbsp; <span class="star">★</span> 필살기';
+
+  // ---- 필터
+  var st = { q: '', stages: new Set(), attrs: new Set(), type: '', view: 'tree', sort: 'i', dir: 1 };
+  STAGES.forEach(function (s) { if (SP.some(function (r) { return r.s === s; })) { var b = document.createElement('button'); b.className = 'fchip'; b.textContent = s; b.setAttribute('aria-pressed', 'false'); b.onclick = function () { toggle(st.stages, s, b); }; $('f-stage').appendChild(b); } });
+  ATTRS.forEach(function (a) { var b = document.createElement('button'); b.className = 'fchip'; b.textContent = a === '중립' ? '프리·기타' : a; b.setAttribute('aria-pressed', 'false'); b.onclick = function () { toggle(st.attrs, a, b); }; $('f-attr').appendChild(b); });
+  DATA.types.forEach(function (t) { var o = document.createElement('option'); o.value = t; o.textContent = t; $('f-type').appendChild(o); });
+  function toggle(set, v, b) { if (set.has(v)) set.delete(v); else set.add(v); b.setAttribute('aria-pressed', set.has(v) ? 'true' : 'false'); apply(); }
+  $('q').addEventListener('input', function () { st.q = this.value.trim(); apply(); });
+  $('f-type').addEventListener('change', function () { st.type = this.value; apply(); });
+  $('btn-reset').onclick = function () { st.q = ''; st.stages.clear(); st.attrs.clear(); st.type = ''; $('q').value = ''; $('f-type').value = ''; document.querySelectorAll('.fchip').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); }); apply(); };
+
+  function matchInfo(r) {
+    if (st.stages.size && !st.stages.has(r.s)) return null;
+    if (st.attrs.size && !st.attrs.has(r.a)) return null;
+    if (st.type && r.t.indexOf(st.type) < 0) return null;
+    if (!st.q) return { mv: null };
+    var q = st.q.toLowerCase();
+    if (r.n.toLowerCase().indexOf(q) >= 0 || r.d.toLowerCase().indexOf(q) >= 0) return { mv: null };
+    var hit = r.m.filter(function (m) { return m[1].toLowerCase().indexOf(q) >= 0; });
+    return hit.length ? { mv: hit } : null;
+  }
+
+  // ---- 트리 만들기
+  var claimed = new Set(), sections = [];
+  function build(id, cond, dark) {
+    if (claimed.has(id)) return { id: id, cond: cond, dark: dark, ref: true, kids: [] };
+    claimed.add(id);
+    var r = BY.get(id);
+    var kids = r.e.slice().sort(function (a, b) { return si(BY.get(a.t).s) - si(BY.get(b.t).s) || a.t - b.t; }).map(function (e) { return build(e.t, e.c, e.k); });
+    return { id: id, cond: cond, dark: dark, ref: false, kids: kids };
+  }
+  var roots = SP.filter(function (r) { return !parents[r.i]; }).sort(function (a, b) { return si(a.s) - si(b.s) || a.i - b.i; });
+  var order = [1, 0, 3, 2, 4, 5];
+  order.forEach(function (sidx) {
+    var rs = roots.filter(function (r) { return si(r.s) === sidx; });
+    if (!rs.length) return;
+    sections.push({ title: STAGES[sidx] + '에서 시작하는 계통', roots: rs.map(function (r) { return build(r.i, '', 0); }) });
+  });
+  var rest = SP.filter(function (r) { return !claimed.has(r.i); }).sort(function (a, b) { return si(a.s) - si(b.s) || a.i - b.i; });
+  if (rest.length) { var extra = []; rest.forEach(function (r) { if (!claimed.has(r.i)) extra.push(build(r.i, '', 0)); }); sections.push({ title: '다른 종에서 이어지는 고리', roots: extra }); }
+
+  var jump = $('jump');
+  sections.forEach(function (s, si_) { s.roots.forEach(function (n) { var o = document.createElement('option'); o.value = n.id; o.textContent = BY.get(n.id).n + ' · ' + BY.get(n.id).s; jump.appendChild(o); }); });
+  jump.addEventListener('change', function () { if (this.value) { setView('tree'); goTo(+this.value); this.value = ''; } });
+
+  var nodeEls = new Map();      // id → 본 줄 DOM 상자
+  function statBar(v) { return '<div class="stat"><span>' + '' + '</span></div>'; }
+  function rowHTML(n, r) {
+    var kidsReal = n.kids.some(function (k) { return !k.ref; });
+    var sp = r.m.filter(function (m) { return m[7]; }).map(function (m) { return m[1]; });
+    return '<div class="c-name">' + (kidsReal ? '<button class="fold" aria-label="아래 단계 접기/펼치기" title="아래 단계 접기/펼치기">▾</button>' : '') +
+      (n.cond ? '<span class="cond' + (n.dark ? ' dk' : '') + '" title="이 종으로 진화하는 조건">' + (n.dark ? '암흑 · ' : '') + esc(n.cond) + '</span>' : '') +
+      '<span class="nm">' + esc(r.n) + '</span><span class="stg">' + esc(r.s) + '</span>' + dupTag(r) + '</div>' +
+      '<div class="c-attr">' + apill(r) + '</div><div class="c-type">' + r.t.map(tchip).join('') + '</div>' +
+      '<div class="c-stat"><span class="num">' + r.b + '</span><span class="bst"><i style="width:' + Math.min(100, Math.round(r.b / 700 * 100)) + '%"></i></span></div>' +
+      '<div class="c-sp" data-sp>' + spText(r, null) + '</div>';
+  }
+  function spText(r, hit) {
+    if (hit && hit.length) return hit.slice(0, 3).map(function (m) { return '<span class="' + (m[7] ? 'star' : '') + '">' + (m[7] ? '★' : '') + esc(m[1]) + '</span> <span class="num">Lv' + m[0] + '</span>'; }).join(' · ');
+    var sp = r.m.filter(function (m) { return m[7]; });
+    return (sp.length ? '<span class="star">★ ' + sp.map(function (m) { return esc(m[1]); }).join(' · ') + '</span> · ' : '') + '기술 ' + r.m.length;
+  }
+  function renderNode(n) {
+    var r = BY.get(n.id), box = document.createElement('div'); box.className = 'node'; box.dataset.id = n.id;
+    var row = document.createElement('div');
+    if (n.ref) {
+      row.className = 'row ref'; row.setAttribute('role', 'button'); row.tabIndex = 0;
+      row.innerHTML = '<div class="c-name"><span class="cond' + (n.dark ? ' dk' : '') + '">' + (n.dark ? '암흑 · ' : '') + esc(n.cond) + '</span><span>↗</span><span class="nm">' + esc(r.n) + '</span>' + dupTag(r) + '<span>— 위쪽 계통에서 이어서 봄 (눌러서 이동)</span></div>';
+      row.onclick = function () { goTo(n.id); }; row.onkeydown = function (e) { if (e.key === 'Enter') goTo(n.id); };
+      box.appendChild(row); box._n = n; box._row = row; return box;
+    }
+    row.className = 'row'; row.setAttribute('role', 'button'); row.tabIndex = 0; row.setAttribute('aria-expanded', 'false'); row.innerHTML = rowHTML(n, r);
+    var det = document.createElement('div'); det.className = 'detail'; det.hidden = true;
+    var kids = document.createElement('div'); kids.className = 'kids';
+    n.kids.forEach(function (k) { kids.appendChild(renderNode(k)); });
+    function toggleDetail() { var open = det.hidden; if (open && !det.dataset.done) { det.innerHTML = detailHTML(r); det.dataset.done = 1; } det.hidden = !open; row.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+    row.onclick = function (e) { if (e.target.closest('.fold')) { kids.hidden = !kids.hidden; e.target.closest('.fold').textContent = kids.hidden ? '▸' : '▾'; return; } toggleDetail(); };
+    row.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDetail(); } };
+    box.appendChild(row); box.appendChild(det); if (n.kids.length) box.appendChild(kids);
+    box._n = n; box._row = row; box._det = det; box._kids = kids; box._toggle = toggleDetail; nodeEls.set(n.id, box); return box;
+  }
+  document.addEventListener('click', function (e) { var a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); e.stopPropagation(); goTo(+a.dataset.go); } });
+
+  // ---- 상세
+  function detailHTML(r) {
+    var stats = r.h.map(function (v, i) { return '<div class="stat"><span>' + STAT_NAMES[i] + '</span><span class="num">' + v + '</span><span class="bar2"><i style="width:' + Math.min(100, Math.round(v / 180 * 100)) + '%"></i></span></div>'; }).join('');
+    var from = (parents[r.i] || []).reduce(function (a, p) { var f = a.find(function (x) { return x.id === p.id; }); if (f) f.c.push(p.c); else a.push({ id: p.id, c: [p.c] }); return a; }, []);
+    var tos = r.e;
+    function link(id) { return '<a data-go="' + id + '">' + esc(BY.get(id).n) + '</a>' + (cnt[BY.get(id).n] > 1 ? ' <span class="dup">⟨' + esc(BY.get(id).t.join('/')) + '⟩</span>' : ''); }
+    var evo = '<div><div class="dh">진화 전</div>' + (from.length ? '<ul class="plain links">' + from.map(function (f) { return '<li>' + link(f.id) + ' <span class="cond">' + esc(f.c.filter(function (v, i, a) { return a.indexOf(v) === i; }).join(' / ')) + '</span></li>'; }).join('') + '</ul>' : '<span class="dup">없음 (야생·이벤트로 만남)</span>') + '</div>' +
+      '<div><div class="dh">진화 후</div>' + (tos.length ? '<ul class="plain links">' + tos.map(function (e) { return '<li>' + link(e.t) + ' <span class="cond' + (e.k ? ' dk' : '') + '">' + (e.k ? '암흑 · ' : '') + esc(e.c) + '</span></li>'; }).join('') + '</ul>' : '<span class="dup">없음</span>') + '</div>';
+    var moves = '<div class="tw"><table><thead><tr><th class="r">Lv</th><th>기술</th><th>타입</th><th>분류</th><th class="r">위력</th><th class="r">명중</th><th class="r">PP</th></tr></thead><tbody>' +
+      r.m.map(function (m) { return '<tr' + (m[7] ? ' class="sp"' : '') + '><td class="r num">' + m[0] + '</td><td>' + (m[7] ? '<span class="star">★ </span>' : '') + esc(m[1]) + '</td><td>' + tchip(m[2]) + '</td><td>' + esc(m[3]) + '</td><td class="r num">' + (m[4] > 1 ? m[4] : '-') + '</td><td class="r num">' + (m[5] ? m[5] : '-') + '</td><td class="r num">' + m[6] + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    var w = r.w, wshow = w.slice(0, 6);
+    var where = '<div><div class="dh">출현</div><ul class="plain">' +
+      (r.ev.length ? r.ev.map(function (x) { return '<li><span class="cond">이벤트</span> ' + esc(x) + '</li>'; }).join('') : '') +
+      (r.tr.length ? '<li><span class="cond">트레이너</span> ' + esc(r.tr.slice(0, 6).join(', ')) + (r.tr.length > 6 ? ' 외 ' + (r.tr.length - 6) : '') + '</li>' : '') +
+      (wshow.length ? wshow.map(function (x) { return '<li>' + esc(x[0]) + ' <span class="num">Lv' + (x[1] === x[2] ? x[1] : x[1] + '~' + x[2]) + '</span> <span class="dup">' + esc(x[3]) + (x[4] ? ' · 최대 ' + x[4] + '%' : '') + '</span></li>'; }).join('') + (w.length > 6 ? '<li><button class="more" data-more="' + r.i + '">야생 장소 ' + (w.length - 6) + '곳 더 보기</button></li>' : '') : '<li class="dup">야생 출현 없음' + (r.ev.length || r.tr.length ? '' : ' — 진화로만 얻음') + '</li>') + '</ul></div>';
+    return '<div class="dcol"><div><div class="dh">능력치 (합 ' + r.b + ')</div>' + stats + '</div>' +
+      '<div class="kv"><span>특성</span><span>' + esc(r.ab.join(', ') || '-') + '</span></div><div class="kv"><span>포획률</span><span class="num">' + r.cr + '</span><span>출처</span><span>' + esc(r.o) + '</span></div>' + evo + where + '</div>' +
+      '<div><div class="dh">배우는 기술 (' + r.m.length + ')</div>' + moves + '</div>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-more]'); if (!b) return; e.stopPropagation(); var r = BY.get(+b.dataset.more); var ul = b.closest('ul');
+    b.closest('li').remove(); r.w.slice(6).forEach(function (x) { var li = document.createElement('li'); li.innerHTML = esc(x[0]) + ' <span class="num">Lv' + (x[1] === x[2] ? x[1] : x[1] + '~' + x[2]) + '</span> <span class="dup">' + esc(x[3]) + (x[4] ? ' · 최대 ' + x[4] + '%' : '') + '</span>'; ul.appendChild(li); });
+  });
+
+  // ---- 화면
+  var main = $('main'), treeBox = document.createElement('div'), listBox = document.createElement('div'), memoBox = document.createElement('div');
+  sections.forEach(function (s) {
+    var sec = document.createElement('section'); sec.className = 'sec'; var n = 0;
+    s.roots.forEach(function (r) { (function c(x) { if (!x.ref) n++; x.kids.forEach(c); })(r); });
+    sec.innerHTML = '<h2>' + esc(s.title) + ' <small>' + s.roots.length + '개 계통 · ' + n + '종</small></h2>'; sec._s = s;
+    s.roots.forEach(function (r) { sec.appendChild(renderNode(r)); }); treeBox.appendChild(sec);
+  });
+  treeBox.appendChild(Object.assign(document.createElement('div'), { className: 'empty', hidden: true, id: 'empty-tree', textContent: '조건에 맞는 종이 없습니다. 필터 지우기를 눌러 보세요.' }));
+  memoBox.innerHTML = __MEMO__;
+  main.appendChild(treeBox); main.appendChild(listBox); main.appendChild(memoBox);
+
+  function setView(v) {
+    st.view = v; treeBox.hidden = v !== 'tree'; listBox.hidden = v !== 'list'; memoBox.hidden = v !== 'memo';
+    ['tree', 'list', 'memo'].forEach(function (k) { $('tab-' + k).setAttribute('aria-selected', k === v ? 'true' : 'false'); });
+    document.querySelectorAll('#bar .chips, #f-type, #btn-reset, #btn-collapse, #btn-expand, #jump, #q, #count').forEach(function (el) { el.hidden = v === 'memo'; });
+    $('btn-collapse').hidden = $('btn-expand').hidden = v !== 'tree'; $('jump').hidden = v !== 'tree'; apply();
+  }
+  $('tab-tree').onclick = function () { setView('tree'); }; $('tab-list').onclick = function () { setView('list'); }; $('tab-memo').onclick = function () { setView('memo'); };
+  $('btn-collapse').onclick = function () { nodeEls.forEach(function (b) { if (b._kids) { var root = !b.parentElement.classList.contains('kids'); b._kids.hidden = true; var f = b._row.querySelector('.fold'); if (f) f.textContent = '▸'; if (b._det && !b._det.hidden) b._toggle(); } }); };
+  $('btn-expand').onclick = function () { nodeEls.forEach(function (b) { if (b._kids) { b._kids.hidden = false; var f = b._row.querySelector('.fold'); if (f) f.textContent = '▾'; } }); };
+
+  // ---- 적용
+  function apply() {
+    if (st.view === 'tree') {
+      var M = new Map(); SP.forEach(function (r) { var m = matchInfo(r); if (m) M.set(r.i, m); });
+      var shown = 0;
+      function vis(box) {
+        var n = box._n, self = M.has(n.id), any = false;
+        if (n.ref) { box.hidden = !self; return self; }
+        var kidsEl = box._kids ? Array.prototype.slice.call(box._kids.children) : [];
+        kidsEl.forEach(function (k) { if (vis(k)) any = true; });
+        var show = self || any; box.hidden = !show;
+        box._row.classList.toggle('ctx', !self && any);
+        var sp = box._row.querySelector('[data-sp]'); var info = M.get(n.id); sp.innerHTML = spText(BY.get(n.id), info && info.mv);
+        if (self) shown++; return show;
+      }
+      treeBox.querySelectorAll('.sec').forEach(function (sec) { var any = false; Array.prototype.forEach.call(sec.children, function (c) { if (c.classList && c.classList.contains('node')) { if (vis(c)) any = true; } }); sec.hidden = !any; });
+      $('empty-tree').hidden = shown > 0; $('count').textContent = shown + '종 표시 / 전체 ' + SP.length + '종';
+      if (st.q && shown) { var open = !!st.q; if (open) { nodeEls.forEach(function (b) { if (b._kids) { b._kids.hidden = false; var f = b._row.querySelector('.fold'); if (f) f.textContent = '▾'; } }); } }
+    } else if (st.view === 'list') { renderList(); }
+  }
+
+  // ---- 전체 목록
+  var COLS = [['i', '번호', 1], ['n', '이름', 0], ['s', '단계', 0], ['a', '속성', 0], ['t', '타입', 0], ['h0', 'HP', 1], ['h1', '공', 1], ['h2', '방', 1], ['h3', '특공', 1], ['h4', '특방', 1], ['h5', '속', 1], ['b', '합', 1], ['e', '진화', 1], ['m', '기술', 1]];
+  function sortVal(r, k) { if (k[0] === 'h' && k.length === 2) return r.h[+k[1]]; if (k === 's') return si(r.s); if (k === 't') return r.t.join('/'); if (k === 'e') return r.e.length; if (k === 'm') return r.m.length; return r[k]; }
+  var openRows = new Set();
+  function renderList() {
+    var rows = SP.map(function (r) { return [r, matchInfo(r)]; }).filter(function (x) { return x[1]; });
+    rows.sort(function (a, b) { var x = sortVal(a[0], st.sort), y = sortVal(b[0], st.sort); return (x < y ? -1 : x > y ? 1 : a[0].i - b[0].i) * st.dir; });
+    $('count').textContent = rows.length + '종 표시 / 전체 ' + SP.length + '종';
+    var h = '<div class="tw"><table class="sortable"><thead><tr>' + COLS.map(function (c) { return '<th data-k="' + c[0] + '"' + (c[2] ? ' class="r"' : '') + (st.sort === c[0] ? ' aria-sort="' + (st.dir > 0 ? 'ascending' : 'descending') + '"' : '') + '>' + c[1] + (st.sort === c[0] ? (st.dir > 0 ? ' ▲' : ' ▼') : '') + '</th>'; }).join('') + '</tr></thead><tbody>';
+    rows.forEach(function (x) {
+      var r = x[0];
+      h += '<tr class="lrow" data-r="' + r.i + '"><td class="r num">' + r.i + '</td><td><b>' + esc(r.n) + '</b> ' + dupTag(r) + '</td><td>' + esc(r.s) + '</td><td>' + apill(r) + '</td><td>' + r.t.map(tchip).join(' ') + '</td>' +
+        r.h.map(function (v) { return '<td class="r num">' + v + '</td>'; }).join('') + '<td class="r num"><b>' + r.b + '</b></td><td class="r num">' + r.e.length + '</td><td class="r num">' + r.m.length + '</td></tr>';
+      if (openRows.has(r.i)) h += '<tr><td colspan="' + COLS.length + '" style="white-space:normal;padding:0"><div class="detail" style="margin:6px 0">' + detailHTML(r) + '</div></td></tr>';
+    });
+    listBox.innerHTML = h + '</tbody></table></div>' + (rows.length ? '' : '<div class="empty">조건에 맞는 종이 없습니다.</div>');
+  }
+  listBox.addEventListener('click', function (e) {
+    var th = e.target.closest('th[data-k]'); if (th) { var k = th.dataset.k; if (st.sort === k) st.dir = -st.dir; else { st.sort = k; st.dir = (k === 'n' || k === 's' || k === 'a' || k === 't' || k === 'i') ? 1 : -1; } renderList(); return; }
+    var tr = e.target.closest('tr.lrow'); if (tr) { var id = +tr.dataset.r; if (openRows.has(id)) openRows.delete(id); else openRows.add(id); renderList(); }
+  });
+
+  // ---- 이동
+  function goTo(id) {
+    if (st.view !== 'tree') setView('tree');
+    var box = nodeEls.get(id); if (!box) return;
+    if (box.hidden || box.closest('[hidden]')) { $('btn-reset').click(); }
+    var p = box.parentElement; while (p && p !== treeBox) { if (p.classList.contains('kids')) p.hidden = false; p = p.parentElement; }
+    box.closest('.sec').hidden = false;
+    if (box._det.hidden) box._toggle();
+    var bar = $('bar').getBoundingClientRect().height + 8; var y = box.getBoundingClientRect().top + window.scrollY - bar;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    box._row.classList.remove('flash'); void box._row.offsetWidth; box._row.classList.add('flash');
+  }
+  setView('tree');
+})();
+</script>
