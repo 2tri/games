@@ -612,7 +612,7 @@ def main():
     say('배우는 레벨 간격 정리(10/19): 옮김 %d · 날림 %d · 위력 급상승 완화 %d · 남은 2레벨 이하 간격 %d · 남은 위력 급상승(+40, 4레벨 안) %d' % (g_move, g_drop, g_spike, left_, spk_))
     for x in g_log: say('  ' + x)
     open(os.path.join(A.out, '기술간격.txt'), 'w', encoding='utf-8').write('\n'.join(g_log) + '\n')
-    # ---- 10/19 v1.1 마무리: v2 규칙은 자리가 없으면 2레벨 간격을 허용하지만, 1레벨 간격(바로 다음 레벨)은 어떤 경우에도 남기지 않음.
+    # ---- 10/19 v1.1 마무리(같은 이름 기술 정리 + 1레벨 간격): v2 규칙은 자리가 없으면 2레벨 간격을 허용하지만, 1레벨 간격(바로 다음 레벨)은 어떤 경우에도 남기지 않음.
     #      붙은 두 기술 중 값어치가 낮은 쪽을 날림(필살기 > 그 디지몬다운 기술 > 공격(위력, 제 타입 +30) > 보조). 둘 다 필살기면 그대로.
     one_ = []
     for s_ in sorted(set(slot.values())):
@@ -625,6 +625,16 @@ def main():
             c_, pw_, t_ = mvinfo(m)
             return 35 if (c_ == 2 or pw_ <= 1) else pw_ + (30 if t_ in sp_t else 0)
         ch_ = False
+        # 같은 이름 기술이 둘이면(전기쇼크 → 일렉트릭쇼크 이름 바꿈 + 더빙 필살기 「일렉트릭쇼크」 등) 값어치 낮은 쪽을 날림
+        seen_ = {}
+        for l_, m_ in sorted(lv1_ + rest_):
+            nm_ = mname(m_)
+            if nm_ in seen_ and seen_[nm_] != m_:
+                o_ = seen_[nm_]; lose_m = m_ if val_(o_) >= val_(m_) else o_
+                one_.append('칸 %d: %s(기술 %d) 날림 (같은 이름 기술이 또 있음)' % (s_, nm_, lose_m))
+                lv1_ = [x for x in lv1_ if x[1] != lose_m]; rest_ = [x for x in rest_ if x[1] != lose_m]; ch_ = True
+                seen_[nm_] = o_ if lose_m == m_ else m_
+            else: seen_[nm_] = m_
         while True:
             k_ = next((i for i in range(len(rest_) - 1) if rest_[i + 1][0] - rest_[i][0] <= 1), None)
             if k_ is None: break
