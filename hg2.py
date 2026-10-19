@@ -65,6 +65,10 @@ def find_table(MSG, CM, must, size=None):
         if hit == len(must) and (best is None or len(names) < len(best[1])): best = (fi, names)
     return best
 
+def _sa_gt_at(pers, s):
+    st = hg1.personal(pers[s])['stats'] if s < len(pers) else None      # 하트골드 순서 HP 공 방 스피드 특공 특방
+    return bool(st) and st[4] > st[1]
+
 def stats_hgss(st):
     """초안 「HP 공 방 특공 특방 스피드」 → 하트골드 순서 HP 공 방 스피드 특공 특방"""
     hp, at, df, sa, sd, sp = [int(x) for x in st.split()]
@@ -352,7 +356,7 @@ def main():
             SPECIAL_TYPES = {10, 11, 12, 13, 14, 15, 16, 17}
             # 10/16 타입별 본보기 기술(4세대 번호, 한 마리 대상 공격): 노말 몸통박치기33 · 격투 깨트리다280 · 비행 날개치기17 · 독 독찌르기398 · 땅 뼈다귀치기125 · 바위 돌떨구기88
             #   벌레 시저크로스404 · 고스트 섀도클로421 · 강철 아이언헤드442 · 불꽃 화염방사53 · 물 하이드로펌프56 · 풀 에너지볼412 · 전기 10만볼트85 · 에스퍼 사이코키네시스94 · 얼음 냉동빔58 · 드래곤 용의파동406 · 악 악의파동399
-            TEMPLATE = {0: 33, 1: 280, 2: 17, 3: 398, 4: 125, 5: 88, 6: 404, 7: 421, 8: 442, 9: 33, 10: 53, 11: 56, 12: 412, 13: 85, 14: 94, 15: 58, 16: 406, 17: 399}
+            TEMPLATE = {0: 33, 1: 280, 2: 17, 3: 398, 4: 125, 5: 88, 6: 404, 7: 421, 8: 442, 9: 230, 10: 53, 11: 56, 12: 412, 13: 85, 14: 94, 15: 58, 16: 406, 17: 399}
             anim_files = None; anim_n = [0]
             try:
                 an_ = NARC(rom.get('a/0/1/0'))
@@ -430,7 +434,7 @@ def main():
                 except ValueError as ex: sp_log.append('필살기 이름 못 씀 %s: %s' % (name_, ex)); continue
                 tpl = TEMPLATE.get(t_, 33)
                 d_ = bytearray(wf[tpl])                             # 본보기 기술 자료를 통째로 가져와(대상·우선도·깃발·콘테스트) 필요한 칸만 덮음
-                struct.pack_into('<H', d_, 0, 0); d_[2] = 1 if t_ in SPECIAL_TYPES else 0      # 효과 0 = 그냥 데미지 / 분류 0 물리 · 1 특수
+                struct.pack_into('<H', d_, 0, 0); d_[2] = 1 if (t_ in SPECIAL_TYPES or (t_ == 9 and _sa_gt_at(pers, os_))) else 0      # (10/19 v1.1: 빛은 분류가 정해져 있지 않아 주인의 특공이 공격보다 높으면 특수) 효과 0 = 그냥 데미지 / 분류 0 물리 · 1 특수
                 d_[3] = min(255, pw_); d_[4] = t_; d_[5] = min(100, ac_); d_[6] = min(40, pp_); d_[7] = 0
                 wf[di] = bytes(d_); mvf[di] = enc_
                 SPECIAL_DI.add(di)
@@ -746,7 +750,7 @@ def main():
     # 다른 종은 그대로인지
     O = N['personal'].files
     for i in held_cleared:                                # 지닌 물건만 비고 나머지는 그대로인지
-        if not (P2[i][:12] == O[i][:12] and P2[i][16:] == O[i][16:] and P2[i][12:16] == bytes(4)): P('지닌 물건 비우기 검산 실패:', i)
+        if not (P2[i][(6 if i in stat_fixed else 0):12] == O[i][(6 if i in stat_fixed else 0):12] and P2[i][16:] == O[i][16:] and P2[i][12:16] == bytes(4)): P('지닌 물건 비우기 검산 실패:', i)   # (능력치를 일부러 고친 칸은 6번째 바이트부터 비교)
     others = [i for i in range(len(pers)) if i not in expect and i not in held_cleared and i not in stat_fixed and i not in type_fixed and i < len(P2) and P2[i] != O[i]]
     say('바꾸지 않은 칸 중 능력치가 달라진 칸: %d (0이어야 함)' % len(others))
     if others: P('엉뚱한 칸이 바뀜:', others[:20])
