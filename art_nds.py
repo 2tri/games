@@ -715,6 +715,7 @@ def main():
     for folder in A.folder:
         if os.path.isdir(folder): fixes.update(load_fixes(folder))
     make_egg_sheet(A.out)
+    src_log = ['종\t칸\t앞\t뒤\t걷기']
     for n, sp in enumerate(design['species'], 1):
         if sp['grade'] in DROP_GRADE: continue
         if only and sp['ko'] not in only: continue
@@ -752,9 +753,11 @@ def main():
             fix = next((fixes[k] for k in keys_ko + keys_en if k in fixes), None)
             res, note = build_one(sp, {'f': f, 'b': b, 'ow': ow, 'fix': fix, 'ow_src': ow_src}, d)
             prev.append((n, sp['ko'], res)); rep.append('%3d %s: %s' % (n, sp['ko'], ', '.join(note) or 'OK'))
+            src_log.append('%s\t%d\t%s\t%s\t%s' % (sp['ko'], n, os.path.basename(f) if f else '', os.path.basename(b) if b else '', os.path.basename(ow) if ow else ''))      # 10/19: 종마다 쓴 그림 파일(비교표용)
         except Exception as e:
             rep.append('%3d %s: 실패 %s' % (n, sp['ko'], e))
     # 10/15 사용자 완성 조건: 데리고 다니는 그림이 모든 종 뭉개지지 않아야 함 → 출처별 수와 「자동(전투 그림 줄임)」 종 목록을 맨 끝 요약에
+    open(os.path.join(A.out, '그림출처.tsv'), 'w', encoding='utf-8').write('\n'.join(src_log) + '\n')
     kinds = collections.OrderedDict([('진짜 걷기(DS 도트)', '걷기 = DS 월드'), ('제미나이 걷기', '걷기 = 제미나이'), ('다른 종 빌림', '그림 빌림'), ('자동(전투 그림 줄임)', '걷기 = 자동'), ('공용 알', '걷기 = 공용 알')])
     cnt = {k: [] for k in kinds}
     for line in rep:
