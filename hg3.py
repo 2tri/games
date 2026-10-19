@@ -276,6 +276,7 @@ def main():
         mm = re.search(r'디지골드 「(.+?)」 그대로', r['메모'])
         if mm and r['출처'] == '디지골드' and not r['NDS 칸'].isdigit() and mm.group(1) != r['이름'] and '(' not in mm.group(1):
             DISPLAY[r['이름']] = mm.group(1)
+    DISPLAY.update(getattr(hg2, 'RENAME_V2', {}))          # v2 공식 이름이 디지골드 원래 이름보다 우선
     DKEYS = sorted(DISPLAY, key=len, reverse=True)
     def disp(t):
         t = t.replace('『', '「').replace('』', '」')      # 10/15: 글자표에 없는 겹낫표

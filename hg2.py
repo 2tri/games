@@ -26,6 +26,14 @@ HELD_CLEAR = {'피코데블몬', '가트몬', '파닥몬', '토코몬'}   # 진�
 DONOR_FIX = {'메가강철톤': '강철톤', '메가핫삼': '핫삼', '메가입치트': '입치트', '메가메타그로스': '메타그로스', '아트라캅테리몬': '아트라캅테몬'}   # 집 보고 10/12: 롬에 없는 이름
 MOVE_ALT = {'에어커터': '에어컷터', '머드샷': '진흙뿌리기', '록블라스트': '암석봉인', '매지컬리프': '메지컬리프', '날개치기': '더블윙'}   # 롬에 없는 기술 이름 → 비슷한 기술
 RENAME = {'아라크네몬': '아르케니몬', '데스메라몬': '데드메라몬', '벨리얼묘티': '벨리얼묘티스몬'}   # 02 더빙명·결정7·GBC 글자 수 제한으로 줄였던 이름
+# v2(10/19): 공식 한국어 도감 이름 — NDS_이름_v2.tsv (이름 → 화면이름). 게임 속 종 이름과 대사 속 이름이 모두 이걸 따름
+RENAME_V2 = {}
+_rp = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'NDS_이름_v2.tsv')
+if os.path.exists(_rp):
+    for _l in open(_rp, encoding='utf-8').read().split('\n')[1:]:
+        _c = _l.split('\t')
+        if len(_c) >= 2 and _c[0] and _c[1]: RENAME_V2[_c[0].strip()] = _c[1].strip()
+RENAME.update(RENAME_V2)
 NL_TOKEN = chr(92) + 'n'          # 글 안의 줄바꿈(Charmap 이 0xE000 을 이렇게 풂)
 # 디지골드가 디지몬을 넣은 자리(엑셀 「수정 전 포켓몬」) → 전국도감 번호. 이 번호로 칸을 찾고, 이름은 검산에만 쓴다.
 REPLACED_DEX = {'토게피': 175, '나무지기': 252, '나무돌이': 253, '나무킹': 254, '아차모': 255, '영치코': 256, '번치코': 257, '물짱이': 258, '늪짱이': 259,
@@ -164,6 +172,9 @@ def main():
         s = slot[ko]
         new = r['출처'] == '새로' or ko == '블랙워그레이몬'
         if not new:
+            if ko in RENAME_V2 and s < len(names_ent):          # v2: 디지골드 종도 공식 이름으로
+                try: names_ent[s] = CM.enc(RENAME_V2[ko]); say('이름 바꿈(v2): %s → %s' % (ko, RENAME_V2[ko]))
+                except ValueError as ex: P('이름 못 씀(글자표):', ko, RENAME_V2[ko], ex)
             if '스타팅 균형: 타입' in r['메모'] and s < len(pers):      # 10/19: 디지골드 종도 표의 타입으로 (스타팅 균형 고침만)
                 pb = bytearray(pers[s]); ts_ = r['타입'].split('/'); pb[6], pb[7] = TYPES.index(ts_[0]), TYPES.index(ts_[-1]); pers[s] = bytes(pb)
                 say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입']))
