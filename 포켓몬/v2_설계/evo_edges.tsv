@@ -1,0 +1,1266 @@
+from_ko	to_ko	from_en	to_en	from_stage	to_stage	method_hint	jogress_partner	direction	used_in_lines	dna_only	from_제외	to_제외	source
+구미몬	레나몬	Gumymon	Renamon	유년기	성장기	DWDD:LV 12; SPD 70		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+구미몬	테리어몬	Gumymon	Terriermon	유년기	성장기	DWDD:LV 9		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+구미몬	테이파몬	Gumymon	Bakumon	유년기	성장기	DWDD:LV 16; HOL 470		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+기기몬	길몬	Gigimon	Guilmon	유년기	성장기	DWDD:LV 11; got Guilmon		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+도리몬	도루몬	Dorimon	Dorumon	유년기	성장기	DWDD:LV 8; BST 100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도리몬	아르마몬	Dorimon	Armadimon	유년기	성장기	DWDD:LV 11; friend 60%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+도리몬	원시고부리몬	Dorimon	Shamamon	유년기	성장기	DWDD:LV 14; SPT 75		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+문몬	로프몬	Moonmon	Lopmon	유년기	성장기	DWDD DNA(+Botamon): Lv7+, Dark EXP100+	Botamon	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+문몬	루나몬	Moonmon	Lunamon	유년기	성장기	DWDD:LV 9; friend 50%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노몬	추추몬	Minomon	Wormmon	유년기	성장기	DWDD:LV 10; Friendship 50%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+미노몬	쿠네몬	Minomon	Kunemon	유년기	성장기	DWDD:LV 7		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노몬	텐타몬	Minomon	Tentomon	유년기	성장기	DWDD:LV 13; DEF 50		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+버드몬	도쿠네몬	Budmon	Dokunemon	유년기	성장기	DWDD:LV 8; INS 130		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+버드몬	라라몬	Budmon	Raramon	유년기	성장기	DWDD:LV 7; Friend 60%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+버드몬	머슈룸몬	Budmon	Mushmon	유년기	성장기	DWDD:LV 13; ATK 65		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+뿔몬	고부리몬	Tsunomon	Goblimon	유년기	성장기	DWDD:LV 12; ATK 60		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+뿔몬	파피몬	Tsunomon	Gabumon	유년기	성장기	DWDD:LV 8		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+시드몬	알라우몬	Tanemon	Alraumon	유년기	성장기	DWDD:LV 14; EX 1100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+시드몬	팔몬	Tanemon	Palmon	유년기	성장기	DWDD:LV 8		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+시드몬	플로라몬	Tanemon	Floramon	유년기	성장기	DWDD:LV 12; INS 100		상승	Y				DWDD차트(StrategyWiki Digivolution)
+썬몬	코로나몬	Sunmon	Coronamon	유년기	성장기	DWDD:LV 11; Friend 50%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+와냐몬	가오몬	Wanyamon	Gaomon	유년기	성장기	DWDD:LV 7; Friend 60%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+와냐몬	베어몬	Wanyamon	Bearmon	유년기	성장기	DWDD:LV 10		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+초코몬	로프몬	Chocomon	Lopmon	유년기	성장기	DWDD:LV 9		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution)
+츠메몬	드라큐몬	Tsumemon	Dracmon	유년기	성장기	DWDD:LV 9		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+츠메몬	케라몬	Tsumemon	Keramon	유년기	성장기	DWDD:LV 18; DRK 450; Got Keramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+치치몬	레드펭귄몬	Chicchimon	Muchomon	유년기	성장기	DWDD:LV 11		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+치치몬	펭귄몬	Chicchimon	Penmon	유년기	성장기	DWDD:LV 10; AQN 100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카프리몬	코테몬	Kapurimon	Kotemon	유년기	성장기	DWDD:LV 12; ATK 60		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카프리몬	톱니몬	Kapurimon	Hagurumon	유년기	성장기	DWDD:LV 10; Friend 50%		상승	Y				DWDD차트(StrategyWiki Digivolution)
+코로몬	도트아구몬	Koromon	DotAgumon	유년기	성장기	DWDD:LV 30; Min APT 45; Got DotAgumon		상승	Y			도트	DWDD차트(StrategyWiki Digivolution)
+코로몬	아구몬	Koromon	Agumon	유년기	성장기	DWDD:LV 7		상승	Y				DWDD차트(StrategyWiki Digivolution)
+토코몬	도트팔코몬	Tokomon	DotFalcomon	유년기	성장기	DWDD:LV 30; MinAPT 45; got Dfalcomon		상승	Y			도트	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토코몬	파닥몬	Tokomon	Patamon	유년기	성장기	DWDD:LV 8; Friendship 50% / 레벨:20		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+토코몬	팔코몬	Tokomon	Falcomon	유년기	성장기	DWDD:LV 12; Friendship 60%		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+퍼그몬	임프몬	Pagumon	Impmon	유년기	성장기	DWDD:LV15; SPT80; DRK490		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+퍼그몬	피코데블몬	Pagumon	PicoDevimon	유년기	성장기	DWDD:LV 10		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+푸티몬	쿠다몬	Puttimon	Kudamon	유년기	성장기	DWDD:LV15; MinAPT25; gotKudamon		상승	Y				DWDD차트(StrategyWiki Digivolution)
+푸티몬	폰체스몬	Puttimon	PawnChessmonWhite	유년기	성장기	DWDD:LV 11; MAC 200		상승	Y				DWDD차트(StrategyWiki Digivolution)
+푸티몬	플롯트몬	Puttimon	Plotmon	유년기	성장기	DWDD:LV 7		상승	Y				DWDD차트(StrategyWiki Digivolution)
+가니몬	가재드라몬	Ganimon	Ebidramon	성장기	성숙기	DWDD:LV 27; DEF 140; DRG 1100		상승	Y				DWDD차트(StrategyWiki Digivolution)
+가니몬	달팽이워매몬	Ganimon	KaratsukiNumemon	성장기	성숙기	DWDD DNA(+Tapirmon): Lv21+, Aquan EXP400+, Defense 140+	테이파몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가니몬	쉘몬	Ganimon	Shellmon	성장기	성숙기	레벨:16		상승	Y				v1(NDS_진화.tsv)
+가니몬	스나이몬	Ganimon	Snimon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가오몬	가오가몬	Gaomon	Gaogamon	성장기	성숙기	DWDD:LV 17; SPD 90; BST 250		상승	Y				DWDD차트(StrategyWiki Digivolution)
+가오몬	레오몬	Gaomon	Leomon	성장기	성숙기	DWDD:LV 28; ATK 150; SPT 130		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+가오몬	시사몬	Gaomon	Seasarmon	성장기	성숙기	DWDD DNA(+Salamon): Lv19+, Holy EXP600+, Defense 140+	플롯트몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가지몬	데블드라몬	Gazimon	Devidramon	성장기	성숙기	레벨:32		상승	Y				v1(NDS_진화.tsv)
+가지몬	이비르몬	Gazimon	Evilmon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+고부리몬	모야몬	Goblimon	Nanimon	성장기	성숙기	DWDD:LV 20; Friendship 70%; MinAPT 28		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고부리몬	미노타루몬	Goblimon	Minotarumon	성장기	성숙기	DWDD:LV 23; DEF 95; BST 360		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고부리몬	에이프몬	Goblimon	Apemon	성장기	성숙기	DWDD DNA(+Bakumon/Tapirmon): Lv21+, Beast EXP500+, Speed 160+ / DWDD DNA(+Terriermon): Lv21+, Beast EXP500+, Speed 160+	테리어몬;테이파몬;테이파몬+테리어몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고부리몬	우가몬	Goblimon	Ogremon	성장기	성숙기	DWDD:LV 26; ATK 120; BST 750		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고부리몬	워매몬	Goblimon	Numemon	성장기	성숙기	DWDD DNA(+Hagurumon): Lv15+, Species EXP1000+, Aptitude 20+	톱니몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고부리몬	하이안드로몬	Goblimon	HiAndromon	성장기	궁극체	DWDD DNA(+RookChessmon): Lv45+, Machine EXP12000, Spirit 290+	룩체스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+기자몬	드리모게몬	Gizamon	Drimogemon	성장기	성숙기	DWDD DNA(+Gomamon): Lv15+, Beast EXP200+, Attack 120+	쉬라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+기자몬	레어몬	Gizamon	Raremon	성장기	성숙기	DWDD:LV 22; DEF 90; MAC 440		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+기자몬	실러캔몬	Gizamon	Coelamon	성장기	성숙기	레벨:16		상승	Y				v1(NDS_진화.tsv)
+기자몬	아이스데블몬	Gizamon	IceDevimon	성장기	성숙기	DWDD:LV 25; DRK 350; AQN 400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+기자몬	웬디몬	Gizamon	Wendimon	성장기	성숙기	DWDD DNA(+Tsukaimon): Lv25+, Dark EXP1000+, Must have Befriended Wendigomon	츠카이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+길몬	그라우몬	Guilmon	Growlmon	성장기	성숙기	DWDD:LV 21; ATK 105; got Guilmon		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+길몬	다크리자몬	Guilmon	DarkLizardmon	성장기	성숙기	DWDD DNA(+Impmon): Lv16+, Dark EXP400+	임프몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+길몬	다크티라몬	Guilmon	DarkTyrannomon	성장기	성숙기	DWDD DNA(+ToyAgumonBlack): Lv17+, Dark EXP600+,Attack 130+	ToyAgumonBlack	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+길몬	티라노몬	Guilmon	tyranomon	성장기	성숙기	DWDD:LV 21; DRG 340		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+도루몬	도루가몬	Dorumon	Dorugamon	성장기	성숙기	DWDD:LV 24; ATK 125; BST 800		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도루몬	드리모게몬	Dorumon	Drimogemon	성장기	성숙기	DWDD:LV 19; ATK 90; MinAPT 25		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도루몬	아쿠이라몬	Dorumon	Aquilamon	성장기	성숙기	DWDD DNA(+Biyomon): Lv16+, Bird EXP500+, Attack 125+	피요몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도루몬	엑스브이몬	Dorumon	XV-mon	성장기	성숙기	DWDD DNA(+SnowAgumon): Lv19+, Dragon EXP1000+, Spirit 155+	스노우아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도쿠네몬	고키몬	Dokunemon	Roachmon	성장기	성숙기	DWDD:LV 17; SPD 95		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도쿠네몬	도쿠구몬	Dokunemon	Dokugumon	성장기	성숙기	DWDD:LV 24; DRK 450		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도쿠네몬	스나이몬	Dokunemon	Snimon	성장기	성숙기		가니몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도쿠네몬	쿠가몬	Dokunemon	Kuwagamon	성장기	성숙기	DWDD:LV 20; INS 380		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+도트아구몬	가재드라몬	DotAgumon	Ebidramon	성장기	성숙기	DWDD DNA(+Syakomon): Lv22+, Dragon EXP800+, Defense 155+	샤코몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도트아구몬	다이노휴몬	DotAgumon	Dinohumon	성장기	성숙기	DWDD DNA(+Kotemon): Lv20+, Dragon EXP700+, Attack 130+ / DWDD DNA(+Hawkmon): Lv20+, Dragon EXP700+, Attack 130+	코테몬;코테몬+호크몬;호크몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도트아구몬	화염리자몬	DotAgumon	FlareLizardmon	성장기	성숙기	DWDD DNA(+Solarmon): Lv16+, Dragon EXP400+	황금톱니몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도트팔코몬	디아트리몬	DotFalcomon	Diatrymon	성장기	성숙기	DWDD DNA(+Solarmon): Lv24+, Machine EXP2000+, Defense 180+	황금톱니몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도트팔코몬	블랙버드라몬	DotFalcomon	Saberdramon	성장기	성숙기	DWDD DNA(+Candlemon): Lv16+, Bird EXP1000+, Speed 120+	캔들몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도트팔코몬	스타몬	DotFalcomon	Starmon	성장기	성숙기	DWDD DNA(+Hagurumon): Lv20+, Spirit 140+, Friendship 60%+	톱니몬	상승	Y	Y	도트		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+드라큐몬	상굴몬	Dracmon	Sangloupmon	성장기	성숙기	DWDD:LV 19; BST 500		상승	Y				DWDD차트(StrategyWiki Digivolution)
+라라몬	레드베지몬	Raramon	RedVeggiemon	성장기	성숙기	DWDD:LV 22; MinAPT 29		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라라몬	해바라기몬	Raramon	Sunflowmon	성장기	성숙기	DWDD:LV 18; Friend 70%; INS 380		상승	Y				DWDD차트(StrategyWiki Digivolution)
+레나몬	구미호몬	Renamon	Kyubimon	성장기	성숙기	DWDD:LV 23; SPT 125		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+레나몬	소서리몬	Renamon	Sorcerymon	성장기	성숙기	DWDD:LV 25; friend 70%; HOL 700		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution)
+레드펭귄몬	디아트리몬	Muchomon	Diatrymon	성장기	성숙기	DWDD:LV 29; DEF 150; BRD 2400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레드펭귄몬	레드꼬끼몬	Muchomon	Akatorimon	성장기	성숙기	DWDD:LV 21; Friendship 70%; BRD 300		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+로프몬	웬디몬	Lopmon	Wendimon	성장기	성숙기	DWDD:LV 29; DRK 1800		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution)
+로프몬	켄터스몬	Lopmon	Centarumon	성장기	성숙기	DWDD:LV 20; MAC 480		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+루나몬	레키스몬	Lunamon	Lekismon	성장기	성숙기	DWDD:LV 19; friend 70%; DRK 330		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+루나몬	상굴몬	Lunamon	Sangloupmon	성장기	성숙기	DWDD DNA(+Gabumon): Lv15+, Drak EXP150+, Beast EXP150+	파피몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머슈룸몬	닌자몬	Mushmon	Igamon	성장기	성숙기	DWDD:LV 22; Friend 70%; SPD 115		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머슈룸몬	머드프리지몬	Mushmon	MudFrigimon	성장기	성숙기	DWDD DNA(+Auraumon): Lv16+, Friendship 60%+, Must have Befriended MudFrigimon/Tsuchidarumon	알라우몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머슈룸몬	우드몬	Mushmon	Woodmon	성장기	성숙기	레벨:16		상승	Y				v1(NDS_진화.tsv)
+머슈룸몬	코가몬	Mushmon	Kougamon	성장기	성숙기	DWDD:LV 22; ATK 105; SPD 110		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머슈룸몬	폭탄모야몬	Mushmon	BomberNanimon	성장기	성숙기	DWDD DNA(+Tekkamon): Lv22+, Machine EXP660+, Friendship 60%+	임프몬;테카몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노드라몬	다이노휴몬	Monodramon	Dinohumon	성장기	성숙기	DWDD:LV24; DRG 900		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노드라몬	라프타드라몬	Monodramon	Raptordramon	성장기	성숙기	DWDD DNA(+ToyAgumonB): Lv22+, Dragon EXP1800+, Defense 160+	ToyAgumonB	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노드라몬	에어드라몬	Monodramon	Airdramon	성장기	성숙기	DWDD:LV 21; EX 4000; gotAirdramon		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노드라몬	해바라기몬	Monodramon	Sunflowmon	성장기	성숙기	DWDD DNA(+Floramon): Lv15+, Insect/Plant EXP500+, Friendship 60%+	플로라몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베어몬	그리즈몬	Bearmon	Grizzmon	성장기	성숙기	DWDD:LV 19; BST 390		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베어몬	모털몬	Bearmon	Mojyamon	성장기	성숙기	DWDD:LV 21; BST 220; AQN 180		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베타몬	게소몬	Betamon	Gesomon	성장기	성숙기	DWDD:LV 21; ATK 95; AQN 550		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베타몬	돌핀몬	Betamon	Dolphmon	성장기	성숙기	DWDD:LV 17; SPT 100; AQN 500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베타몬	시드라몬	Betamon	Seadramon	성장기	성숙기	레벨:27		상승	Y				v1(NDS_진화.tsv)
+베타몬	옥토몬	Betamon	Octomon	성장기	성숙기	DWDD:LV 21; DEF 95; AQN 550		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+브이몬	매그너몬	V-mon	Magnamon	성장기	완전체	도구지니고낮:동글동글돌 / 도구지니고밤:동글동글돌		상승	Y				v1(NDS_진화.tsv)
+브이몬	번개드라몬	V-mon	Lighdramon	성장기	아머체	도구사용:천둥의돌		상승	Y				v1(NDS_진화.tsv)
+브이몬	브이드라몬	V-mon	V-Dramon	성장기	성숙기	DWDD:LV 18; ATK 90; DRG 340		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+브이몬	엑스브이몬	V-mon	XV-mon	성장기	성숙기	DWDD:LV 23; ATK 120; SPT 115 / 레벨:19		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+브이몬	화염드라몬	V-mon	Flamedramon	성장기	완전체	도구사용:불꽃의돌		상승	Y				v1(NDS_진화.tsv)
+블랙아구몬	다크티라몬	BlackAgumon	DarkTyrannomon	성장기	성숙기	DWDD:LV 21; ATK 100; DRK 1000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+블랙아구몬	데블드라몬	BlackAgumon	Devidramon	성장기	성숙기	DWDD DNA(+DemiDevimon): Lv18+, Dragon EXP 250+, Dark EXP200+	피코데블몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙아구몬	모노크로몬	BlackAgumon	Monochromon	성장기	성숙기	DWDD:LV 19; DRG 220		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	가재드라몬	Shakomon	Ebidramon	성장기	성숙기	DWDD DNA(+DotAgumon): Lv22+, Dragon EXP800+, Defense 155+	도트아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	달팽이워매몬	Shakomon	KaratsukiNumemon	성장기	성숙기	DWDD:LV 26; DEF 135; MinAPT 30		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	쉘몬	Shakomon	Shellmon	성장기	성숙기	DWDD:LV 23; BST 430		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	실러캔몬	Shakomon	Coelamon	성장기	성숙기	DWDD:LV 18; ATK 95; AQN 410		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쉬라몬	드리모게몬	Gomamon	Drimogemon	성장기	성숙기	DWDD DNA(+Gizamon): Lv15+, Beast EXP200+, Attack 120+	기자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쉬라몬	시드라몬	Gomamon	Seadramon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+쉬라몬	원뿔몬	Gomamon	Ikkakumon	성장기	성숙기	DWDD:LV 21; Friendship 70% / 레벨:20		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+스노우고부리몬	블루우가몬	SnowGoblimon	Hyogamon	성장기	성숙기	DWDD:LV 23; ATK 110		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+스노우고부리몬	아이스데블몬	SnowGoblimon	IceDevimon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스노우고부리몬	아이스몬	SnowGoblimon	Icemon	성장기	성숙기	DWDD DNA(+Tsukaimon): Lv21+, Aquan WXP300+, Dark EXP300+	츠카이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스노우고부리몬	프리지몬	SnowGoblimon	Frigimon	성장기	성숙기	DWDD:LV 21; Friendship 70%; AQN 700		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+스노우아구몬	시드라몬	YukiAgumon	Seadramon	성장기	성숙기	DWDD:LV 24; AQN 450		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스노우아구몬	에어드라몬	YukiAgumon	Airdramon	성장기	성숙기		파닥몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스노우아구몬	엑스브이몬	YukiAgumon	XV-mon	성장기	성숙기	DWDD DNA(+Dorumon): Lv19+, Dragon EXP1000+, Spirit 155+	도루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아구몬	그레이몬	Agumon	Greymon	성장기	성숙기	DWDD:LV 18; DRG 280 / 레벨:18		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+아구몬	모노크로몬	Agumon	Monochromon	성장기	성숙기	DWDD DNA(+Gotsumon): Lv15+, Dragon EXP150+, Defense 110+	울퉁몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+아구몬	지오그레이몬	Agumon	GeoGreymon	성장기	성숙기	DWDD:LV 20; Friend 60%; DEF 90		상승	Y				DWDD차트(StrategyWiki Digivolution)
+아구몬	티라노몬	Agumon	tyranomon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+아르마몬	디그몬	Armadimon	Digmon	성장기	아머체	도구사용:달의돌		상승	Y				v1(NDS_진화.tsv)
+아르마몬	서브마리몬	Armadimon	Submarimon	성장기	아머체	도구사용:물의돌		상승	Y				v1(NDS_진화.tsv)
+아르마몬	수염두리몬	Armadimon	NiseDrimogemon	성장기	성숙기	DWDD:LV 19; DEF 90; MinAPT 25		상승	Y				DWDD차트(StrategyWiki Digivolution)
+아르마몬	안킬로몬	Armadimon	Ankylomon	성장기	성숙기	DWDD:LV 23; DEF 100; BST 500 / 레벨:24		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+아르마몬	크레인몬	Armadimon	Kenkimon	성장기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아르마몬	토르토몬	Armadimon	Tortomon	성장기	성숙기	DWDD DNA(+Gotsumon): Lv18+, Aquan EXP400+, Defense 130+ / DWDD DNA(+Otamamon): Lv18+, Aquan EXP400+, Defense 130+	오타마몬;울퉁몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+알라우몬	그린베지몬	Alraumon	Weedmon	성장기	성숙기	DWDD:LV 23; SPT 95		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+알라우몬	머드프리지몬	Alraumon	MudFrigimon	성장기	성숙기	DWDD DNA(+Mushroomon): Lv16+, Friendship 60%+, Must have Befriended MudFrigimon/Tsuchidarumon	머슈룸몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+알라우몬	우드몬	Alraumon	Woodmon	성장기	성숙기	DWDD:LV 27; DEF 125; INS 1800		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에렉몬	레오몬	Elecmon	Leomon	성장기	성숙기	레벨:18		상승	Y				v1(NDS_진화.tsv)
+오타마몬	가와파몬	Otamamon	Gwappamon	성장기	성숙기	DWDD DNA(+ToyAgumon): Lv15+, Machine EXP450+, Aquan EXP550+	토이아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오타마몬	개굴몬	Otamamon	Gekomon	성장기	성숙기	DWDD:LV 18; AQN 380 / 레벨:16		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+오타마몬	옐로우워매몬	Otamamon	Geremon	성장기	성숙기	DWDD:LV 19; gotNumemon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오타마몬	워매몬	Otamamon	Numemon	성장기	성숙기	DWDD:LV 19; EX 1400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오타마몬	토르토몬	Otamamon	Tortomon	성장기	성숙기	DWDD DNA(+Gotsumon): Lv18+, Aquan EXP400+, Defense 130+ / DWDD DNA(+Armadillomon): Lv18+, Aquan EXP400+, Defense 130+	아르마몬;울퉁몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+울퉁몬	골레몬	Gotsumon	Golemon	성장기	성숙기	DWDD:LV 21; ATK 120; MAC 500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+울퉁몬	머드프리지몬	Gotsumon	MudFrigimon	성장기	성숙기	DWDD:LV 20; Friend 70%; gotTsuchidarumon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+울퉁몬	모노크로몬	Gotsumon	Monochromon	성장기	성숙기	레벨:25 / DWDD DNA(+Agumon): Lv15+, Dragon EXP150+, Defense 110+	아구몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+울퉁몬	아이스몬	Gotsumon	Icemon	성장기	성숙기	DWDD:LV 19; DEF 90; AQN 400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+울퉁몬	토르토몬	Gotsumon	Tortomon	성장기	성숙기	DWDD DNA(+Otamamon): Lv18+, Aquan EXP400+, Defense 130+ / DWDD DNA(+Armadillomon): Lv18+, Aquan EXP400+, Defense 130+	아르마몬;오타마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+원시고부리몬	무사몬	Shamamon	Musyamon	성장기	성숙기	DWDD DNA(+Kotemon): Lv22+, Dark EXP1000+, Attack 160+	코테몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+원시고부리몬	아이스몬	Shamamon	Icemon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+원시고부리몬	에이프몬	Shamamon	Apemon	성장기	성숙기	DWDD:LV 26; HOL 750; gotApemon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+원시고부리몬	푸가몬	Shamamon	Fugamon	성장기	성숙기	DWDD:LV 24; ATK 120; BST 450		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+임프몬	다크리자몬	Impmon	DarkLizardmon	성장기	성숙기	DWDD DNA(+Guilmon): Lv16+, Dark EXP400+	길몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+임프몬	모야몬	Impmon	Nanimon	성장기	성숙기	DWDD DNA(+Solarmon): Lv15+, Aptitude 24+, Defense 220+	황금톱니몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+임프몬	위자몬	Impmon	Wizarmon	성장기	성숙기	DWDD:LV 25; friend 70%; DRK 700		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+임프몬	이비르몬	Impmon	Evilmon	성장기	성숙기	DWDD:LV 23; DRK 950		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+임프몬	폭탄모야몬	Impmon	BomberNanimon	성장기	성숙기			상승	Y		테이머즈		wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+추추몬	스나이몬	Wormmon	Snimon	성장기	성숙기	DWDD:LV 19; ATK 90		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+추추몬	스팅몬	Wormmon	Stingmon	성장기	성숙기	DWDD:LV 23; DEF 110; SPD 115 / 레벨:25		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+추추몬	콩고몬	Wormmon	Kongoumon	성장기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+츄몬	슈카몬	Tyumon	Sukamon	성장기	성숙기	레벨:16		상승	Y				v1(NDS_진화.tsv)
+츠카이몬	고스몬	Tsukaimon	Bakemon	성장기	성숙기	DWDD:LV 19; DRK 420		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+츠카이몬	데블드라몬	Tsukaimon	Devidramon	성장기	성숙기	DWDD:LV 22; DRG 350; DRK 300		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+츠카이몬	아이스데블몬	Tsukaimon	IceDevimon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+츠카이몬	아이스몬	Tsukaimon	Icemon	성장기	성숙기	DWDD DNA(+SnowGoburimon): Lv21+, Aquan WXP300+, Dark EXP300+	스노우고부리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+츠카이몬	웬디몬	Tsukaimon	Wendimon	성장기	성숙기	DWDD DNA(+Gizamon): Lv25+, Dark EXP1000+, Must have Befriended Wendigomon	기자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카메몬	가와파몬	Kamemon	Gwappamon	성장기	성숙기	DWDD:LV 19; MAC 370		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+카메몬	토르토몬	Kamemon	Tortomon	성장기	성숙기	DWDD:LV 23; DEF 110		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+캔들몬	다크리자몬	Candmon	DarkLizardmon	성장기	성숙기	DWDD:LV 20; DRK 650		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+캔들몬	블랙버드라몬	Candmon	Saberdramon	성장기	성숙기	DWDD DNA(+DotFalcomon): Lv16+, Bird EXP1000+, Speed 120+	도트팔코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+캔들몬	화염리자몬	Candmon	FlareLizardmon	성장기	성숙기	DWDD:LV 20; DRG 650		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+케라몬	크리사리몬	Keramon	Chrysalimon	성장기	성숙기	DWDD:LV 27; DEF 110; got Keramon / 레벨:18		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+코로나몬	소서리몬	Coronamon	Sorcerymon	성장기	성숙기	DWDD DNA(+Kudamon): Lv20+, Holy EXP400+, Friendship 60%+	쿠다몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코로나몬	파이라몬	Coronamon	Firamon	성장기	성숙기	DWDD:LV 25; Friend 70%; BST 700		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코쿠와몬	메카노리몬	Kokuwamon	Mechanorimon	성장기	성숙기	DWDD DNA(+ToyAgumon): Lv15+, Species EXP300+	토이아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코쿠와몬	번개콩알몬	Kokuwamon	Thundermon	성장기	성숙기	DWDD:LV 23; MAC 460		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+코쿠와몬	켄터스몬	Kokuwamon	Centarumon	성장기	성숙기	DWDD DNA(+Terriermon): Lv16+, Attack 125+, Speed 130+ / DWDD DNA(+Hagurumon): Lv16+, Attack 125+, Speed 130+	테리어몬;톱니몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코쿠와몬	쿠가몬	Kokuwamon	Kuwagamon	성장기	성숙기	DWDD DNA(+Tentomon): Lv16+, Insect/Plant EXP500+, Attack 125+	텐타몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코테몬	다이노휴몬	Kotemon	Dinohumon	성장기	성숙기	DWDD DNA(+Hawkmon): Lv20+, Dragon EXP700+, Attack 130+ / DWDD DNA(+DotAgumon): Lv20+, Dragon EXP700+, Attack 130+	도트아구몬;호크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코테몬	무사몬	Kotemon	Musyamon	성장기	성숙기	DWDD DNA(+Shamanmon): Lv22+, Dark EXP1000+, Attack 160+	원시고부리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코테몬	오메카몬	Kotemon	Omekamon	성장기	성숙기	DWDD:LV 22; MAC 580		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+코테몬	코가몬	Kotemon	Kougamon	성장기	성숙기	DWDD DNA(+Falcomon): Lv17+, Attack 130+, Speed 110+	팔코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코테몬	화이트스카몬	Kotemon	PlatinumSukamon	성장기	성숙기	DWDD:LV 25; DEF 120		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+쿠네몬	번개콩알몬	Kunemon	Thundermon	성장기	성숙기		텐타몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쿠네몬	슈카몬	Kunemon	Sukamon	성장기	성숙기	DWDD:LV 18; EX 1500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+쿠네몬	왕잠자리몬	Kunemon	Yanmamon	성장기	성숙기	DWDD:LV 18; SPD 75; INS 250		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쿠네몬	플라이몬	Kunemon	Flymon	성장기	성숙기	DWDD:LV 19; INS 500 / 레벨:14		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+쿠다몬	레파몬	Kudamon	Leppamon	성장기	성숙기	DWDD:LV27; SPD125; HOL 800		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+쿠다몬	소서리몬	Kudamon	Sorcerymon	성장기	성숙기	DWDD DNA(+Coronamon): Lv20+, Holy EXP400+, Friendship 60%+	코로나몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+쿠다몬	스타몬	Kudamon	Starmon	성장기	성숙기	DWDD:LV 24; Friendship 70%; SPT 115		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+테리어몬	가르고몬	Terriermon	Galgomon	성장기	성숙기	DWDD:LV 20; Friend 60%; BST 480		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+테리어몬	에이프몬	Terriermon	Apemon	성장기	성숙기	DWDD DNA(+Goburimon): Lv21+, Beast EXP500+, Speed 160+ / DWDD DNA(+Bakumon/Tapirmon): Lv21+, Beast EXP500+, Speed 160+	고부리몬;테이파몬;테이파몬+고부리몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테리어몬	켄터스몬	Terriermon	Centarumon	성장기	성숙기	DWDD DNA(+Kokuwamon): Lv16+, Attack 125+, Speed 130+ / DWDD DNA(+Hagurumon): Lv16+, Attack 125+, Speed 130+	코쿠와몬;코쿠와몬+톱니몬;톱니몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테이파몬	달팽이워매몬	Bakumon	KaratsukiNumemon	성장기	성숙기	DWDD DNA(+Crabmon): Lv21+, Aquan EXP400+, Defense 140+	가니몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테이파몬	시사몬	Bakumon	Seasarmon	성장기	성숙기	DWDD:LV 24; DEF 120; HOL 800		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테이파몬	에이프몬	Bakumon	Apemon	성장기	성숙기	DWDD DNA(+Goburimon): Lv21+, Beast EXP500+, Speed 160+ / DWDD DNA(+Terriermon): Lv21+, Beast EXP500+, Speed 160+	고부리몬;테리어몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테이파몬	유니몬	Bakumon	Unimon	성장기	성숙기	DWDD:LV 22; SPD 90		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+텐타몬	번개콩알몬	Tentomon	Thundermon	성장기	성숙기		쿠네몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+텐타몬	왕모래잠자리몬	Tentomon	SandYanmamon	성장기	성숙기	DWDD:LV 18; DEF 90; INS 250		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+텐타몬	캅테리몬	Tentomon	Kabuterimon	성장기	성숙기	DWDD:LV 21; INS 410 / 레벨:18		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+텐타몬	쿠가몬	Tentomon	Kuwagamon	성장기	성숙기	도구사용:어둠의돌 / DWDD DNA(+Kokuwamon): Lv16+, Insect/Plant EXP500+, Attack 125+	코쿠와몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+토이아구몬	가와파몬	ToyAgumon	Gwappamon	성장기	성숙기	DWDD DNA(+Otamamon): Lv15+, Machine EXP450+, Aquan EXP550+	오타마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토이아구몬	레볼몬	ToyAgumon	Revolmon	성장기	성숙기	DWDD:LV 22; Friendship 70%; MAC 600		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토이아구몬	메카노리몬	ToyAgumon	Mechanorimon	성장기	성숙기	DWDD DNA(+Kokuwamon): Lv15+, Species EXP300+	코쿠와몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토이아구몬	스타몬	ToyAgumon	Starmon	성장기	성숙기	DWDD DNA(+ToyAgumonB): Lv20+, Spirit 140+, Friendship 60%+	ToyAgumonB	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토이아구몬	탱크몬	ToyAgumon	Tankmon	성장기	성숙기	DWDD:LV 19; ATK 110		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+톱니몬	가드로몬	Hagurumon	Guadromon	성장기	성숙기	DWDD:LV 20; DEF105 / 레벨:20		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+톱니몬	스타몬	Hagurumon	Starmon	성장기	성숙기	DWDD DNA(+DotFalcomon): Lv20+, Spirit 140+, Friendship 60%+	도트팔코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+톱니몬	워매몬	Hagurumon	Numemon	성장기	성숙기	DWDD DNA(+Goburimon): Lv15+, Species EXP1000+, Aptitude 20+	고부리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+톱니몬	켄터스몬	Hagurumon	Centarumon	성장기	성숙기	DWDD DNA(+Terriermon): Lv16+, Attack 125+, Speed 130+ / DWDD DNA(+Kokuwamon): Lv16+, Attack 125+, Speed 130+	코쿠와몬;테리어몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+톱니몬	후크몬	Hagurumon	Hookmon	성장기	성숙기	DWDD:LV 22; MAC 450; AQN 300		상승	Y				DWDD차트(StrategyWiki Digivolution)
+파닥몬	데블몬	Patamon	Devimon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+파닥몬	에어드라몬	Patamon	Airdramon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파닥몬	엔젤몬	Patamon	Angemon	성장기	성숙기	DWDD:LV 19; Friendship 70%; Holy 300 / 레벨:20		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+파닥몬	유니몬	Patamon	Unimon	성장기	성숙기	DWDD DNA(+Biyomon): Lv17+, Holy EXP250+, Speed 110+	피요몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파닥몬	페가수몬	Patamon	Pegasmon	성장기	아머체	도구사용:각성의돌		상승	Y				v1(NDS_진화.tsv)
+파닥몬	프라리몬	Patamon	Prariemon	성장기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+파피몬	가루몬	Gabumon	Garurumon	성장기	성숙기	DWDD:LV 19; Friendship 60%; ATK 100 / 레벨:18		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+파피몬	상굴몬	Gabumon	Sangloupmon	성장기	성숙기	DWDD DNA(+Lunamon): Lv15+, Drak EXP150+, Beast EXP150+	루나몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파피몬	우가몬	Gabumon	Ogremon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+파피몬	정글모쟈몬	Gabumon	J-Mojyamon	성장기	성숙기	DWDD:LV 17; BST 350		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+팔몬	그린쉘몬	Palmon	MoriShellmon	성장기	성숙기	DWDD:LV 22; DEF 105; BST 900		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팔몬	니드몬	Palmon	Togemon	성장기	성숙기	DWDD:LV 19; Friendship 60%; ATK 95 / 레벨:20		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+팔몬	베지몬	Palmon	Vegimon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+팔코몬	코가몬	Falcomon	Kougamon	성장기	성숙기	DWDD DNA(+Kotemon): Lv17+, Attack 130+, Speed 110+	코테몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+팔코몬	펙크몬	Falcomon	Peckmon	성장기	성숙기	DWDD:LV 20; SPD 100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+펭귄몬	꼬끼몬	Penmon	Kokatorimon	성장기	성숙기	DWDD:LV 21; Friendship 70%; DRK 370		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+펭귄몬	키위몬	Penmon	Kiwimon	성장기	성숙기	DWDD:LV 18; DEF 80; INS 400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+펭귄몬	프리지몬	Penmon	Frigimon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+폰체스몬	가드로몬	PawnChessmonWhite	Guadromon	성장기	성숙기	DWDD DNA(+PawnChessmonBlack): Lv15+, Defense 130+	PawnChessmonBlack	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+폰체스몬	나이트체스몬	PawnChessmonWhite	KnightChessmonWhite	성장기	성숙기	DWDD:LV 21; SPD 100		상승	Y				DWDD차트(StrategyWiki Digivolution)
+플로라몬	닌자몬	Floramon	Igamon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플로라몬	머드프리지몬	Floramon	MudFrigimon	성장기	성숙기		머슈룸몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플로라몬	베지몬	Floramon	Vegimon	성장기	성숙기	DWDD:LV 23; INS 500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플로라몬	키위몬	Floramon	Kiwimon	성장기	성숙기	레벨:16		상승	Y				v1(NDS_진화.tsv)
+플로라몬	해바라기몬	Floramon	Sunflowmon	성장기	성숙기	DWDD DNA(+Monodramon): Lv15+, Insect/Plant EXP500+, Friendship 60%+	모노드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플롯트몬	가트몬	Plotmon	Tailmon	성장기	성숙기	DWDD:LV 18; Friendship 70% / 레벨:16		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+플롯트몬	시사몬	Plotmon	Seasarmon	성장기	성숙기	DWDD DNA(+Gaomon): Lv19+, Holy EXP600+, Defense 140+	가오몬;가오몬+로프몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플롯트몬	위자몬	Plotmon	Wizarmon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+플롯트몬	프리지몬	Plotmon	Frigimon	성장기	성숙기			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피요몬	버드라몬	Biyomon	Birdramon	성장기	성숙기	DWDD:LV 19; friend 60% / 레벨:18		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+피요몬	블랙버드라몬	Biyomon	Saberdramon	성장기	성숙기	DWDD:LV 18; SPD 95; BRD 210		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+피요몬	아쿠이라몬	Biyomon	Aquilamon	성장기	성숙기	DWDD DNA(+Dorumon): Lv16+, Bird EXP500+, Attack 125+	도루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피요몬	유니몬	Biyomon	Unimon	성장기	성숙기	DWDD DNA(+Patamon): Lv17+, Holy EXP250+, Speed 110+	파닥몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피요몬	키위몬	Biyomon	Kiwimon	성장기	성숙기	도구사용:어둠의돌		상승	Y				v1(NDS_진화.tsv)
+피코데블몬	데블드라몬	PicoDevimon	Devidramon	성장기	성숙기	DWDD DNA(+BlackAgumon): Lv18+, Dragon EXP 250+, Dark EXP200+	블랙아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피코데블몬	데블몬	PicoDevimon	Devimon	성장기	성숙기	DWDD:LV 21; DRK 450 / 도구사용:어둠의돌		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+피코데블몬	묘티스몬	PicoDevimon	Vamdemon	성장기	완전체	레벨:33		상승	Y				v1(NDS_진화.tsv)
+피코데블몬	무사몬	PicoDevimon	Musyamon	성장기	성숙기	DWDD:LV 26; ATK 130; DRK 1200		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+호크몬	닌자몬	Hawkmon	Igamon	성장기	성숙기		플로라몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+호크몬	다이노휴몬	Hawkmon	Dinohumon	성장기	성숙기	DWDD DNA(+Kotemon): Lv20+, Dragon EXP700+, Attack 130+ / DWDD DNA(+DotAgumon): Lv20+, Dragon EXP700+, Attack 130+	도트아구몬;코테몬;코테몬+도트아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+호크몬	슈림몬	Hawkmon	Shurimon	성장기	완전체	도구사용:리프의돌		상승	Y				v1(NDS_진화.tsv)
+호크몬	아쿠이라몬	Hawkmon	Aquilamon	성장기	성숙기	DWDD:LV 20; ATK 105 / 레벨:24		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+호크몬	할세몬	Hawkmon	Holsmon	성장기	아머체	도구사용:태양의돌		상승	Y				v1(NDS_진화.tsv)
+황금톱니몬	디아트리몬	Solarmon	Diatrymon	성장기	성숙기	DWDD DNA(+DotFalcomon): Lv24+, Machine EXP2000+, Defense 180+	도트팔코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+황금톱니몬	모야몬	Solarmon	Nanimon	성장기	성숙기	DWDD DNA(+Impmon): Lv15+, Aptitude 24+, Defense 220+	임프몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+황금톱니몬	타임몬	Solarmon	Clockmon	성장기	성숙기	DWDD:LV 33; MinAPT 40; MAC 6000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+황금톱니몬	폭탄모야몬	Solarmon	BomberNanimon	성장기	성숙기	DWDD:LV 24; Friendship 70%; MAC 960		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+황금톱니몬	화염리자몬	Solarmon	FlareLizardmon	성장기	성숙기	DWDD DNA(+DotAgumon): Lv16+, Dragon EXP400+	도트아구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가드로몬	래피드몬	Guadromon	Rapidmon	성숙기	완전체	DWDD DNA(+Gaogamon): Lv28+, Machine EXP2500+, Speed 175+	가오가몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가드로몬	마하가오가몬	Guadromon	MachGaogamon	성숙기	완전체	DWDD DNA(+Grizzmon): Lv28+, Machine EXP2300+, Speed 200+	그리즈몬;그리즈몬+가오가몬+개굴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가드로몬	안드로몬	Guadromon	Andromon	성숙기	완전체	DWDD:LV35; Friend 80%; ATK165 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+가루몬	도루그레몬	Garurumon	Dorugreymon	성숙기	완전체	DWDD DNA(+Greymon): Lv34+, Machine EXP2500+, Dragon EXP4500+	그레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가루몬	맘몬	Garurumon	Mammothmon	성숙기	완전체	DWDD DNA(+Leomon): Lv30+, Attack 200+, Defense 210+	레오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가루몬	워가루몬	Garurumon	WereGarurumon	성숙기	완전체	DWDD:LV 35; SPD 170; BST 4500 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+가루몬	크로우몬	Garurumon	Karatenmon	성숙기	완전체	DWDD DNA(+Kougamon): Lv27+, Spirit 175+, Speed 155+ / DWDD DNA(+Firamon): Lv27+, Spirit 175+, Speed 155+	코가몬;코가몬+파이라몬;파이라몬;파이라몬+코가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가르고몬	래피드몬	Galgomon	Rapidmon	성숙기	완전체	DWDD:LV 33; SPD 135; MAC 3500		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+가오가몬	래피드몬	Gaogamon	Rapidmon	성숙기	완전체	DWDD DNA(+Guardromon): Lv28+, Machine EXP2500+, Speed 175+	가드로몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가오가몬	마하가오가몬	Gaogamon	MachGaogamon	성숙기	완전체	DWDD:LV 33; Friend 80%; MAC 2800		상승	Y				DWDD차트(StrategyWiki Digivolution)
+가와파몬	다이버몬	Gwappamon	Divermon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가와파몬	사우자몬	Gwappamon	Shaujingmon	성숙기	완전체	DWDD:LV 34; SPT 155; AQN 3600		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+가재드라몬	메가시드라몬	Ebidramon	MegaSeadramon	성숙기	완전체	DWDD DNA(+GeoGreymon): Lv32+, Aquan EXP3000+, Attack 185+ / DWDD DNA(+Airdramon): Lv32+, Aquan EXP3000+, Attack 185+	에어드라몬;지오그레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가재드라몬	스컬그레이몬	Ebidramon	SkullGreymon	성숙기	완전체	DWDD DNA(+Monochromon): Lv37+, Dark EXP6500+, Must have Befriended SkullGreymon	모노크로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가재드라몬	콩알티라몬	Ebidramon	MameTyramon	성숙기	완전체	DWDD DNA(+Shellmon): Lv32+, Dragon EXP3100+, Defense 200+ / DWDD DNA(+Monochromon): Lv32+, Dragon EXP3100+, Defense 200+	모노크로몬;쉘몬;쉘몬+모노크로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가트몬	레이디데블몬	Tailmon	LadyDevimon	성숙기	완전체	도구지니고밤:예리한손톱		상승	Y				v1(NDS_진화.tsv)
+가트몬	링스몬	Tailmon	Lynxmon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+가트몬	실피드몬	Tailmon	Silphymon	성숙기	완전체	파티종:아쿠이라몬 / DWDD DNA(+Aquilamon): Lv35+, Bird EXP7000+, Speed 190+	아쿠이라몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); v1(NDS_진화.tsv)
+가트몬	엔젤우몬	Tailmon	Angewomon	성숙기	완전체	DWDD:LV 35; ATK 160; HOL 2700 / 기술:천사의멜로디		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+가트몬	티로몬	Tailmon	Tylomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+개굴몬	볼케몬	Gekomon	Volcamon	성숙기	완전체		고키몬+정글모쟈몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+개굴몬	왕개굴몬	Gekomon	ShogunGekomon	성숙기	완전체	DWDD:LV 32; Friend 70%; MAC 2900 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+게소몬	다고몬	Gesomon	Dragomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Octomon): Lv33+, Dark EXP 3800+, Spirit 200+	옥토몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+게소몬	마린데블몬	Gesomon	Marinedevimon	성숙기	완전체	DWDD DNA(+Vilemon): Lv31+, Aquan EXP2000+, Dark EXP1700+	이비르몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고릴라몬	맘몬	Gorimon	Mammothmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+고스몬	머미몬	Bakemon	Mummymon	성숙기	완전체	DWDD DNA(+Hookmon): Lv31+, Dark EXP41000+, Spirit 210+ / DWDD DNA(+Fugamon): Lv31+, Dark EXP41000+, Spirit 210+	푸가몬;후크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고스몬	묘티스몬	Bakemon	Vamdemon	성숙기	완전체	DWDD DNA(+Sangloupmon): Lv37+, Dark EXP9000+, Spirit 225+	상굴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고스몬	팬텀몬	Bakemon	Phantomon	성숙기	완전체	DWDD:LV 34; DRK 4200 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+고키몬	가비지몬	Roachmon	Garbagemon	성숙기	완전체	DWDD DNA(+Numemon): Lv30+, Machine EXP4000+, Attack 195+ / DWDD DNA(+PlatinumSukamon): Lv30+, Machine EXP4000+, Attack 195+	워매몬;워매몬+화이트스카몬;화이트스카몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고키몬	볼케몬	Roachmon	Volcamon	성숙기	완전체		개굴몬+정글모쟈몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+골레몬	빅콩알몬	Golemon	BigMamemon	성숙기	완전체	DWDD DNA(+Mekanorimon): Lv36+, Machine EXP5500+, must have befriended Mamemon / DWDD DNA(+Veggiemon): Lv36+, Machine EXP5500+, must have befriended Mamemon	메카노리몬;베지몬;이비르몬+메카노리몬+베지몬;이비르몬+베지몬+메카노리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+골레몬	운석몬	Golemon	Meteormon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+골레몬	트리케라몬	Golemon	Triceramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+구미호몬	도사몬	Kyubimon	Taomon	성숙기	완전체	DWDD:LV 36; Friend 80%; SPT 185		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+그라우몬	메가로그라우몬	Growlmon	WarGrowlmon	성숙기	완전체	DWDD:LV 36; SPT 130; MAC 2100		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+그라우몬	블랙메가로그라우몬	Growlmon	BlackWarGrowlmon	성숙기	완전체	DWDD:LV 40; DRK 3600; MAC 3300		상승	Y		테이머즈	테이머즈;색만다름	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+그레이몬	다크그레몬	Greymon	Metal Greymon (Virus)	성숙기	완전체	도구지니고낮:금속코트 / 도구지니고밤:금속코트		상승	Y			디자인변형(바이러스판)	v1(NDS_진화.tsv)
+그레이몬	도루그레몬	Greymon	Dorugreymon	성숙기	완전체	DWDD DNA(+Garurumon): Lv34+, Machine EXP2500+, Dragon EXP4500+	가루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그레이몬	메탈그레이몬	Greymon	MetalGreymon	성숙기	완전체	DWDD:LV 34; Friend 70%; DRG 3000 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+그레이몬	스컬그레이몬	Greymon	SkullGreymon	성숙기	완전체	도구지니고밤:예리한손톱 / DWDD DNA(+Devidramon): Lv37+, Dark EXP6500+, Must have Befriended SkullGreymon	데블드라몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+그리즈몬	마하가오가몬	Grizzmon	MachGaogamon	성숙기	완전체	DWDD DNA(+Guardromon): Lv28+, Machine EXP2300+, Speed 200+	가드로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그리즈몬	팬더몬	Grizzmon	Pandamon	성숙기	완전체	DWDD:LV 36; BST 8000; gotPandamon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그리즈몬	퍼펫몬	Grizzmon	Monzaemon	성숙기	완전체	DWDD:LV 33; Friend 80%; HOL 4000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그린베지몬	라일라몬	Weedmon	Lilamon	성숙기	완전체	DWDD DNA(+Vegiemon): Lv30+, Insect/Plant EXP4500+, Speed 160+	베지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그린베지몬	블로섬몬	Weedmon	Blossomon	성숙기	완전체	DWDD:LV 34; ATK 140; AQN 3200		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그린베지몬	아르고몬	Weedmon	ArgomonPerfect	성숙기	완전체	DWDD DNA(+Devimon): Lv43+, Bug/Plant EXP15000+, Got Chrysalimon(Kurisarimon)	데블몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그린쉘몬	디지타마몬	MoriShellmon	Digitamamon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그린쉘몬	트리케라몬	MoriShellmon	Triceramon	성숙기	완전체	DWDD DNA(+Monochromon): Lv28+,Dragon EXP2500+, Defense 195+	모노크로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+그림몬	카오스그림몬	Grimmon	ChaosGrimmon	(보스)	(보스)			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+꼬끼몬	데라몬	Kokatorimon	Deramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+꼬끼몬	레이디데블몬	Kokatorimon	LadyDevimon	성숙기	완전체	DWDD DNA(+Devidramon): Lv35+, Dark EXP6000+, Attack 215+ / DWDD DNA(+Lekismon): Lv35+, Dark EXP6000+, Attack 215+	데블드라몬;레키스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+꼬끼몬	신드라몬	Kokatorimon	Sinduramon	성숙기	완전체	DWDD DNA(+Akatorimon): Lv34+, Bird EXP7000+	레드꼬끼몬;레드꼬끼몬+번개콩알몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+나이트체스몬	나이트몬	KnightChessmonWhite	Knightmon	성숙기	완전체		다이노휴몬+오메카몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+나이트체스몬	비숍체스몬	KnightChessmonWhite	BishopChessmon	성숙기	완전체	DWDD:LV 34; ATK 175		상승	Y				DWDD차트(StrategyWiki Digivolution)
+나이트체스몬	아트라캅테리몬	KnightChessmonWhite	AlturKabuterimonRed	성숙기	완전체	DWDD DNA(+Drimogemon): Lv32+, Defense 200+, Spirit 190+ / DWDD DNA(+Stingmon): Lv32+, Defense 200+, Spirit 190+	드리모게몬;스팅몬;스팅몬+드리모게몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+네페르티몬	엔젤우몬	Nefertimon	Angewomon	아머체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+니드몬	릴리몬	Togemon	Lilymon	성숙기	완전체	DWDD:LV 33; Friendship 80%; INS 3600 / 기술:파동탄		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+닌자몬	메탈콩알몬	Igamon	MetalMamemon	성숙기	완전체	DWDD DNA(+PlatinumSukamon): Lv29+, Machine EXP3000+, Attack 195+	화이트스카몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+닌자몬	슈퍼스타몬	Igamon	SuperStarmon	성숙기	완전체	DWDD DNA(+Deputymon/Revolmon): Lv36+, Holy EXP7200+, Attack 230+	레볼몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+닌자몬	쥬레이몬	Igamon	Cherrymon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노휴몬	나이트몬	Dinohumon	Knightmon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노휴몬	바지라몬	Dinohumon	Vajramon	성숙기	완전체	DWDD DNA(+Centaurmon): Lv30+, Dark EXP3000+, Defense 190+ / DWDD DNA(+Minotarumon): Lv30+, Dark EXP3000+, Defense 190+	미노타루몬;미노타루몬+켄터스몬;켄터스몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노휴몬	사이버드라몬	Dinohumon	Cyberdramon	성숙기	완전체	DWDD:LV38; ATK195; MAC3800		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노휴몬	황금무사몬	Dinohumon	Zanbamon	성숙기	궁극체	DWDD DNA(+Kabukimon): Lv42+, Dark EXP11000+, Speed 270+	카부키몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크리자몬	기가드라몬	DarkLizardmon	Gigadramon	성숙기	완전체	DWDD DNA(+SandYanmamon): Lv36+, Machine EXP4000+, Attack 210+	왕모래잠자리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크리자몬	메가로그라우몬	DarkLizardmon	WarGrowlmon	성숙기	완전체		화염리자몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크리자몬	메탈티라노몬	DarkLizardmon	MetalTyrannomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+다크리자몬	볼케몬	DarkLizardmon	Volcamon	성숙기	완전체	DWDD:LV 36; ATK 160; DRK 3400		상승	Y				DWDD차트(StrategyWiki Digivolution)
+다크티라몬	메탈티라노몬	DarkTyrannomon	MetalTyrannomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+다크티라몬	블랙메가로그라우몬	DarkTyrannomon	BlackWarGrowlmon	성숙기	완전체	DWDD DNA(+ReptileDramon): Lv35+, Machine EXP3000+, Dark EXP3000+	라프타드라몬	상승	Y	Y		테이머즈;색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크티라몬	스컬그레이몬	DarkTyrannomon	SkullGreymon	성숙기	완전체	DWDD:LV 42; DRK 7000; got SkullGreymon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+달팽이워매몬	디지타마몬	KaratsukiNumemon	Digitamamon	성숙기	완전체	DWDD:LV 38; HOL 3100; gotTapirmon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블드라몬	기가드라몬	Devidramon	Gigadramon	성숙기	완전체	DWDD:LV 40; ATK 195; MAC 4400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블드라몬	레이디데블몬	Devidramon	LadyDevimon	성숙기	완전체	DWDD DNA(+Kokatorimon): Lv35+, Dark EXP6000+, Attack 215+ / DWDD DNA(+Lekismon): Lv35+, Dark EXP6000+, Attack 215+	꼬끼몬;레키스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블드라몬	스컬그레이몬	Devidramon	SkullGreymon	성숙기	완전체	DWDD DNA(+Greymon): Lv37+, Dark EXP6500+, Must have Befriended SkullGreymon	그레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블드라몬	키메라몬	Devidramon	Chimeramon	성숙기	완전체	DWDD:LV 44; DRK 11000; gotKimeramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블몬	묘티스몬	Devimon	Vamdemon	성숙기	완전체	DWDD:LV 42; SPT 195; DRK 10000 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+데블몬	아르고몬	Devimon	ArgomonPerfect	성숙기	완전체	DWDD DNA(+Zassoumon/Weedmon): Lv43+, Bug/Plant EXP15000+, Got Chrysalimon(Kurisarimon)	그린베지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데블몬	키메라몬	Devimon	Chimeramon	성숙기	완전체	DWDD DNA(+Kabuterimon): Lv40+, Species EXP19000+, Got SkullGreymon	캅테리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+도루가몬	도루그레몬	Dorugamon	Dorugreymon	성숙기	완전체	DWDD:LV 38; DRG 4800; Mac 3000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+도쿠구몬	아라크네몬	Dokugumon	Arachnemon	성숙기	완전체	DWDD:LV 40; SPT 220; DRK 7500 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+돌핀몬	고래몬	Dolphmon	Whamon	성숙기	완전체	DWDD:LV32; AQN 6000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+돌핀몬	다이버몬	Dolphmon	Divermon	성숙기	완전체	DWDD:LV 36; MAC 2900; gotDivermon	원뿔몬+레오몬+실러캔몬	상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+드리모게몬	도루그레몬	Drimogemon	Dorugreymon	성숙기	완전체	DWDD DNA(+NiseDrimogemon): Lv34+, Machine EXP2500+, Dragon EXP4500+	수염두리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+드리모게몬	맘몬	Drimogemon	Mammothmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Icemon): Lv30+, Attack 200+, Defense 210+	아이스몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+드리모게몬	아트라캅테리몬	Drimogemon	AlturKabuterimonRed	성숙기	완전체	DWDD DNA(+KnightChessmon (White)): Lv32+, Defense 200+, Spirit 190+ / DWDD DNA(+Stingmon): Lv32+, Defense 200+, Spirit 190+	나이트체스몬;나이트체스몬+스팅몬;스팅몬;스팅몬+나이트체스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+디그몬	샤코몬	Digmon	Shakkoumon	아머체	완전체	파티종:엔젤몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+디아트리몬	데라몬	Diatrymon	Deramon	성숙기	완전체	DWDD DNA(+Woodmon): Lv31+, Bird EXP2000+, Insect/Plant EXP2000+	우드몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+디아트리몬	신드라몬	Diatrymon	Sinduramon	성숙기	완전체	DWDD:LV 40; BRD 8000; gotSinduramon		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라프타드라몬	메탈그레이몬	Raptordramon	MetalGreymon	성숙기	완전체	DWDD DNA(+Tankmon): Lv30+, Dragon EXP2000+, Attack 200+	탱크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라프타드라몬	블랙메가로그라우몬	Raptordramon	BlackWarGrowlmon	성숙기	완전체	DWDD DNA(+DarkTyrannomon): Lv35+, Machine EXP3000+, Dark EXP3000+	다크티라몬	상승	Y	Y		테이머즈;색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라프타드라몬	사이버드라몬	Raptordramon	Cyberdramon	성숙기	완전체		우가몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레드꼬끼몬	신드라몬	Akatorimon	Sinduramon	성숙기	완전체	DWDD DNA(+Kokatorimon): Lv34+, Bird EXP7000+	꼬끼몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레드꼬끼몬	파롯트몬	Akatorimon	Parrotmon	성숙기	완전체	DWDD:LV 35; HOL 2200; BRD 3300		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레드베지몬	베이더몬	RedVeggiemon	Vademon	성숙기	완전체	DWDD DNA(+Nanimon): Lv36+, Machine EXP 3000+, Insect/Plant EXP 4000+	모야몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레드베지몬	블로섬몬	RedVeggiemon	Blossomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+레드베지몬	빅콩알몬	RedVeggiemon	BigMamemon	성숙기	완전체	DWDD DNA(+Veggiemon): Lv36+, Machine EXP5500+, must have befriended Mamemon	베지몬;베지몬+그레이몬+레볼몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레볼몬	라이즈그레이몬	Revolmon	RizeGreymon	성숙기	완전체	DWDD DNA(+FlareRizamon): Lv30+, Machine EXP2000+, Drgaon EXP2000+	화염리자몬;화염리자몬+그라우몬+레파몬;화염리자몬+지오그레이몬+시사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레볼몬	슈퍼스타몬	Revolmon	SuperStarmon	성숙기	완전체	DWDD DNA(+Igamon): Lv36+, Holy EXP7200+, Attack 230+	닌자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레볼몬	안드로몬	Revolmon	Andromon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+레볼몬	콩알티라몬	Revolmon	MameTyramon	성숙기	완전체	DWDD:LV 37; DEF 170; DRG 3900		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레어몬	가비지몬	Raremon	Garbagemon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+레어몬	데이터몬	Raremon	Nanomon	성숙기	완전체	DWDD:LV 35; MAC 4400		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레어몬	티라노몬X	Raremon	XTyrannomon	성숙기	완전체	DWDD DNA(+Tyrannomon): Lv29+, Dark EXP3700+	티라노몬	상승	Y	Y		디자인변형(X항체)	DWDD DNA(StrategyWiki DNA_Digivolution)
+레오몬	맘몬	Leomon	Mammothmon	성숙기	완전체	DWDD DNA(+Garurumon): Lv30+, Attack 200+, Defense 210+	가루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레오몬	사벨레오몬	Leomon	SaberLeomon	성숙기	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55	레파몬+아이언레오몬+쥬드몬	상승	Y				v1(NDS_진화.tsv)
+레오몬	아이언레오몬	Leomon	GrappLeomon	성숙기	완전체	DWDD:LV 39; SPD 190; MAC 5500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+레오몬	쥬드몬	Leomon	Zudomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레키스몬	레이디데블몬	Lekismon	LadyDevimon	성숙기	완전체	DWDD DNA(+Kokatorimon): Lv35+, Dark EXP6000+, Attack 215+ / DWDD DNA(+Devidramon): Lv35+, Dark EXP6000+, Attack 215+	꼬끼몬;꼬끼몬+데블드라몬;꼬끼몬+데블드라몬+데블몬;데블드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레키스몬	크레세몬	Lekismon	Crescemon	성숙기	완전체	DWDD:LV 33; friend 80%; DRK 2800		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레파몬	치린몬	Leppamon	Qilinmon	성숙기	완전체	DWDD:LV43; SPT210; HOL 7000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+레파몬	큐우키몬	Leppamon	Kyukimon	성숙기	완전체	DWDD DNA(+Snimon): Lv35+, Beast EXP3500+, Speed 210+	스나이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머드프리지몬	테카몬	MudFrigimon	Tekkamon	성숙기	완전체	DWDD DNA(+Thunderballmon): Lv32+, Machine EXP3100+, Attack 195+	번개콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머드프리지몬	팬더몬	MudFrigimon	Pandamon	성숙기	완전체	DWDD DNA(+Frigimon): Lv31+, Beast EXP6000+, Defense 225+	프리지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메라몬	데스메라몬	Meramon	Death Meramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+메카노리몬	메가드라몬	Mechanorimon	Megadramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+메카노리몬	메탈티라노몬	Mechanorimon	MetalTyrannomon	성숙기	완전체	DWDD DNA(+Tankmon): Lv29+, Machine EXp4000+ / DWDD DNA(+Tyrannomon): Lv29+, Machine EXp4000+	탱크몬;티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메카노리몬	빅콩알몬	Mechanorimon	BigMamemon	성숙기	완전체	DWDD DNA(+Golemon): Lv36+, Machine EXP5500+, must have befriended Mamemon	골레몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메카노리몬	티라노몬X	Mechanorimon	XTyrannomon	성숙기	완전체	DWDD:LV 34; DRK 4500		상승	Y			디자인변형(X항체)	DWDD차트(StrategyWiki Digivolution)
+모노크로몬	버밀리몬	Monochromon	Vermilimon	성숙기	완전체	DWDD:LV 37; DEF 175; DRG 3500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+모노크로몬	스컬그레이몬	Monochromon	SkullGreymon	성숙기	완전체	DWDD DNA(+Ebidramon): Lv37+, Dark EXP6500+, Must have Befriended SkullGreymon	가재드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노크로몬	콩알티라몬	Monochromon	MameTyramon	성숙기	완전체	DWDD DNA(+Shellmon): Lv32+, Dragon EXP3100+, Defense 200+ / DWDD DNA(+Ebidramon): Lv32+, Dragon EXP3100+, Defense 200+	가재드라몬;쉘몬;쉘몬+가재드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모노크로몬	트리케라몬	Monochromon	Triceramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+MoriShellmon): Lv28+,Dragon EXP2500+, Defense 195+	그린쉘몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+모야몬	디지타마몬	Nanimon	Digitamamon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+모야몬	맘몬	Nanimon	Mammothmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+모야몬	베이더몬	Nanimon	Vademon	성숙기	완전체	DWDD DNA(+RedVegiemon): Lv36+, Machine EXP 3000+, Insect/Plant EXP 4000+	레드베지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모털몬	맘몬	Mojyamon	Mammothmon	성숙기	완전체	DWDD:LV 35; ATK 180; DEF 185		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+모털몬	워가루몬	Mojyamon	WereGarurumon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+무사몬	나이트몬	Musyamon	Knightmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+무사몬	바지라몬	Musyamon	Vajramon	성숙기	완전체	DWDD:LV 35; DEF 160; BST 3700		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+무사몬	왕쿠가몬	Musyamon	Okuwamon	성숙기	완전체	DWDD DNA(+SandYanmamon): Lv30+, Insect/Plant EXP3500+, Defense 170+ / DWDD DNA(+Yanmamon): Lv30+, Insect/Plant EXP3500+, Defense 170+	왕모래잠자리몬;왕모래잠자리몬+왕잠자리몬;왕잠자리몬;왕잠자리몬+왕모래잠자리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노타루몬	바지라몬	Minotarumon	Vajramon	성숙기	완전체	DWDD DNA(+Dinohumon): Lv30+, Dark EXP3000+, Defense 190+ / DWDD DNA(+Centaurmon): Lv30+, Dark EXP3000+, Defense 190+	다이노휴몬;다이노휴몬+켄터스몬;켄터스몬;켄터스몬+다이노휴몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노타루몬	스컬사탄몬	Minotarumon	Skull Satamon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+미노타루몬	아이언레오몬	Minotarumon	GrappLeomon	성숙기	완전체	DWDD DNA(+Fugamon): Lv34+, MachineEXP 4800+, Speed 225+	푸가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노타루몬	에테몬	Minotarumon	Etemon	성숙기	완전체	DWDD:LV 34; SPT 135; BST 3800		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+미노타루몬	트리케라몬	Minotarumon	Triceramon	성숙기	완전체	DWDD DNA(+Akylomon): Lv28+,Dragon EXP2500+, Defense 195+	안킬로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+버드라몬	가루다몬	Birdramon	Garudamon	성숙기	완전체	DWDD:LV 32; friend 80%; BRD 2700 / 기술:스카이어퍼		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+버드라몬	파롯트몬	Birdramon	Parrotmon	성숙기	완전체	DWDD DNA(+Unimon): Lv30+, Holy EXP1600+, Bird EXP2600+	유니몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+번개드라몬	파일드라몬	Lighdramon	Paildramon	아머체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+번개콩알몬	데이터몬	Thundermon	Nanomon	성숙기	완전체	DWDD DNA(+BomberNanimon): Lv29+, Machine EXP3300+	폭탄모야몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+번개콩알몬	콩알몬	Thundermon	Mamemon	성숙기	완전체	DWDD:LV 33; ATK 150; SPD 140		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+번개콩알몬	테카몬	Thundermon	Tekkamon	성숙기	완전체	DWDD DNA(+MudFrigimon/Tsuchidarumon): Lv32+, Machine EXP3100+, Attack 195+	머드프리지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베지몬	라일라몬	Vegimon	Lilamon	성숙기	완전체	DWDD DNA(+Weedmon): Lv30+, Insect/Plant EXP4500+, Speed 160+	그린베지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베지몬	블로섬몬	Vegimon	Blossomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+베지몬	빅콩알몬	Vegimon	BigMamemon	성숙기	완전체	DWDD DNA(+RedVegiemon): Lv36+, Machine EXP5500+, must have befriended Mamemon / DWDD DNA(+Golemon): Lv36+, Machine EXP5500+, must have befriended Mamemon	골레몬;그레이몬+레볼몬+레드베지몬+골레몬;레드베지몬;레드베지몬+골레몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베지몬	콩알몬	Vegimon	Mamemon	성숙기	완전체	DWDD DNA(+Sunflowmon): Lv28+, Attack 170+, Speed 160+	해바라기몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+브이드라몬	에어로브이드라몬	V-Dramon	AeroVeedramon	성숙기	완전체	DWDD:LV 36; ATK 190; DRG 4100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+블랙버드라몬	가루다몬	Saberdramon	Garudamon	성숙기	완전체	DWDD DNA(+Aquilamon): Lv27+, Bird EXP2400+, Speed 160+	아쿠이라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙버드라몬	크로우몬	Saberdramon	Karatenmon	성숙기	완전체	DWDD:LV 33; SPT 170		상승	Y				DWDD차트(StrategyWiki Digivolution)
+블루우가몬	다이버몬	Hyogamon	Divermon	성숙기	완전체		가와파몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블루우가몬	워가루몬	Hyogamon	WereGarurumon	성숙기	완전체		모털몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블루우가몬	쥬드몬	Hyogamon	Zudomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+상굴몬	마타돌몬	Sangloupmon	Matadormon	성숙기	완전체	DWDD:LV 35; SPD 175; DRK 3900		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+상굴몬	묘티스몬	Sangloupmon	Vamdemon	성숙기	완전체	DWDD DNA(+Bakemon): Lv37+, Dark EXP9000+, Spirit 225+	고스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+상굴몬	블랙워가루몬	Sangloupmon	WereGarurumonBlack	성숙기	완전체			상승	Y			색만다름	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+서브마리몬	샤코몬	Submarimon	Shakkoumon	아머체	완전체	파티종:엔젤몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+소서리몬	사우자몬	Sorcerymon	Shaujingmon	성숙기	완전체	DWDD DNA(+Hanumon): Lv29+, Aquan EXP3000+, Spirit 180+ / DWDD DNA(+IceDevimon): Lv29+, Aquan EXP3000+, Spirit 180+	아이스데블몬;에이프몬;에이프몬+아이스데블몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+소서리몬	안티라몬	Sorcerymon	Antiramon	성숙기	완전체	DWDD DNA(+Wizardmon): Lv36+, Friendship 70%+, Spirit 230+	위자몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution)
+소서리몬	피콜로몬	Sorcerymon	Piccolomon	성숙기	완전체	DWDD DNA(+Yanmamon): Lv28+, Holy EXP3000+, Spirit 170+	왕잠자리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+수염두리몬	도루그레몬	NiseDrimogemon	Dorugreymon	성숙기	완전체	DWDD DNA(+Drimogemon): Lv34+, Machine EXP2500+, Dragon EXP4500+	드리모게몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+수염두리몬	버밀리몬	NiseDrimogemon	Vermilimon	성숙기	완전체	DWDD DNA(+Ankylomon): Lv33+, Dragon EXP3000+, Defense 225+ / DWDD DNA(+GeoGreymon): Lv33+, Dragon EXP3000+, Defense 225+	안킬로몬;지오그레이몬;지오그레이몬+안킬로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+수염두리몬	아트라캅테리몬(청)	NiseDrimogemon	MegaKabuterimonBlue	성숙기	완전체	DWDD DNA(+Flymon): Lv29+, Defense 170+, Spirit 160+ / DWDD DNA(+Tortomon): Lv29+, Defense 170+, Spirit 160+	토르토몬;플라이몬;플라이몬+토르토몬	상승	Y	Y		색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쉘몬	스콜피오몬	Shellmon	Scorpiomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+쉘몬	왕개굴몬	Shellmon	ShogunGekomon	성숙기	완전체	DWDD DNA(+Hookmon): Lv27+, Machine EXP2500+, Friendship 60%+	후크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쉘몬	쥬드몬	Shellmon	Zudomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쉘몬	콩알티라몬	Shellmon	MameTyramon	성숙기	완전체	DWDD DNA(+Ebidramon): Lv32+, Dragon EXP3100+, Defense 200+ / DWDD DNA(+Monochromon): Lv32+, Dragon EXP3100+, Defense 200+	가재드라몬;모노크로몬;모노크로몬+가재드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈카몬	가비지몬	Sukamon	Garbagemon	성숙기	완전체	DWDD:LV 35; ATK 170; MAC 5000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈카몬	에테몬	Sukamon	Etemon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Geremon): Lv29+, Beast EXP3200+, Spirit 155+ / DWDD DNA(+J.Mojyamon): Lv29+, Beast EXP3200+, Spirit 155+	옐로우워매몬;정글모쟈몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+스나이몬	스콜피오몬	Snimon	Scorpiomon	성숙기	완전체	DWDD DNA(+SandYanmamon): Lv26+, Aquan EXP3000+, Spirit 170+	왕모래잠자리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+스나이몬	아라크네몬	Snimon	Arachnemon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+스나이몬	큐우키몬	Snimon	Kyukimon	성숙기	완전체	DWDD DNA(+Reppamon): Lv35+, Beast EXP3500+, Speed 210+	레파몬;레파몬+레파몬+구미호몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스나이몬	팬텀몬	Snimon	Phantomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스타몬	슈퍼스타몬	Starmon	SuperStarmon	성숙기	완전체	DWDD:LV 41; ATK 190; HOL 8800 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+스타몬	퍼펫몬	Starmon	Monzaemon	성숙기	완전체	DWDD DNA(+Frigimon): Lv28+, Holy EXP3500+, Friendship 70%+ / DWDD DNA(+Numemon): Lv28+, Holy EXP3500+, Friendship 70%+	워매몬;프리지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스타몬	홀리엔젤몬	Starmon	HolyAngemon	성숙기	완전체	DWDD DNA(+Clockmon): Lv30+, Holy EXP5000+, Spirit 190+	타임몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스팅몬	다이노몬	Stingmon	DinoBeemon	성숙기	완전체	DWDD DNA(+ExVeemon): Lv35+, Speed 250+, Friendship 80%+	엑스브이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+스팅몬	아트라캅테리몬	Stingmon	AlturKabuterimonRed	성숙기	완전체	DWDD DNA(+Drimogemon): Lv32+, Defense 200+, Spirit 190+ / DWDD DNA(+KnightChessmon (White)): Lv32+, Defense 200+, Spirit 190+	나이트체스몬;드리모게몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스팅몬	파일드라몬	Stingmon	Paildramon	성숙기	완전체	파티종:엑스브이몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+ExVeemon): Lv36+, Attack 230+, Friendship 80%+, ExVeemon must initiate the Jogress	엑스브이몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); v1(NDS_진화.tsv)
+시드라몬	메가시드라몬	Seadramon	MegaSeadramon	성숙기	완전체	DWDD:LV 37; ATK 155; AQN 4000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+시드라몬	메탈시드라몬	Seadramon	MetalSeadramon	성숙기	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				v1(NDS_진화.tsv)
+시드라몬	브라키몬	Seadramon	Brachiomon	성숙기	완전체		옐로우워매몬+워매몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+시사몬	치린몬	Seasarmon	Qilinmon	성숙기	완전체	DWDD DNA(+Unimon): Lv38+, Holy EXP5500+, Must have Befriended Kudamon	유니몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+시사몬	퍼펫몬	Seasarmon	Monzaemon	성숙기	완전체	DWDD DNA(+Frigimon): Lv28+, Holy EXP3500+, Friendship 70%+	스타몬+프리지몬;프리지몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+실러캔몬	고래몬	Coelamon	Whamon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+실러캔몬	스콜피오몬	Coelamon	Scorpiomon	성숙기	완전체	DWDD:LV 31; SPT 130; AQN 3200		상승	Y				DWDD차트(StrategyWiki Digivolution)
+아이스데블몬	마린데블몬	IceDevimon	Marinedevimon	성숙기	완전체	DWDD:LV 36; DRK 2100; AQN 2700		상승	Y				DWDD차트(StrategyWiki Digivolution)
+아이스데블몬	사우자몬	IceDevimon	Shaujingmon	성숙기	완전체	DWDD DNA(+Apemon): Lv29+, Aquan EXP3000+, Spirit 180+ / DWDD DNA(+Sorcerymon): Lv29+, Aquan EXP3000+, Spirit 180+	소서리몬;소서리몬+에이프몬;에이프몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아이스몬	맘몬	Icemon	Mammothmon	성숙기	완전체	DWDD DNA(+Drimogemon): Lv30+, Attack 200+, Defense 210+	드리모게몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아이스몬	운석몬	Icemon	Meteormon	성숙기	완전체	DWDD:LV 37; DEF 210; SPD 175		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아쿠이라몬	가루다몬	Aquilamon	Garudamon	성숙기	완전체	DWDD DNA(+Saberdramon): Lv27+, Bird EXP2400+, Speed 160+	블랙버드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아쿠이라몬	슈림몬	Aquilamon	Shurimon	성숙기	완전체	도구사용:리프의돌		상승	Y				v1(NDS_진화.tsv)
+아쿠이라몬	실피드몬	Aquilamon	Silphymon	성숙기	완전체	파티종:가트몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Gatomon): Lv35+, Bird EXP7000+, Speed 190+	가트몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+안킬로몬	버밀리몬	Ankylomon	Vermilimon	성숙기	완전체	DWDD DNA(+GeoGreymon): Lv33+, Dragon EXP3000+, Defense 225+ / DWDD DNA(+NiseDrimogemon): Lv33+, Dragon EXP3000+, Defense 225+	수염두리몬;수염두리몬+지오그레이몬;지오그레이몬;지오그레이몬+수염두리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+안킬로몬	샤코몬	Ankylomon	Shakkoumon	성숙기	완전체	파티종:엔젤몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Angemon): Lv36+, Machine EXP4500+, Defense 255+	엔젤몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+안킬로몬	트리케라몬	Ankylomon	Triceramon	성숙기	완전체	DWDD DNA(+Minotarumon): Lv28+,Dragon EXP2500+, Defense 195+	미노타루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에어드라몬	메가드라몬	Airdramon	Megadramon	성숙기	완전체	DWDD:LV 34; MAC 3600 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+에어드라몬	메가시드라몬	Airdramon	MegaSeadramon	성숙기	완전체	DWDD DNA(+Ebidramon): Lv32+, Aquan EXP3000+, Attack 185+	가재드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에어드라몬	에어로브이드라몬	Airdramon	AeroVeedramon	성숙기	완전체	DWDD DNA(+Tyrannomon): Lv32+, Dragon EXP3700+, Attack 220+	티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에이프몬	맘몬	Apemon	Mammothmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+에이프몬	사우자몬	Apemon	Shaujingmon	성숙기	완전체	DWDD DNA(+IceDevimon): Lv29+, Aquan EXP3000+, Spirit 180+ / DWDD DNA(+Sorcerymon): Lv29+, Aquan EXP3000+, Spirit 180+	소서리몬;소서리몬+아이스데블몬;아이스데블몬;아이스데블몬+소서리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에이프몬	큐우키몬	Apemon	Kyukimon	성숙기	완전체	DWDD:LV 34; SPD 180; BST 4000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+엑스브이몬	다이노몬	XV-mon	DinoBeemon	성숙기	완전체	DWDD DNA(+Stingmon as Jogress Initiator): Lv35+, Speed 250+, Friendship 80%+	스팅몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+엑스브이몬	매그너몬	XV-mon	Magnamon	성숙기	완전체	도구지니고낮:동글동글돌 / 도구지니고밤:동글동글돌		상승	Y				v1(NDS_진화.tsv)
+엑스브이몬	파일드라몬	XV-mon	Paildramon	성숙기	완전체	파티종:스팅몬 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Stingmon): Lv36+, Attack 230+, Friendship 80%+, ExVeemon must initiate the Jogress	스팅몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); v1(NDS_진화.tsv)
+엑스브이몬	화염드라몬	XV-mon	Flamedramon	성숙기	완전체	도구사용:불꽃의돌		상승	Y				v1(NDS_진화.tsv)
+엔젤몬	샤코몬	Angemon	Shakkoumon	성숙기	완전체	파티종:안킬로몬 / DWDD DNA(+Ankylomon): Lv36+, Machine EXP4500+, Defense 255+	안킬로몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+엔젤몬	홀리엔젤몬	Angemon	HolyAngemon	성숙기	완전체	DWDD:LV 34; SPT 160; HOL 3100 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+옐로우워매몬	브라키몬	Geremon	Brachiomon	성숙기	완전체		화이트스카몬+워매몬+시드라몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+옐로우워매몬	에테몬	Geremon	Etemon	성숙기	완전체	DWDD DNA(+Sukamon): Lv29+, Beast EXP3200+, Spirit 155+ / DWDD DNA(+J.Mojyamon): Lv29+, Beast EXP3200+, Spirit 155+	슈카몬;정글모쟈몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오메카몬	나이트몬	Omekamon	Knightmon	성숙기	완전체		다이노휴몬+나이트체스몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오메카몬	테카몬	Omekamon	Tekkamon	성숙기	완전체	DWDD:LV 37; ATK 170; SPD 150		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+옥토몬	다고몬	Octomon	Dragomon	성숙기	완전체	DWDD DNA(+Gesomon): Lv33+, Dark EXP 3800+, Spirit 200+	게소몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+옥토몬	마린데블몬	Octomon	Marinedevimon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+옥토몬	블로섬몬	Octomon	Blossomon	성숙기	완전체	DWDD DNA(+Kiwimon): Lv29+, Insect/Plant EXP5000+, Attack 170+	키위몬;키위몬+해바라기몬+니드몬+도쿠구몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕모래잠자리몬	기가드라몬	SandYanmamon	Gigadramon	성숙기	완전체	DWDD DNA(+DarkLizardmon): Lv36+, Machine EXP4000+, Attack 210+	다크리자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕모래잠자리몬	스콜피오몬	SandYanmamon	Scorpiomon	성숙기	완전체	DWDD DNA(+Snimon): Lv26+, Aquan EXP3000+, Spirit 170+	스나이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+왕모래잠자리몬	왕쿠가몬	SandYanmamon	Okuwamon	성숙기	완전체	DWDD DNA(+Yanmamon): Lv30+, Insect/Plant EXP3500+, Defense 170+ / DWDD DNA(+Musyamon): Lv30+, Insect/Plant EXP3500+, Defense 170+	무사몬;무사몬+왕잠자리몬;왕잠자리몬;왕잠자리몬+무사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕잠자리몬	메가드라몬	Yanmamon	Megadramon	성숙기	완전체	DWDD DNA(+FlareRizamon): Lv29+, Machine EXP2500+, Dragon EXP2000+	화염리자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕잠자리몬	왕쿠가몬	Yanmamon	Okuwamon	성숙기	완전체	DWDD DNA(+SandYanmamon): Lv30+, Insect/Plant EXP3500+, Defense 170+ / DWDD DNA(+Musyamon): Lv30+, Insect/Plant EXP3500+, Defense 170+	무사몬;무사몬+왕모래잠자리몬;왕모래잠자리몬;왕모래잠자리몬+무사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕잠자리몬	피콜로몬	Yanmamon	Piccolomon	성숙기	완전체	DWDD DNA(+Sorcerymon): Lv28+, Holy EXP3000+, Spirit 170+	소서리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+우가몬	디지타마몬	Ogremon	Digitamamon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+우가몬	블랙워가루몬	Ogremon	WereGarurumonBlack	성숙기	완전체	DWDD:LV 41; SPD 190; DRK 6500		상승	Y			색만다름	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+우가몬	사이버드라몬	Ogremon	Cyberdramon	성숙기	완전체		라프타드라몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+우가몬	쥬드몬	Ogremon	Zudomon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+우드몬	데라몬	Woodmon	Deramon	성숙기	완전체	DWDD DNA(+Diatrymon): Lv31+, Bird EXP2000+, Insect/Plant EXP2000+	디아트리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+우드몬	쥬레이몬	Woodmon	Cherrymon	성숙기	완전체	DWDD:LV 41; ATK 200; SPT 210 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+워매몬	가비지몬	Numemon	Garbagemon	성숙기	완전체	DWDD DNA(+Roachmon): Lv30+, Machine EXP4000+, Attack 195+ / DWDD DNA(+PlatinumSukamon): Lv30+, Machine EXP4000+, Attack 195+	고키몬;화이트스카몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+워매몬	브라키몬	Numemon	Brachiomon	성숙기	완전체		옐로우워매몬+시드라몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+워매몬	퍼펫몬	Numemon	Monzaemon	성숙기	완전체	DWDD DNA(+Starmon): Lv28+, Holy EXP3500+, Friendship 70%+	스타몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+원뿔몬	쥬드몬	Ikkakumon	Zudomon	성숙기	완전체	DWDD:LV 32; ATK 160; AQN 4100 / 기술:번개엄니		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+웬디몬	아라크네몬	Wendimon	Arachnemon	성숙기	완전체	DWDD DNA(+Flymon): Lv35+, Dark EXP7000+, Spirit 250+	플라이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+웬디몬	안티라몬	Wendimon	Antiramon	성숙기	완전체	DWDD:LV 41; Friendship 80%; SPT 190		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution)
+위자몬	머미몬	Wizarmon	Mummymon	성숙기	완전체	DWDD:LV 36; SPT 180; DRK 5100		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+위자몬	비숍체스몬	Wizarmon	BishopChessmon	성숙기	완전체	DWDD DNA(+Hookmon): Lv30+, Machine EXP3000+, Attack 200+	후크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+위자몬	안티라몬	Wizarmon	Antiramon	성숙기	완전체	DWDD DNA(+Sorcerymon): Lv36+, Friendship 70%+, Spirit 230+	소서리몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution)
+위자몬	팬텀몬	Wizarmon	Phantomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+유니몬	치린몬	Unimon	Qilinmon	성숙기	완전체	DWDD DNA(+Saesarmon): Lv38+, Holy EXP5500+, Must have Befriended Kudamon	시사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+유니몬	파롯트몬	Unimon	Parrotmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Birdramon): Lv30+, Holy EXP1600+, Bird EXP2600+	버드라몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+유니몬	피콜로몬	Unimon	Piccolomon	성숙기	완전체	DWDD:LV 33; SPT 145; HOL 4300		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+이비르몬	레이디데블몬	Evilmon	LadyDevimon	성숙기	완전체	DWDD:LV 39; ATK 185; DRK 6200		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+이비르몬	마린데블몬	Evilmon	Marinedevimon	성숙기	완전체	DWDD DNA(+Gesomon): Lv31+, Aquan EXP2000+, Dark EXP1700+	게소몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+이비르몬	마타돌몬	Evilmon	Matadormon	성숙기	완전체	DWDD DNA(+Hookmon): Lv30+, Dark EXP3100+, Speed 195+	후크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+이비르몬	팬텀몬	Evilmon	Phantomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+정글모쟈몬	볼케몬	J-Mojyamon	Volcamon	성숙기	완전체		개굴몬+고키몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+정글모쟈몬	블랙워가루몬	J-Mojyamon	WereGarurumonBlack	성숙기	완전체		상굴몬	상승	Y	Y		색만다름	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+정글모쟈몬	에테몬	J-Mojyamon	Etemon	성숙기	완전체	DWDD DNA(+Sukamon): Lv29+, Beast EXP3200+, Spirit 155+ / DWDD DNA(+Geremon): Lv29+, Beast EXP3200+, Spirit 155+	슈카몬;슈카몬+옐로우워매몬;옐로우워매몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+지오그레이몬	라이즈그레이몬	GeoGreymon	RizeGreymon	성숙기	완전체	DWDD:LV 35; DRG 2500; MAC 2500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+지오그레이몬	메가시드라몬	GeoGreymon	MegaSeadramon	성숙기	완전체	DWDD DNA(+Ebidramon): Lv32+, Aquan EXP3000+, Attack 185+	가재드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+지오그레이몬	버밀리몬	GeoGreymon	Vermilimon	성숙기	완전체	DWDD DNA(+Ankylomon): Lv33+, Dragon EXP3000+, Defense 225+ / DWDD DNA(+NiseDrimogemon): Lv33+, Dragon EXP3000+, Defense 225+	수염두리몬;수염두리몬+안킬로몬;안킬로몬;안킬로몬+수염두리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+캅테리몬	아트라캅테리몬	Kabuterimon	AlturKabuterimonRed	성숙기	완전체	DWDD:LV 36; Friendship 80%; SPT 170 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+캅테리몬	아트라캅테리몬(청)	Kabuterimon	MegaKabuterimonBlue	성숙기	완전체	DWDD:LV 33; SPT 140		상승	Y			색만다름	DWDD차트(StrategyWiki Digivolution)
+캅테리몬	키메라몬	Kabuterimon	Chimeramon	성숙기	완전체	DWDD DNA(+Devimon): Lv40+, Species EXP19000+, Got SkullGreymon	데블몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+켄터스몬	바지라몬	Centarumon	Vajramon	성숙기	완전체	DWDD DNA(+Dinohumon): Lv30+, Dark EXP3000+, Defense 190+ / DWDD DNA(+Minotarumon): Lv30+, Dark EXP3000+, Defense 190+	다이노휴몬;다이노휴몬+미노타루몬;미노타루몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+켄터스몬	블랙래피드몬	Centarumon	BlackRapidmon	성숙기	완전체	DWDD:LV 33; SPD 145; MAC 3500		상승	Y			테이머즈;색만다름	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+켄터스몬	안드로몬	Centarumon	Andromon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+코가몬	쥬레이몬	Kougamon	Cherrymon	성숙기	완전체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코가몬	지로몬	Kougamon	Giromon	성숙기	완전체	DWDD DNA(+Kuwagamon): Lv30+, Machine EXP3800+, Attack 200+	쿠가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+코가몬	크로우몬	Kougamon	Karatenmon	성숙기	완전체	DWDD DNA(+Garurumon): Lv27+, Spirit 175+, Speed 155+ / DWDD DNA(+Firamon): Lv27+, Spirit 175+, Speed 155+	가루몬;파이라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쿠가몬	왕쿠가몬	Kuwagamon	Okuwamon	성숙기	완전체	DWDD:LV 35; DEF 145; INS 4000 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+쿠가몬	지로몬	Kuwagamon	Giromon	성숙기	완전체	DWDD DNA(+Kougamon): Lv30+, Machine EXP3800+, Attack 200+	코가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+크리사리몬	아르고몬	Chrysalimon	ArgomonPerfect	성숙기	완전체	DWDD:LV 48; SPT 320; INS 20000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크리사리몬	인펠몬	Chrysalimon	Infermon	성숙기	완전체	DWDD:LV 36; ATK 200 / 도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+키위몬	데라몬	Kiwimon	Deramon	성숙기	완전체	DWDD:LV 36; INS 4000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+키위몬	블로섬몬	Kiwimon	Blossomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Octomon): Lv29+, Insect/Plant EXP5000+, Attack 170+	옥토몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+타임몬	나이트몬	Clockmon	Knightmon	성숙기	완전체	DWDD:LV 40; ATK 200; DEF 180		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+타임몬	팬텀몬	Clockmon	Phantomon	성숙기	완전체		고스몬+스나이몬;스나이몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+타임몬	홀리엔젤몬	Clockmon	HolyAngemon	성숙기	완전체	DWDD DNA(+Starmon): Lv30+, Holy EXP5000+, Spirit 190+	스타몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+탱크몬	기가드라몬	Tankmon	Gigadramon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+탱크몬	메탈그레이몬	Tankmon	MetalGreymon	성숙기	완전체	DWDD DNA(+RaptorDramon/Reptiledramon): Lv30+, Dragon EXP2000+, Attack 200+	라프타드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+탱크몬	메탈콩알몬	Tankmon	MetalMamemon	성숙기	완전체	DWDD:LV 34; ATK 165; MAC 3300		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+탱크몬	메탈티라노몬	Tankmon	MetalTyrannomon	성숙기	완전체	DWDD DNA(+Tyrannomon): Lv29+, Machine EXp4000+ / DWDD DNA(+Mekanorimon): Lv29+, Machine EXp4000+	메카노리몬;티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토르토몬	브라키몬	Tortomon	Brachiomon	성숙기	완전체	DWDD:LV 38; AQN 7500; got Brachiomon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토르토몬	아트라캅테리몬(청)	Tortomon	MegaKabuterimonBlue	성숙기	완전체	DWDD DNA(+Flymon): Lv29+, Defense 170+, Spirit 160+ / DWDD DNA(+NiseDrimogemon): Lv29+, Defense 170+, Spirit 160+	수염두리몬;플라이몬	상승	Y	Y		색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토르토몬	쥬드몬	Tortomon	Zudomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+티라노몬	메탈티라노몬	tyranomon	MetalTyrannomon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨 / DWDD DNA(+Tankmon): Lv29+, Machine EXp4000+ / DWDD DNA(+Mekanorimon): Lv29+, Machine EXp4000+	메카노리몬;탱크몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+티라노몬	에어로브이드라몬	tyranomon	AeroVeedramon	성숙기	완전체	DWDD DNA(+Airdramon): Lv32+, Dragon EXP3700+, Attack 220+	에어드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+티라노몬	트리케라몬	tyranomon	Triceramon	성숙기	완전체	DWDD:LV 33; DEF 135; DRG 2000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+티라노몬	티라노몬X	tyranomon	XTyrannomon	성숙기	완전체	DWDD DNA(+Raremon): Lv29+, Dark EXP3700+	레어몬	상승	Y	Y		디자인변형(X항체)	DWDD DNA(StrategyWiki DNA_Digivolution)
+파이라몬	크로우몬	Firamon	Karatenmon	성숙기	완전체	DWDD DNA(+Garurumon): Lv27+, Spirit 175+, Speed 155+ / DWDD DNA(+Kougamon): Lv27+, Spirit 175+, Speed 155+	가루몬;가루몬+코가몬;코가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파이라몬	플레어몬	Firamon	Flaremon	성숙기	완전체	DWDD:LV 40; Friend 80%; SPT 140		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+펌프몬	머미몬	Pumpmon	Mummymon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+페가수몬	홀리엔젤몬	Pegasmon	HolyAngemon	아머체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+펙크몬	야타가라몬	Peckmon	Yatagaramon	성숙기	완전체	DWDD:LV 37; Friendship 80%; BRD 3500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+폭탄모야몬	데이터몬	BomberNanimon	Nanomon	성숙기	완전체	DWDD DNA(+Thunderballmon): Lv29+, Machine EXP3300+	번개콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+폭탄모야몬	지로몬	BomberNanimon	Giromon	성숙기	완전체	DWDD:LV 38; ATK 175; MAC 4000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+푸가몬	마타돌몬	Fugamon	Matadormon	성숙기	완전체		이비르몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+푸가몬	머미몬	Fugamon	Mummymon	성숙기	완전체	DWDD DNA(+Hookmon): Lv31+, Dark EXP41000+, Spirit 210+ / DWDD DNA(+Bakemon): Lv31+, Dark EXP41000+, Spirit 210+	고스몬;고스몬+후크몬;후크몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+푸가몬	아이언레오몬	Fugamon	GrappLeomon	성숙기	완전체	DWDD DNA(+Minotaurmon): Lv34+, MachineEXP 4800+, Speed 225+	미노타루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+프리지몬	맘몬	Frigimon	Mammothmon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+프리지몬	팬더몬	Frigimon	Pandamon	성숙기	완전체	DWDD DNA(+MudFrigimon/Tsuchidarumon): Lv31+, Beast EXP6000+, Defense 225+	머드프리지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+프리지몬	퍼펫몬	Frigimon	Monzaemon	성숙기	완전체	DWDD DNA(+Starmon): Lv28+, Holy EXP3500+, Friendship 70%+ / DWDD DNA(+Saesarmon): Lv28+, Holy EXP3500+, Friendship 70%+	스타몬;시사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플라이몬	다이노몬	Flymon	DinoBeemon	성숙기	완전체	DWDD:LV 41; DRG 8800; gotDinobeemon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플라이몬	아라크네몬	Flymon	Arachnemon	성숙기	완전체	DWDD DNA(+Wendigomon): Lv35+, Dark EXP7000+, Spirit 250+	웬디몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플라이몬	아트라캅테리몬(청)	Flymon	MegaKabuterimonBlue	성숙기	완전체	DWDD DNA(+Tortomon): Lv29+, Defense 170+, Spirit 160+ / DWDD DNA(+NiseDrimogemon): Lv29+, Defense 170+, Spirit 160+	수염두리몬;토르토몬	상승	Y	Y		색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플라이몬	왕쿠가몬	Flymon	Okuwamon	성숙기	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+할세몬	실피드몬	Holsmon	Silphymon	아머체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		상승	Y				v1(NDS_진화.tsv)
+해바라기몬	라일라몬	Sunflowmon	Lilamon	성숙기	완전체	DWDD:LV 35; Friend 80%; SPD 135		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+해바라기몬	콩알몬	Sunflowmon	Mamemon	성숙기	완전체	DWDD DNA(+Vegiemon): Lv28+, Attack 170+, Speed 160+	베지몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화염리자몬	라이즈그레이몬	FlareLizardmon	RizeGreymon	성숙기	완전체	DWDD DNA(+Deputymon/Revolmon): Lv30+, Machine EXP2000+, Drgaon EXP2000+	레볼몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화염리자몬	메가드라몬	FlareLizardmon	Megadramon	성숙기	완전체	DWDD DNA(+Yanmamon): Lv29+, Machine EXP2500+, Dragon EXP2000+	왕잠자리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화염리자몬	메가로그라우몬	FlareLizardmon	WarGrowlmon	성숙기	완전체		다크리자몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화이트스카몬	가비지몬	PlatinumSukamon	Garbagemon	성숙기	완전체	DWDD DNA(+Numemon): Lv30+, Machine EXP4000+, Attack 195+ / DWDD DNA(+Roachmon): Lv30+, Machine EXP4000+, Attack 195+	고키몬;워매몬;워매몬+고키몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화이트스카몬	메탈콩알몬	PlatinumSukamon	MetalMamemon	성숙기	완전체	DWDD DNA(+Igamon/Ninjamon): Lv29+, Machine EXP3000+, Attack 195+	닌자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화이트스카몬	운석몬	PlatinumSukamon	Meteormon	성숙기	완전체		골레몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+후크몬	마타돌몬	Hookmon	Matadormon	성숙기	완전체	DWDD DNA(+Vilemon): Lv30+, Dark EXP3100+, Speed 195+	이비르몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+후크몬	머미몬	Hookmon	Mummymon	성숙기	완전체	DWDD DNA(+Bakemon): Lv31+, Dark EXP41000+, Spirit 210+ / DWDD DNA(+Fuugamon): Lv31+, Dark EXP41000+, Spirit 210+	고스몬;푸가몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+후크몬	비숍체스몬	Hookmon	BishopChessmon	성숙기	완전체	DWDD DNA(+Wizardmon): Lv30+, Machine EXP3000+, Attack 200+	위자몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+후크몬	아이언레오몬	Hookmon	GrappLeomon	성숙기	완전체		미노타루몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+후크몬	왕개굴몬	Hookmon	ShogunGekomon	성숙기	완전체	DWDD DNA(+Shellmon): Lv27+, Machine EXP2500+, Friendship 60%+	쉘몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가루다몬	그리포몬	Garudamon	Gryphonmon	완전체	궁극체	DWDD:LV 47; ATK 240; BST 8000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+가루다몬	아누비스몬	Garudamon	Anubismon	완전체	궁극체	DWDD DNA(+Blossomon): Lv52+, Holy EXP15000+, Spirit 290+	블로섬몬;블로섬몬+시사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가루다몬	페닉스몬	Garudamon	Phoenixmon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+가비지몬	이바몬	Garbagemon	Ebemon	완전체	궁극체	DWDD DNA(+Meteormon): Lv42+, Machine EXP8000+, Attack 270+ / DWDD DNA(+MetalMamemon): Lv42+, Machine EXP8000+, Attack 270+	메탈콩알몬;운석몬;운석몬+메탈콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+가비지몬	피노키몬	Garbagemon	Puppetmon	완전체	궁극체		쥬레이몬+슈림몬	상승	Y	Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+고래몬	기가시드라몬	Whamon	GigaSeadramon	완전체	궁극체	DWDD DNA(+Gigadramon): Lv53+, Machine EXP17000+, Aquan EXP17000+	기가드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+고래몬	마린엔젤몬	Whamon	MarineAngemon	완전체	궁극체	DWDD:LV 47; HOL 8000; AQN 13000		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution)
+고래몬	바이킹몬	Whamon	Vikemon	완전체	궁극체	DWDD DNA(+WereGarurumon): Lv45+, Defense 250+, Spirit 250+	워가루몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+기가드라몬	기가시드라몬	Gigadramon	GigaSeadramon	완전체	궁극체	DWDD DNA(+Whamon): Lv53+, Machine EXP17000+, Aquan EXP17000+	고래몬;고래몬+메가시드라몬+데블시드라몬+왕개굴몬;메가시드라몬+데블시드라몬+왕개굴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+기가드라몬	지드밀레니엄몬	Gigadramon	ZeedMillenniummon	완전체	궁극체	DWDD DNA(+MoonMilleniumon): {{Footer Nav|game=Digimon World: Dawn and Dusk|prevpage=Digivolution|nextpage=Armor Digivolution}}	문밀레니엄몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+기가드라몬	파워드라몬	Gigadramon	Machinedramon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Megadramon): Lv50+, Attack 300+, Must have befriended MetalSeadramon / DWDD DNA(+MetalTyrannomon): Lv50+, Attack 300+, Must have befriended MetalSeadramon	메가드라몬;메탈티라노몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+다고몬	베놈묘티몬	Dragomon	VenomMyotismon	완전체	궁극체	DWDD DNA(+Pipismon): Lv60+, Beast EXP33333+, Dark EXP33333+	다이노몬+피피스몬+묘티스몬+아트라캅테리몬;피피스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노몬	그랜쿠가몬	DinoBeemon	GranKuwagamon	완전체	궁극체	DWDD DNA(+Scorpiomon): Lv44+, Insect/Plant EXP13000+, Attack 280+	스콜피오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이노몬	황제드라몬	DinoBeemon	Imperialdramon	완전체	궁극체	DWDD:LV 50; ATK 315; DRG 20000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+다이버몬	바이킹몬	Divermon	Vikemon	완전체	궁극체	DWDD DNA(+Shakkoumon): Lv45+, Defense 250+, Spirit 250+	샤코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다이버몬	푸쿠몬	Divermon	Pukumon	완전체	궁극체	DWDD DNA(+Ponchomon): Lv40+, Aquan EXP8400+, Attack 220+	판초몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크그레몬	파워드라몬	Metal Greymon (Virus)	Machinedramon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y		디자인변형(바이러스판)		v1(NDS_진화.tsv)
+데라몬	발키리몬	Deramon	Valkyrimon	완전체	궁극체	DWDD DNA(+Angewomon): Lv46+, Holy EXP10000+, Speed 280+ / DWDD DNA(+Owlmon): Lv46+, Holy EXP10000+, Speed 280+	아울몬;아울몬+엔젤우몬;엔젤우몬;엔젤우몬+아울몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데라몬	페닉스몬	Deramon	Phoenixmon	완전체	궁극체	DWDD:LV 52; HOL 11000; BRD 11000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+데이터몬	파라오몬	Nanomon	Pharaohmon	완전체	궁극체	DWDD DNA(+Kongoumon): Lv45+, Holy EXP7500+, Dark EXP7500+	콩고몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+데이터몬	패러사이몬	Nanomon	Parasimon	완전체	궁극체	DWDD:LV 48; minAPT 52; Dark 8800		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도루그레몬	그리포몬	Dorugreymon	Gryphonmon	완전체	궁극체	DWDD DNA(+Toucanmon): Lv41+, Beast EXP7000+, Attack 250+	토칸몬;토칸몬+블로섬몬+데라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도루그레몬	도루고라몬	Dorugreymon	Dorugoramon	완전체	궁극체	DWDD:LV 54; ATK 265; EX 57000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+도사몬	샤크라몬	Taomon	Sakuyamon	완전체	궁극체	DWDD:LV 52; HOL 16000; got Kazuhamon		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+도사몬	쿠즈하몬	Taomon	Kuzuhamon	완전체	궁극체	DWDD DNA(+Karatenmon): Lv43+, Holy EXP7700+, Spirit 270+	크로우몬	상승	Y	Y	테이머즈	테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+도사몬	파라오몬	Taomon	Pharaohmon	완전체	궁극체	DWDD DNA(+Lynxmon): Lv45+, Holy EXP7500+, Dark EXP7500+	링스몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+디지타마몬	데블타몬	Digitamamon	Devitamon	완전체	궁극체	DWDD:LV 50; ATK 250; DRK 18000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+디지타마몬	데스몬	Digitamamon	Deathmon	완전체	궁극체	DWDD DNA(+Monzaemon): Lv44+, Defense 260+, Spirit 250+ / DWDD DNA(+Pandamon): Lv44+, Defense 260+, Spirit 250+	팬더몬;팬더몬+퍼펫몬;퍼펫몬;퍼펫몬+팬더몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+디지타마몬	램프몬	Digitamamon	Lampmon	완전체	궁극체	DWDD:LV 49; DEF 220; HOL 11500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라이즈그레이몬	샤인그레이몬	RizeGreymon	ShineGreymon	완전체	궁극체	DWDD:LV 54; ATK 270; HOL 13000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라이즈그레이몬	샤인그레이몬 루인모드	RizeGreymon	DSGreymon	완전체	궁극체	DWDD:LV 60; MAC 30000; Got DS Greymon		상승	Y			모드(루인모드)	DWDD차트(StrategyWiki Digivolution)
+라이즈그레이몬	황제드라몬	RizeGreymon	Imperialdramon	완전체	궁극체	DWDD DNA(+Allomon): Lv52+, Dragon EXP19000+, Got ImperialdramonDM	알로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라일라몬	로제몬	Lilamon	Rosemon	완전체	궁극체	DWDD:LV 50; ATK 225; INS 17000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라일라몬	로터스몬	Lilamon	Lotusmon	완전체	궁극체	DWDD:LV 57; INS 29000; gotRosemon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라일라몬	마그나드몬	Lilamon	Magnadramon	완전체	궁극체	DWDD DNA(+Angewomon): Lv60+, Holy EXP22000+, Dragon EXP11000+ / DWDD DNA(+Lillymon): Lv60+, Holy EXP22000+, Dragon EXP11000+	릴리몬;엔젤우몬;엔젤우몬+릴리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+라일라몬	할매몬	Lilamon	Babamon	완전체	궁극체	DWDD DNA(+Piximon): Lv44+, Holy EXP7000+, Spirit 240+ / DWDD DNA(+Vademon): Lv44+, Holy EXP7000+, Spirit 240+	베이더몬;피콜로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+래피드몬	세라피몬	Rapidmon	Seraphimon	완전체	궁극체	DWDD DNA(+BlackRapidmon): Lv61+, Holy EXP50000+, Must have Befriended Seraphimon	블랙래피드몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+래피드몬	세인트가르고몬	Rapidmon	SaintGalgomon	완전체	궁극체	DWDD:LV 50; HOL 8000; MAC 8000		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+레이디데블몬	로터스몬	LadyDevimon	Lotusmon	완전체	궁극체	DWDD DNA(+Blossomon): Lv52+, Insect/Plant EXP22000+, Must have Befriended Rosemon	블로섬몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+레이디데블몬	마왕몬	LadyDevimon	Daemon	완전체	(보스)			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+룩체스몬	블랙세인트가르고몬	RookChessmon	BlackSaintGalgomon	완전체	궁극체	DWDD DNA(+BishopChessmon): Lv45+, Dark EXP7000+, Beast EXP7000+	비숍체스몬	상승	Y	Y		테이머즈;색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+룩체스몬	퀸체스몬	RookChessmon	QueenChessmon	완전체	궁극체	DWDD:LV 50; SPT 220; MAC 13000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+룩체스몬	하이안드로몬	RookChessmon	HiAndromon	완전체	궁극체	DWDD DNA(+Goburimon): Lv45+, Machine EXP12000, Spirit 290+	고부리몬;지로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+릴리몬	로제몬	Lilymon	Rosemon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Matadormon): Lv44+, Insect/Plant EXP14000+, Attack 240+	마타돌몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+릴리몬	마그나드몬	Lilymon	Magnadramon	완전체	궁극체	DWDD DNA(+Lilamon): Lv60+, Holy EXP22000+, Dragon EXP11000+ / DWDD DNA(+Angewomon): Lv60+, Holy EXP22000+, Dragon EXP11000+	라일라몬;엔젤우몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+릴리몬	마린엔젤몬	Lilymon	MarineAngemon	완전체	궁극체	DWDD DNA(+MegaSeadramon): Lv42+, Holy EXP7000+, Water EXP10000+	메가시드라몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+링스몬	사벨레오몬	Lynxmon	SaberLeomon	완전체	궁극체	DWDD DNA(+Zudomon): Lv52+, Beast EXP16000+, Attack 320+	쥬드몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+링스몬	파라오몬	Lynxmon	Pharaohmon	완전체	궁극체	DWDD DNA(+Taomon): Lv45+, Holy EXP7500+, Dark EXP7500+	도사몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+마린데블몬	메탈시드라몬	Marinedevimon	MetalSeadramon	완전체	궁극체	DWDD DNA(+Scorpiomon): Lv50+, Machine EXp8000+, Aquan EXP6000+ / DWDD DNA(+MetalTyrannomon): Lv50+, Machine EXp8000+, Aquan EXP6000+	메탈티라노몬;스콜피오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+마타돌몬	로제몬	Matadormon	Rosemon	완전체	궁극체	DWDD DNA(+Lillymon): Lv44+, Insect/Plant EXP14000+, Attack 240+	릴리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+마타돌몬	피에몬	Matadormon	Piedmon	완전체	궁극체	DWDD:LV55; gotPiedmon; gotPuppetmon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+마하가오가몬	미라쥬가오가몬	MachGaogamon	MirageGaogamon	완전체	궁극체	DWDD:LV 53; ATK 235; SPD 280		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+마하가오가몬	블랙마하가오가몬	MachGaogamon	DMGaogamon	완전체	궁극체	DWDD:LV 60; MAC 30000; gotDMGaogamon		상승	Y			색만다름	DWDD차트(StrategyWiki Digivolution)
+맘몬	메탈가루몬	Mammothmon	MetalGarurumon	완전체	궁극체	DWDD DNA(+MetalMamemon): Lv47+, Beast EXP10000+, Speed 300+	메탈콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+맘몬	스컬맘몬	Mammothmon	SkullMammon	완전체	궁극체	DWDD:LV 49; DRK 6000; BST 8000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+매그너몬	스사노오몬	Magnamon	Susanoomon	완전체	궁극체	DWDD DNA(+SuperStarmon): Lv73+, Species EXP88888+, Spirit 460+	슈퍼스타몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+머미몬	파라오몬	Mummymon	Pharaohmon	완전체	궁극체	DWDD:LV 50; HOL 9000; DRK 9000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+메가드라몬	다크드라몬	Megadramon	Darkdramon	완전체	궁극체	DWDD:LV 52; DRK 12000; MAC 9000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메가드라몬	블랙워그레이몬	Megadramon	BlackWarGreymon	완전체	궁극체	DWDD DNA(+BlackWargrowlmon): Lv53+, Dark EXP18000+, Spirit 320+	블랙메가로그라우몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메가드라몬	파워드라몬	Megadramon	Machinedramon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+MetalTyrannomon): Lv50+, Attack 300+, Must have befriended MetalSeadramon / DWDD DNA(+Gigadramon): Lv50+, Attack 300+, Must have befriended MetalSeadramon	기가드라몬;메탈티라노몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+메가로그라우몬	메기드라몬	WarGrowlmon	Megidramon	완전체	궁극체	DWDD:LV 48; DRK 9000; gotGuilmon		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+메가시드라몬	기가시드라몬	MegaSeadramon	GigaSeadramon	완전체	궁극체	DWDD:LV 59; AQN 25000; gotGigaSeadramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+메가시드라몬	마린엔젤몬	MegaSeadramon	MarineAngemon	완전체	궁극체	DWDD DNA(+Lillymon): Lv42+, Holy EXP7000+, Water EXP10000+	릴리몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메가시드라몬	메탈시드라몬	MegaSeadramon	MetalSeadramon	완전체	궁극체	DWDD:LV 55; MAC 10000; AQN 11000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+메탈그레이몬	다크드라몬	MetalGreymon	Darkdramon	완전체	궁극체	DWDD DNA(+MameTyramon): Lv46+, Machine EXP5000+, Dark EXP 10000+ / DWDD DNA(+MetalTyrannomon): Lv46+, Machine EXP5000+, Dark EXP 10000+	메탈티라노몬;콩알티라몬;콩알티라몬+메탈티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈그레이몬	워그레이몬	MetalGreymon	WarGreymon	완전체	궁극체	DWDD:LV 52; Friend 90%; got Agumon / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+메탈콩알몬	메탈가루몬	MetalMamemon	MetalGarurumon	완전체	궁극체	DWDD DNA(+Mammothmon): Lv47+, Beast EXP10000+, Speed 300+	맘몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈콩알몬	이바몬	MetalMamemon	Ebemon	완전체	궁극체	DWDD DNA(+Meteormon): Lv42+, Machine EXP8000+, Attack 270+ / DWDD DNA(+Garbagemon): Lv42+, Machine EXP8000+, Attack 270+	가비지몬;운석몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈콩알몬	프린스콩알몬	MetalMamemon	PrinceMamemon	완전체	궁극체	DWDD:LV 46; SPT 220; MAC 9300		상승	Y				DWDD차트(StrategyWiki Digivolution)
+메탈티라노몬	다크드라몬	MetalTyrannomon	Darkdramon	완전체	궁극체	DWDD DNA(+MameTyramon): Lv46+, Machine EXP5000+, Dark EXP 10000+ / DWDD DNA(+MetalGreymon): Lv46+, Machine EXP5000+, Dark EXP 10000+	메탈그레이몬;콩알티라몬;콩알티라몬+메탈그레이몬;콩알티라몬+메탈그레이몬+메가드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈티라노몬	메탈시드라몬	MetalTyrannomon	MetalSeadramon	완전체	궁극체	DWDD DNA(+MarineDevimon): Lv50+, Machine EXp8000+, Aquan EXP6000+ / DWDD DNA(+Scorpiomon): Lv50+, Machine EXp8000+, Aquan EXP6000+	마린데블몬;마린데블몬+메가시드라몬+메가드라몬+티로몬;스콜피오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈티라노몬	파워드라몬	MetalTyrannomon	Machinedramon	완전체	궁극체	DWDD DNA(+Megadramon): Lv50+, Attack 300+, Must have befriended MetalSeadramon / DWDD DNA(+Gigadramon): Lv50+, Attack 300+, Must have befriended MetalSeadramon	기가드라몬;메가드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+묘티스몬	마왕몬	Vamdemon	Daemon	완전체	(보스)			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+묘티스몬	베놈묘티몬	Vamdemon	VenomMyotismon	완전체	궁극체	DWDD:LV 66; BST 6666; allyDemiDevimon / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+묘티스몬	벨리얼묘티	Vamdemon	BelialVamdemon	완전체	궁극체	DWDD DNA(+Shadramon): Lv68+, Spirit 470+, Arukenimon must be in your Party	샤드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+묘티스몬	스컬맘몬	Vamdemon	SkullMammon	완전체	궁극체	DWDD DNA(+MegaKabuterimonBlue): Lv44+, Dark EXP5000+, Beast EXP5000+ / DWDD DNA(+SkullGreymon): Lv44+, Dark EXP5000+, Beast EXP5000+	스컬그레이몬;아트라캅테리몬(청)	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+바지라몬	볼트몬	Vajramon	Boltmon	완전체	궁극체	DWDD:LV 46; MAC 12500; gotBoltmon		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+바지라몬	황금무사몬	Vajramon	Zanbamon	완전체	궁극체	DWDD:LV 47; SPD 240; DRK 13000		상승	Y		테이머즈		DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+버밀리몬	블랙워그레이몬	Vermilimon	BlackWarGreymon	완전체	궁극체	DWDD:LV 58; SPT 290; DRK 21000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+버밀리몬	캐논드라몬	Vermilimon	Cannondramon	완전체	궁극체	DWDD DNA(+Mametyramon): lv42+, Machine EXP10000+, Attack 295+ / DWDD DNA(+Brachiomon): lv42+, Machine EXP10000+, Attack 295+	브라키몬;콩알티라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베이더몬	할매몬	Vademon	Babamon	완전체	궁극체	DWDD DNA(+Piximon): Lv44+, Holy EXP7000+, Spirit 240+ / DWDD DNA(+Lilamon): Lv44+, Holy EXP7000+, Spirit 240+	라일라몬;피콜로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+볼케몬	가르프몬	Volcamon	Galfmon	완전체	궁극체	DWDD DNA(+Arukenimon): Lv51+, Dark EXP12000+, Beast EXP8500+	아라크네몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+볼케몬	볼트몬	Volcamon	Boltmon	완전체	궁극체	DWDD DNA(+Tekkamon): Lv41+, Machine EXP9100+, Attack 260+	테카몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+브라키몬	캐논드라몬	Brachiomon	Cannondramon	완전체	궁극체	DWDD DNA(+MameTyramon): lv42+, Machine EXP10000+, Attack 295+ / DWDD DNA(+Vermillimon): lv42+, Machine EXP10000+, Attack 295+	버밀리몬;콩알티라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+브라키몬	플레시오몬	Brachiomon	Plesiomon	완전체	궁극체	DWDD:LV 47; AQN 17500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+블랙래피드몬	블랙세인트가르고몬	BlackRapidmon	BlackSaintGalgomon	완전체	궁극체	DWDD:LV 50; DRK 8000; MAC 8000		상승	Y		테이머즈;색만다름	테이머즈;색만다름	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙래피드몬	세라피몬	BlackRapidmon	Seraphimon	완전체	궁극체	DWDD DNA(+Rapidmon): Lv61+, Holy EXP50000+, Must have Befriended Seraphimon	래피드몬	상승	Y	Y	테이머즈;색만다름		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙메가로그라우몬	메기드라몬	BlackWarGrowlmon	Megidramon	완전체	궁극체	DWDD DNA(+Shadramon): Lv44+, Dark EXP6000+, Got Guilmon	샤드라몬	상승	Y	Y	테이머즈;색만다름	테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙메가로그라우몬	블랙워그레이몬	BlackWarGrowlmon	BlackWarGreymon	완전체	궁극체	DWDD DNA(+Megadramon): Lv53+, Dark EXP18000+, Spirit 320+	메가드라몬	상승	Y	Y	테이머즈;색만다름		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블랙워가루몬	가르프몬	WereGarurumonBlack	Galfmon	완전체	궁극체	DWDD:LV 56; DRK 15000; BST 10000		상승	Y		색만다름	테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블로섬몬	로터스몬	Blossomon	Lotusmon	완전체	궁극체	DWDD DNA(+LadyDevimon): Lv52+, Insect/Plant EXP22000+, Must have Befriended Rosemon	레이디데블몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+블로섬몬	아누비스몬	Blossomon	Anubismon	완전체	궁극체	DWDD DNA(+Garudamon): Lv52+, Holy EXP15000+, Spirit 290+	가루다몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+비숍체스몬	블랙세인트가르고몬	BishopChessmon	BlackSaintGalgomon	완전체	궁극체	DWDD DNA(+RookChessmon): Lv45+, Dark EXP7000+, Beast EXP7000+	룩체스몬	상승	Y	Y		테이머즈;색만다름	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+비숍체스몬	킹체스몬	BishopChessmon	KingChessmon	완전체	궁극체	DWDD:LV 50; MinAPT 55; MAC 13000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+빅콩알몬	세인트가르고몬	BigMamemon	SaintGalgomon	완전체	궁극체		프라리몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+빅콩알몬	점보가메몬	BigMamemon	JumboGamemon	완전체	궁극체	DWDD DNA(+Seahomon): Lv46+, Machine EXP9000+, Attack 300+	해마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+사우자몬	점보가메몬	Shaujingmon	JumboGamemon	완전체	궁극체	DWDD:LV 51; ATK 270; MAC 9600		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+사이버드라몬	갓드라몬	Cyberdramon	Goldramon	완전체	궁극체	DWDD DNA(+Magna Angemon): Lv58+, Holy EXP55000+, Must have befriended Airdramon	홀리엔젤몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+사이버드라몬	저스티몬	Cyberdramon	Justimon	완전체	궁극체	DWDD:LV 51; SPT 250; MAC 18000		상승	Y		테이머즈	테이머즈	DWDD차트(StrategyWiki Digivolution)
+사이버드라몬	퀸체스몬	Cyberdramon	QueenChessmon	완전체	궁극체	DWDD DNA(+Antylamon): Lv45+, Machine EXP10000+, Spirit 220+ / DWDD DNA(+Crescemon): Lv45+, Machine EXP10000+, Spirit 220+	안티라몬;크레세몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤드라몬	메기드라몬	Shadramon	Megidramon	완전체	궁극체	DWDD DNA(+BlackWarGrowlmon): Lv44+, Dark EXP6000+, Got Guilmon	블랙메가로그라우몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤드라몬	벨리얼묘티	Shadramon	BelialVamdemon	완전체	궁극체	DWDD DNA(+Myotismon): Lv68+, Spirit 470+, Arukenimon must be in your Party	묘티스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	바이킹몬	Shakkoumon	Vikemon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Divermon): Lv45+, Defense 250+, Spirit 250+	다이버몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+샤코몬	세라피몬	Shakkoumon	Seraphimon	완전체	궁극체	DWDD DNA(+Parrotmon): Lv61+, Holy EXP50000+, Must have Befriended Seraphimon	파롯트몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+샤코몬	크로스몬	Shakkoumon	Eaglemon	완전체	궁극체	DWDD DNA(+Kenkimon): Lv46+, Holy EXP7000+, Defense 300+ / DWDD DNA(+Owlmon): Lv46+, Holy EXP7000+, Defense 300+	아울몬;아울몬+크레인몬;크레인몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈림몬	레이브몬	Shurimon	Ravemon	완전체	궁극체	DWDD DNA(+Karatenmon): Lv44+, Machine EXP9000+, must have Befriended Falcomon	크로우몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈림몬	피노키몬	Shurimon	Puppetmon	완전체	궁극체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈퍼스타몬	마린엔젤몬	SuperStarmon	MarineAngemon	완전체	궁극체	DWDD DNA(+Monzaemon): Lv42+, Holy EXP7000+, Water EXP10000+	퍼펫몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈퍼스타몬	스사노오몬	SuperStarmon	Susanoomon	완전체	궁극체	DWDD DNA(+Magnamon): Lv73+, Species EXP88888+, Spirit 460+	매그너몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+슈퍼스타몬	저스티몬	SuperStarmon	Justimon	완전체	궁극체	DWDD DNA(+Andromon): Lv46+, Machine EXP14500+, Spirit 280+	안드로몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution)
+스컬그레이몬	블랙워그레이몬	SkullGreymon	BlackWarGreymon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Allomon): Lv53+, Dark EXP18000+, Spirit 320+	알로몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+스컬그레이몬	스컬맘몬	SkullGreymon	SkullMammon	완전체	궁극체	DWDD DNA(+Myotismon): Lv44+, Dark EXP5000+, Beast EXP5000+ / DWDD DNA(+MegaKabuterimonBlue): Lv44+, Dark EXP5000+, Beast EXP5000+	묘티스몬;아트라캅테리몬(청)	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스컬그레이몬	파워드라몬	SkullGreymon	Machinedramon	완전체	궁극체	DWDD:LV 55; ATK 280; got MetalSeadramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+스콜피오몬	그랜쿠가몬	Scorpiomon	GranKuwagamon	완전체	궁극체	DWDD DNA(+Dinobeemon): Lv44+, Insect/Plant EXP13000+, Attack 280+	다이노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+스콜피오몬	데블타몬	Scorpiomon	Devitamon	완전체	궁극체	DWDD DNA(+Pipismon): Lv44+, Dark EXP13000+, Attack 270+	피피스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+스콜피오몬	메탈시드라몬	Scorpiomon	MetalSeadramon	완전체	궁극체	DWDD DNA(+MarineDevimon): Lv50+, Machine EXp8000+, Aquan EXP6000+ / DWDD DNA(+MetalTyrannomon): Lv50+, Machine EXp8000+, Aquan EXP6000+	마린데블몬;메탈티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+스콜피오몬	푸쿠몬	Scorpiomon	Pukumon	완전체	궁극체	DWDD:LV 45; ATK 200; AQN 9900		상승	Y				DWDD차트(StrategyWiki Digivolution)
+신드라몬	발두르몬	Sinduramon	Varodurumon	완전체	궁극체	DWDD DNA(+Silphymon): Lv63+, Holy EXP16000+, Bird EXP24000+	실피드몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+신드라몬	페닉스몬	Sinduramon	Phoenixmon	완전체	궁극체		가루다몬+가루다몬+파롯트몬	상승	Y	Y	테이머즈		wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+실피드몬	발두르몬	Silphymon	Varodurumon	완전체	궁극체	DWDD DNA(+Sinduramon): Lv63+, Holy EXP16000+, Bird EXP24000+	신드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+실피드몬	발키리몬	Silphymon	Valkyrimon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				v1(NDS_진화.tsv)
+아라크네몬	가르프몬	Arachnemon	Galfmon	완전체	궁극체	DWDD DNA(+Volcanomon): Lv51+, Dark EXP12000+, Beast EXP8500+	볼케몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아라크네몬	패러사이몬	Arachnemon	Parasimon	완전체	궁극체	DWDD DNA(+ExTyrannomon): Lv43+, Machine EXP3000+, DarkEXP6500+	티라노몬X	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아라크네몬	피에몬	Arachnemon	Piedmon	완전체	궁극체	DWDD DNA(+Phantomon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon / DWDD DNA(+Infermon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon	인펠몬;인펠몬+팬텀몬;팬텀몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아르고몬	아르고몬	ArgomonPerfect	ArgomonUltimate	완전체	궁극체	DWDD:LV 62; ATK 400; DRK 40000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아울몬	발키리몬	Owlmon	Valkyrimon	완전체	궁극체	DWDD DNA(+Deramon): Lv46+, Holy EXP10000+, Speed 280+	데라몬;엔젤우몬+데라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아울몬	크로스몬	Owlmon	Eaglemon	완전체	궁극체	DWDD DNA(+Kenkimon): Lv46+, Holy EXP7000+, Defense 300+ / DWDD DNA(+Shakkoumon): Lv46+, Holy EXP7000+, Defense 300+	샤코몬;샤코몬+크레인몬;크레인몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아이언레오몬	반쵸레오몬	GrappLeomon	BantyoLeomon	완전체	궁극체	DWDD DNA(+Pandamon): LV64+ , Beast EXP50000+, Attack 420+	팬더몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아이언레오몬	사벨레오몬	GrappLeomon	SaberLeomon	완전체	궁극체	DWDD:LV 57; ATK 290; BST 20000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아트라캅테리몬	헤라클레스캅테리몬	AlturKabuterimonRed	HerculesKabuterimon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Ookuwamon): Lv61+, Bug/Plant EXP32000, Defense 330+	왕쿠가몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+아트라캅테리몬(청)	도루고라몬	MegaKabuterimonBlue	Dorugoramon	완전체	궁극체	DWDD DNA(+Flamedramon): Lv49+, Species EXP47000+, Attack 305+	화염드라몬	상승	Y	Y	색만다름		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+아트라캅테리몬(청)	스컬맘몬	MegaKabuterimonBlue	SkullMammon	완전체	궁극체	DWDD DNA(+Myotismon): Lv44+, Dark EXP5000+, Beast EXP5000+ / DWDD DNA(+SkullGreymon): Lv44+, Dark EXP5000+, Beast EXP5000+	묘티스몬;스컬그레이몬;스컬그레이몬+묘티스몬	상승	Y	Y	색만다름		DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+안드로몬	저스티몬	Andromon	Justimon	완전체	궁극체	DWDD DNA(+SuperStarmon): Lv46+, Machine EXP14500+, Spirit 280+	슈퍼스타몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution)
+안드로몬	하이안드로몬	Andromon	HiAndromon	완전체	궁극체	DWDD:LV 50; SPT 250; MAC 15000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+안티라몬	퀸체스몬	Antiramon	QueenChessmon	완전체	궁극체	DWDD DNA(+Crescemon): Lv45+, Machine EXP10000+, Spirit 220+ / DWDD DNA(+Cyberdramon): Lv45+, Machine EXP10000+, Spirit 220+	사이버드라몬;크레세몬	상승	Y	Y	테이머즈		DWDD DNA(StrategyWiki DNA_Digivolution)
+알로몬	블랙워그레이몬	Allomon	BlackWarGreymon	완전체	궁극체	DWDD DNA(+SkullGreymon): Lv53+, Dark EXP18000+, Spirit 320+	스컬그레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+알로몬	황제드라몬	Allomon	Imperialdramon	완전체	궁극체	DWDD DNA(+RiseGreymon): Lv52+, Dragon EXP19000+, Got ImperialdramonDM	라이즈그레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+야타가라몬	레이브몬	Yatagaramon	Ravemon	완전체	궁극체	DWDD:LV 50; SPD 255; MAC 10000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+야타가라몬	스사노오몬	Yatagaramon	Susanoomon	완전체	궁극체	DWDD DNA(+Kongoumon): Lv73+, Species EXP88888+, Spirit 460+	콩고몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+야타가라몬	아누비스몬	Yatagaramon	Anubismon	완전체	궁극체	DWDD DNA(+Karatenmon): Lv52+, Holy EXP15000+, Spirit 290+	크로우몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+에어로브이드라몬	갓드라몬	AeroVeedramon	Goldramon	완전체	궁극체	DWDD:LV 63; HOL 45000; gotAirdramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에어로브이드라몬	플레시오몬	AeroVeedramon	Plesiomon	완전체	궁극체	DWDD DNA(+Tylomon): Lv42+, Aquan EXP14000+, Spirit 240+ / DWDD DNA(+Zudomon): Lv42+, Aquan EXP14000+, Spirit 240+	쥬드몬;쥬드몬+티로몬;티로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+에테몬	메탈에테몬	Etemon	MetalEtemon	완전체	궁극체	DWDD:LV 46; DEF 200; BST 10000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+엔젤우몬	마그나드몬	Angewomon	Magnadramon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Lilamon): Lv60+, Holy EXP22000+, Dragon EXP11000+ / DWDD DNA(+Lillymon): Lv60+, Holy EXP22000+, Dragon EXP11000+	라일라몬;릴리몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+엔젤우몬	발키리몬	Angewomon	Valkyrimon	완전체	궁극체	DWDD DNA(+Deramon): Lv46+, Holy EXP10000+, Speed 280+	데라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕개굴몬	메탈에테몬	ShogunGekomon	MetalEtemon	완전체	궁극체	DWDD DNA(+Meteormon): Lv41+, Beast EXP8000+, Defense 240+	운석몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕개굴몬	킹체스몬	ShogunGekomon	KingChessmon	완전체	궁극체	DWDD DNA(+Mamemon): Lv45+, Machine EXP10000+, Aptitude 50+	콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+왕쿠가몬	그랜쿠가몬	Okuwamon	GranKuwagamon	완전체	궁극체	DWDD:LV 49; ATK 255; INS 17000 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+왕쿠가몬	헤라클레스캅테리몬	Okuwamon	HerculesKabuterimon	완전체	궁극체	DWDD DNA(+MegaKabuterimonRed): Lv61+, Bug/Plant EXP32000, Defense 330+	아트라캅테리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+운석몬	램프몬	Meteormon	Lampmon	완전체	궁극체	DWDD DNA(+Mamemon): Lv43+, Holy EXP9800+, Defense 250+	콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+운석몬	메탈에테몬	Meteormon	MetalEtemon	완전체	궁극체	DWDD DNA(+Shogun Gekomon): Lv41+, Beast EXP8000+, Defense 240+	왕개굴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+운석몬	이바몬	Meteormon	Ebemon	완전체	궁극체	DWDD DNA(+Garbagemon): Lv42+, Machine EXP8000+, Attack 270+ / DWDD DNA(+MetalMamemon): Lv42+, Machine EXP8000+, Attack 270+	가비지몬;메탈콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+워가루몬	메탈가루몬	WereGarurumon	MetalGarurumon	완전체	궁극체	DWDD:LV 52; Friendship 90%; gotGabumon / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+워가루몬	바이킹몬	WereGarurumon	Vikemon	완전체	궁극체	DWDD DNA(+Whamon): Lv45+, Defense 250+, Spirit 250+	고래몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+인펠몬	디아블로몬	Infermon	Diaboromon	완전체	궁극체	DWDD:LV 45; DRK 25000; got Keramon / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+인펠몬	아마게몬	Infermon	Armageddemon	완전체	궁극체	DWDD DNA(+Diaboromon): Lv81+, Defense 480+, Kuramon must be in your party	디아블로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+인펠몬	피에몬	Infermon	Piedmon	완전체	궁극체	DWDD DNA(+Arukenimon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon / DWDD DNA(+Phantomon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon	아라크네몬;팬텀몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쥬드몬	바이킹몬	Zudomon	Vikemon	완전체	궁극체	DWDD:LV 50; DEF 230; SPT230 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서); v1(NDS_진화.tsv)
+쥬드몬	사벨레오몬	Zudomon	SaberLeomon	완전체	궁극체	DWDD DNA(+Lynxmon): Lv52+, Beast EXP16000+, Attack 320+	링스몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+쥬드몬	플레시오몬	Zudomon	Plesiomon	완전체	궁극체	DWDD DNA(+AeroVeedramon): Lv42+, Aquan EXP14000+, Spirit 240+ / DWDD DNA(+Tylomon): Lv42+, Aquan EXP14000+, Spirit 240+	에어로브이드라몬;티로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+쥬레이몬	피노키몬	Cherrymon	Puppetmon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+쥬레이몬	할배몬	Cherrymon	Jijimon	완전체	궁극체	DWDD DNA(+Pandamon): Lv44+, Holy EXP7000+, Attack 230+	팬더몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+지로몬	슬래쉬엔젤몬	Giromon	SlashAngemon	완전체	궁극체	DWDD DNA(+Kyukimon): Lv41+, Machine EXP8000+, Attack 290+ / DWDD DNA(+Pixiemon): Lv41+, Machine EXP8000+, Attack 290+	큐우키몬;큐우키몬+피콜로몬;피콜로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+지로몬	프린스콩알몬	Giromon	PrinceMamemon	완전체	궁극체	DWDD DNA(+Mamemon): Lv41+, Machine EXP8100+, Spirit 250+	콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+지로몬	하이안드로몬	Giromon	HiAndromon	완전체	궁극체			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카부키몬	샤크라몬	Kabukimon	Sakuyamon	완전체	궁극체	DWDD DNA(+Kyukimon): Lv47+, Holy EXP14000+, Must have Befriended Kuzuhamon	큐우키몬;큐우키몬+도사몬+레나몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카부키몬	황금무사몬	Kabukimon	Zanbamon	완전체	궁극체	DWDD DNA(+Tekkamon): Lv42+, Dark EXP11000+, Speed 270+ / DWDD DNA(+Dinohumon): Lv42+, Dark EXP11000+, Speed 270+	다이노휴몬;다이노휴몬+테카몬;테카몬;테카몬+다이노휴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+카오스그림몬	엑소그림몬	ChaosGrimmon	ExoGrimmon	(보스)	(보스)			상승	Y				wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩고몬	스사노오몬	Kongoumon	Susanoomon	완전체	궁극체	DWDD DNA(+Yatagaramon): Lv73+, Species EXP88888+, Spirit 460+	야타가라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩고몬	파라오몬	Kongoumon	Pharaohmon	완전체	궁극체	DWDD DNA(+Nanomon): Lv45+, Holy EXP7500+, Dark EXP7500+	데이터몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알몬	램프몬	Mamemon	Lampmon	완전체	궁극체	DWDD DNA(+Meteormon): Lv43+, Holy EXP9800+, Defense 250+	운석몬;운석몬+메탈콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알몬	킹체스몬	Mamemon	KingChessmon	완전체	궁극체	DWDD DNA(+Shogun Gekomon): Lv45+, Machine EXP10000+, Aptitude 50+	왕개굴몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알몬	프린스콩알몬	Mamemon	PrinceMamemon	완전체	궁극체	DWDD DNA(+Giromon): Lv41+, Machine EXP8100+, Spirit 250+	지로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알티라몬	다크드라몬	MameTyramon	Darkdramon	완전체	궁극체	DWDD DNA(+MetalGreymon): Lv46+, Machine EXP5000+, Dark EXP 10000+ / DWDD DNA(+MetalTyrannomon): Lv46+, Machine EXP5000+, Dark EXP 10000+	메탈그레이몬;메탈그레이몬+메탈티라노몬;메탈티라노몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알티라몬	워그레이몬	MameTyramon	WarGreymon	완전체	궁극체	DWDD DNA(+Flamedramon): Lv47+, Dragon EXP10000+, Attack 300+	화염드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+콩알티라몬	캐논드라몬	MameTyramon	Cannondramon	완전체	궁극체	DWDD DNA(+Brachiomon): lv42+, Machine EXP10000+, Attack 295+ / DWDD DNA(+Vermillimon): lv42+, Machine EXP10000+, Attack 295+	버밀리몬;브라키몬;브라키몬+버밀리몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+큐우키몬	샤크라몬	Kyukimon	Sakuyamon	완전체	궁극체	DWDD DNA(+Kabukimon): Lv47+, Holy EXP14000+, Must have Befriended Kuzuhamon	카부키몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+큐우키몬	슬래쉬엔젤몬	Kyukimon	SlashAngemon	완전체	궁극체	DWDD DNA(+Giromon): Lv41+, Machine EXP8000+, Attack 290+ / DWDD DNA(+Pixiemon): Lv41+, Machine EXP8000+, Attack 290+	지로몬;피콜로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+큐우키몬	쿠즈하몬	Kyukimon	Kuzuhamon	완전체	궁극체	DWDD:LV 48; HOL 9000; gotKuzuhamon		상승	Y			테이머즈	DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크레세몬	퀸체스몬	Crescemon	QueenChessmon	완전체	궁극체	DWDD DNA(+Antylamon): Lv45+, Machine EXP10000+, Spirit 220+ / DWDD DNA(+Cyberdramon): Lv45+, Machine EXP10000+, Spirit 220+	사이버드라몬;안티라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크레인몬	기가시드라몬	Kenkimon	GigaSeadramon	완전체	궁극체	DWDD DNA(+Tylomon): Lv53+, Machine EXP17000+, Aquan EXP17000+	티로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크레인몬	크로스몬	Kenkimon	Eaglemon	완전체	궁극체	DWDD DNA(+Owlmon): Lv46+, Holy EXP7000+, Defense 300+ / DWDD DNA(+Shakkoumon): Lv46+, Holy EXP7000+, Defense 300+	샤코몬;아울몬;아울몬+샤코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크로우몬	레이브몬	Karatenmon	Ravemon	완전체	궁극체	DWDD DNA(+Shurimon): Lv44+, Machine EXP9000+, must have Befriended Falcomon	슈림몬;야타가라몬+사이버드라몬+도사몬+슈림몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크로우몬	아누비스몬	Karatenmon	Anubismon	완전체	궁극체	DWDD DNA(+Yatagaramon): Lv52+, Holy EXP15000+, Spirit 290+	야타가라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+크로우몬	쿠즈하몬	Karatenmon	Kuzuhamon	완전체	궁극체	DWDD DNA(+Taomon): Lv43+, Holy EXP7700+, Spirit 270+	도사몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+키메라몬	문밀레니엄몬	Chimeramon	MoonMilleniummon	완전체	궁극체	DWDD:LV 66; SPT 370; GotMillenniummon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+키메라몬	밀레니엄몬	Chimeramon	Milleniummon	완전체	궁극체	DWDD DNA(+Machinedramon): Lv55+, Dark EXp27000+, Attack 320+	파워드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+테카몬	볼트몬	Tekkamon	Boltmon	완전체	궁극체	DWDD DNA(+Volcanomon): Lv41+, Machine EXP9100+, Attack 260+	볼케몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+테카몬	피노키몬	Tekkamon	Puppetmon	완전체	궁극체	DWDD:LV 55; MAC 20000; GOT Machdramon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+테카몬	황금무사몬	Tekkamon	Zanbamon	완전체	궁극체	DWDD DNA(+Kabukimon): Lv42+, Dark EXP11000+, Speed 270+	카부키몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토칸몬	그리포몬	Toucanmon	Gryphonmon	완전체	궁극체	DWDD DNA(+Dorugremon): Lv41+, Beast EXP7000+, Attack 250+	도루그레몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+토칸몬	데블타몬	Toucanmon	Devitamon	완전체	궁극체	DWDD DNA(+ExTyrannomon): Lv44+, Dark EXP13000+, Attack 270+	티라노몬X	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+트리케라몬	캐논드라몬	Triceramon	Cannondramon	완전체	궁극체	DWDD:LV 47; ATK 255; MAC 12500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+티라노몬X	데블타몬	XTyrannomon	Devitamon	완전체	궁극체	DWDD DNA(+Toucanmon): Lv44+, Dark EXP13000+, Attack 270+	토칸몬	상승	Y	Y	디자인변형(X항체)		DWDD DNA(StrategyWiki DNA_Digivolution)
+티라노몬X	데스몬	XTyrannomon	Deathmon	완전체	궁극체	DWDD:LV 49; DEF 230; SPT 230		상승	Y		디자인변형(X항체)		DWDD차트(StrategyWiki Digivolution)
+티라노몬X	패러사이몬	XTyrannomon	Parasimon	완전체	궁극체	DWDD DNA(+Arukenimon): Lv43+, Machine EXP3000+, DarkEXP6500+	아라크네몬	상승	Y	Y	디자인변형(X항체)	테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution)
+티로몬	기가시드라몬	Tylomon	GigaSeadramon	완전체	궁극체	DWDD DNA(+Kenkimon): Lv53+, Machine EXP17000+, Aquan EXP17000+	크레인몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+티로몬	플레시오몬	Tylomon	Plesiomon	완전체	궁극체	DWDD DNA(+AeroVeedramon): Lv42+, Aquan EXP14000+, Spirit 240+ / DWDD DNA(+Zudomon): Lv42+, Aquan EXP14000+, Spirit 240+	에어로브이드라몬;에어로브이드라몬+쥬드몬;쥬드몬;쥬드몬+에어로브이드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파롯트몬	세라피몬	Parrotmon	Seraphimon	완전체	궁극체	DWDD DNA(+Shakkoumon): Lv61+, Holy EXP50000+, Must have Befriended Seraphimon	샤코몬;샤코몬+홀리엔젤몬+엔젤우몬+샤코몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+파롯트몬	크로스몬	Parrotmon	Eaglemon	완전체	궁극체	DWDD:LV 51; DEF 265; HOL 7500		상승	Y				DWDD차트(StrategyWiki Digivolution)
+파일드라몬	황제드라몬	Paildramon	Imperialdramon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				v1(NDS_진화.tsv)
+판초몬	푸쿠몬	Ponchomon	Pukumon	완전체	궁극체	DWDD DNA(+Divermon): Lv40+, Aquan EXP8400+, Attack 220+	다이버몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팬더몬	데스몬	Pandamon	Deathmon	완전체	궁극체	DWDD DNA(+Monzaemon): Lv44+, Defense 260+, Spirit 250+ / DWDD DNA(+Digitamamon): Lv44+, Defense 260+, Spirit 250+	디지타마몬;퍼펫몬;퍼펫몬+디지타마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팬더몬	반쵸레오몬	Pandamon	BantyoLeomon	완전체	궁극체	DWDD DNA(+Grappleomon): LV64+ , Beast EXP50000+, Attack 420+	아이언레오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팬더몬	할배몬	Pandamon	Jijimon	완전체	궁극체	DWDD DNA(+Cherrymon): Lv44+, Holy EXP7000+, Attack 230+	쥬레이몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팬텀몬	아포카리몬	Phantomon	Apocalymon	완전체	궁극체	DWDD:LV 71; EX 44444; gotApocalymon		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+팬텀몬	피에몬	Phantomon	Piedmon	완전체	궁극체	도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55 / DWDD DNA(+Arukenimon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon / DWDD DNA(+Infermon): Lv50+, Must have Befriended BOTH Piedmon & Puppetmon	아라크네몬;인펠몬	상승	Y				DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서); v1(NDS_진화.tsv)
+퍼펫몬	데스몬	Monzaemon	Deathmon	완전체	궁극체	DWDD DNA(+Digitamamon): Lv44+, Defense 260+, Spirit 250+ / DWDD DNA(+Pandamon): Lv44+, Defense 260+, Spirit 250+	디지타마몬;팬더몬;팬더몬+디지타마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+퍼펫몬	마린엔젤몬	Monzaemon	MarineAngemon	완전체	궁극체	DWDD DNA(+SuperStarmon): Lv42+, Holy EXP7000+, Water EXP10000+	슈퍼스타몬	상승	Y	Y		테이머즈	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+퍼펫몬	할매몬	Monzaemon	Babamon	완전체	궁극체	DWDD:LV 48; SPT 220; HOL 8000		상승	Y				DWDD차트(StrategyWiki Digivolution)
+프라리몬	세인트가르고몬	Prariemon	SaintGalgomon	완전체	궁극체		빅콩알몬	상승	Y	Y		테이머즈	wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+플레어몬	갓드라몬	Flaremon	Goldramon	완전체	궁극체	DWDD DNA(+Seahomon): Lv58+, Holy EXP55000+, Must have befriended Airdramon	해마몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피콜로몬	슬래쉬엔젤몬	Piccolomon	SlashAngemon	완전체	궁극체	DWDD DNA(+Kyukimon): Lv41+, Machine EXP8000+, Attack 290+ / DWDD DNA(+Giromon): Lv41+, Machine EXP8000+, Attack 290+	지로몬;지로몬+큐우키몬;큐우키몬;큐우키몬+지로몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피콜로몬	할매몬	Piccolomon	Babamon	완전체	궁극체	DWDD DNA(+Vademon): Lv44+, Holy EXP7000+, Spirit 240+ / DWDD DNA(+Lilamon): Lv44+, Holy EXP7000+, Spirit 240+	라일라몬;베이더몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피콜로몬	할배몬	Piccolomon	Jijimon	완전체	궁극체	DWDD:LV 48; ATK 220; HOL 8000		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피피스몬	데블타몬	Pipismon	Devitamon	완전체	궁극체	DWDD DNA(+Anomarokarimon/Scorpiomon): Lv44+, Dark EXP13000+, Attack 270+	스콜피오몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+피피스몬	베놈묘티몬	Pipismon	VenomMyotismon	완전체	궁극체	DWDD DNA(+Dragomon): Lv60+, Beast EXP33333+, Dark EXP33333+	다고몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+해마몬	갓드라몬	Seahomon	Goldramon	완전체	궁극체	DWDD DNA(+Flaremon): Lv58+, Holy EXP55000+, Must have befriended Airdramon	플레어몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+해마몬	점보가메몬	Seahomon	JumboGamemon	완전체	궁극체	DWDD DNA(+BigMamemon): Lv46+, Machine EXP9000+, Attack 300+	빅콩알몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+홀리엔젤몬	갓드라몬	HolyAngemon	Goldramon	완전체	궁극체	DWDD DNA(+Cyberdramon): Lv58+, Holy EXP55000+, Must have befriended Airdramon	사이버드라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+홀리엔젤몬	세라피몬	HolyAngemon	Seraphimon	완전체	궁극체	DWDD:LV 66; SPT 380; HOL 77777 / 도구지니고낮:심해의비늘 / 도구지니고밤:심해의비늘 / 레벨:55		상승	Y				DWDD차트(StrategyWiki Digivolution); v1(NDS_진화.tsv)
+홀리엔젤몬	슬래쉬엔젤몬	HolyAngemon	SlashAngemon	완전체	궁극체	DWDD:LV 48; ATK 250; MAC 8500		상승	Y				DWDD차트(StrategyWiki Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화염드라몬	도루고라몬	Flamedramon	Dorugoramon	완전체	궁극체	DWDD DNA(+MegaKabuterimon): Lv49+, Species EXP47000+, Attack 305+	아트라캅테리몬(청)	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+화염드라몬	워그레이몬	Flamedramon	WarGreymon	완전체	궁극체	DWDD DNA(+Mametyramon): Lv47+, Dragon EXP10000+, Attack 300+	콩알티라몬	상승	Y	Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+꼬마몬	브이몬	Chibimon	V-mon	유년기	성장기			상승	Y				wikimon(타게임, 인용 14건) — v1전용종 빈칸채움(상위2)
+둥실몬	샤코몬	Pukamon	Shakomon	유년기	성장기			상승	Y				wikimon(타게임, 인용 15건) — v1전용종 빈칸채움(상위2)
+둥실몬	쉬라몬	Pukamon	Gomamon	유년기	성장기			상승	Y				wikimon(타게임, 인용 24건) — v1전용종 빈칸채움(상위2)
+모티몬	울퉁몬	Mochimon	Gotsumon	유년기	성장기			상승	Y				wikimon(타게임, 인용 15건) — v1전용종 빈칸채움(상위2)
+모티몬	텐타몬	Mochimon	Tentomon	유년기	성장기			상승	Y				wikimon(타게임, 인용 34건) — v1전용종 빈칸채움(상위2)
+버드몬	츄몬	Budmon	Tyumon	유년기	성장기			상승	Y				wikimon(타게임, 인용 2건) — v1전용종 빈칸채움(상위2)
+뿔몬	에렉몬	Tsunomon	Elecmon	유년기	성장기			상승	Y				wikimon(타게임, 인용 11건) — v1전용종 빈칸채움(상위2)
+야옹몬	루나몬	Nyaromon	Lunamon	유년기	성장기			상승	Y				wikimon(타게임, 인용 5건) — v1전용종 빈칸채움(상위2)
+야옹몬	플롯트몬	Nyaromon	Plotmon	유년기	성장기			상승	Y				wikimon(타게임, 인용 18건) — v1전용종 빈칸채움(상위2)
+어니몬	머슈룸몬	Pyocomon	Mushmon	유년기	성장기			상승	Y				wikimon(타게임, 인용 10건) — v1전용종 빈칸채움(상위2)
+어니몬	에렉몬	Pyocomon	Elecmon	유년기	성장기			상승	Y				wikimon(타게임, 인용 6건) — v1전용종 빈칸채움(상위2)
+어니몬	피요몬	Pyocomon	Biyomon	유년기	성장기			상승	Y				wikimon(타게임, 인용 25건) — v1전용종 빈칸채움(상위2)
+우파몬	아구몬	Upamon	Agumon	유년기	성장기			상승	Y				wikimon(타게임, 인용 1건) — v1전용종 빈칸채움(상위2)
+우파몬	아르마몬	Upamon	Armadimon	유년기	성장기			상승	Y				wikimon(타게임, 인용 12건) — v1전용종 빈칸채움(상위2)
+츠메몬	가지몬	Tsumemon	Gazimon	유년기	성장기			상승	Y				wikimon(타게임, 인용 2건) — v1전용종 빈칸채움(상위2)
+코로몬	츄몬	Koromon	Tyumon	유년기	성장기			상승	Y				wikimon(타게임, 인용 3건) — v1전용종 빈칸채움(상위2)
+퍼그몬	가지몬	Pagumon	Gazimon	유년기	성장기			상승	Y				wikimon(타게임, 인용 16건) — v1전용종 빈칸채움(상위2)
+포로몬	파피몬	Poromon	Gabumon	유년기	성장기			상승	Y				wikimon(타게임, 인용 2건) — v1전용종 빈칸채움(상위2)
+포로몬	호크몬	Poromon	Hawkmon	유년기	성장기			상승	Y				wikimon(타게임, 인용 10건) — v1전용종 빈칸채움(상위2)
+고부리몬	고릴라몬	Goblimon	Gorimon	성장기	성숙기			상승	Y				wikimon(타게임, 인용 3건) — v1전용종 빈칸채움(상위2)
+아구몬	네페르티몬	Agumon	Nefertimon	성장기	아머체			상승	Y				wikimon(타게임, 인용 1건) — v1전용종 빈칸채움(상위2)
+아구몬	메라몬	Agumon	Meramon	성장기	성숙기			상승	Y				wikimon(타게임, 인용 10건) — v1전용종 빈칸채움(상위2)
+캔들몬	메라몬	Candmon	Meramon	성장기	성숙기			상승	Y				wikimon(타게임, 인용 14건) — v1전용종 빈칸채움(상위2)
+파피몬	고릴라몬	Gabumon	Gorimon	성장기	성숙기			상승	Y				wikimon(타게임, 인용 3건) — v1전용종 빈칸채움(상위2)
+플롯트몬	네페르티몬	Plotmon	Nefertimon	성장기	아머체			상승	Y				wikimon(타게임, 인용 5건) — v1전용종 빈칸채움(상위2)
+메카노리몬	다크퍼펫몬	Mechanorimon	Waru Monzaemon	성숙기	완전체			상승	Y				wikimon(타게임, 인용 7건) — v1전용종 빈칸채움(상위2)
+타임몬	다크퍼펫몬	Clockmon	Waru Monzaemon	성숙기	완전체		메카노리몬	상승	Y	Y			wikimon(타게임, 인용 6건) — v1전용종 빈칸채움(상위2)
+다크퍼펫몬	베놈묘티몬	Waru Monzaemon	VenomMyotismon	완전체	궁극체			상승	Y				wikimon(타게임, 인용 4건) — v1전용종 빈칸채움(상위2)
+다크퍼펫몬	파워드라몬	Waru Monzaemon	Machinedramon	완전체	궁극체		메가드라몬	상승	Y	Y			wikimon(타게임, 인용 3건) — v1전용종 빈칸채움(상위2)
+데스메라몬	볼트몬	Death Meramon	Boltmon	완전체	궁극체			상승	Y				wikimon(타게임, 인용 12건) — v1전용종 빈칸채움(상위2)
+데스메라몬	스컬맘몬	Death Meramon	SkullMammon	완전체	궁극체			상승	Y				wikimon(타게임, 인용 4건) — v1전용종 빈칸채움(상위2)
+스컬사탄몬	데스몬	Skull Satamon	Deathmon	완전체	궁극체			상승	Y				wikimon(타게임, 인용 3건) — v1전용종 빈칸채움(상위2)
+스컬사탄몬	마왕몬	Skull Satamon	Daemon	완전체	(보스)			상승	Y				wikimon(타게임, 인용 8건) — v1전용종 빈칸채움(상위2)
+가트몬	네페르티몬	Tailmon	Nefertimon	성숙기	아머체	도구사용:빛의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+아쿠이라몬	할세몬	Aquilamon	Holsmon	성숙기	아머체	도구사용:태양의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+안킬로몬	디그몬	Ankylomon	Digmon	성숙기	아머체	도구사용:달의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+안킬로몬	서브마리몬	Ankylomon	Submarimon	성숙기	아머체	도구사용:물의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+엑스브이몬	번개드라몬	XV-mon	Lighdramon	성숙기	아머체	도구사용:천둥의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+엔젤몬	페가수몬	Angemon	Pegasmon	성숙기	아머체	도구사용:각성의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+워매몬	슈카몬	Numemon	Sukamon	성숙기	성숙기	레벨:22		같은단계(모드/옆)					v1(NDS_진화.tsv)
+티라노몬	다크티라몬	tyranomon	DarkTyrannomon	성숙기	성숙기	도구사용:어둠의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+슈림몬	실피드몬	Shurimon	Silphymon	완전체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		같은단계(모드/옆)					v1(NDS_진화.tsv)
+워가루몬	블랙워가루몬	WereGarurumon	WereGarurumonBlack	완전체	완전체	도구지니고밤:예리한손톱		같은단계(모드/옆)				색만다름	v1(NDS_진화.tsv)
+콩알몬	번개콩알몬	Mamemon	Thundermon	완전체	성숙기	레벨:40		하강					v1(NDS_진화.tsv)
+테카몬	폭탄모야몬	Tekkamon	BomberNanimon	완전체	성숙기	DWDD DNA(+Mushroomon): Lv22+, Machine EXP660+, Friendship 60%+	머슈룸몬	하강		Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+퍼펫몬	다크퍼펫몬	Monzaemon	Waru Monzaemon	완전체	완전체	도구사용:어둠의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+화염드라몬	파일드라몬	Flamedramon	Paildramon	완전체	완전체	도구지니고낮:심해의이빨 / 도구지니고밤:심해의이빨		같은단계(모드/옆)					v1(NDS_진화.tsv)
+다크드라몬	샤인그레이몬 루인모드	Darkdramon	DSGreymon	궁극체	궁극체	DWDD DNA(+ShineGreymon): Lv59+, Dark EXP24000+, Attack 335+	샤인그레이몬	같은단계(모드/옆)		Y		모드(루인모드)	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+다크드라몬	카오스몬	Darkdramon	Chaosmon	궁극체	궁극체	DWDD DNA(+BanchoLeomon): Lv67+, Total EXP70000+, Attack 420+ / DWDD DNA(+Valdurmon): Lv67+, Total EXP70000+, Attack 420+	반쵸레오몬;발두르몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+디아블로몬	아마게몬	Diaboromon	Armageddemon	궁극체	궁극체	DWDD DNA(+Infermon): Lv81+, Defense 480+, Kuramon must be in your party	인펠몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+메탈가루몬	오메가몬	MetalGarurumon	Omegamon	궁극체	궁극체	도구지니고낮:마음의물방울 / 도구지니고밤:마음의물방울 / DWDD DNA(+WarGreymon): Lv65+, Speed 415+, Friendship 100%	워그레이몬	같은단계(모드/옆)					DWDD DNA(StrategyWiki DNA_Digivolution); v1(NDS_진화.tsv)
+메탈시드라몬	아포카리몬	MetalSeadramon	Apocalymon	궁극체	궁극체	DWDD DNA(+Puppetmon): Lv70+, Dark EXP 44444+, Got Piedmon	피노키몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+문밀레니엄몬	지드밀레니엄몬	MoonMilleniummon	ZeedMillenniummon	궁극체	궁극체	DWDD DNA(+Gigadramon): {{Footer Nav|game=Digimon World: Dawn and Dusk|prevpage=Digivolution|nextpage=Armor Digivolution}}	기가드라몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+반쵸레오몬	카오스몬	BantyoLeomon	Chaosmon	궁극체	궁극체	DWDD DNA(+Darkdramon): Lv67+, Total EXP70000+, Attack 420+ / DWDD DNA(+Valdurmon): Lv67+, Total EXP70000+, Attack 420+	다크드라몬;발두르몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+발두르몬	카오스몬	Varodurumon	Chaosmon	궁극체	궁극체	DWDD DNA(+Darkdramon): Lv67+, Total EXP70000+, Attack 420+ / DWDD DNA(+BanchoLeomon): Lv67+, Total EXP70000+, Attack 420+	다크드라몬;반쵸레오몬;반쵸레오몬+다크드라몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+발두르몬	크로노몬	Varodurumon	Chronomon	궁극체	궁극체		스사노오몬	같은단계(모드/옆)		Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+베놈묘티몬	벨리얼묘티	VenomMyotismon	BelialVamdemon	궁극체	궁극체	도구사용:어둠의돌		같은단계(모드/옆)					v1(NDS_진화.tsv)
+샤인그레이몬	샤인그레이몬 루인모드	ShineGreymon	DSGreymon	궁극체	궁극체	DWDD DNA(+Darkdramon): Lv59+, Dark EXP24000+, Attack 335+	다크드라몬	같은단계(모드/옆)		Y		모드(루인모드)	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+스사노오몬	크로노몬	Susanoomon	Chronomon	궁극체	궁극체		발두르몬	같은단계(모드/옆)		Y			wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+오메가몬	황제팔라딘	Omegamon	ImperialdramonPaladin	궁극체	궁극체	DWDD DNA(+Imperialdramon FM): Lv68+, Holy EXP50000+, Attack 440+	황제드라몬+황제파이터;황제파이터;황제파이터+황제드라몬	같은단계(모드/옆)		Y		모드(팔라딘모드)	DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+워그레이몬	오메가몬	WarGreymon	Omegamon	궁극체	궁극체	도구지니고낮:마음의물방울 / 도구지니고밤:마음의물방울 / DWDD DNA(+MetalGarurumon): Lv65+, Speed 415+, Friendship 100%	메탈가루몬	같은단계(모드/옆)					DWDD DNA(StrategyWiki DNA_Digivolution); v1(NDS_진화.tsv)
+파워드라몬	밀레니엄몬	Machinedramon	Milleniummon	궁극체	궁극체	DWDD DNA(+Kimeramon): Lv55+, Dark EXp27000+, Attack 320+	키메라몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution)
+파워드라몬	아포카리몬	Machinedramon	Apocalymon	궁극체	궁극체	DWDD DNA(+Piedmon): Lv70+, Dark EXP 44444+, Got Piedmon	피에몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+피노키몬	아포카리몬	Puppetmon	Apocalymon	궁극체	궁극체	DWDD DNA(+MetalSeadramon): Lv70+, Dark EXP 44444+, Got Piedmon	메탈시드라몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 양쪽문서)
+피에몬	아포카리몬	Piedmon	Apocalymon	궁극체	궁극체	DWDD DNA(+Machinedramon): Lv70+, Dark EXP 44444+, Got Piedmon	파워드라몬	같은단계(모드/옆)		Y			DWDD DNA(StrategyWiki DNA_Digivolution); wikimon(Sunburst/Moonlight 인용, 한쪽문서)
+황제드라몬	황제파이터	Imperialdramon	ImperialdramonFighter	궁극체	궁극체	레벨:60		같은단계(모드/옆)				모드(파이터모드)	v1(NDS_진화.tsv)
+황제드라몬	황제팔라딘	Imperialdramon	ImperialdramonPaladin	궁극체	궁극체	도구지니고낮:마음의물방울 / 도구지니고밤:마음의물방울		같은단계(모드/옆)				모드(팔라딘모드)	v1(NDS_진화.tsv)
+황제파이터	황제팔라딘	ImperialdramonFighter	ImperialdramonPaladin	궁극체	궁극체	DWDD DNA(+Omnimon): Lv68+, Holy EXP50000+, Attack 440+	오메가몬	같은단계(모드/옆)		Y	모드(파이터모드)	모드(팔라딘모드)	DWDD DNA(StrategyWiki DNA_Digivolution)
+구미몬	토이아구몬	Gumymon	ToyAgumon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+기기몬	브이몬	Gigimon	V-mon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+기기몬	울퉁몬	Gigimon	Gotsumon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+기기몬	캔들몬	Gigimon	Candmon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+기기몬	황금톱니몬	Gigimon	Solarmon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+도리몬	모노드라몬	Dorimon	Monodramon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+도리몬	블랙아구몬	Dorimon	BlackAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+도리몬	스노우고부리몬	Dorimon	SnowGoblimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+동글몬	플롯트몬	Calumon	Plotmon	유년기	성장기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+둥실몬	가니몬	Pukamon	Ganimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	기자몬	Pukamon	Gizamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	루나몬	Pukamon	Lunamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	베타몬	Pukamon	Betamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	브이몬	Pukamon	V-mon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	스노우고부리몬	Pukamon	SnowGoblimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	스노우아구몬	Pukamon	YukiAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	오타마몬	Pukamon	Otamamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	카메몬	Pukamon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	코로나몬	Pukamon	Coronamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+둥실몬	펭귄몬	Pukamon	Penmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	가니몬	Mochimon	Ganimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	고부리몬	Mochimon	Goblimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	도쿠네몬	Mochimon	Dokunemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	라라몬	Mochimon	Raramon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	에렉몬	Mochimon	Elecmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	오타마몬	Mochimon	Otamamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	임프몬	Mochimon	Impmon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+모티몬	추추몬	Mochimon	Wormmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	츄몬	Mochimon	Tyumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	카메몬	Mochimon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	캔들몬	Mochimon	Candmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	쿠네몬	Mochimon	Kunemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	톱니몬	Mochimon	Hagurumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	펭귄몬	Mochimon	Penmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	피요몬	Mochimon	Biyomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+모티몬	황금톱니몬	Mochimon	Solarmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+문몬	가지몬	Moonmon	Gazimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+문몬	블랙아구몬	Moonmon	BlackAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+미노몬	코쿠와몬	Minomon	Kokuwamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+버드몬	베타몬	Budmon	Betamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+버드몬	쉬라몬	Budmon	Gomamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+버드몬	스노우아구몬	Budmon	YukiAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+버드몬	토이아구몬	Budmon	ToyAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+버드몬	피요몬	Budmon	Biyomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+뿔몬	모노드라몬	Tsunomon	Monodramon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+뿔몬	베타몬	Tsunomon	Betamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+뿔몬	브이몬	Tsunomon	V-mon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+뿔몬	샤코몬	Tsunomon	Shakomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+뿔몬	쉬라몬	Tsunomon	Gomamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+뿔몬	스노우고부리몬	Tsunomon	SnowGoblimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+시드몬	베타몬	Tanemon	Betamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+시드몬	피요몬	Tanemon	Biyomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+썬몬	에렉몬	Sunmon	Elecmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	가오몬	Nyaromon	Gaomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	기자몬	Nyaromon	Gizamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	길몬	Nyaromon	Guilmon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+야옹몬	레나몬	Nyaromon	Renamon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+야옹몬	로프몬	Nyaromon	Lopmon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+야옹몬	베어몬	Nyaromon	Bearmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	스노우아구몬	Nyaromon	YukiAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	아구몬	Nyaromon	Agumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	아르마몬	Nyaromon	Armadimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	에렉몬	Nyaromon	Elecmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	울퉁몬	Nyaromon	Gotsumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	카메몬	Nyaromon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	쿠다몬	Nyaromon	Kudamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	테리어몬	Nyaromon	Terriermon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+야옹몬	테이파몬	Nyaromon	Bakumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	파피몬	Nyaromon	Gabumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	피요몬	Nyaromon	Biyomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+야옹몬	호크몬	Nyaromon	Hawkmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	가지몬	Pyocomon	Gazimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	레드펭귄몬	Pyocomon	Muchomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	추추몬	Pyocomon	Wormmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	쿠네몬	Pyocomon	Kunemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	팔몬	Pyocomon	Palmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	팔코몬	Pyocomon	Falcomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	펭귄몬	Pyocomon	Penmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	플로라몬	Pyocomon	Floramon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	피코데블몬	Pyocomon	PicoDevimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+어니몬	호크몬	Pyocomon	Hawkmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	기자몬	Wanyamon	Gizamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	샤코몬	Wanyamon	Shakomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	쉬라몬	Wanyamon	Gomamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	에렉몬	Wanyamon	Elecmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	츄몬	Wanyamon	Tyumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	카메몬	Wanyamon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	캔들몬	Wanyamon	Candmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+와냐몬	토이아구몬	Wanyamon	ToyAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+우파몬	기자몬	Upamon	Gizamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+우파몬	브이몬	Upamon	V-mon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+우파몬	파닥몬	Upamon	Patamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+츠메몬	블랙아구몬	Tsumemon	BlackAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+츠메몬	츠카이몬	Tsumemon	Tsukaimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+카프리몬	울퉁몬	Kapurimon	Gotsumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+카프리몬	코쿠와몬	Kapurimon	Kokuwamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+카프리몬	토이아구몬	Kapurimon	ToyAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+카프리몬	황금톱니몬	Kapurimon	Solarmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	모노드라몬	Koromon	Monodramon	유년기	성장기			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+코로몬	베타몬	Koromon	Betamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	브이몬	Koromon	V-mon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	블랙아구몬	Koromon	BlackAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	스노우아구몬	Koromon	YukiAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	카메몬	Koromon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	캔들몬	Koromon	Candmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로몬	토이아구몬	Koromon	ToyAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	가니몬	Tokomon	Ganimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	브이몬	Tokomon	V-mon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	에렉몬	Tokomon	Elecmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	울퉁몬	Tokomon	Gotsumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	츠카이몬	Tokomon	Tsukaimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	카메몬	Tokomon	Kamemon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	캔들몬	Tokomon	Candmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	피요몬	Tokomon	Biyomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+토코몬	호크몬	Tokomon	Hawkmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	기자몬	Pagumon	Gizamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	블랙아구몬	Pagumon	BlackAgumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	오타마몬	Pagumon	Otamamon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	울퉁몬	Pagumon	Gotsumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	츄몬	Pagumon	Tyumon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+퍼그몬	츠카이몬	Pagumon	Tsukaimon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+포로몬	추추몬	Poromon	Wormmon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+포로몬	팔코몬	Poromon	Falcomon	유년기	성장기			상승	후보				wikimon(타게임) — 빈칸 후보
+기자몬	메라몬	Gizamon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+길몬	메라몬	Guilmon	Meramon	성장기	성숙기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+도루몬	메라몬	Dorumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+드라큐몬	메라몬	Dracmon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+레드펭귄몬	네페르티몬	Muchomon	Nefertimon	성장기	아머체			상승	후보				wikimon(타게임) — 빈칸 후보
+베타몬	메라몬	Betamon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+브이몬	고릴라몬	V-mon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+브이몬	메라몬	V-mon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+블랙아구몬	고릴라몬	BlackAgumon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+블랙아구몬	네페르티몬	BlackAgumon	Nefertimon	성장기	아머체			상승	후보				wikimon(타게임) — 빈칸 후보
+블랙아구몬	메라몬	BlackAgumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+아구몬	고릴라몬	Agumon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+아르마몬	고릴라몬	Armadimon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+원시고부리몬	고릴라몬	Shamamon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+원시고부리몬	메라몬	Shamamon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+임프몬	메라몬	Impmon	Meramon	성장기	성숙기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+추추몬	메라몬	Wormmon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+코로나몬	메라몬	Coronamon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+코쿠와몬	고릴라몬	Kokuwamon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+테리어몬	고릴라몬	Terriermon	Gorimon	성장기	성숙기			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+테이파몬	메라몬	Bakumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+토이아구몬	메라몬	ToyAgumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+톱니몬	메라몬	Hagurumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+파닥몬	고릴라몬	Patamon	Gorimon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+파닥몬	네페르티몬	Patamon	Nefertimon	성장기	아머체			상승	후보				wikimon(타게임) — 빈칸 후보
+파피몬	네페르티몬	Gabumon	Nefertimon	성장기	아머체			상승	후보				wikimon(타게임) — 빈칸 후보
+파피몬	메라몬	Gabumon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+펭귄몬	메라몬	Penmon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+피요몬	고릴라몬	Biyomon	Gorimon	성장기	성숙기		엔젤몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+피요몬	메라몬	Biyomon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+피코데블몬	메라몬	PicoDevimon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+호크몬	메라몬	Hawkmon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+황금톱니몬	메라몬	Solarmon	Meramon	성장기	성숙기			상승	후보				wikimon(타게임) — 빈칸 후보
+가드로몬	다크퍼펫몬	Guadromon	Waru Monzaemon	성숙기	완전체		탱크몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+가루몬	다크퍼펫몬	Garurumon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+가루몬	데블시드라몬	Garurumon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+가와파몬	데블시드라몬	Gwappamon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+가재드라몬	다크퍼펫몬	Ebidramon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+가재드라몬	데블시드라몬	Ebidramon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+가트몬	카부키몬	Tailmon	Kabukimon	성숙기	완전체		플로라몬+닌자몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+개굴몬	다크퍼펫몬	Gekomon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+게소몬	다크퍼펫몬	Gesomon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+게소몬	데블시드라몬	Gesomon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+고릴라몬	데블시드라몬	Gorimon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+고스몬	다크퍼펫몬	Bakemon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+구미호몬	다크퍼펫몬	Kyubimon	Waru Monzaemon	성숙기	완전체			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+그라우몬	다크퍼펫몬	Growlmon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y	테이머즈		wikimon(타게임) — 빈칸 후보
+그레이몬	룩체스몬	Greymon	RookChessmon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+그레이몬	샤드라몬	Greymon	Shadramon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+그레이몬	피피스몬	Greymon	Pipismon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+꼬끼몬	다크퍼펫몬	Kokatorimon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트체스몬	룩체스몬	KnightChessmonWhite	RookChessmon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+니드몬	다크퍼펫몬	Togemon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+니드몬	판초몬	Togemon	Ponchomon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+닌자몬	다크퍼펫몬	Igamon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+닌자몬	카부키몬	Igamon	Kabukimon	성숙기	완전체		가트몬+플로라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+다크티라몬	다크퍼펫몬	DarkTyrannomon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+다크티라몬	스컬벌키몬	DarkTyrannomon	SkullBarukimon	성숙기	(보스)		아이스데블몬+드리모게몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+달팽이워매몬	데블시드라몬	KaratsukiNumemon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데블드라몬	다크퍼펫몬	Devidramon	Waru Monzaemon	성숙기	완전체		타임몬+가드로몬+메카노리몬+탱크몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데블몬	다크퍼펫몬	Devimon	Waru Monzaemon	성숙기	완전체		정글모쟈몬;정글모쟈몬+메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+도루가몬	다크퍼펫몬	Dorugamon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+도쿠구몬	다크퍼펫몬	Dokugumon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+드리모게몬	다크퍼펫몬	Drimogemon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+드리모게몬	스컬벌키몬	Drimogemon	SkullBarukimon	성숙기	(보스)		아이스데블몬+다크티라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+레드베지몬	다크퍼펫몬	RedVeggiemon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+레어몬	다크퍼펫몬	Raremon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+레어몬	스컬벌키몬	Raremon	SkullBarukimon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+레오몬	다크퍼펫몬	Leomon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+레키스몬	다크퍼펫몬	Lekismon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+레키스몬	데블시드라몬	Lekismon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+메라몬	다크퍼펫몬	Meramon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+모노크로몬	다크퍼펫몬	Monochromon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+모노크로몬	스컬벌키몬	Monochromon	SkullBarukimon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+모야몬	다크퍼펫몬	Nanimon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+모야몬	데블시드라몬	Nanimon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+모털몬	다크퍼펫몬	Mojyamon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+무사몬	스컬벌키몬	Musyamon	SkullBarukimon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+번개콩알몬	다크퍼펫몬	Thundermon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+베지몬	다크퍼펫몬	Vegimon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+블랙버드라몬	데블시드라몬	Saberdramon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+블루우가몬	다크퍼펫몬	Hyogamon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+상굴몬	스컬벌키몬	Sangloupmon	SkullBarukimon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+서브마리몬	데블시드라몬	Submarimon	WaruSeadramon	아머체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+쉘몬	다크퍼펫몬	Shellmon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+쉘몬	데블시드라몬	Shellmon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+슈카몬	다크퍼펫몬	Sukamon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+슈카몬	룩체스몬	Sukamon	RookChessmon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+슈카몬	샤드라몬	Sukamon	Shadramon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+슈카몬	피피스몬	Sukamon	Pipismon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+스타몬	다크퍼펫몬	Starmon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+시드라몬	다크퍼펫몬	Seadramon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+시드라몬	데블시드라몬	Seadramon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+실러캔몬	다크퍼펫몬	Coelamon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+실러캔몬	데블시드라몬	Coelamon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아이스데블몬	스컬벌키몬	IceDevimon	SkullBarukimon	성숙기	(보스)		다크티라몬+드리모게몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+안킬로몬	해마몬	Ankylomon	Seahomon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+옐로우워매몬	다크퍼펫몬	Geremon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+옥토몬	다크퍼펫몬	Octomon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+우가몬	다크퍼펫몬	Ogremon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+우가몬	데블시드라몬	Ogremon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+우드몬	다크퍼펫몬	Woodmon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+워매몬	다크퍼펫몬	Numemon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+위자몬	다크퍼펫몬	Wizarmon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+위자몬	판초몬	Wizarmon	Ponchomon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+정글모쟈몬	다크퍼펫몬	J-Mojyamon	Waru Monzaemon	성숙기	완전체		데블몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+캅테리몬	다크퍼펫몬	Kabuterimon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+켄터스몬	다크퍼펫몬	Centarumon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+쿠가몬	다크퍼펫몬	Kuwagamon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+키위몬	다크퍼펫몬	Kiwimon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+탱크몬	다크퍼펫몬	Tankmon	Waru Monzaemon	성숙기	완전체		가드로몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+티라노몬	다크퍼펫몬	tyranomon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+프리지몬	다크퍼펫몬	Frigimon	Waru Monzaemon	성숙기	완전체			상승	후보				wikimon(타게임) — 빈칸 후보
+플라이몬	다크퍼펫몬	Flymon	Waru Monzaemon	성숙기	완전체		메카노리몬+가드로몬+탱크몬+타임몬+번개콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+후크몬	데블시드라몬	Hookmon	WaruSeadramon	성숙기	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+가루다몬	주작몬	Garudamon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+기가드라몬	가이오몬	Gigadramon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+기가드라몬	그랜드로코몬	Gigadramon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+나이트몬	그리포몬	Knightmon	Gryphonmon	완전체	궁극체		블로섬몬+데라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	메탈가루몬	Knightmon	MetalGarurumon	완전체	궁극체		빅콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	메탈시드라몬	Knightmon	MetalSeadramon	완전체	궁극체		메가시드라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	미라쥬가오가몬	Knightmon	MirageGaogamon	완전체	궁극체		마하가오가몬+켄터스몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	발키리몬	Knightmon	Valkyrimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	베놈묘티몬	Knightmon	VenomMyotismon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	볼트몬	Knightmon	Boltmon	완전체	궁극체		데스메라몬+펌프몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	사벨레오몬	Knightmon	SaberLeomon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	세라피몬	Knightmon	Seraphimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	슬래쉬엔젤몬	Knightmon	SlashAngemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	워그레이몬	Knightmon	WarGreymon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	플레시오몬	Knightmon	Plesiomon	완전체	궁극체		다이버몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+나이트몬	황금무사몬	Knightmon	Zanbamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+나이트몬	황제드라몬	Knightmon	Imperialdramon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다이노몬	그랜드로코몬	DinoBeemon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+다이노몬	황제파이터	DinoBeemon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+다이노몬	황제팔라딘	DinoBeemon	ImperialdramonPaladin	완전체	궁극체			상승	후보			모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+다크그레몬	가이오몬	Metal Greymon (Virus)	Gaiomon	완전체	(보스)			상승	후보		디자인변형(바이러스판)		wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	가르프몬	Waru Monzaemon	Galfmon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	그랜쿠가몬	Waru Monzaemon	GranKuwagamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	다크드라몬	Waru Monzaemon	Darkdramon	완전체	궁극체		메가드라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	마왕몬	Waru Monzaemon	Daemon	완전체	(보스)		레이디데블몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	메탈가루몬	Waru Monzaemon	MetalGarurumon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	메탈에테몬	Waru Monzaemon	MetalEtemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	사벨레오몬	Waru Monzaemon	SaberLeomon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	아누비스몬	Waru Monzaemon	Anubismon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	파라오몬	Waru Monzaemon	Pharaohmon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	푸쿠몬	Waru Monzaemon	Pukumon	완전체	궁극체		다고몬+마린데블몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	피노키몬	Waru Monzaemon	Puppetmon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+다크퍼펫몬	피에몬	Waru Monzaemon	Piedmon	완전체	궁극체		묘티스몬+팬텀몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데라몬	백호몬	Deramon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데라몬	주작몬	Deramon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데라몬	현무몬	Deramon	Xuanwumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	가이오몬	WaruSeadramon	Gaiomon	(보스)	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	기가시드라몬	WaruSeadramon	GigaSeadramon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	마왕몬	WaruSeadramon	Daemon	(보스)	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	메기드라몬	WaruSeadramon	Megidramon	(보스)	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+데블시드라몬	메탈가루몬	WaruSeadramon	MetalGarurumon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	메탈시드라몬	WaruSeadramon	MetalSeadramon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	메탈에테몬	WaruSeadramon	MetalEtemon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	블랙워그레이몬	WaruSeadramon	BlackWarGreymon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	점보가메몬	WaruSeadramon	JumboGamemon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	푸쿠몬	WaruSeadramon	Pukumon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데블시드라몬	플레시오몬	WaruSeadramon	Plesiomon	(보스)	궁극체		쥬드몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	그리포몬	Death Meramon	Gryphonmon	완전체	궁극체		블로섬몬+데라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	데블타몬	Death Meramon	Devitamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데스메라몬	마왕몬	Death Meramon	Daemon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+데스메라몬	메기드라몬	Death Meramon	Megidramon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+데스메라몬	메탈가루몬	Death Meramon	MetalGarurumon	완전체	궁극체		나이트몬+빅콩알몬+메탈콩알몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	메탈시드라몬	Death Meramon	MetalSeadramon	완전체	궁극체		메가시드라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	베놈묘티몬	Death Meramon	VenomMyotismon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데스메라몬	사벨레오몬	Death Meramon	SaberLeomon	완전체	궁극체		피콜로몬+트리케라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	캐논드라몬	Death Meramon	Cannondramon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데스메라몬	플레시오몬	Death Meramon	Plesiomon	완전체	궁극체		다이버몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+데스메라몬	피에몬	Death Meramon	Piedmon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데스메라몬	할배몬	Death Meramon	Jijimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+데이터몬	그랜드로코몬	Nanomon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+도루그레몬	가이오몬	Dorugreymon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+도루그레몬	스피노몬	Dorugreymon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+도사몬	크로노몬	Taomon	Chronomon	완전체	궁극체		신드라몬	상승	후보	Y	테이머즈		wikimon(타게임) — 빈칸 후보
+디지타마몬	황제파이터	Digitamamon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+라이즈그레이몬	가이오몬	RizeGreymon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+라이즈그레이몬	청룡몬	RizeGreymon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+릴리몬	스피노몬	Lilymon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+마타돌몬	그란드라큐몬	Matadormon	GranDracmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+마하가오가몬	백호몬	MachGaogamon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+매그너몬	황제파이터	Magnamon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+매그너몬	황제팔라딘	Magnamon	ImperialdramonPaladin	완전체	궁극체		황제드라몬	상승	후보	Y		모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+머미몬	황제파이터	Mummymon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+머미몬	황제팔라딘	Mummymon	ImperialdramonPaladin	완전체	궁극체			상승	후보			모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+메가드라몬	가이오몬	Megadramon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+메탈그레이몬	가이오몬	MetalGreymon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+메탈그레이몬	백호몬	MetalGreymon	Baihumon	완전체	(보스)		아이언레오몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+메탈그레이몬	스피노몬	MetalGreymon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+메탈그레이몬	오메가몬	MetalGreymon	Omegamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+메탈콩알몬	그랜드로코몬	MetalMamemon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+메탈티라노몬	그랜드로코몬	MetalTyrannomon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+묘티스몬	그란드라큐몬	Vamdemon	GranDracmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+바지라몬	가이오몬	Vajramon	Gaiomon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+바지라몬	백호몬	Vajramon	Baihumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+바지라몬	주작몬	Vajramon	Zhuqiaomon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+바지라몬	청룡몬	Vajramon	QuingLongmon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+바지라몬	현무몬	Vajramon	Xuanwumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+버밀리몬	가이오몬	Vermilimon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+블랙메가로그라우몬	가이오몬	BlackWarGrowlmon	Gaiomon	완전체	(보스)			상승	후보		테이머즈;색만다름		wikimon(타게임) — 빈칸 후보
+블로섬몬	스피노몬	Blossomon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+블로섬몬	현무몬	Blossomon	Xuanwumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+빅콩알몬	그랜드로코몬	BigMamemon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+사이버드라몬	황제파이터	Cyberdramon	ImperialdramonFighter	완전체	궁극체			상승	후보		테이머즈	모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+샤코몬	청룡몬	Shakkoumon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬그레이몬	가이오몬	SkullGreymon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬그레이몬	스피노몬	SkullGreymon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬벌키몬	그리포몬	SkullBarukimon	Gryphonmon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬벌키몬	발두르몬	SkullBarukimon	Varodurumon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬벌키몬	스컬맘몬	SkullBarukimon	SkullMammon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬벌키몬	아누비스몬	SkullBarukimon	Anubismon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬벌키몬	황금무사몬	SkullBarukimon	Zanbamon	(보스)	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	가르프몬	Skull Satamon	Galfmon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+스컬사탄몬	그란드라큐몬	Skull Satamon	GranDracmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	디아블로몬	Skull Satamon	Diaboromon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	메기드라몬	Skull Satamon	Megidramon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+스컬사탄몬	발키리몬	Skull Satamon	Valkyrimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	베놈묘티몬	Skull Satamon	VenomMyotismon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	아포카리몬	Skull Satamon	Apocalymon	완전체	궁극체		묘티스몬+피노키몬+레이디데블몬+이비르몬+피코데블몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+스컬사탄몬	이바몬	Skull Satamon	Ebemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스컬사탄몬	피에몬	Skull Satamon	Piedmon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+스콜피오몬	그란드라큐몬	Scorpiomon	GranDracmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+신드라몬	백호몬	Sinduramon	Baihumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+신드라몬	주작몬	Sinduramon	Zhuqiaomon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+신드라몬	청룡몬	Sinduramon	QuingLongmon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+신드라몬	크로노몬	Sinduramon	Chronomon	완전체	궁극체		도사몬	상승	후보	Y	테이머즈		wikimon(타게임) — 빈칸 후보
+신드라몬	현무몬	Sinduramon	Xuanwumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+실피드몬	주작몬	Silphymon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아라크네몬	백호몬	Arachnemon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아라크네몬	스피노몬	Arachnemon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아이언레오몬	백호몬	GrappLeomon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아이언레오몬	주작몬	GrappLeomon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아이언레오몬	청룡몬	GrappLeomon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+아이언레오몬	현무몬	GrappLeomon	Xuanwumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+안티라몬	백호몬	Antiramon	Baihumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+안티라몬	주작몬	Antiramon	Zhuqiaomon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+안티라몬	청룡몬	Antiramon	QuingLongmon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+안티라몬	현무몬	Antiramon	Xuanwumon	완전체	(보스)			상승	후보		테이머즈		wikimon(타게임) — 빈칸 후보
+야타가라몬	스피노몬	Yatagaramon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+야타가라몬	주작몬	Yatagaramon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+에어로브이드라몬	황제파이터	AeroVeedramon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+엔젤우몬	그란드라큐몬	Angewomon	GranDracmon	완전체	(보스)		마타돌몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+엔젤우몬	백호몬	Angewomon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+엔젤우몬	오메가몬	Angewomon	Omegamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+엔젤우몬	황제팔라딘	Angewomon	ImperialdramonPaladin	완전체	궁극체			상승	후보			모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+운석몬	백호몬	Meteormon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+워가루몬	백호몬	WereGarurumon	Baihumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+워가루몬	오메가몬	WereGarurumon	Omegamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+쥬레이몬	현무몬	Cherrymon	Xuanwumon	완전체	(보스)		점보가메몬+할배몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+치린몬	레이브몬	Qilinmon	Ravemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	마린엔젤몬	Qilinmon	MarineAngemon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+치린몬	메기드라몬	Qilinmon	Megidramon	완전체	궁극체			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+치린몬	메탈가루몬	Qilinmon	MetalGarurumon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	미라쥬가오가몬	Qilinmon	MirageGaogamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	발두르몬	Qilinmon	Varodurumon	완전체	궁극체		발키리몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+치린몬	발키리몬	Qilinmon	Valkyrimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	샤인그레이몬	Qilinmon	ShineGreymon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	세라피몬	Qilinmon	Seraphimon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	점보가메몬	Qilinmon	JumboGamemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	청룡몬	Qilinmon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+치린몬	크로스몬	Qilinmon	Eaglemon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+콩고몬	황제팔라딘	Kongoumon	ImperialdramonPaladin	완전체	궁극체			상승	후보			모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+콩알티라몬	가이오몬	MameTyramon	Gaiomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+콩알티라몬	스피노몬	MameTyramon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+키메라몬	그란드라큐몬	Chimeramon	GranDracmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+키메라몬	주작몬	Chimeramon	Zhuqiaomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+키메라몬	카오스몬	Chimeramon	Chaosmon	완전체	궁극체		다크드라몬	상승	후보	Y			wikimon(타게임) — 빈칸 후보
+키메라몬	황제파이터	Chimeramon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+트리케라몬	스피노몬	Triceramon	Spinomon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+트리케라몬	청룡몬	Triceramon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+트리케라몬	현무몬	Triceramon	Xuanwumon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+파일드라몬	그랜드로코몬	Paildramon	GranLocomon	완전체	(보스)			상승	후보			테이머즈	wikimon(타게임) — 빈칸 후보
+파일드라몬	황제파이터	Paildramon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
+파일드라몬	황제팔라딘	Paildramon	ImperialdramonPaladin	완전체	궁극체			상승	후보			모드(팔라딘모드)	wikimon(타게임) — 빈칸 후보
+홀리엔젤몬	오메가몬	HolyAngemon	Omegamon	완전체	궁극체			상승	후보				wikimon(타게임) — 빈칸 후보
+홀리엔젤몬	청룡몬	HolyAngemon	QuingLongmon	완전체	(보스)			상승	후보				wikimon(타게임) — 빈칸 후보
+화염드라몬	황제파이터	Flamedramon	ImperialdramonFighter	완전체	궁극체			상승	후보			모드(파이터모드)	wikimon(타게임) — 빈칸 후보
