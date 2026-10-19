@@ -178,6 +178,34 @@ def check_movenames(rom, base):
                 seen.setdefault(nd, mv)
     note('한 종이 같은 이름 기술을 두 번 배우는 곳: %d' % dup)
 
+STAGE_RANK = {'유년기Ⅰ': 0, '유년기Ⅱ': 1, '성장기': 2, '성숙기': 3, '아머체': 3, '완전체': 4, '궁극체': 5}
+SKIP_OK = {('레오몬', '사벨레오몬')}      # 원작(워프 진화)에서도 중간 단계 없이 바로 가는 진화 (Wikimon: Saber Leomon — Warp Evolution)
+
+def check_evolutions(rom, base):
+    """10/19 v1.1 — 단계(성장기→성숙기→완전체→궁극체)를 건너뛰는 진화, 진화했는데 능력치 합이 안 오르는 진화를 잡는다(사용자가 여러 번 점검 요청).
+    같은 단계 안의 갈래(어둠 진화·아머 갈래)는 건너뛰기가 아니므로 능력치가 낮아지지만 않으면 통과."""
+    sl = load_slots('hg2_out/칸표.tsv')
+    if not sl: note('진화 단계 검사 건너뜀(칸표.tsv 없음)'); return
+    here = os.path.dirname(os.path.abspath(__file__))
+    stage = {}
+    for l in open(os.path.join(here, 'NDS_종_초안.tsv'), encoding='utf-8').read().split('\n')[1:]:
+        f = l.split('\t')
+        if len(f) > 3 and f[2] in sl: stage[sl[f[2]][0]] = (f[2], f[3])
+    pers = narc(rom, P['personal']); evo = narc(rom, P['evo'])
+    bst = lambda i: sum(pers[i][:6])
+    n = bad = 0
+    for i, (nm, st) in stage.items():
+        for m, prm, t in hg1.evos(evo[i]):
+            if t not in stage: continue
+            n += 1; nm2, st2 = stage[t]
+            d = STAGE_RANK[st2] - STAGE_RANK[st]
+            if d > 1 and (nm, nm2) not in SKIP_OK: fail('단계 건너뛰기 진화: %s(%s) → %s(%s)' % (nm, st, nm2, st2)); bad += 1
+            elif d < 0: fail('단계가 거꾸로인 진화: %s(%s) → %s(%s)' % (nm, st, nm2, st2)); bad += 1
+            db = bst(t) - bst(i)
+            if d >= 1 and db < 20: fail('진화했는데 능력치 합이 거의 안 오름(+%d): %s(%d) → %s(%d)' % (db, nm, bst(i), nm2, bst(t))); bad += 1
+            elif d == 0 and db < 0: fail('같은 단계 갈래인데 능력치 합이 낮아짐(%d): %s(%d) → %s(%d)' % (db, nm, bst(i), nm2, bst(t))); bad += 1
+    note('진화 단계·능력치 검사: 진화 %d건, 문제 %d건' % (n, bad))
+
 def check_sound(rom, base):
     try:
         import sdat_scan, hg_song
@@ -311,7 +339,7 @@ def main():
     global OUR_SLOTS
     sl_ = load_slots(A.slots)
     if sl_: OUR_SLOTS = {v[0] for v in sl_.values()}
-    for fn in (check_data, check_scripts, check_msgs, check_movenames, check_sound):
+    for fn in (check_data, check_scripts, check_msgs, check_movenames, check_evolutions, check_sound):
         try: fn(rom, base)
         except Exception as ex: fail('%s 중 오류: %s' % (fn.__name__, ex))
     try: check_traces(rom, base, load_slots(A.slots))

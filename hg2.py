@@ -25,6 +25,7 @@ EVO_LEVEL, EVO_ITEM, EVO_FRIEND = 4, 7, 1
 HELD_CLEAR = {'피코데블몬', '가트몬', '파닥몬', '토코몬'}   # 진화표 결정3(어둠의돌)·결정5(빛의돌·각성의돌 등) — 지닌 물건 없앰
 DONOR_FIX = {'메가강철톤': '강철톤', '메가핫삼': '핫삼', '메가입치트': '입치트', '메가메타그로스': '메타그로스', '아트라캅테리몬': '아트라캅테몬'}   # 집 보고 10/12: 롬에 없는 이름
 MOVE_ALT = {'에어커터': '에어컷터', '머드샷': '진흙뿌리기', '록블라스트': '암석봉인', '매지컬리프': '메지컬리프', '날개치기': '더블윙'}   # 롬에 없는 기술 이름 → 비슷한 기술
+NAME_FIX = {'다크그레몬': '다크그레몬', '황제파이터': '황제파이터'}   # 10/19 v1.1: 디지골드 칸이 원래 이름(메탈그레이몬·황제드라몬)을 그대로 달고 있어 같은 이름이 둘 → 표의 이름으로
 RENAME = {'아라크네몬': '아르케니몬', '데스메라몬': '데드메라몬', '벨리얼묘티': '벨리얼묘티스몬'}   # 02 더빙명·결정7·GBC 글자 수 제한으로 줄였던 이름
 NL_TOKEN = chr(92) + 'n'          # 글 안의 줄바꿈(Charmap 이 0xE000 을 이렇게 풂)
 # 디지골드가 디지몬을 넣은 자리(엑셀 「수정 전 포켓몬」) → 전국도감 번호. 이 번호로 칸을 찾고, 이름은 검산에만 쓴다.
@@ -158,6 +159,7 @@ def main():
     seed, names_ent = MSG[NAMEF]; names_ent = [list(e) for e in names_ent]
     expect = {}; held_cleared = set(); dg_learn_n = [0]
     SPECIAL_DI = set()                     # 필살기로 쓴 기술 칸 (같은 레벨 정리에서 제자리 우선)
+    stat_fixed = set(); type_fixed = set(); name_fixed = {}    # 10/19 v1.1: 디지골드 종의 능력치·이름 고침
     SPECIAL_OWNER = {}                     # 10/19 v1.1: 필살기 칸 → 주인 이름 (기술 설명 글용)
     for r in draft:
         ko = r['이름']
@@ -167,7 +169,12 @@ def main():
         if not new:
             if '스타팅 균형: 타입' in r['메모'] and s < len(pers):      # 10/19: 디지골드 종도 표의 타입으로 (스타팅 균형 고침만)
                 pb = bytearray(pers[s]); ts_ = r['타입'].split('/'); pb[6], pb[7] = TYPES.index(ts_[0]), TYPES.index(ts_[-1]); pers[s] = bytes(pb)
-                say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입']))
+                type_fixed.add(s); say('타입 고침(스타팅 균형): %s → %s' % (ko, r['타입']))
+            if '능력치 고침' in r['메모'] and s < len(pers):          # 10/19 v1.1: 진화 전후 능력치가 같거나 너무 가까운 종 (표의 능력치로)
+                pb = bytearray(pers[s]); st_ = stats_hgss(r['HP 공 방 특공 특방 스피드']); pb[0:6] = bytes(min(255, x) for x in st_); pers[s] = bytes(pb)
+                stat_fixed.add(s); say('능력치 고침: %s → %s' % (ko, r['HP 공 방 특공 특방 스피드']))
+            if ko in NAME_FIX and s < len(names_ent):
+                names_ent[s] = CM.enc(NAME_FIX[ko]); name_fixed[s] = NAME_FIX[ko]; say('이름 고침: %s' % NAME_FIX[ko])
             if ko in HELD_CLEAR and s < len(pers) and len(pers[s]) >= 16:      # 진화표 결정3·5: 야생이 지닌 진화 돌을 뺌(암흑·아머 갈래가 너무 일찍 열림)
                 pb = bytearray(pers[s]); held = struct.unpack_from('<HH', pb, 12)
                 if any(held): pb[12:16] = bytes(4); pers[s] = bytes(pb); held_cleared.add(s); say('야생이 지닌 물건 뺌: %s %s' % (ko, held))
@@ -730,13 +737,17 @@ def main():
         ok = (N2[s] == e['name'] and p['stats'] == [min(255, x) for x in e['stats']] and tuple(p['type']) == e['types']
               and len(hg1.learnset(L2[s])) == e['nmoves'] and [t for _, _, t in evos(E2[s])] == e['evo'])
         if not ok: bad += 1; P('검산 실패:', s, e['name'])
+    for i, nm_ in name_fixed.items():
+        if N2[i] != nm_: bad += 1; P('검산 실패(이름 고침):', i, nm_)
+    for r_ in draft:
+        if r_['이름'] in slot and slot[r_['이름']] in stat_fixed and hg1.personal(P2[slot[r_['이름']]])['stats'] != stats_hgss(r_['HP 공 방 특공 특방 스피드']): bad += 1; P('검산 실패(능력치 고침):', r_['이름'])
     say('디지골드 종 기술을 표대로 다시 씀(성장기 진화 전까지 · 단계 시작 Lv 정리): %d종' % dg_learn_n[0])
     say('자체 검산: %d종 중 실패 %d' % (len(expect), bad))
     # 다른 종은 그대로인지
     O = N['personal'].files
     for i in held_cleared:                                # 지닌 물건만 비고 나머지는 그대로인지
         if not (P2[i][:12] == O[i][:12] and P2[i][16:] == O[i][16:] and P2[i][12:16] == bytes(4)): P('지닌 물건 비우기 검산 실패:', i)
-    others = [i for i in range(len(pers)) if i not in expect and i not in held_cleared and i < len(P2) and P2[i] != O[i]]
+    others = [i for i in range(len(pers)) if i not in expect and i not in held_cleared and i not in stat_fixed and i not in type_fixed and i < len(P2) and P2[i] != O[i]]
     say('바꾸지 않은 칸 중 능력치가 달라진 칸: %d (0이어야 함)' % len(others))
     if others: P('엉뚱한 칸이 바뀜:', others[:20])
     # 10/15: 이름 → 칸 표(rom_check 의 「포켓몬 흔적」 검사가 씀). 새그림 = 이 칸의 전투 그림이 새로 들어가야 하는지(디지골드 자기 칸 디지몬은 원래 그림)
