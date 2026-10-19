@@ -522,142 +522,122 @@ def main():
                     keep[nl] = m; n_move += 1; lv_log.append('칸 %d: %s Lv%d → Lv%d (살림: %s)' % (s_, nm, l, nl, '보조 기술' if c == 2 else ('그 디지몬다운 기술' if nm in KEEP_THEME else '다른 타입 공격'))); continue
             n_drop += 1; lv_log.append('칸 %d: %s Lv%d 날림 (%s)' % (s_, nm, l, why))
         learn[s_] = enc_learn(lv1 + sorted(keep.items()))
+        if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len(lv1) + len(keep)      # 10/19 v1.1: 검산 기대값도 맞춤(v1 은 24종 「검산 실패」였음)
     say('같은 레벨 기술 정리: %d종 — 옮김 %d · 날림 %d (자세히는 아래)' % (n_sp, n_move, n_drop))
     for x in lv_log: say('  ' + x)
 
-    # ---- 10/19 v1.1 기술 배우는 간격 정리 (사용자 「아구몬 Lv12 꼬마불꽃 → Lv13 메탈클로처럼 바로 붙어서 배우고 갑자기 강해짐」
-    #      원칙: 무조건 한 칸 미루지 말고 그 디지몬다운 기술은 적당한 자리로, 쓸모없으면 날리고, 배우는 때는 3레벨 이상, 위력이 갑자기 튀지 않게)
-    #      규칙 (우리 종만, Lv1 시작 기술은 그대로):
-    #       1) 같은 이름 기술이 둘이면 하나만(필살기·센 쪽)
-    #       2) 쓸모없는 기술 날림: 같은 타입·같은 분류의 더 센(같거나) 공격 기술을 그보다 먼저(Lv1 포함) 배우면 → 늦게 배울 이유가 없음
-    #          (단, 날릴 기술에 따로 효과가 있고 그 효과가 앞 기술과 다르면 살림)
-    #       3) 필살기는 제 레벨에 고정. 나머지는 원래 차례대로, 앞뒤 기술과 3레벨 이상 떨어지게 원래 레벨에 가장 가까운 자리로
-    #          (범위: 원래 첫 레벨 ~ 레벨 진화가 있으면 진화 레벨, 없으면 원래 마지막 레벨). 자리가 모자라면 값어치가 가장 낮은 기술부터 날림
-    #          값어치: 필살기 > 그 디지몬다운 기술(KEEP) > 공격 기술(위력, 자기 타입이면 +30) > 보조 기술(35)
-    #       4) 위력이 튀지 않게: 필살기가 아닌 공격 기술은 자리를 정한 뒤 위력 낮은 것부터 앞자리에(약한 → 강한)
-    #       5) 그래도 앞 공격 기술보다 위력이 40 넘게 높으면 6레벨 이상 띄움(진화 안 하는 종은 원래 마지막 레벨 +6 까지)
-    GAP = 3; gap_log = []; gap_drop = gap_move = gap_sp = 0
-    EVO_LV_METHODS = {4, 8, 9, 10, 11, 12, 13, 14}
+    # ---- 10/19 v1.1 (v2 세션 규칙을 옮김, ce6d735): 「배우는 레벨이 1~2 차이로 붙어 있고(아구몬 Lv12 꼬마불꽃 → Lv13 메탈클로) 갑자기 세짐」
+    #   규칙(무조건 +1 로 밀지 않음): 필살기는 제자리 / 다른 기술은 앞뒤 기술과 3레벨 이상 떨어지게
+    #   1) 붙어 있으면: 앞 레벨에 같은 타입·같은 분류의 같거나 센 기술이 이미 있으면 → 날림(쓸모없음)
+    #   2) 아니면 뒤로 1~4레벨(진화 레벨 전까지) 중 3레벨 이상 떨어진 가장 이른 자리 → 없으면 (보조·약한 기술만) 앞으로 1~2레벨 → 없으면 2레벨 간격 → 없으면 날림
+    #   3) 위력 급상승: 공격 기술 위력이 그때까지 가장 센 기술보다 40 이상 높은데 앞 공격 기술과 4레벨 안이면 → 뒤로 1~4레벨(3레벨 간격 유지)
+    evo_cap = {}
+    for s_ in set(slot.values()):
+        if s_ < len(evo):
+            lvl_ = [prm for m_, prm, t_ in evos(evo[s_]) if m_ == EVO_LEVEL and prm]
+            if lvl_: evo_cap[s_] = min(lvl_) - 1
+    g_move = g_drop = g_spike = 0; g_log = []
     for s_ in sorted(set(slot.values())):
         if s_ >= len(learn): continue
         ls_ = hg1.learnset(learn[s_])
-        if not ls_: continue
-        lv1 = [x for x in ls_ if x[0] <= 1]; rest = sorted([x for x in ls_ if x[0] > 1])
-        if not rest: continue
-        before_ = list(ls_)
-        ptypes = set(pers[s_][6:8]) if s_ < len(pers) and len(pers[s_]) >= 8 else set()
-        evl = [p_ for m_, p_, t_ in hg1.evos(evo[s_]) if m_ in EVO_LV_METHODS and p_ > 0] if s_ < len(evo) else []
-        # 범위: 원래 첫 레벨(2레벨까지 앞당길 수 있음, Lv3 아래로는 안 감) ~ 레벨 진화가 있으면 진화 레벨.
-        #       단 원래 표가 진화 레벨보다 한참(3레벨 넘게) 길게 짜인 종(진화 안 시키고 키우는 갈래)은 원래 마지막 레벨까지
-        lo = max(3, rest[0][0] - 2) if rest[0][0] > 3 else rest[0][0]
-        if evl and rest[-1][0] > min(evl) + 3: evl = []
-        hi = min(evl) if evl else rest[-1][0]
-        def value(m):
+        lv1 = [x for x in ls_ if x[0] <= 1]; rest = sorted(x for x in ls_ if x[0] > 1)
+        if len(rest) < 2: continue
+        cap_ = evo_cap.get(s_, 100); placed = {}
+        for l, m in rest:
+            if m in SPECIAL_DI and l not in placed: placed[l] = m
+        changed_ = False
+        # 핵심 기술을 먼저 자리 잡고(원래 차례 기준으로 판정), 나머지 기술은 남는 자리에 — 나중 기술이 앞 기술에 밀려 몰리지 않게
+        sp_types = set(pers[s_][6:8]) if s_ < len(pers) and len(pers[s_]) >= 8 else set()
+        core_set = set()
+        for i_, (l, m) in enumerate(rest):
+            c, pw, t = mvinfo(m); nm = mname(m)
+            if nm in KEEP_THEME or (t in sp_types and (c == 2 or not any(mvinfo(M)[2] == t and mvinfo(M)[0] != 2 and mvinfo(M)[1] >= pw for L, M in rest[:i_] + lv1))):
+                core_set.add((l, m))
+        rest = [x for x in rest if x in core_set] + [x for x in rest if x not in core_set]
+        for l, m in rest:
+            if m in SPECIAL_DI and placed.get(l) == m: continue
+            c, pw, t = mvinfo(m); nm = mname(m)
+            lim = max(cap_, l)
+            def ok(p_, need):
+                return 2 <= p_ <= lim and p_ not in placed and all(abs(p_ - L) >= need for L in placed)
+            def best_before(p_): return max([mvinfo(M)[1] for L, M in list(placed.items()) + lv1 if L < p_ and mvinfo(M)[0] != 2] + [0])
+            def last_atk(p_): return max([L for L, M in placed.items() if L < p_ and mvinfo(M)[0] != 2 and mvinfo(M)[1] > 1] + [0])
+            # 10/19 사용자 「너무 없는 것도 그래」: 핵심 기술은 날리지 않음 — 그 디지몬다운 기술(KEEP), 제 타입의 첫 공격 기술, 제 타입 보조 기술
+            core = (l, m) in core_set
+            if ok(l, 3): p_ = l
+            elif core:
+                near = sorted(range(max(2, l - 4), l + 7), key=lambda q: (abs(q - l), q > l))
+                free = lambda q, need: q not in placed and all(abs(q - L) >= need for L in placed)
+                def gap_(q): return min([abs(q - L) for L in placed] + [99])
+                def score(q): g = gap_(q); return abs(q - l) + (0 if g >= 3 else 2 if g == 2 else 5)   # 원래 레벨과 가깝고, 앞뒤 간격이 넓을수록 좋음
+                inside = [q for q in near if q <= lim and q not in placed]
+                outside = [q for q in near if q > lim and q not in placed]
+                p_ = min(inside, key=score) if inside else (min(outside, key=score) if outside else None)   # 진화 전 범위 안에서 먼저, 없을 때만 진화 뒤로
+                if p_ is None: p_ = next((q for q in sorted(range(2, 101), key=lambda q: abs(q - l)) if q not in placed), l)
+                if p_ != l: g_move += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (핵심 기술이라 살림)' % (s_, nm, l, p_))
+                else: g_log.append('칸 %d: %s Lv%d 그대로 (핵심 기술)' % (s_, nm, l))
+            else:
+                dom = c != 2 and nm not in KEEP_THEME and any(L < l and mvinfo(M)[2] == t and mvinfo(M)[0] == c and mvinfo(M)[1] >= pw for L, M in placed.items())
+                if dom:
+                    g_drop += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d 날림 (붙어 있고, 앞에 같은 타입 같거나 센 기술)' % (s_, nm, l)); continue
+                # 가까운 자리부터(앞으로는 2레벨까지 — 앞당겨도 위력 급상승이 안 생길 때만, 뒤로는 4레벨까지). 붙은 기술을 하나씩 밀어 줄줄이 밀리는 것을 줄임
+                def early_ok(q): return c == 2 or pw < best_before(q) + 40
+                cands = sorted([q for q in range(l - 2, l + 5) if q != l and (q > l or early_ok(q))], key=lambda q: (abs(q - l), q < l))
+                p_ = next((q for need in (3, 2) for q in cands if ok(q, need)), None)
+                if p_ is None:
+                    g_drop += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d 날림 (앞뒤 기술과 3레벨 떨어진 자리가 없음)' % (s_, nm, l)); continue
+                g_move += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (붙어 있어 옮김)' % (s_, nm, l, p_))
+            if c != 2 and pw > 1:
+                bb_ = best_before(p_); la_ = last_atk(p_)
+                if bb_ and pw - bb_ >= 40 and la_ and p_ - la_ < 4:
+                    q_ = next((q for q in range(p_ + 1, p_ + 5) if q - la_ >= 4 and ok(q, 3)), None)   # 앞 공격 기술과 4레벨 이상 벌어질 때만 옮김(1레벨 밀기는 뜻 없음)
+                    if q_: g_spike += 1; changed_ = True; g_log.append('칸 %d: %s Lv%d → Lv%d (위력 급상승 %d→%d 완화)' % (s_, nm, p_, q_, bb_, pw)); p_ = q_
+            placed[p_] = m
+        if changed_:
+            learn[s_] = enc_learn((lv1 + sorted(placed.items()))[:20])
+            if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len((lv1 + sorted(placed.items()))[:20])
+    left_ = 0
+    for s_ in set(slot.values()):
+        r_ = sorted(x[0] for x in hg1.learnset(learn[s_]) if x[0] > 1) if s_ < len(learn) else []
+        left_ += sum(1 for a_, b_ in zip(r_, r_[1:]) if b_ - a_ <= 2)
+    spk_ = 0
+    for s_ in set(slot.values()):
+        if s_ >= len(learn): continue
+        bst_ = 0; la_ = 0
+        for l_, m_ in sorted(x for x in hg1.learnset(learn[s_]) if x[0] > 1):
+            c_, pw_, _t = mvinfo(m_)
+            if c_ == 2 or pw_ <= 1: continue
+            if bst_ and pw_ - bst_ >= 40 and l_ - la_ < 4: spk_ += 1
+            bst_ = max(bst_, pw_); la_ = l_
+    say('배우는 레벨 간격 정리(10/19): 옮김 %d · 날림 %d · 위력 급상승 완화 %d · 남은 2레벨 이하 간격 %d · 남은 위력 급상승(+40, 4레벨 안) %d' % (g_move, g_drop, g_spike, left_, spk_))
+    for x in g_log: say('  ' + x)
+    open(os.path.join(A.out, '기술간격.txt'), 'w', encoding='utf-8').write('\n'.join(g_log) + '\n')
+    # ---- 10/19 v1.1 마무리: v2 규칙은 자리가 없으면 2레벨 간격을 허용하지만, 1레벨 간격(바로 다음 레벨)은 어떤 경우에도 남기지 않음.
+    #      붙은 두 기술 중 값어치가 낮은 쪽을 날림(필살기 > 그 디지몬다운 기술 > 공격(위력, 제 타입 +30) > 보조). 둘 다 필살기면 그대로.
+    one_ = []
+    for s_ in sorted(set(slot.values())):
+        if s_ >= len(learn): continue
+        ls_ = hg1.learnset(learn[s_]); lv1_ = [x for x in ls_ if x[0] <= 1]; rest_ = sorted(x for x in ls_ if x[0] > 1)
+        sp_t = set(pers[s_][6:8]) if s_ < len(pers) and len(pers[s_]) >= 8 else set()
+        def val_(m):
             if m in SPECIAL_DI: return 10 ** 6
             if mname(m) in KEEP_THEME: return 1000
-            c, pw, t = mvinfo(m)
-            if c == 2 or pw <= 1: return 35
-            return pw + (30 if t in ptypes else 0)
-        logs = []
-        # 1) 같은 이름
-        seen = {}
-        for l, m in lv1 + rest:
-            nm = mname(m)
-            if nm in seen and seen[nm] != m:
-                a_, b_ = seen[nm], m
-                lose = b_ if value(a_) >= value(b_) else a_
-                logs.append('%s Lv%d 날림 (같은 이름 기술이 또 있음)' % (nm, next(L for L, M in lv1 + rest if M == lose)))
-                rest = [(L, M) for L, M in rest if M != lose]; lv1 = [(L, M) for L, M in lv1 if M != lose]
-                seen[nm] = a_ if lose == b_ else b_
-            else: seen[nm] = m
-        # 2) 쓸모없는 기술
-        keep2 = []
-        for l, m in rest:
-            c, pw, t = mvinfo(m)
-            if m not in SPECIAL_DI and mname(m) not in KEEP_THEME and c != 2 and pw > 1:
-                def eff_(M):
-                    try: return struct.unpack_from('<H', wf[M], 0)[0]
-                    except Exception: return -1
-                bet = [M for L, M in lv1 + keep2 if mvinfo(M)[2] == t and mvinfo(M)[0] == c and mvinfo(M)[1] >= pw and (eff_(m) == 0 or eff_(m) == eff_(M))]   # 효과가 다른 기술(먼저 치기·풀죽음 등)은 살림
-                if bet: logs.append('%s Lv%d 날림 (먼저 배우는 %s 이 같은 타입·더 셈)' % (mname(m), l, mname(bet[0]))); continue
-            keep2.append((l, m))
-        rest = keep2
-        # 3) 자리 정하기
-        anchors = sorted((l, m) for l, m in rest if m in SPECIAL_DI)
-        hi = max([hi] + [l for l, _ in anchors])
-        segs = []; cur = []; bounds = []; prevA = None
-        free = [(l, m) for l, m in rest if m not in SPECIAL_DI]
-        cuts = [l for l, _ in anchors]
-        for k in range(len(cuts) + 1):
-            L = lo if k == 0 else cuts[k - 1] + GAP
-            H = hi if k == len(cuts) else cuts[k] - GAP
-            if k == 0 and cuts and lo > cuts[0] - GAP: L = min(lo, max(2, cuts[0] - GAP))
-            lo_l = -1 if k == 0 else cuts[k - 1]; hi_l = 999 if k == len(cuts) else cuts[k]
-            segs.append([[x for x in free if lo_l < x[0] <= hi_l and not (k < len(cuts) and x[0] == hi_l and False)], L, H])
-        # 레벨이 필살기와 같으면 뒤 구간으로
-        for k in range(len(segs) - 1):
-            mv_ = [x for x in segs[k][0] if x[0] >= cuts[k]]
-            if mv_: segs[k][0] = [x for x in segs[k][0] if x[0] < cuts[k]]; segs[k + 1][0] = mv_ + segs[k + 1][0]
-        def cap(L, H): return 0 if H < L else (H - L) // GAP + 1
-        for k in range(len(segs)):
-            ms, L, H = segs[k]
-            while len(ms) > cap(L, H):
-                if k + 1 < len(segs) and len(segs[k + 1][0]) < cap(segs[k + 1][1], segs[k + 1][2]):
-                    segs[k + 1][0].insert(0, ms.pop()); continue
-                w_ = min(range(len(ms)), key=lambda i: (value(ms[i][1]), -i))
-                l, m = ms.pop(w_); logs.append('%s Lv%d 날림 (자리가 모자람 — 앞뒤 %d레벨 간격을 지키면 더 들어갈 자리가 없음)' % (mname(m), l, GAP))
-            segs[k][0] = ms
-        placed = list(anchors)
-        for ms, L, H in segs:
-            if not ms: continue
-            lvls = []
-            for i, (l, m) in enumerate(ms):
-                lvls.append(max(l, L, (lvls[-1] + GAP) if lvls else L))
-            for i in range(len(lvls) - 1, -1, -1):
-                lvls[i] = min(lvls[i], H if i == len(lvls) - 1 else lvls[i + 1] - GAP)
-            placed += [(lv_, m) for lv_, (l, m) in zip(lvls, ms)]
-        placed.sort()
-        # 4) 약한 → 강한
-        atk_pos = [i for i, (l, m) in enumerate(placed) if m not in SPECIAL_DI and mvinfo(m)[0] != 2 and mvinfo(m)[1] > 1]
-        atk = sorted((placed[i][1] for i in atk_pos), key=lambda m: mvinfo(m)[1])
-        for i, m in zip(atk_pos, atk): placed[i] = (placed[i][0], m)
-        # 5) 위력이 40 넘게 뛰는 공격 기술은 앞 공격 기술과 6레벨 이상 띄움(뒤 기술도 같이 밀고, 다음 필살기·범위를 넘으면 그대로 둠)
-        hi_ext = hi if evl else min(100, hi + 6)
-        for i in range(len(placed)):
-            if placed[i] is None: continue
-            l_i, m_i = placed[i]; c_i, p_i, _ = mvinfo(m_i)
-            if m_i in SPECIAL_DI or c_i == 2 or p_i <= 1: continue
-            j = next((j for j in range(i - 1, -1, -1) if placed[j] is not None and mvinfo(placed[j][1])[0] != 2 and mvinfo(placed[j][1])[1] > 1), None)
-            if j is None or p_i - mvinfo(placed[j][1])[1] < 40 or l_i - placed[j][0] >= 2 * GAP: continue
-            nxt_a = next((k for k in range(i + 1, len(placed)) if placed[k] is not None and placed[k][1] in SPECIAL_DI), None)
-            bound = (placed[nxt_a][0] - GAP) if nxt_a is not None else hi_ext
-            if any(x is None for x in placed[i:]): continue
-            want_ = [x[0] if x else 0 for x in placed]; want_[i] = placed[j][0] + 2 * GAP
-            for k in range(i + 1, nxt_a if nxt_a is not None else len(placed)): want_[k] = max(want_[k], want_[k - 1] + GAP)
-            last_k = (nxt_a - 1) if nxt_a is not None else len(placed) - 1
-            if want_[last_k] <= bound:
-                logs.append('%s Lv%d → Lv%d (앞 공격 기술보다 위력 %d 높아 띄움)' % (mname(m_i), l_i, want_[i], p_i - mvinfo(placed[j][1])[1]))
-                placed = [(want_[k], placed[k][1]) if placed[k] else None for k in range(len(placed))]
-            elif evl and mname(m_i) not in KEEP_THEME:
-                logs.append('%s Lv%d 날림 (진화 전 종인데 앞 공격 기술보다 위력 %d 높고, 진화 Lv%d 전에 띄울 자리가 없음 — 진화한 뒤 강한 기술을 배움)' % (mname(m_i), l_i, p_i - mvinfo(placed[j][1])[1], min(evl)))
-                placed[i] = None
-        placed = [x for x in placed if x is not None]
-        new_ls = lv1 + placed
-        if new_ls != before_:
-            gap_sp += 1
-            ol = {m: l for l, m in before_}
-            for l, m in placed:
-                if ol.get(m) != l: gap_move += 1
-            gap_drop += sum(1 for x in logs if '날림' in x)
-            gap_log.append('칸 %d: %s\n    전: %s\n    후: %s%s' % (s_, '', ' '.join('%d:%s' % (l, mname(m)) for l, m in before_), ' '.join('%d:%s' % (l, mname(m)) for l, m in new_ls),
-                           ''.join('\n    - ' + x for x in logs)))
-            learn[s_] = enc_learn(new_ls)
-        if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len(new_ls)   # 검산 기대값 = 마지막 기술표(같은 레벨 정리에서 안 고쳐 v1 은 24종 「검산 실패」였음)
-    say('기술 간격 정리(3레벨 이상·약한→강한): %d종 — 레벨 바뀜 %d · 날림 %d (자세히는 hg2_out/기술간격.txt)' % (gap_sp, gap_move, gap_drop))
-    slot_name_ = {v: k for k, v in slot.items()}
-    with open(os.path.join(OUT_DIR if 'OUT_DIR' in globals() else 'hg2_out', '기술간격.txt'), 'w', encoding='utf-8') as f_:
-        for x in gap_log:
-            k_ = int(x.split(':')[0].split()[1]); f_.write(x.replace('칸 %d: ' % k_, '%s (칸 %d)' % (slot_name_.get(k_, '?'), k_), 1) + '\n\n')
+            c_, pw_, t_ = mvinfo(m)
+            return 35 if (c_ == 2 or pw_ <= 1) else pw_ + (30 if t_ in sp_t else 0)
+        ch_ = False
+        while True:
+            k_ = next((i for i in range(len(rest_) - 1) if rest_[i + 1][0] - rest_[i][0] <= 1), None)
+            if k_ is None: break
+            a_, b_ = rest_[k_], rest_[k_ + 1]
+            if val_(a_[1]) >= 10 ** 6 and val_(b_[1]) >= 10 ** 6: break
+            lose_ = b_ if val_(a_[1]) >= val_(b_[1]) else a_
+            one_.append('칸 %d: %s Lv%d 날림 (바로 다음 레벨 기술과 붙음)' % (s_, mname(lose_[1]), lose_[0])); rest_.remove(lose_); ch_ = True
+        if ch_:
+            learn[s_] = enc_learn(lv1_ + rest_)
+            if s_ in expect and 'nmoves' in expect[s_]: expect[s_]['nmoves'] = len(lv1_) + len(rest_)
+    say('1레벨 간격 마무리: 날림 %d' % len(one_))
+    for x in one_: say('  ' + x)
+    with open(os.path.join(A.out, '기술간격.txt'), 'a', encoding='utf-8') as f_: f_.write('\n'.join(one_) + '\n')
 
     # ---- 10/19 v1.1 (사용자 「아구몬 꼬마불꽃이 전투에서 『사념의박치기』로 나옴」): 기술 이름은 이름표(mv[0], 743) 말고도
     #      전투 「○○의 기술!」 글 묶음(기술마다 3줄: 내 쪽·야생·상대, 3m~3m+2)에 이름이 글자 그대로 박혀 있음 → 바꾼 이름을 거기에도 똑같이.
