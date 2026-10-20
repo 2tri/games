@@ -8,6 +8,8 @@
 import os, sys, re, csv, struct, argparse, traceback
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import hg1, hg3, hg4, art_nds
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '수정판_시험'))
+import trainer_cell
 from hg1 import NDS, NARC, bps_make, bps_apply, say, R
 
 def decode_any(f):
@@ -42,8 +44,31 @@ def encode_any(template, rows, mode):
     d = bytearray(template); d[c + 0x20:c + 0x20 + 2 * n] = struct.pack('<%dH' % n, *enc)
     return bytes(d)
 
+def clean_checker_specks(img, max_area=9000):
+    """10/19 v1.1: 체크무늬 배경 그림(미미)에서 테두리 flood 가 못 지운 작은 회색·흰 조각(모래알·다리 사이 칸)을 지움.
+    밝고 채도 낮은 색(110 이상)끼리 이어진 덩어리 중 면적이 작고 회색(160~236) 칸이 3할 넘는 것만 — 흰 눈·이빨(순백)은 남김"""
+    h, w = len(img), len(img[0])
+    def lite(p): return p[3] >= 128 and min(p[:3]) >= 110 and max(p[:3]) - min(p[:3]) <= 28
+    seen = bytearray(w * h); out = [list(r) for r in img]; n = 0
+    for y0 in range(h):
+        for x0 in range(w):
+            i0 = y0 * w + x0
+            if seen[i0] or not lite(img[y0][x0]): continue
+            comp = [(x0, y0)]; seen[i0] = 1; k = 0
+            while k < len(comp):
+                x, y = comp[k]; k += 1
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    X, Y = x + dx, y + dy
+                    if 0 <= X < w and 0 <= Y < h and not seen[Y * w + X] and lite(img[Y][X]): seen[Y * w + X] = 1; comp.append((X, Y))
+            if len(comp) < max_area:
+                gray = sum(1 for x, y in comp if min(img[y][x][:3]) < 237)
+                if gray > 0.3 * len(comp):
+                    for x, y in comp: out[y][x] = (0, 0, 0, 0)
+                    n += 1
+    return out
+
 def load_png(path):
-    w, h, img = art_nds.png_read(path); img = art_nds.remove_bg(img); b = art_nds.bbox(img)
+    w, h, img = art_nds.png_read(path); img = art_nds.remove_bg(img); img = clean_checker_specks(img); b = art_nds.bbox(img)
     if not b: raise ValueError('그림이 비었음')
     img = art_nds.crop(img, b); nat = art_nds.native(img)
     nat = art_nds.scale_to(nat, 78, 78) if (len(nat) > 78 or len(nat[0]) > 78) else nat
@@ -134,7 +159,19 @@ def main():
                 rows80, pal = load_png(path)
         except Exception as ex: problems.append('그림 못 읽음 %s: %s' % (png, ex)); continue
         base_i = cls * per
-        for k in (0, per - 1):
+        # 10/19 v1.1: 파일 0번(전투 때 상대 트레이너 그림)은 「조각(OAM) 6개 + 3프레임」 셀 방식이라 한 줄씩 덮어쓰면 그림이 깨짐(소라 등).
+        #   파일 2번(RECN) 조립표대로 80x80 그림을 조각마다 잘라 넣는다(프레임이 여럿이면 모두 같은 그림). 파일 4번(160x80 한 줄 방식)은 그대로.
+        f0 = files[base_i]
+        if f0[:4] == b'RGCN' and files[base_i + 2][:4] == b'RECN':
+            try:
+                c0 = f0.find(b'RAHC'); body0 = f0[c0 + 0x20:]; info = trainer_cell.parse_ncer(files[base_i + 2])
+                nb = body0
+                for ci in range(len(info['cells'])): nb = trainer_cell.disassemble(nb, info, ci, rows80)
+                bad_ci = [ci for ci in range(len(info['cells'])) if info['cells'][ci] and trainer_cell.assemble(nb, info, ci) != rows80]
+                if bad_ci: problems.append('셀 조립 검산 실패(일부 프레임 그림이 조금 다를 수 있음): %s 직업 %d 셀 %s' % (key, cls, bad_ci))
+                files[base_i] = f0[:c0 + 0x20] + nb; checks.append((base_i, rows80, 'cell:%d' % cls))
+            except Exception as ex: problems.append('셀 그림 못 넣음 %s(직업 %d): %s' % (key, cls, ex))
+        for k in (per - 1,):
             f = files[base_i + k]
             if f[:4] != b'RGCN': continue
             old, mode, w = decode_any(f)
@@ -149,6 +186,10 @@ def main():
     nar.files = files; out = NDS(raw); out.put('a/0/5/8', nar.build()); new_raw = bytes(out.d)
     chk = NARC(NDS(new_raw).get('a/0/5/8')).files; bad = 0
     for idx, rows_, mode in checks:
+        if mode.startswith('cell:'):
+            c1 = chk[idx].find(b'RAHC'); inf = trainer_cell.parse_ncer(chk[idx + 2])
+            if trainer_cell.assemble(chk[idx][c1 + 0x20:], inf, 0) != rows_: bad += 1; problems.append('검산 실패: 파일 %d(셀 %s)' % (idx, mode))
+            continue
         got, m2, w = decode_any(chk[idx])
         if got != rows_: bad += 1; problems.append('검산 실패: 파일 %d(%s→%s)' % (idx, mode, m2))
     say('트레이너 그림 넣음: %d명, 검산 %d파일 중 실패 %d' % (done, len(checks), bad))

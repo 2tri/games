@@ -9,6 +9,7 @@
  4) 스크립트: 파일 머리 표(u32 상대 위치 … 0xFD13)가 파일 안을 가리키는지, 원본보다 짧아지지 않았는지
  5) 글 묶음: 모든 글 파일이 풀리는지, 글 수가 원본과 같은지
  6) 소리(SDAT): 곡 정보가 가리키는 파일·뱅크가 있는지, 바뀐 곡이 SSEQ 검사(hg_song.check_sseq)를 통과하는지
+ 6b) 기술 이름(10/19 v1.1): 기술 이름표와 전투 「○○의 기술!」 글의 이름이 같은지, 한 종이 같은 이름 기술을 두 번 배우는지
  7) 포켓몬 흔적(10/15 사용자 「배틀에 강철톤 같은 게 없어야」): hg2_out/칸표.tsv 가 있으면
     - 야생(라디오·대량 발생 칸 포함)·트레이너 파티에 나오는 종이 전부 우리 종 칸인지
     - 새 그림이 들어가야 하는 칸의 전투 앞모습이 원본과 달라졌는지(같으면 원래 포켓몬 그림이 남은 것)
@@ -130,6 +131,80 @@ def check_msgs(rom, base):
         for j, e in enumerate(ent):
             if e and e[-1] != 0xFFFF: fail('글 파일 %d #%d 끝 표시(FFFF) 없음' % (i, j)); break
     note('글 파일 검사(바뀐 것만)')
+
+OUR_SLOTS = None      # main 에서 칸표(hg2_out/칸표.tsv)로 채움 — 우리 종 칸
+
+def check_movenames(rom, base):
+    """10/19 v1.1 — 기술 이름이 여러 글 파일에 따로 있음: 이름표(기술 468개) + 전투 「○○의 기술!」 글(기술마다 3줄: 내 쪽·야생·상대).
+    hg2 가 이름표만 바꿔 전투에서 옛 이름이 나왔음(아구몬 「꼬마불꽃」 → 「사념의박치기」). 두 파일의 이름이 같은지 부호로 대조.
+    덤으로 한 종이 이름이 같은 기술을 두 번 배우는지도 봄(필살기가 두 칸에 같은 이름으로 들어갔던 것)."""
+    a = narc(rom, P['msg'])
+    if not a: return
+    dec = []
+    for f in a:
+        try: dec.append(hg1.msg_decode(f)[1])
+        except Exception: dec.append([])
+    body = lambda e: tuple(e[:-1] if e and e[-1] == 0xFFFF else e)
+    def find_in(hay, nd):
+        n = len(nd)
+        return n and any(tuple(hay[i:i + n]) == nd for i in range(len(hay) - n + 1))
+    names_f = use_f = None
+    for i, ent in enumerate(dec):
+        if not (460 <= len(ent) <= 480): continue
+        if sum(len(e) for e in ent) / len(ent) > 14: continue           # 설명 글 묶음(같은 개수)은 길어서 뺌
+        cand = [k for k, u in enumerate(dec) if len(u) == 3 * len(ent)]       # 전투 기술 글 = 기술마다 3줄 → 개수가 정확히 3배
+        if len(cand) == 1: names_f, use_f = i, cand[0]; break
+        if names_f is not None: break
+    if names_f is None: note('기술 이름 대조: 이름표·전투 기술 글 묶음을 못 찾음(건너뜀)'); return
+    names = dec[names_f]; use = dec[use_f]; bad = []
+    for m in range(1, len(names)):
+        nd = body(names[m])
+        if not nd: continue
+        miss = [k for k in range(3) if not find_in(use[3 * m + k], nd)]
+        if miss: bad.append(m)
+    for m in bad[:60]: fail('기술 %d: 이름표(msg %d)의 이름이 전투 기술 글(msg %d #%d~#%d)에 없음 — 전투에서 다른 이름이 나옴' % (m, names_f, use_f, 3 * m, 3 * m + 2))
+    if len(bad) > 60: fail('… 기술 이름 안 맞음 모두 %d개' % len(bad))
+    note('기술 이름 대조(이름표 msg %d ↔ 전투 기술 글 msg %d): 안 맞음 %d' % (names_f, use_f, len(bad)))
+    learn = narc(rom, P['learn']); dup = 0
+    if learn:
+        for i, f in enumerate(learn[:494]):
+            seen = {}
+            for lv, mv in hg1.learnset(f):
+                if mv >= len(names): continue
+                nd = body(names[mv])
+                if nd in seen and seen[nd] != mv:
+                    if OUR_SLOTS is None or i in OUR_SLOTS: fail('종 %d: 이름이 같은 기술을 두 번 배움(기술 %d · %d)' % (i, seen[nd], mv)); dup += 1
+                    else: note('(안 쓰는 칸) 종 %d: 이름이 같은 기술을 두 번 배움(기술 %d · %d) — 우리 종 아님, 게임에 안 나옴' % (i, seen[nd], mv))
+                seen.setdefault(nd, mv)
+    note('한 종이 같은 이름 기술을 두 번 배우는 곳: %d' % dup)
+
+STAGE_RANK = {'유년기Ⅰ': 0, '유년기Ⅱ': 1, '성장기': 2, '성숙기': 3, '아머체': 3, '완전체': 4, '궁극체': 5}
+SKIP_OK = {('레오몬', '사벨레오몬')}      # 원작(워프 진화)에서도 중간 단계 없이 바로 가는 진화 (Wikimon: Saber Leomon — Warp Evolution)
+
+def check_evolutions(rom, base):
+    """10/19 v1.1 — 단계(성장기→성숙기→완전체→궁극체)를 건너뛰는 진화, 진화했는데 능력치 합이 안 오르는 진화를 잡는다(사용자가 여러 번 점검 요청).
+    같은 단계 안의 갈래(어둠 진화·아머 갈래)는 건너뛰기가 아니므로 능력치가 낮아지지만 않으면 통과."""
+    sl = load_slots('hg2_out/칸표.tsv')
+    if not sl: note('진화 단계 검사 건너뜀(칸표.tsv 없음)'); return
+    here = os.path.dirname(os.path.abspath(__file__))
+    stage = {}
+    for l in open(os.path.join(here, 'NDS_종_초안.tsv'), encoding='utf-8').read().split('\n')[1:]:
+        f = l.split('\t')
+        if len(f) > 3 and f[2] in sl: stage[sl[f[2]][0]] = (f[2], f[3])
+    pers = narc(rom, P['personal']); evo = narc(rom, P['evo'])
+    bst = lambda i: sum(pers[i][:6])
+    n = bad = 0
+    for i, (nm, st) in stage.items():
+        for m, prm, t in hg1.evos(evo[i]):
+            if t not in stage: continue
+            n += 1; nm2, st2 = stage[t]
+            d = STAGE_RANK[st2] - STAGE_RANK[st]
+            if d > 1 and (nm, nm2) not in SKIP_OK: fail('단계 건너뛰기 진화: %s(%s) → %s(%s)' % (nm, st, nm2, st2)); bad += 1
+            elif d < 0: fail('단계가 거꾸로인 진화: %s(%s) → %s(%s)' % (nm, st, nm2, st2)); bad += 1
+            db = bst(t) - bst(i)
+            if d >= 1 and db < 20: fail('진화했는데 능력치 합이 거의 안 오름(+%d): %s(%d) → %s(%d)' % (db, nm, bst(i), nm2, bst(t))); bad += 1
+            elif d == 0 and db < 0: fail('같은 단계 갈래인데 능력치 합이 낮아짐(%d): %s(%d) → %s(%d)' % (db, nm, bst(i), nm2, bst(t))); bad += 1
+    note('진화 단계·능력치 검사: 진화 %d건, 문제 %d건' % (n, bad))
 
 def check_sound(rom, base):
     try:
@@ -261,7 +336,10 @@ def main():
     for fn in (check_fs, ):
         fn(rom)
     if base: check_counts(rom, base)
-    for fn in (check_data, check_scripts, check_msgs, check_sound):
+    global OUR_SLOTS
+    sl_ = load_slots(A.slots)
+    if sl_: OUR_SLOTS = {v[0] for v in sl_.values()}
+    for fn in (check_data, check_scripts, check_msgs, check_movenames, check_evolutions, check_sound):
         try: fn(rom, base)
         except Exception as ex: fail('%s 중 오류: %s' % (fn.__name__, ex))
     try: check_traces(rom, base, load_slots(A.slots))

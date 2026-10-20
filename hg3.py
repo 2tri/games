@@ -581,6 +581,7 @@ def main():
         rare_slots = NEVER | RARE_ONLY | NEVER_J   # 아래 「얻을 길 없는 종 넣기」에서 이 종들은 넣지 않음
         for r in rare_rows:
             if r['이름'] not in slot: P('귀한 종 표의 이름이 초안에 없음:', r['이름'])
+        WILD_MAX = {'성장기': 24, '유년기': 24, '유년기Ⅰ': 24, '유년기Ⅱ': 24}      # 10/20 v1.1 사용자: 야생 성장기 Lv50 은 이상함 → 레벨에 맞는 성숙기·완전체
         WILD_MIN = {'성숙기': 18, '아머체': 25, '완전체': 30, '궁극체': 50}      # 10/14 성숙기 18(파트너 첫 진화 뒤)
         RANK = {'유년기Ⅱ': 0, '유년기': 0, '성장기': 1, '성숙기': 2, '아머체': 2, '완전체': 3, '궁극체': 4}
         def is_rare_slot(off):
@@ -600,6 +601,7 @@ def main():
             if s_ in NEVER_J and cur_region[0] != '관동': return False
             g = grade_of.get(s_, '')
             if lv < WILD_MIN.get(g, 0): return False
+            if lv > WILD_MAX.get(g, 999): return False                  # 10/20 v1.1: 성장기가 Lv50 야생에 나오던 것(파닥몬·피코데블몬·추추몬)
             if (s_ in RARE_ONLY or g == '궁극체') and not rare_slot: return False
             return True
         commons = [c for c in eligible if c not in NEVER and c not in NEVER_J and c not in RARE_ONLY and grade_of.get(c, '') in RANK and grade_of.get(c, '') != '궁극체' and not grade_of.get(c, '').startswith('유년기')]
@@ -706,7 +708,9 @@ def main():
                 if 0x5C <= off < 0x64 or off >= 0xBC: continue        # 라디오·대량 발생 칸은 그대로
                 y = struct.unpack_from('<H', b, off)[0]
                 if not y or y not in ours or y in RARE_ONLY: continue
-                if y in only_here: only_here.discard(y); continue      # 그 표에만 있는 종: 가장 낮은 레벨 칸 하나는 그대로
+                if y in only_here:                                       # 그 표에만 있는 종: 가장 낮은 레벨 칸 하나는 그대로
+                    lv_o = lv12[((off - 0x14) // 2) % 12] if off < 0x5C else b[off - 2]
+                    if RANK.get(grade_of.get(y, ''), 9) >= rank_for(lv_o): only_here.discard(y); continue    # 10/20 v1.1: 레벨에 맞는 단계일 때만(진화 전 성숙기가 Lv38~52 에 남던 10곳) — 아니면 진화형으로 바꾸고 이 종은 아래 「얻을 길 없는 종 넣기」가 맞는 레벨 표에 넣음
                 lv = lv12[((off - 0x14) // 2) % 12] if off < 0x5C else b[off - 2]
                 z = y if A.no_grow else grow(y, lv, is_rare_slot(off), is_water_slot(off), off // 2)
                 if z != y: struct.pack_into('<H', b, off, z); var_log['낮은 단계 → 진화형'] += 1; use_cnt[z] += 1
@@ -766,7 +770,7 @@ def main():
         for d in enc_files:
             if len(d) == ENC_SIZE: now_sp |= {struct.unpack_from('<H', d, off)[0] for off in ENC_SPECIES if not (0x5C <= off < 0x64 or off >= 0xBC)}   # 대량 발생·라디오 칸만 남은 종은 없는 것으로
         for y_, (i_, off_, lv_) in first_seen.items():
-            if y_ not in now_sp:                                       # 진화형으로만 바뀌어 얻을 길이 사라진 종(추추몬·프리지몬 등) → 가장 낮은 레벨 자리에 되살림
+            if y_ not in now_sp and RANK.get(grade_of.get(y_, ''), 9) >= rank_for(first_seen[y_][2]):   # 진화형으로만 바뀌어 얻을 길이 사라진 종(추추몬·프리지몬 등) → 가장 낮은 레벨 자리에 되살림(10/20: 그 레벨에 맞는 단계일 때만)
                 bb = bytearray(enc_files[i_]); struct.pack_into('<H', bb, off_, y_); enc_files[i_] = bytes(bb); var_log['마지막 자리라 되살림'] += 1; now_sp.add(y_)
         say('야생 다양성·적재적소(10/16 저녁): %s' % (', '.join('%s %d' % kv for kv in var_log.most_common()) or '바꿀 것 없음'))
         # ---- 얻을 길 없는 종 → 걷기 칸 6·7번(5%+5%, 아침·낮·밤 모두)에 넣음(교차 검증 10/8: 골레몬·스타몬 등 10종)
@@ -774,7 +778,9 @@ def main():
             got = set()
             for d in enc_files:
                 if len(d) == ENC_SIZE:
-                    for off in ENC_SPECIES: got.add(struct.unpack_from('<H', d, off)[0])
+                    for off in ENC_SPECIES:
+                        if 0x5C <= off < 0x64 or off >= 0xBC: continue      # 10/20 v1.1: 대량 발생·라디오 칸은 못 만나는 걸로(레볼몬이 이 칸에만 남아 얻을 길이 없었음)
+                        got.add(struct.unpack_from('<H', d, off)[0])
             return got
         evo_next = collections.defaultdict(set)
         for src_i, f in enumerate(N['evo'].files):
@@ -795,6 +801,21 @@ def main():
         def catch(n): return pers[n]['catch'] if n < len(pers) and pers[n] else 0
         used_tbl = set(); placed = []; nofit = []
         reach = reachable()
+        # 10/20 v1.1: 위 규칙으로 야생에서 사라진 성장기(파닥몬 — 스타팅 셋 중 안 고른 하나, 추추몬)는 성도 낮은 레벨 표의 드문 칸(4%)에 넣음
+        LOW_G = ('성장기', '유년기', '유년기Ⅰ', '유년기Ⅱ')
+        sp_now = present_species()
+        lost = sorted(x for x in ours if grade_of.get(x, '') in LOW_G and x not in sp_now and (x not in EVENT_SP or x == slot.get('파닥몬')) and x not in {slot.get(n) for n in ('토코몬',)})
+        early_put = []
+        for x in lost:
+            cands = sorted((min(d[8:20]), i) for i, d in enumerate(enc_files) if len(d) == ENC_SIZE and d[0] and REGION.get(i) == '성도' and 3 <= min(d[8:20]) <= 8 and not any(struct.unpack_from('<H', d, bo + 2 * 8)[0] == x for bo in (0x14, 0x2C, 0x44)))
+            for _, i in cands:
+                old_d = enc_files[i]; b = bytearray(old_d)
+                for base_off in (0x14, 0x2C, 0x44): struct.pack_into('<H', b, base_off + 2 * 8, x)
+                enc_files[i] = bytes(b)
+                new_reach = reachable()
+                if reach - new_reach: enc_files[i] = old_d; continue
+                reach = new_reach; early_put.append((x, i, b[8 + 8])); break
+        for x, i, lv in early_put: say('  성장기 %s → 야생 파일 %d 걷기 9번 칸(4%%, Lv%d) — 레벨 높은 야생에서 뺀 대신' % ({v: k for k, v in slot.items()}.get(x, x), i, lv))
         need = sorted((x for x in ours if x not in reach and x not in rare_slots and grade_of.get(x, '') != '궁극체' and catch(x) > 5 and ORDER.get(grade_of.get(x, '').rstrip('ⅠⅡ'), 9) <= 4),
                       key=lambda x: (ORDER.get(grade_of.get(x, '').rstrip('ⅠⅡ'), 9), x))
         for x in (need if ev_rows else []):

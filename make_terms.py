@@ -6,7 +6,7 @@
 - 이름: 앞이 한글이 아니고 뒤가 조사·문장부호·끝일 때만(「비상구」「그린 그림」 보호) — 1-5 인물 이름
 - 문맥: 「이름」 조건 + 같은 글에 관장·체육관·수련장·수호자·사천왕·챔피언·배지·문장·트레이너 중 하나가 있거나 바로 뒤가 『 일 때만 — 1-9 손으로만 낱말
 - 타입표: 타입 이름 글에서만
-GBC 설계에서 온 타입 이름(결정 필요: 페어리=빛, 에스퍼=영혼)은 여기서 덧붙인다."""
+GBC 설계에서 온 타입 이름(결정 필요: 페어리=빛)은 여기서 덧붙인다."""
 import os, re, json
 H = os.path.dirname(os.path.abspath(__file__)); P = os.path.join(H, '..')
 doc = open(os.path.join(P, 'NDS_대사.md'), encoding='utf-8').read()
@@ -53,7 +53,8 @@ add('실버', '매튜', '트레이너이름', '라이벌 기본 이름(트레이
 # 타입 이름(GBC 설계 + 결정 필요 추천)
 d = json.load(open(os.path.join(H, 'design.json'), encoding='utf-8'))
 for o, n in d['rules']['TYPE_RENAME'].items():
-    add(o, '영혼' if o == '에스퍼' else n, '타입표', '타입 이름(결정 필요: 페어리=빛, 에스퍼=영혼)')
+    if o == '에스퍼': continue      # 10/19 v1.1: 에스퍼는 원래 이름 그대로(「영혼」은 포켓몬에 없는 이름이라 뺌)
+    add(o, n, '타입표', '타입 이름(결정 필요: 페어리=빛)')
 add('페어리', '빛', '타입표', '결정 필요 — 추천')
 rows.sort(key=lambda r: -len(r[0]))
 open(os.path.join(P, 'NDS_용어표.tsv'), 'w', encoding='utf-8', newline='\n').write('옛\t새\t범위\t비고\n' + '\n'.join('\t'.join(r) for r in rows) + '\n')

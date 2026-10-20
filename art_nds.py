@@ -96,8 +96,14 @@ def remove_bg(img):
     seeds = [img[0][0], img[0][w - 1], img[h - 1][0], img[h - 1][w - 1]]
     bg = collections.Counter(s[:3] for s in seeds).most_common(1)[0][0]
     checker = min(bg) >= 185 and max(bg) - min(bg) <= 28            # 10/16 집 보고(에렉몬): 밝은 회색 체크무늬 — 두 가지 회색·흰색을 다 배경으로
+    lo_ck = 185
+    if checker:
+        # 10/19 v1.1: 미미 그림은 체크무늬 회색이 175 안팎(< 185)이라 안 지워졌음 → 테두리 한 줄의 낮은 채도 회색 중 가장 어두운 쪽(상위 몇 %는 빼고)을 따라 기준을 내림(150 아래로는 안 감)
+        edge = [img[y][x][:3] for y in (0, h - 1) for x in range(w)] + [img[y][x][:3] for x in (0, w - 1) for y in range(h)]
+        gr = sorted(min(c) for c in edge if max(c) - min(c) <= 28 and min(c) >= 110)
+        if gr: lo_ck = max(110, min(185, gr[int(len(gr) * 0.02)] - 12))
     def near(p):
-        if checker and min(p[:3]) >= 185 and max(p[:3]) - min(p[:3]) <= 28: return True
+        if checker and min(p[:3]) >= lo_ck and max(p[:3]) - min(p[:3]) <= 28: return True
         return sum((a - b) ** 2 for a, b in zip(p[:3], bg)) < 45 ** 2
     out = [list(r) for r in img]
     # 10/19 사용자 「츄몬 흰 눈알이 투명」: 큰 도트(제미나이 1024) 그림은 외곽선의 1~몇 픽셀 틈(jpg 번짐)으로 테두리 flood 가
