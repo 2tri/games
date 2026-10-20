@@ -18,7 +18,8 @@ run ro python3 $T/inject_roamer.py _a9.nds _a10.nds
 run an python3 $T/inject_animfix.py _a10.nds _a11.nds
 run gr python3 $T/inject_ground.py _a11.nds _a11g.nds                      # 10/19 전투 그림 높이(바닥에서 뜨는 것)
 run ty python3 $T/inject_typeicons.py _a11g.nds _a11t.nds                    # 10/20 타입 글자판 그림(불꽃→화염 등 11장)
-run at python3 hg_attr.py _a11t.nds _a12.nds --base "$ROM"      # 10/19 속성 상성(백신>바이러스>데이터>백신, ×1.2/×0.8)
+run dc python3 $T/inject_dexchips.py _a11t.nds _a11d.nds                    # 10/20 도감 화면 타입 칩 그림(11장)
+run at python3 hg_attr.py _a11d.nds _a12.nds --base "$ROM"      # 10/19 속성 상성(백신>바이러스>데이터>백신, ×1.2/×0.8)
 run nm python3 $T/inject_names.py _a12.nds _a13.nds                         # 10/20 7글자 종 이름 2개를 6글자로(이름판에서 잘림)
 cp _a13.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
