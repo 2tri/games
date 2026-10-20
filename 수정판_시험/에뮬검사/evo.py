@@ -1,4 +1,4 @@
-"""python evo.py <롬> <폴더> <출발 종> <방법> <값> <도착 종> — 레벨 직전까지 올린 출발 종으로 소라전에서 이겨 진화하는지(진화 뒤 파티 종 번호) 확인"""
+"""(PARTNER=종번호 환경변수: 두 번째 칸에 그 종을 넣어 「파티 종」 진화 시험) python evo.py <롬> <폴더> <출발 종> <방법> <값> <도착 종> — 레벨 직전까지 올린 출발 종으로 소라전에서 이겨 진화하는지(진화 뒤 파티 종 번호) 확인"""
 import sys, os, struct, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); sys.path.insert(0, '/home/user/games')
 import pkm, hg1
@@ -33,8 +33,13 @@ tmpl = bytes(emu.memory.unsigned[ADDRS[0]:ADDRS[0] + 236])
 new = pkm.make_mon(tmpl, src, L - 1, moves, personal, item, exp=pkm.exp_for(growth, L) - 1, pp=PPD)
 if meth == 1:      # 친밀도 진화: 친밀도 칸(블록 A 0x14) 255
     pk = pkm.decode(new); A = bytearray(pk['blocks']['A']); A[0x14 - 0x08 + 0] = 255; pk['blocks']['A'] = bytes(A); new = pkm.encode(pk)
+PARTNER = os.environ.get('PARTNER')      # 파티 종 진화 시험: 두 번째 칸에 이 종을 넣고 파티 마릿수를 2 로
+partner_mon = pkm.make_mon(tmpl, int(PARTNER), 30, [33], personal, 0, pp=PPD) if PARTNER else None
 for a in ADDRS:
     for i, b in enumerate(new): emu.memory.unsigned[a + i] = b
+    if partner_mon:
+        for i, b in enumerate(partner_mon): emu.memory.unsigned[a + 236 + i] = b
+        emu.memory.unsigned[a - 4] = 2
 walk(Keys.KEY_RIGHT, 1); walk(Keys.KEY_UP, 1); press(Keys.KEY_A)
 def is_menu(img):
     px = img.getpixel((128, 70)); return px[0] > 180 and px[1] < 90 and px[2] < 90
