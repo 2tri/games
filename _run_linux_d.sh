@@ -22,7 +22,8 @@ run dc python3 $T/inject_dexchips.py _a11t.nds _a11d.nds                    # 10
 run at python3 hg_attr.py _a11d.nds _a12.nds --base "$ROM"      # 10/19 속성 상성(백신>바이러스>데이터>백신, ×1.2/×0.8)
 run nm python3 $T/inject_names.py _a12.nds _a13.nds                         # 10/20 7글자 종 이름 2개를 6글자로(이름판에서 잘림)
 run kl python3 $T/inject_kantolab_trigger.py _a13.nds _a14.nds              # 10/20 관동 연구소(2부 시작) 입장하면 장면 시작 + 스타팅 레벨 45 전부
-cp _a14.nds 최종_오늘.nds
+run gt python3 $T/inject_gatomon_wild.py _a14.nds _a15.nds                    # 10/20 가트몬을 2부 시작 야생(관동 1·2·3번도로 10%)에
+cp _a15.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds
