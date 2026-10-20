@@ -19,7 +19,8 @@ run an python3 $T/inject_animfix.py _a10.nds _a11.nds
 run gr python3 $T/inject_ground.py _a11.nds _a11g.nds                      # 10/19 전투 그림 높이(바닥에서 뜨는 것)
 run ty python3 $T/inject_typeicons.py _a11g.nds _a11t.nds                    # 10/20 타입 글자판 그림(불꽃→화염 등 11장)
 run at python3 hg_attr.py _a11t.nds _a12.nds --base "$ROM"      # 10/19 속성 상성(백신>바이러스>데이터>백신, ×1.2/×0.8)
-cp _a12.nds 최종_오늘.nds
+run nm python3 $T/inject_names.py _a12.nds _a13.nds                         # 10/20 7글자 종 이름 2개를 6글자로(이름판에서 잘림)
+cp _a13.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds
