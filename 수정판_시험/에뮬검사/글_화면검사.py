@@ -14,7 +14,7 @@ from hg1 import NDS, NARC, msg_encode
 from PIL import Image
 ap = argparse.ArgumentParser(); ap.add_argument('rom'); ap.add_argument('dstdir'); ap.add_argument('out')
 ap.add_argument('--base', default='포켓몬/1_폰에 넣을 파일/디지몬골드 v1.6 (이지).nds')
-ap.add_argument('--min', type=float, default=18); ap.add_argument('--shard', default='0/1'); ap.add_argument('--labrom', default=None)
+ap.add_argument('--min', type=float, default=18); ap.add_argument('--shard', default='0/1'); ap.add_argument('--labrom', default=None); ap.add_argument('--only', default=None, help='예: 219:135,268:36 — 이 대사들만 검사')
 A = ap.parse_args(); si, sn = map(int, A.shard.split('/')); os.makedirs(A.out, exist_ok=True)
 draft = {r['이름'] for r in csv.DictReader(open('NDS_종_초안.tsv', encoding='utf-8'), delimiter='\t')}
 new, old = g.load(A.rom), g.load(A.base); CM = hg1.infer_charmap(new, draft)[0]
@@ -25,6 +25,7 @@ for fi in range(min(len(new), len(old))):
         try: t = CM.dec(new[fi][1][ei])
         except Exception: continue
         if hang.search(t) and max(g.width(l) for l in g.lines(t)) >= A.min: cands.append((fi, ei))
+if A.only: cands = [tuple(map(int, x.split(':'))) for x in A.only.split(',')]
 B = 3; groups = [cands[i:i + B] for i in range(0, len(cands), B)]
 print('후보 %d줄 → %d묶음, 내 몫 %s' % (len(cands), len(groups), A.shard), flush=True)
 raw = open(A.labrom or A.rom, 'rb').read(); env = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy')
