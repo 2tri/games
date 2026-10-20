@@ -25,6 +25,7 @@ EVO_LEVEL, EVO_ITEM, EVO_FRIEND = 4, 7, 1
 HELD_CLEAR = {'피코데블몬', '가트몬', '파닥몬', '토코몬'}   # 진화표 결정3(어둠의돌)·결정5(빛의돌·각성의돌 등) — 지닌 물건 없앰
 DONOR_FIX = {'메가강철톤': '강철톤', '메가핫삼': '핫삼', '메가입치트': '입치트', '메가메타그로스': '메타그로스', '아트라캅테리몬': '아트라캅테몬'}   # 집 보고 10/12: 롬에 없는 이름
 MOVE_ALT = {'에어커터': '에어컷터', '머드샷': '진흙뿌리기', '록블라스트': '암석봉인', '매지컬리프': '메지컬리프', '날개치기': '더블윙'}   # 롬에 없는 기술 이름 → 비슷한 기술
+ANIM_SKIP = {153, 120}       # 자폭·대폭발 연출은 쓰는 쪽이 사라지는 장면이 섞여 있을 수 있어 빌리지 않음
 NAME_FIX = {'다크그레몬': '다크그레몬', '황제파이터': '황제파이터'}   # 10/19 v1.1: 디지골드 칸이 원래 이름(메탈그레이몬·황제드라몬)을 그대로 달고 있어 같은 이름이 둘 → 표의 이름으로
 RENAME = {'아라크네몬': '아르케니몬', '데스메라몬': '데드메라몬', '벨리얼묘티': '벨리얼묘티스몬'}   # 02 더빙명·결정7·GBC 글자 수 제한으로 줄였던 이름
 NL_TOKEN = chr(92) + 'n'          # 글 안의 줄바꿈(Charmap 이 0xE000 을 이렇게 풂)
@@ -365,9 +366,10 @@ def main():
             except Exception as ex_: P('기술 연출 묶음(a/0/1/0) 못 읽음: %s' % ex_)
             grade_of_ = {r['이름']: r['단계'] for r in draft}
             want = []                                              # (주인, 이름, 타입, 위력, 명중, PP, 차례)
-            have_owner = set(); seconds = []
+            have_owner = set(); seconds = []; ANIM_OF = {}       # 10/19 v1.1: (주인, 기술) → 연출을 빌릴 4세대 기술 번호
             for sp_ in specials:
                 want.append((sp_['owner'], sp_['name'], int(sp_['type']), int(sp_['power']), int(sp_['acc']), int(sp_['pp']), 1)); have_owner.add(sp_['owner'])
+                if sp_.get('anim_move') and int(sp_['anim_move']) not in ANIM_SKIP: ANIM_OF[(sp_['owner'], sp_['name'])] = int(sp_['anim_move'])
             fp_ = os.path.join(here_, 'NDS_필살기.tsv')
             fp_rows = list(csv.DictReader((l for l in open(fp_, encoding='utf-8') if not l.startswith('#')), delimiter=chr(9))) if os.path.exists(fp_) else []
             if fp_rows:
@@ -387,6 +389,7 @@ def main():
                     pw_, ac_, pp_ = STAGE_PW.get(grade_of_.get(o_, ''), (70, 100, 10))
                     if r.get('위력', '').strip().isdigit(): pw_ = int(r['위력'])
                     (want if order_ == 1 else seconds).append((o_, nm_, t_, pw_, ac_, pp_, order_)); have_owner.add(o_)
+                    if (r.get('연출') or '').strip().isdigit(): ANIM_OF[(o_, nm_)] = int((r.get('연출') or '').strip())
             want = want + seconds                                  # 첫 필살기를 모든 종에 먼저, 둘째는 칸이 남을 때
             used_ids = set()
             for s_ in slot.values():
@@ -403,6 +406,7 @@ def main():
                 def info_(m_): f_ = wf[m_]; return f_[2], f_[3], f_[4]          # 분류, 위력, 타입
                 common_ = [m_ for m_, c_ in cnt_.items() if c_ >= 3 and 0 < m_ < len(wf) and info_(m_)[1] > 0]
                 swap_ = {}
+                if os.environ.get('HG2_DEBUG'): say('DEBUG 드문 기술', sorted((c_, mvnames[m_], info_(m_), m_ in TMHM, mvnames[m_] in KEEP_MOVES) for m_, c_ in cnt_.items() if 1 <= c_ <= 2))
                 for m_, c_ in cnt_.items():
                     if not (1 <= c_ <= 2) or m_ in TMHM or m_ in RESERVED or not (0 < m_ < len(wf)) or mvnames[m_] in KEEP_MOVES: continue
                     cat_, pw_m, ty_ = info_(m_)
@@ -426,20 +430,33 @@ def main():
                 say('필살기 칸 정리(reuse): 1~2종만 배우던 공격 기술 %d개를 비슷한 흔한 기술로 바꿔 칸을 비움. 예: %s' % (len(freed), ', '.join('%s→%s' % (mvnames[a_], mvnames[b_]) for a_, b_ in list(swap_.items())[:8])))
             donors = [i_ for i_ in list(range(355, min(468, len(mvnames)))) + list(range(252, 355)) + list(range(1, 252)) if i_ not in TMHM and i_ not in RESERVED and i_ not in used_ids and mvnames[i_] and not mvnames[i_].startswith('{')]
             say('필살기 후보 %d개, 빌릴 수 있는 기술 칸 %d개' % (len(want), len(donors)))
-            if len(donors) < len(want): P('빌릴 기술 칸이 모자라 뒤쪽 %d개 필살기는 못 넣음(설계 31개와 표 앞쪽 우선)' % (len(want) - len(donors)))
-            for (owner, name_, t_, pw_, ac_, pp_, order_), di in zip(want, donors):
+            donor_it = iter(donors); shared_di = {}        # 10/19 v1.1: 이름·타입·위력이 같은 필살기(시저암즈·히트바이퍼 등)는 기술 칸 하나를 함께 씀
+            for (owner, name_, t_, pw_, ac_, pp_, order_) in want:
+                skey_ = (name_, t_, pw_, ac_, pp_)
+                if skey_ in shared_di: di = shared_di[skey_]; shared_here = True
+                else:
+                    di = next(donor_it, None); shared_here = False
+                    if di is None: sp_log.append('기술 칸이 모자라 못 넣음: %s %s' % (owner, name_)); continue
                 os_ = slot.get(owner)
                 if os_ is None or os_ >= len(learn): sp_log.append('필살기 주인 칸 없음: %s %s' % (owner, name_)); continue
                 try: enc_ = CM.enc(name_[:8])
                 except ValueError as ex: sp_log.append('필살기 이름 못 씀 %s: %s' % (name_, ex)); continue
                 tpl = TEMPLATE.get(t_, 33)
+                if shared_here:
+                    lv = STAGE_LV.get(grade_of_.get(owner, ''), 20) + (8 if order_ == 2 else 0)
+                    ls = hg1.learnset(learn[os_]); ls = [(l_, m_) for l_, m_ in ls if m_ != di] + [(lv, di)]
+                    ls.sort(key=lambda x: x[0]); ls = ls[:20]; learn[os_] = enc_learn(ls)
+                    if os_ in expect and 'nmoves' in expect[os_]: expect[os_]['nmoves'] = len(ls)
+                    sp_log.append('%s → %s (칸 %d 앞 주인과 함께 씀, Lv%d)' % (owner, name_, di, lv)); continue
+                shared_di[skey_] = di
                 d_ = bytearray(wf[tpl])                             # 본보기 기술 자료를 통째로 가져와(대상·우선도·깃발·콘테스트) 필요한 칸만 덮음
                 struct.pack_into('<H', d_, 0, 0); d_[2] = 1 if (t_ in SPECIAL_TYPES or (t_ == 9 and _sa_gt_at(pers, os_))) else 0      # (10/19 v1.1: 빛은 분류가 정해져 있지 않아 주인의 특공이 공격보다 높으면 특수) 효과 0 = 그냥 데미지 / 분류 0 물리 · 1 특수
                 d_[3] = min(255, pw_); d_[4] = t_; d_[5] = min(100, ac_); d_[6] = min(40, pp_); d_[7] = 0
                 wf[di] = bytes(d_); mvf[di] = enc_
                 SPECIAL_DI.add(di)
                 SPECIAL_OWNER[di] = owner
-                if anim_files is not None and max(di, tpl) < len(anim_files): anim_files[di] = anim_files[tpl]; anim_n[0] += 1
+                atpl = ANIM_OF.get((owner, name_), tpl)
+                if anim_files is not None and max(di, atpl) < len(anim_files): anim_files[di] = anim_files[atpl]; anim_n[0] += 1
                 lv = STAGE_LV.get(grade_of_.get(owner, ''), 20) + (8 if order_ == 2 else 0)
                 ls = hg1.learnset(learn[os_]); ls = [(l_, m_) for l_, m_ in ls if m_ != di] + [(lv, di)]
                 ls.sort(key=lambda x: x[0]); ls = ls[:20]
