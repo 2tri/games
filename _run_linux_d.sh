@@ -26,7 +26,8 @@ run gt python3 $T/inject_gatomon_wild.py _a14.nds _a15.nds                    # 
 run eg python3 $T/inject_egg_species.py _a15.nds _a16.nds                       # 10/20 조수의 알이 포요몬이 아니라 토코몬으로 부화(오버레이 1 코드)
 run bs python3 $T/inject_boss_fix.py _a16.nds _a17.nds                          # 10/20 심볼 보스 2곳을 설계표대로(블랙워그레몬 Lv50 · 디아블로몬 Lv50)
 run ev python3 $T/inject_evo_fix.py _a17.nds _a18.nds                             # 10/20 토코몬→파닥몬 Lv10(알이 토코몬 Lv1 로 나오므로)
-cp _a18.nds 최종_오늘.nds
+run bl python3 $T/inject_balance.py _a18.nds _a19.nds                           # 10/20 체육관 졸개·33번도로 트레이너 레벨(수호자 −2)
+cp _a19.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds
