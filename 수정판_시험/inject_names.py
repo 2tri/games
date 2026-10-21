@@ -10,6 +10,8 @@ H = os.path.dirname(os.path.abspath(__file__)); P = os.path.abspath(os.path.join
 import hg1
 from hg1 import NDS, NARC, msg_decode, msg_encode
 RENAME = {'블랙워그레이몬': '블랙워그레몬', '벨리얼묘티스몬': '벨리얼묘티몬'}
+# 10/20 순회 확인: 울음 대사 2줄의 따옴표가 한쪽만 열려 있음(메가시드라몬“크와앙 / 레오몬“하앗) → 황제드라몬 줄처럼 「이름: 소리」로
+FIX = {(621, 0): '메가시드라몬{01C4}{01DE}크와앙{01AB}{01AB}', (110, 4): '레오몬{01C4}{01DE}하앗{01AB}{01AB}'}
 src, dst = sys.argv[1], sys.argv[2]
 raw = open(src, 'rb').read(); rom = NDS(raw); nar = NARC(rom.get(hg1.NARC_PATHS['msg']))
 draft = {r['이름'] for r in csv.DictReader(open(os.path.join(P, 'NDS_종_초안.tsv'), encoding='utf-8'), delimiter='\t')}
@@ -31,6 +33,9 @@ for fi, (seed, ents) in enumerate(MSG):
         enc = CM.enc(t2)
         assert CM.dec(enc) == t2, '글 다시 쓰기 검산 실패 msg%d#%d' % (fi, ei)
         new_ents[ei] = enc; changed = True; n_total += 1
+    for (ff, ee), tx in FIX.items():
+        if ff == fi:
+            enc = CM.enc(tx); assert CM.dec(enc) == tx, '울음 줄 검산 실패'; new_ents[ee] = enc; changed = True; n_total += 1
     if changed: files[fi] = msg_encode(seed, new_ents); n_files += 1
 nar.files = files; how = rom.put(hg1.NARC_PATHS['msg'], nar.build()); open(dst, 'wb').write(bytes(rom.d))
 print('이름 바꿈: 글 항목 %d개 (글 묶음 %d개) %s (%s)' % (n_total, n_files, RENAME, how))
