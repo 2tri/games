@@ -29,7 +29,9 @@ run ev python3 $T/inject_evo_fix.py _a17.nds _a18.nds                           
 run bl python3 $T/inject_balance.py _a18.nds _a19.nds                           # 10/20 체육관 졸개·33번도로 트레이너 레벨(수호자 −2)
 run st python3 $T/inject_starter.py _a19.nds _a20.nds                            # 10/20 스타팅 파닥몬 → 베타몬(알이 토코몬→파닥몬이라 겹침)
 run mv python3 $T/inject_evo_moves.py _a20.nds _a21.nds                          # 10/21 「기술을 알면 진화」 4줄에 필요한 기술 배우는 길(니드몬 파동탄 등)
-cp _a21.nds 최종_오늘.nds
+run dk python3 $T/inject_dark.py _a21.nds _a22.nds                                 # 10/22 검은 톱니 낮 진화 · 상점 판매 시기(어둠의돌 배지 1개·검은 톱니/금속코트 7개) · 어둠의돌 설명
+run wl python3 $T/inject_well.py _a22.nds _a23.nds 3                              # 10/22 우물 간부 랜스를 이기면 어둠의돌 ×3
+cp _a23.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds
