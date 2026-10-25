@@ -33,11 +33,11 @@ run dk python3 $T/inject_dark.py _a21.nds _a22.nds                              
 run wl python3 $T/inject_well.py _a22.nds _a23.nds 3                              # 10/22 우물 간부 랜스를 이기면 어둠의돌 ×3
 cp _a23.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
-run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
+# (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds
 cp 노래_배정결과.txt _로그/노래_배정결과_오늘.txt
-run 11dh python3 hg_song.py 최종_하드.nds --out 최종_하드_노래.nds
-run rc2 python3 rom_check.py 최종_하드.nds --base "$ROM" --out 롬검사_하드.txt
+# (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run 11dh python3 hg_song.py 최종_하드.nds --out 최종_하드_노래.nds
+# (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run rc2 python3 rom_check.py 최종_하드.nds --base "$ROM" --out 롬검사_하드.txt
 run rc3 python3 rom_check.py 최종_노래.nds --base "$ROM" --out 롬검사_노래.txt
-run rc4 python3 rom_check.py 최종_하드_노래.nds --base "$ROM" --out 롬검사_하드_노래.txt
+# (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run rc4 python3 rom_check.py 최종_하드_노래.nds --base "$ROM" --out 롬검사_하드_노래.txt
 echo PART_B_DONE
