@@ -1694,4 +1694,4 @@ MIDI 없음: 노래/midi/Butter-Fly피아노판동굴.mid (동굴·탑·유적)
 만듦 「The Biggest Dreamer」 악기 [0, 17]: 멜로디 219음, 반주 400음, 반복 시작 10.3초, 2924바이트
 넣음 1353 SEQ_GS_P_SAFARI_ROAD ← The Biggest Dreamer (뱅크 750 → 750(멜로디 악기가 없는 뱅크라 바꿈))
 
-→ 최종_하드_노래.nds (SDAT 8076313 → 8262048바이트, 제자리)
+→ 최종_노래.nds (SDAT 8076313 → 8262048바이트, 제자리)

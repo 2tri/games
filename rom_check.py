@@ -115,6 +115,9 @@ def check_scripts(rom, base):
         if b and i < len(b) and len(f) < len(b[i]): fail('스크립트 파일 %d 이 원본보다 짧아짐(%d → %d)' % (i, len(b[i]), len(f)))
     note('스크립트 바뀐 파일 %d개 검사: %s' % (len(changed), changed[:20]))
 
+# 10/26 inject_story_fix.py 가 일부러 글 끝에 새 글을 더한 파일(글 번호: 더한 개수) — 호크몬(바위산 마을 노인, 글 575)·브이몬(편지 아주머니, 글 383) 선물 대사
+EXPECT_ADD = {383: 2, 575: 2}
+
 def check_msgs(rom, base):
     a = narc(rom, P['msg']); b = narc(base, P['msg']) if base else None
     if not a: return
@@ -126,7 +129,7 @@ def check_msgs(rom, base):
         if b and i < len(b):
             try:
                 _, e0 = hg1.msg_decode(b[i])
-                if len(e0) != len(ent): fail('글 파일 %d 글 수가 바뀜 %d → %d' % (i, len(e0), len(ent)))
+                if len(e0) != len(ent) + 0 - EXPECT_ADD.get(i, 0): fail('글 파일 %d 글 수가 바뀜 %d → %d (의도한 추가 %d)' % (i, len(e0), len(ent), EXPECT_ADD.get(i, 0)))
             except Exception: pass
         for j, e in enumerate(ent):
             if e and e[-1] != 0xFFFF: fail('글 파일 %d #%d 끝 표시(FFFF) 없음' % (i, j)); break

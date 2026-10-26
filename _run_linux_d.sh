@@ -31,7 +31,8 @@ run st python3 $T/inject_starter.py _a19.nds _a20.nds                           
 run mv python3 $T/inject_evo_moves.py _a20.nds _a21.nds                          # 10/21 「기술을 알면 진화」 4줄에 필요한 기술 배우는 길(니드몬 파동탄 등)
 run dk python3 $T/inject_dark.py _a21.nds _a22.nds                                 # 10/22 검은 톱니 낮 진화 · 상점 판매 시기(어둠의돌 배지 1개·검은 톱니/금속코트 7개) · 어둠의돌 설명
 run wl python3 $T/inject_well.py _a22.nds _a23.nds 3                              # 10/22 우물 간부 랜스를 이기면 어둠의돌 ×3
-cp _a23.nds 최종_오늘.nds
+run sf python3 $T/inject_story_fix.py _a23.nds _a24.nds                          # 10/26 1부 직접 플레이로 찾은 어긋남(레오몬 디지멘탈·호크몬/브이몬 선물·설명 대사·청룡몬 Lv60·이름표)
+cp _a24.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 # (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
 run 11d python3 hg_song.py 최종_오늘.nds --out 최종_노래.nds

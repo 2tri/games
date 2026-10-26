@@ -33,7 +33,7 @@ def load_table():
                     try: opcode = int(v.split(',')[0], 0)
                     except ValueError: opcode = v.split(',')[0]      # 기호 상수
                     size += 2; continue
-                if d == '.word' and '- . - 4' in l: jumps.append(size)
+                if d == '.word' and '-.-4' in l.replace(' ', ''): jumps.append(size)
                 n = SIZES[d]
                 size += n * max(1, len([x for x in l[len(d):].split(',') if x.strip()]))
             else:
