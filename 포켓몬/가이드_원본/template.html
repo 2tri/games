@@ -1,0 +1,360 @@
+<title>디지몬골드 1부 공략집</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 레이아웃: 좁은 한 단 본문 + 위쪽에 붙는 목차 줄. 도감 수첩처럼 칸을 나눈 표·칩 중심, 강조색은 주황 하나. */
+:root {
+  --bg: #f1f4f7; --surface: #ffffff; --surface2: #e8edf2; --ink: #101c28; --ink2: #475667; --line: #d2dae2;
+  --accent: #d4470c; --accent-bg: #fbe6db; --good: #1c7448; --bad: #b3261e;
+  --va: #2a62c9; --da: #25894f; --vi: #8340c4; --fr: #697785;
+  --cs: 62%; --cl: 90%; --ts: 55%; --tl: 24%;
+  --f-display: 'Black Han Sans', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1520; --surface: #152130; --surface2: #1c2b3c; --ink: #e8eef4; --ink2: #9fb0c1; --line: #2a3b4e;
+    --accent: #ff8f55; --accent-bg: #3a2418; --good: #5fd09a; --bad: #ff8f86;
+    --va: #7fa8f2; --da: #67cf92; --vi: #bb8df0; --fr: #9aa8b6;
+    --cs: 38%; --cl: 22%; --ts: 72%; --tl: 82%; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1520; --surface: #152130; --surface2: #1c2b3c; --ink: #e8eef4; --ink2: #9fb0c1; --line: #2a3b4e;
+  --accent: #ff8f55; --accent-bg: #3a2418; --good: #5fd09a; --bad: #ff8f86;
+  --va: #7fa8f2; --da: #67cf92; --vi: #bb8df0; --fr: #9aa8b6;
+  --cs: 38%; --cl: 22%; --ts: 72%; --tl: 82%; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 4.2rem; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 880px; margin-inline: auto; padding-block: 0 4rem; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+h4, h5 { font-family: var(--f-body); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+b { font-weight: 600; }
+.n { font-variant-numeric: tabular-nums; }
+.sm { font-size: 12px; color: var(--ink2); }
+
+/* 머리 */
+.top { padding-block: 2.2rem 1.4rem; display: grid; gap: .9rem; }
+.kick { font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+h1 { font-size: clamp(2rem, 7vw, 3rem); line-height: 1.12; }
+.lead { max-width: 62ch; color: var(--ink2); }
+.pills { display: flex; flex-wrap: wrap; gap: .45rem; }
+.pill { font-size: 12px; font-weight: 600; padding: .18rem .6rem; border-radius: 99px; background: var(--surface2); color: var(--ink2); border: 1px solid var(--line); }
+
+/* 목차 */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 15; background: var(--bg); border-bottom: 1px solid var(--line);
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+.nav ul { list-style: none; display: flex; gap: .3rem; overflow-x: auto; margin: 0; padding: .5rem 0; max-width: 880px; margin-inline: auto; scrollbar-width: thin; }
+.nav a { display: block; white-space: nowrap; padding: .3rem .75rem; border-radius: 6px; color: var(--ink2); text-decoration: none; font-size: 13px; font-weight: 600; }
+.nav a:hover, .nav a:focus-visible { background: var(--surface2); color: var(--ink); outline: none; }
+
+/* 절 */
+section { padding-block: 2.6rem 0; display: grid; gap: 1.1rem; min-width: 0; }
+h2 { font-size: 1.7rem; line-height: 1.2; }
+h2 small { display: block; font-family: var(--f-body); font-size: 13px; font-weight: 500; color: var(--ink2); letter-spacing: 0; margin-top: .35rem; }
+h3 { font-size: 1.3rem; }
+h3 small { display: block; font-family: var(--f-body); font-size: 13px; font-weight: 500; color: var(--ink2); letter-spacing: 0; margin-top: .3rem; line-height: 1.5; }
+h4 { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--ink2); text-transform: uppercase; }
+h5 { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: .9rem; }
+
+/* 칩 */
+.ty { display: inline-block; font-size: 11.5px; font-weight: 600; padding: .05rem .45rem; border-radius: 4px; margin-right: .2rem; white-space: nowrap;
+  background: hsl(var(--h) var(--cs) var(--cl)); color: hsl(var(--h) var(--ts) var(--tl)); }
+.at { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 0 .45rem; border-radius: 99px; border: 1.5px solid currentColor; white-space: nowrap; }
+.at.va { color: var(--va); } .at.da { color: var(--da); } .at.vi { color: var(--vi); } .at.fr { color: var(--fr); border-style: dashed; }
+
+/* 기본 설명 */
+.basics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem 1.6rem; }
+.basics > div { border-top: 2px solid var(--ink); padding-top: .6rem; min-width: 0; }
+.basics h3 { font-family: var(--f-body); font-size: 15px; font-weight: 700; margin-bottom: .25rem; }
+.basics p { font-size: 14px; color: var(--ink2); }
+.tri { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .5rem; font-size: 13px; }
+.tri i { font-style: normal; color: var(--ink2); }
+
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: .5rem .7rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+thead th { font-size: 12px; color: var(--ink2); background: var(--surface2); font-weight: 600; white-space: nowrap; }
+tbody tr:last-child > * { border-bottom: 0; }
+tbody th { font-weight: 600; white-space: nowrap; }
+td.mv { min-width: 14rem; color: var(--ink2); font-size: 12.5px; }
+.pt td.n { text-align: right; }
+
+/* 레벨 막대 */
+.lvl { list-style: none; margin: 0; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; display: grid; gap: .4rem; }
+.lvl li { display: grid; grid-template-columns: 5.2rem 1fr 4.2rem; align-items: center; gap: .6rem; font-size: 13px; }
+.lvl .bar { height: .7rem; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.lvl .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.lvl .lv { text-align: right; font-weight: 600; }
+
+/* 파티 */
+.pnav { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pnav a { padding: .4rem .9rem; border: 1.5px solid var(--ink); border-radius: 6px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 14px; }
+.pnav a:hover, .pnav a:focus-visible { background: var(--ink); color: var(--bg); outline: none; }
+.party { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem; display: grid; gap: .9rem; min-width: 0; }
+.party header { display: grid; gap: .15rem; }
+.party h3 { font-size: 1.6rem; color: var(--accent); }
+.psub { font-weight: 600; }
+.pst { font-size: 13px; color: var(--ink2); }
+.pitch { color: var(--ink2); max-width: 66ch; }
+.mems { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: .7rem; }
+.mem { border: 1px solid var(--line); border-radius: 8px; padding: .7rem .8rem; background: var(--bg); min-width: 0; display: grid; gap: .45rem; align-content: start; }
+.mh { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .3rem .6rem; }
+.mn { font-weight: 700; font-size: 16px; }
+.ms { display: inline-flex; gap: .2rem; align-items: center; flex-wrap: wrap; }
+.mem dl { display: grid; gap: .3rem; margin: 0; }
+.mem dl > div { display: grid; grid-template-columns: 3.6rem 1fr; gap: .5rem; font-size: 13px; }
+.mem dt { color: var(--ink2); font-weight: 600; }
+.mem dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.plan { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.plan li { display: grid; grid-template-columns: 7.2rem 1fr; gap: .6rem; font-size: 14px; border-top: 1px solid var(--line); padding-top: .5rem; }
+.plan li b { color: var(--ink); }
+.plan li span { color: var(--ink2); min-width: 0; }
+.sw { display: grid; gap: .4rem; font-size: 14px; background: var(--surface2); border-radius: 8px; padding: .8rem .9rem; }
+.sw .g { color: var(--good); margin-right: .4rem; } .sw .r { color: var(--bad); margin-right: .4rem; }
+
+/* 진행 */
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+details + details { margin-top: .7rem; }
+summary { cursor: pointer; list-style: none; padding: .8rem 1rem; display: grid; gap: .1rem; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "＋"; position: absolute; right: 1rem; top: .9rem; color: var(--ink2); font-weight: 400; }
+details[open] > summary::after { content: "－"; }
+details > summary { position: relative; padding-right: 2.6rem; }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.ct { font-weight: 700; font-size: 15.5px; }
+.cs { font-size: 13px; color: var(--ink2); }
+.cl { font-size: 12px; font-weight: 700; color: var(--accent); }
+.cb { padding: 0 1rem 1rem; display: grid; gap: .3rem; min-width: 0; }
+.todo { margin: .4rem 0 0; padding-left: 1.2rem; display: grid; gap: .35rem; font-size: 14px; }
+.wildl { list-style: none; margin: .3rem 0 0; padding: 0; display: grid; gap: .3rem; font-size: 13px; }
+.wildl li { display: grid; grid-template-columns: 8.6rem 1fr; gap: .6rem; border-bottom: 1px dashed var(--line); padding-bottom: .3rem; }
+.wp { font-weight: 600; } .wl { color: var(--ink2); min-width: 0; }
+.mk { display: inline-block; font-size: 11px; font-weight: 700; line-height: 1; padding: .18rem .4rem; border-radius: 999px; margin-right: .3rem; vertical-align: .08em; color: #fff; background: #5b6470; }
+.mk.ck { background: #1f7a4d; } .mk.sc { background: #5b6b8c; } .mk.nw { background: #b4531f; } .mk.un { background: #8a6d00; } .mk.wr { background: #b3261e; }
+.tip { font-size: 14px; background: var(--accent-bg); border-radius: 8px; padding: .7rem .85rem; margin-top: .8rem; }
+.tip b { color: var(--accent); margin-right: .3rem; }
+
+/* 보스 */
+.boss summary { grid-template-columns: 5.4rem 1fr auto; align-items: baseline; gap: .1rem .7rem; }
+.boss .bt { font-size: 12px; color: var(--ink2); font-weight: 600; }
+.boss .bn { font-weight: 700; }
+.boss .bl { display: none; }
+.boss .bv { font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.bb { padding: 0 1rem 1rem; display: grid; gap: .8rem; min-width: 0; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: .5rem 1rem; margin: 0; }
+.kv > div { min-width: 0; }
+.kv dt { font-size: 12px; font-weight: 600; color: var(--ink2); }
+.kv dd { margin: 0; font-size: 13.5px; }
+.rt .tw { margin-top: .2rem; }
+
+
+/* 진화표 */
+.evq { display: grid; gap: .5rem; }
+.evq input { width: 100%; font: inherit; font-size: 15px; padding: .6rem .8rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.evq input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.evt { max-height: 70vh; overflow: auto; }
+.evt table { min-width: 34rem; }
+.evt thead th { position: sticky; top: 0; z-index: 2; }
+.evt .gh td { background: var(--accent-bg); color: var(--accent); font-weight: 700; font-size: 13px; position: sticky; top: 2.1rem; z-index: 1; }
+.evt .gh small { font-weight: 500; color: var(--ink2); margin-left: .3rem; }
+.evt tbody th { white-space: normal; min-width: 8rem; }
+.evt tbody th .at { margin-left: .25rem; vertical-align: 1px; }
+.evt td .at { margin-left: .25rem; vertical-align: 1px; }
+.cd { display: inline-block; font-size: 12.5px; padding: .08rem .5rem; margin: .1rem .1rem .1rem 0; border-radius: 6px; background: var(--surface2); border: 1px solid var(--line); }
+.cd small { color: var(--ink2); }
+.evt td i { font-style: normal; font-size: 12px; color: var(--ink2); margin-right: .2rem; }
+.ar { color: var(--accent); font-weight: 700; }
+.evn { display: none; padding: 1rem; text-align: center; color: var(--ink2); }
+
+/* 표 아래 메모 */
+.note { font-size: 13px; color: var(--ink2); }
+.warn { border-left: 4px solid var(--bad); background: var(--surface); padding: .8rem 1rem; border-radius: 0 8px 8px 0; display: grid; gap: .45rem; font-size: 14px; }
+.warn ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink2); display: grid; gap: .3rem; }
+
+@media (max-width: 520px) {
+  .plan li { grid-template-columns: 1fr; gap: .1rem; }
+  .wildl li { grid-template-columns: 1fr; gap: .1rem; }
+  .boss summary { grid-template-columns: 1fr auto; }
+  .boss .bt { grid-column: 1 / -1; }
+  .lvl li { grid-template-columns: 4.6rem 1fr 3.6rem; }
+  .evt table { min-width: 0; }
+  .evt th, .evt td { padding: .45rem .5rem; }
+  .evt tbody th { min-width: 0; }
+  .cd { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <p class="kick">디지몬골드 v1.3 · 이지 + 노래 기준</p>
+  <h1>디지몬골드 1부 공략집</h1>
+  <p class="lead">시작의 마을에서 챔피언 아포카리몬까지. 완성 롬에서 직접 읽은 트레이너 파티·레벨·기술·출현표를 기준으로 썼습니다. 진행 순서는 에뮬레이터로 새 게임부터 직접 플레이하며 확인했고, 각 단계 앞에 <span class="mk ck">확인</span>(직접 플레이) · <span class="mk sc">스크립트</span>(롬 스크립트를 읽어 확인, 플레이는 못 함) · <span class="mk nw">새로</span>(v1.3에서 롬을 고쳐 가능해짐) · <span class="mk un">불확실</span> 표를 붙였습니다.</p>
+  <div class="pills"><span class="pill">수호자 8 · 4천왕 4 · 챔피언 1</span><span class="pill">추천 파티 4종</span><span class="pill">새 게임 권장</span><span class="pill">v1.3: 브이몬·호크몬 선물 · 레오몬 디지멘탈</span></div>
+</header>
+
+<nav class="nav" aria-label="목차"><ul>
+  <li><a href="#basics">먼저 읽기</a></li><li><a href="#level">레벨 곡선</a></li><li><a href="#parties">추천 파티</a></li>
+  <li><a href="#route">진행 순서</a></li><li><a href="#bosses">보스 도감</a></li><li><a href="#gifts">선물·고정</a></li><li><a href="#evo">진화표</a></li><li><a href="#darktiming">어둠의돌 시기</a></li><li><a href="#unknown">불확실</a></li>
+</ul></nav>
+
+<section id="basics">
+  <h2>먼저 읽기<small>이 롬에서만 다른 규칙 아홉 가지</small></h2>
+  <div class="basics">
+    <div><h3>스타팅은 셋, 모두 Lv5</h3><p>아구몬(백신·불꽃), 케라몬(바이러스·고스트/악), 베타몬(데이터·물/전기). 옛 파닥몬 자리가 베타몬으로 바뀌었습니다. 파닥몬은 알로 얻습니다.</p></div>
+    <div><h3>속성 상성이 따로 있다</h3><p>타입 상성에 더해 속성이 곱해집니다. 이기는 쪽 공격은 ×1.2, 지는 쪽은 ×0.8. 프리·언노운은 중립입니다.</p>
+      <div class="tri"><span class="at va">백신</span><i>이김 →</i><span class="at vi">바이러스</span><i>이김 →</i><span class="at da">데이터</span><i>이김 →</i><span class="at va">백신</span></div></div>
+    <div><h3>알은 토코몬</h3><p>전망산에서 소라를 이기면 조수가 알을 맡깁니다. 부화하는 토코몬은 Lv1이고 Lv10에 파닥몬, Lv20에 엔젤몬이 됩니다. 옛 세이브의 알은 포요몬일 수 있으니 새 게임으로 시작하세요.</p></div>
+    <div><h3>완전체는 태그</h3><p>성장기→성숙기는 레벨, 성숙기→완전체는 「태그」를 지니고 레벨업. 첫 태그는 수호자 안드로몬(6번째)이 주고, 배지 7개가 되면 상점에서 삽니다.</p></div>
+    <div><h3>궁극체는 문장 또는 Lv55</h3><p>「궁극의 문장」을 지니고 레벨업하거나 Lv55가 되면 진화합니다. 문장은 리키(8번째)가 2개 주고 상점에서는 팔지 않습니다. 1부 챔피언은 Lv50입니다.</p></div>
+    <div><h3>아머체는 디지멘탈</h3><p>수호자가 주는 디지멘탈을 쓰면 아머체가 됩니다. 낮밤 조건은 없습니다.</p></div>
+    <div><h3>디지슬론은 하지 마세요</h3><p>자연공원 옆 경기장 「디지슬론」은 경기를 시작하면 두 화면이 하얘지며 멈춥니다. 원래 v1.6 롬에서도 같은 현상이라 고치지 않았고, 안 해도 진행에는 지장이 없습니다. 미나가 가 보라고 권해도 가지 마세요.</p></div>
+    <div><h3>선물 디지몬은 곧 진화합니다</h3><p>호크몬(Lv27)·아르마몬(Lv30)은 Lv24, 브이몬(Lv18)은 Lv19에 일반 진화하는 줄이 있어 <b>다음 레벨업 때 바로 진화</b>합니다. 디지멘탈(아머체)로 바꾸려면 레벨이 오르기 전에 쓰세요(진화 장면에서 B로 취소해도 됩니다).</p></div>
+    <div><h3>성숙기는 잘 안 잡힌다</h3><p>상점 손님의 말대로 성숙기 야생은 포획이 어렵습니다. 체력을 깎고 상태 이상을 거는 편이 좋습니다.</p></div>
+  </div>
+  <h4>진화 도구 한눈에</h4>
+  <div class="tw"><table>
+    <thead><tr><th>도구</th><th>얻는 곳</th><th>쓰는 법</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">태그</th><td>안드로몬 보상 1개 · 상점(배지 7개부터)</td><td>지니고 레벨업 → 완전체</td></tr>
+      <tr><th scope="row">궁극의 문장</th><td>리키 보상 2개(장로 시험 뒤)</td><td>지니고 레벨업 → 궁극체 (또는 Lv55)</td></tr>
+      <tr><th scope="row">어둠의돌</th><td>우물 간부 랜스 보상 3개 · 상점(배지 1개부터, 2,100원)</td><td><b>가방에서 디지몬에게 사용(지니는 게 아님)</b> → 성장기를 어둠 갈래로(아구몬→티라노몬, 파닥몬→데블몬, 가지몬→이비르몬, 쉬라몬→시드라몬 등)</td></tr>
+      <tr><th scope="row">금속코트</th><td>상점(배지 7개부터, 100원)</td><td>지니고 레벨업 → 그레이몬이 다크그레몬</td></tr>
+      <tr><th scope="row">검은 톱니</th><td>얼음나라 아지트 · 상점(배지 7개부터, 2,100원)</td><td><b>지니고 레벨업(낮밤 무관)</b> → 그레이몬이 스컬그레이몬, 가트몬이 레이디데블몬</td></tr>
+      <tr><th scope="row">기술을 배워서</th><td>레벨업으로 배움</td><td>그 기술을 아는 채로 레벨업 → 니드몬(Lv35 파동탄) → 릴리몬 · 버드라몬(Lv35 크림슨네일) → 가루다몬 · 가트몬(Lv39 불릿해머) → 엔젤우몬 · 원뿔몬(Lv35 번개송곳니) → 쥬드몬. 기술을 잊으면 진화하지 않으니 잊지 말 것</td></tr>
+      <tr><th scope="row">용기의 디지멘탈</th><td>디지문자 유적 석판(선두가 브이몬일 때 첫 번째 선택지)</td><td>브이몬 → 화염드라몬</td></tr>
+      <tr><th scope="row">사랑의 디지멘탈</th><td>수호자 레오몬 <small>(v1.3에서 고침)</small> · 유적 석판(선두 호크몬)</td><td>호크몬 → 할세몬</td></tr>
+      <tr><th scope="row">지식의 디지멘탈</th><td>수호자 정석</td><td>아르마몬 → 디그몬</td></tr>
+      <tr><th scope="row">희망의 디지멘탈</th><td>수호자 가트몬 · 유적 석판(선두 파닥몬)</td><td>파닥몬·엔젤몬 → 페가수몬</td></tr>
+    </tbody></table></div>
+  <div class="basics">
+    <div><h3>쓰는 법은 두 가지</h3><p><b>사용</b>: 가방에서 도구를 골라 디지몬에게 씁니다. 바로 진화합니다(어둠의돌, 디지멘탈). <b>지니고 레벨업</b>: 도구를 지니게 한 채 레벨이 오르면 진화합니다(태그, 궁극의 문장, 금속코트, 검은 톱니, 오메가블레이드). 어둠의돌을 지니게 하는 것은 아무 효과가 없습니다.</p></div>
+    <div><h3>어디서 파나</h3><p>마을의 일반 상점(마트) 카운터에서 「사다」를 고릅니다. 쪽을 넘기면 마지막 쪽에 나옵니다. 어둠의돌은 배지 1개부터, 금속코트·검은 톱니·태그는 7개부터 팝니다. 가격은 에뮬레이터 화면 기준 어둠의돌 2,100원 · 검은 톱니 2,100원 · 금속코트 100원 · 태그 200원입니다. 어느 마을에 있는지 이름 목록은 롬에서 확인하지 못했고(지명 글이 비어 있음), 층이 있는 백화점형 상점은 목록이 달라 안 팔 것으로 보입니다(불확실).</p></div>
+  </div>
+</section>
+
+<section id="level">
+  <h2>레벨 곡선<small>각 보스의 에이스 레벨(롬에서 읽은 값)</small></h2>
+  <ol class="lvl">{{BARS}}</ol>
+  <p class="note">파티 평균 레벨은 에이스보다 2~3 높게 맞추는 것을 제안합니다(제안 값). 4천왕 이후는 한 번에 다섯 전투라 Lv48 이상을 권합니다. 곤충 마을·장난감 마을 등 체육관의 졸개는 수호자 에이스보다 낮게 조정되어 있습니다.</p>
+</section>
+
+<section id="parties">
+  <h2>추천 파티<small>1부 마무리(챔피언)까지. 전부 이 롬에서 얻을 수 있는 디지몬만 썼습니다</small></h2>
+  <div class="pnav"><a href="#balance">밸런스</a><a href="#dark">암흑</a><a href="#angel">천사</a><a href="#rare">비주류</a></div>
+  {{PARTIES}}
+</section>
+
+<section id="route">
+  <h2>진행 순서<small>이야기 순서대로. 레벨은 야생·트레이너 표에서 읽은 값입니다</small></h2>
+  <div>{{CHAPTERS}}</div>
+</section>
+
+<section id="bosses" class="rt">
+  <h2>보스 도감<small>잘 먹히는 타입은 4세대 타입 상성으로 파티 전체를 계산한 값. 페어리 표기는 상성이 없는 타입으로 취급(불확실)</small></h2>
+  <h4>수호자 8곳</h4>
+  <div>{{LEADERS}}</div>
+  <h4>어둠의 4천왕 · 챔피언</h4>
+  <div>{{E4}}</div>
+  <h4>라이벌 매튜</h4>
+  <div class="tw"><table><thead><tr><th>만남</th><th>장소</th><th>파티</th></tr></thead><tbody>{{RIVAL}}</tbody></table></div>
+  <p class="note">괄호 안 한 마리는 내 스타팅에 따라 달라집니다(팔몬 줄 · 아구몬 줄 · 쉬라몬 줄). 어느 스타팅에 어느 줄이 나오는지는 롬에서 확인하지 못했습니다(불확실).</p>
+  <h4>암흑단 간부</h4>
+  <div class="tw"><table><thead><tr><th>상대</th><th>파티</th><th>메모</th></tr></thead><tbody>{{DARK}}</tbody></table></div>
+</section>
+
+<section id="gifts">
+  <h2>선물·고정 디지몬<small>1부에서 받거나 만나는 특별한 상대</small></h2>
+  <div class="tw"><table>
+    <thead><tr><th>디지몬</th><th>장소</th><th>레벨</th><th>메모</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">토코몬(알)</th><td>전망산, 소라 뒤 조수 리키</td><td class="n">Lv1</td><td>Lv10 파닥몬 → Lv20 엔젤몬</td></tr>
+      <tr><th scope="row">브이몬</th><td>장난감 마을 편지 심부름의 사례(5장)</td><td class="n">Lv18</td><td><span class="mk nw">새로</span> v1.3에서 추가. 다음 레벨업(Lv19)에 엑스브이몬이 되니, 화염드라몬을 노리면 용기의 디지멘탈(유적 석판)을 레벨업 전에 사용</td></tr>
+      <tr><th scope="row">쿠가몬</th><td>36번도로 길 막은 나무(꽃집 언니의 「유인 피리」)</td><td class="n">Lv20</td><td>고정 전투. 잡을 수 있음. 나무 앞에서 유인 피리를 쓰면 시작</td></tr>
+      <tr><th scope="row">가지몬</th><td>32번도로 일대로 보임</td><td class="n">Lv11</td><td>스크립트상 선물. 위치·조건은 불확실</td></tr>
+      <tr><th scope="row">켄터스몬 ×2</th><td>모모 농장(39번도로 일대)</td><td class="n">Lv30</td><td>스크립트상 선물. 조건은 불확실</td></tr>
+      <tr><th scope="row">호크몬</th><td>바위산 마을 바닷가 집의 노인(처음 말 걸 때)</td><td class="n">Lv27</td><td><span class="mk nw">새로</span> v1.3에서 추가. 사랑의 디지멘탈로 할세몬. Lv24 일반 진화(아쿠이라몬)가 있어 레벨업 전에</td></tr>
+      <tr><th scope="row">아르마몬</th><td>절구산</td><td class="n">Lv30</td><td>지식의 디지멘탈로 디그몬</td></tr>
+      <tr><th scope="row">에어드라몬</th><td>용의 눈 동굴 장로</td><td class="n">Lv35</td><td>태그로 메가드라몬</td></tr>
+      <tr><th scope="row">돌핀몬</th><td>연결동굴</td><td class="n">Lv20</td><td>고정 전투(스크립트 확인). 만나는 조건(요일 등)은 불확실</td></tr>
+      <tr><th scope="row">붉은 메가시드라몬</th><td>용의 눈 호수</td><td class="n">Lv30</td><td>완전체를 일찍 얻는 기회</td></tr>
+      <tr><th scope="row">톱니몬 · 가드로몬</th><td>얼음나라 아지트</td><td class="n">Lv30</td><td>고정(스크립트 확인)</td></tr>
+      <tr><th scope="row">청룡몬</th><td>방울탑 꼭대기(11장)</td><td class="n">Lv60</td><td><span class="mk nw">새로</span> 롬 Lv55였던 것을 설계표대로 60으로. 장로 시험 뒤 무녀 5연전에서 받는 크리스탈방울이 있어야 열림. 포획률 5</td></tr>
+      <tr><th scope="row">백호몬 · 주작몬 · 현무몬</th><td>파일섬 떠돌이</td><td class="n">불확실</td><td>만나는 방법은 불확실</td></tr>
+    </tbody></table></div>
+  <p class="note">도구: 행복의알(경험치 증가)은 장난감 마을에서 나리가, 기력의조각 3개는 미나가, 유인 피리는 장난감 마을 꽃집 언니가 줍니다.</p>
+</section>
+
+<section id="evo">
+  <h2>진화표<small>롬의 진화 데이터(a/0/3/4)를 그대로 옮긴 164줄. 이름을 입력하면 걸러집니다</small></h2>
+  <div class="evq"><input id="evq" type="search" placeholder="디지몬 이름 검색 (예: 그레이몬, 오메가몬)" aria-label="진화표 검색" autocomplete="off">
+    <p class="note">출발 디지몬 기준으로 묶었습니다. 어느 디지몬이 되는지 보려면 도착 이름으로 검색하세요. 같은 도착이 여러 줄이면 아무 조건이나 맞으면 진화합니다(「또는」).</p></div>
+  <div class="tw evt"><table>
+    <thead><tr><th>지금</th><th>진화 후</th><th>조건</th></tr></thead>
+    {{EVO}}
+  </table><p class="evn" id="evn">일치하는 디지몬이 없습니다.</p></div>
+  <h3 id="darktiming">어둠의돌 쓰는 시기<small>성장기에 돌을 쓰면 종이 바뀌어 기술도 바뀝니다. 언제 쓰느냐에 따라 놓치는 기술이 있습니다</small></h3>
+  <p class="note">돌은 레벨 제한 없이 바로 진화시킵니다. 진화해도 가진 기술은 그대로이고, 어둠 종의 기술은 <b>진화한 뒤 그 레벨이 될 때</b> 배웁니다. 어둠 종은 대부분 Lv16부터 기술을 배우므로 <b>Lv15 이하에 쓰면 어둠 종의 기술을 전부</b> 얻습니다. 반대로 일반 진화 레벨(Lv18~20)에 맞추면 Lv16·19 기술은 이미 지나간 뒤라 놓칩니다(원작 규칙 기준, 이 롬에서는 확인하지 못함).</p>
+  <div class="tw"><table>
+    <thead><tr><th>지금(성장기)</th><th>어둠의돌 → 어둠 종 · 배우는 기술</th><th>일반 진화</th><th>권장 시기</th></tr></thead>
+    <tbody>{{DARKEVO}}</tbody></table></div>
+  <p class="note">기술은 4개까지만 갖습니다. 돌을 일찍 쓰면 성장기 때 기술(예: 팔몬 흡수·덩굴채찍·독침)을 가진 채 어둠 종의 기술을 이어서 배우게 됩니다. 어둠 종은 능력치와 타입이 일반 갈래와 다르니 위 표의 타입·속성을 확인하세요.</p>
+  <h4>같은 단계 안의 변종</h4>
+  <div class="tw"><table>
+    <thead><tr><th>지금</th><th>어둠의돌 → 변종</th><th>기술이 바뀌는 곳(레벨)</th></tr></thead>
+    <tbody>{{DARKSAME}}</tbody></table></div>
+  <p class="note">낮·밤 조건이 둘 다 열려 있는 문장·태그 진화는 하나로 합쳤습니다. 진화 줄이 없는 디지몬은 더 진화하지 않는 끝입니다. 이 표는 롬에서 읽은 값이며 모든 줄을 게임 안에서 직접 진화시켜 확인한 것은 아닙니다(위 기술 진화 4줄과 조그레스 일부만 확인).</p>
+</section>
+
+<section id="unknown">
+  <h2>확인하지 못한 것<small>롬을 읽거나 에뮬레이터로 확인하지 못한 부분</small></h2>
+  <div class="warn" style="border-left-color: var(--accent)">
+    <b>불확실한 내용</b>
+    <ul>
+      <li><b>4천왕 마지막(피에몬) 방과 챔피언 아포카리몬, 배표·명예의 전당</b>은 시험용 치트 몬스터의 PP가 떨어져 끝까지 플레이하지 못했습니다(1~3번째 방까지 확인). 스크립트상 존재합니다.</li>
+      <li>리키 체육관 안(함정 칸) 직접 걷기, 쿠가몬·붉은 메가시드라몬·돌핀몬 실제 포획, 라디오 타워 지하 창고의 라이벌 습격(매튜 4차), 절구산 아르마몬·켄터스몬 선물, 새 브이몬·호크몬 선물을 받은 뒤의 디지멘탈 진화 장면은 스크립트로만 확인했습니다.</li>
+      <li>라디오 타워에서 카드키 없이도 5층·꼭대기까지 올라갈 수 있는지(시험은 카드키를 먼저 받은 상태였습니다).</li>
+      <li>호크몬·브이몬 선물, 레오몬 사랑의 디지멘탈, 보상 뒤 설명 대사, 청룡몬 Lv60, 이름표 고침은 v1.3에서 새로 넣은 것이라, 이전 판(v1.2) 세이브가 아닌 <b>새 게임</b>으로 확인해 주세요.</li>
+      <li>매튜의 마지막 한 마리가 어느 스타팅에 어느 줄(팔몬·아구몬·쉬라몬)로 나오는지.</li>
+      <li>시작의 마을에서 26·27번도로·나선산 길로 가는 길(파도타기 필요 여부).</li>
+      <li>돌핀몬·백호몬·주작몬·현무몬을 만나는 정확한 방법, 가지몬·켄터스몬 선물의 조건.</li>
+      <li>타입 상성은 하트골드 원작(4세대) 표 기준으로 계산했고 롬의 상성표를 직접 대조하지는 않았습니다. 페어리 타입은 원작의 「???」 자리라 상성이 없는 것으로 취급했습니다.</li>
+      <li>장소별 야생 레벨 표의 「깊은 곳」 구분은 파일 순서로 나눈 것이라 실제 층 이름과 다를 수 있어 레벨 범위로 적었습니다.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <p>출처: 디지몬골드 v1.3(이지+노래) 롬의 트레이너 데이터(a/0/5/5·a/0/5/6), 기술·진화·능력치(a/0/3/3·a/0/3/4·a/0/0/2), 야생 표(a/0/3/7), 이벤트·스크립트 표와 장면 대사표.</p>
+  <p>개인 비공개 팬 작업용 문서입니다. 디지몬의 권리는 반다이·토에이에 있습니다.</p>
+</footer>
+</div>
+<script>
+(function () {
+  var q = document.getElementById('evq'); if (!q) return;
+  var gs = document.querySelectorAll('#evo tbody[data-g]'), none = document.getElementById('evn');
+  function run() {
+    var v = q.value.trim().toLowerCase().replace(/\s+/g, ''), total = 0;
+    gs.forEach(function (g) {
+      var n = 0;
+      g.querySelectorAll('tr[data-q]').forEach(function (r) {
+        var ok = !v || r.getAttribute('data-q').toLowerCase().replace(/\s+/g, '').indexOf(v) >= 0;
+        r.hidden = !ok; if (ok) n++;
+      });
+      g.hidden = n === 0; total += n;
+    });
+    none.style.display = total ? 'none' : 'block';
+  }
+  q.addEventListener('input', run);
+})();
+</script>
+
