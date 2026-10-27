@@ -40,7 +40,8 @@ run sa python3 $T/inject_sanhae_ship.py _a27g.nds _a27s.nds                     
 run ml python3 $T/inject_mildo.py _a27s.nds _a27m.nds                            # 10/27 마일도 최종전 대사 3종(전·졌을 때·이겼을 때) + 이긴 뒤 한마디
 run rv python3 $T/inject_rival.py _a27m.nds _a27r.nds                            # 10/28 매튜 6·7차 설계 대사(검은 톱니는 버렸어 / 마지막 승부다) + 리키 첫 대사 고침
 run lab python3 $T/inject_labels.py _a27r.nds _a27l.nds                          # 10/28 2부 인물 필드 대사 23줄에 「이름:」 이름표(산해·예지·재하·릴리몬·스팅몬·쥬드몬·리키·겐나이·정우·나리·엔젤우몬)
-run lb python3 $T/fix_linebreaks.py _a27l.nds _a28.nds                          # 10/27 두 줄 대화창에서 셋째 줄로 넘쳐 끊기던 대사 128줄 줄바꿈 고침 (마지막에 둘 것)
+run ld python3 $T/inject_leaders.py _a27l.nds _a27d.nds                          # 10/28 2부 수호자 이름 통일: 원작 관장 이름(마티스·이슬·도희…)이 남은 56줄 → 산해·예지·재하 등
+run lb python3 $T/fix_linebreaks.py _a27d.nds _a28.nds                          # 10/27 두 줄 대화창에서 셋째 줄로 넘쳐 끊기던 대사 128줄 줄바꿈 고침 (마지막에 둘 것)
 cp _a28.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 # (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
