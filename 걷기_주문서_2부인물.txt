@@ -1,0 +1,171 @@
+2부 인물 걷기 주문서 — 제미나이 주문문 (DS 롬용 필드 걷기 그림)
+2026-10-27
+
+[방법]
+1) 대화방을 새로 열고, 아래 인물마다 「이미지 1 = 그 인물 그림」 「이미지 2 = taichi_walk_ds_ai.png(태일 걷기 시트, 형식 본보기)」 두 장을 먼저 올린다.
+   (그림은 모두 저장소 games/digimon/art/src/people/ 안)
+2) 주문문을 그대로 붙여 보낸다. 한 번에 한 명.
+3) 받은 그림을 같은 폴더에 「저장할 이름」으로 저장하거나 대화에 올려서 알려 주면, sheet_cut.py 로 32x32 칸 4줄x3칸으로 잘라 롬에 넣는다.
+   (겐나이는 gennai_ai.png 에 이미 앞·뒤·옆 걷기 컷이 있어 주문하지 않아도 됨)
+
+============================================================
+산해 — 2부 첫 수호자(항구 마을) · 배 안에서 말을 거는 소년
+이미지 1 = daisuke_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = daisuke_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Daisuke Motomiya (Davis) (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Daisuke Motomiya (Davis) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: spiky dark red-brown hair; big white-framed goggles with blue lenses pushed up on top of the head; light-blue fur collar; blue jacket with a red lower half and yellow-orange flame patterns; beige shirt under it; khaki shorts; green gloves; orange-and-white high boots.
+Keep the goggles and the flame jacket clearly visible in every direction, including the back view.
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+예지 — 2부 수호자(왕개굴몬 성) · 발전기 부품 장면
+이미지 1 = miyako_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = miyako_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Miyako Inoue (Yolei) (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Miyako Inoue (Yolei) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: short orange bob hair on top with long purple hair hanging behind; round thin-framed glasses; light-blue long-sleeve shirt; tan vest with a green diagonal strap; white gloves; red pants; pale grey-green boots.
+Show the long purple hair falling down her back in the back view and in both side views.
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+재하 — 2부 수호자(사파리 마을) · 가장 어린 아이
+이미지 1 = iori_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = iori_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Iori Hida (Cody) (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Iori Hida (Cody) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: short brown bowl-cut hair; beige mandarin-collar jacket with a magenta stripe down the front and magenta cuffs; magenta pants; brown boots; calm serious face.
+He is the youngest kid, so draw him slightly smaller than the Taichi sheet (about 90% of the height).
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+정우(카이저) — 2부 악역 · 28번도로에서 싸움
+이미지 1 = ken_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = ken_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Ken Ichijouji as the Digimon Kaiser (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Ken Ichijouji as the Digimon Kaiser in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: spiky maroon-purple hair; yellow-framed visor glasses with purple lenses; yellow shoulder armor; purple cape with a gold edge and gold symbols; blue and white bodysuit; gold belt buckle; white cuffs; dark grey boots.
+Keep the cape SHORT, ending at the waist, so the character stays narrow like the Taichi sheet. The cape must stay visible from behind (it covers most of the back).
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+마일도 — 2부 흑막 · 은빛산 꼭대기 최종전
+이미지 1 = mildo_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = mildo_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Oikawa (Digimon Adventure 02 antagonist) (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Oikawa (Digimon Adventure 02 antagonist) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: pale face with a stern expression; long straight black hair down to the shoulders; long dark purple trench coat with gold trim, gold buttons and a belt; red shirt with a grey tie; dark navy pants; brown shoes.
+Draw the coat only down to the knees (not to the ankles) so the legs can swing in the walking frames. Keep the long black hair visible from behind.
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+매튜 (선택) — 라이벌 · 1부·2부 내내 길에서 만남 (선택)
+이미지 1 = yamato_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = yamato_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Yamato Ishida (Matt) (Digimon Adventure) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Yamato Ishida (Matt) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: (look at Image 1 and keep his hair, clothes, colors and accessories exactly as drawn there)
+Keep the hair shape clearly readable from the front, back and sides.
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+리키 (선택) — 8번째 수호자(디지타마몬 마을) · 1부 8번째 수련장 (선택)
+이미지 1 = takeru_tr_ai.png   이미지 2 = taichi_walk_ds_ai.png   저장할 이름 = takeru_walk_ds_ai.png
+------------------------------------------------------------
+Image 1 is our finished FRONT picture of Takeru Takaishi (T.K.) (Digimon Adventure 02) in color pixel art. Image 2 is our finished walking sprite sheet of Taichi Yagami. Image 2 shows the exact sheet layout, pixel style, character proportions and checkered transparent background that I want.
+
+Task: draw a walking sprite sheet of Takeru Takaishi (T.K.) in exactly the same layout and style as Image 2. Do NOT draw Taichi; use only his sheet as the format guide.
+
+Layout: 3 columns x 4 rows, thin black grid lines between the cells, every cell the same size.
+Row 1: seen from the front. Column 1 standing, column 2 left foot forward, column 3 right foot forward.
+Row 2: seen from behind. Same three poses.
+Row 3: side view, facing LEFT. Same three poses.
+Row 4: side view, facing RIGHT. Same three poses.
+
+Style: chibi proportions, about 2 heads tall, big head and short body, like Image 2. Chunky square pixels, a thick 1-pixel black outline, flat colors with simple shading, the same pixel size in every cell. Use exactly the colors of Image 1.
+Keep the character at the same size and the same position in every cell, with the feet on the same line, so the sheet can be cut into equal cells.
+
+Details to keep from Image 1: (look at Image 1 and keep his hair, clothes, colors and accessories exactly as drawn there)
+Keep the hat or hair shape clearly readable from the front, back and sides.
+
+Background: transparent checkerboard like Image 2, or plain white. No ground shadow, no text, no labels, no extra characters. Each cell contains exactly one character. Output one single image.
+
+============================================================
+[잘 안 나올 때 — 한 줄씩 덧붙여 다시 요청]
+1. Every cell must have the SAME character size and the SAME feet position. Do not let the character grow or shrink between cells.
+2. Row 3 must face LEFT and row 4 must face RIGHT. The back view in row 2 must show no face.
+3. Use exactly the same colors as Image 1. Do not add any new colors, objects, weapons, Digimon, text or borders.
+4. Make the pixels bigger and chunkier like a real 32x32 game sprite. Remove tiny details.
+5. The sheet must have exactly 3 columns and 4 rows with thin black grid lines, like Image 2.
