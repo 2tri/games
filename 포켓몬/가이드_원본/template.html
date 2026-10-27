@@ -1,4 +1,4 @@
-<title>디지몬골드 1부 공략집</title>
+<title>디지몬골드 공략집 1부·2부</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,7 +138,7 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; b
 .wildl li { display: grid; grid-template-columns: 8.6rem 1fr; gap: .6rem; border-bottom: 1px dashed var(--line); padding-bottom: .3rem; }
 .wp { font-weight: 600; } .wl { color: var(--ink2); min-width: 0; }
 .mk { display: inline-block; font-size: 11px; font-weight: 700; line-height: 1; padding: .18rem .4rem; border-radius: 999px; margin-right: .3rem; vertical-align: .08em; color: #fff; background: #5b6470; }
-.mk.ck { background: #1f7a4d; } .mk.sc { background: #5b6b8c; } .mk.nw { background: #b4531f; } .mk.un { background: #8a6d00; } .mk.wr { background: #b3261e; }
+.mk.ck { background: #1f7a4d; } .mk.ds { background: #6a4c93; } .mk.sc { background: #5b6b8c; } .mk.nw { background: #b4531f; } .mk.un { background: #8a6d00; } .mk.wr { background: #b3261e; }
 .tip { font-size: 14px; background: var(--accent-bg); border-radius: 8px; padding: .7rem .85rem; margin-top: .8rem; }
 .tip b { color: var(--accent); margin-right: .3rem; }
 
@@ -175,6 +175,10 @@ summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; b
 .evn { display: none; padding: 1rem; text-align: center; color: var(--ink2); }
 
 /* 표 아래 메모 */
+.part { margin-top: 2.2rem; padding-top: .9rem; border-top: 3px solid var(--accent); }
+.part h2 { font-size: 22px; }
+.h1s { font-size: .55em; color: var(--accent); white-space: nowrap; }
+.mu { color: var(--ink2); }
 .note { font-size: 13px; color: var(--ink2); }
 .warn { border-left: 4px solid var(--bad); background: var(--surface); padding: .8rem 1rem; border-radius: 0 8px 8px 0; display: grid; gap: .45rem; font-size: 14px; }
 .warn ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
@@ -196,16 +200,19 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
 
 <div class="wrap">
 <header class="top">
-  <p class="kick">디지몬골드 v1.4 · 이지 + 노래 기준</p>
-  <h1>디지몬골드 1부 공략집</h1>
-  <p class="lead">시작의 마을에서 챔피언 아포카리몬까지. 완성 롬에서 직접 읽은 트레이너 파티·레벨·기술·출현표를 기준으로 썼습니다. 진행 순서는 에뮬레이터로 새 게임부터 직접 플레이하며 확인했고, 각 단계 앞에 <span class="mk ck">확인</span>(직접 플레이) · <span class="mk sc">스크립트</span>(롬 스크립트를 읽어 확인, 플레이는 못 함) · <span class="mk nw">새로</span>(v1.3에서 롬을 고쳐 가능해짐) · <span class="mk un">불확실</span> 표를 붙였습니다.</p>
-  <div class="pills"><span class="pill">수호자 8 · 4천왕 4 · 챔피언 1</span><span class="pill">추천 파티 4종</span><span class="pill">새 게임 권장</span><span class="pill">v1.4: 붉은 메가시드라몬 색 · 대사 속 포켓몬 이름 정리</span><span class="pill">v1.3: 브이몬·호크몬 선물 · 레오몬 디지멘탈</span></div>
+  <p class="kick">디지몬골드 v1.5 · 이지 + 노래 기준</p>
+  <h1>디지몬골드 공략집 <span class="h1s">1부 · 2부</span></h1>
+  <p class="lead">1부는 시작의 마을에서 챔피언 아포카리몬까지, 2부는 신대륙행 배에서 카이저 정우와 마일도의 최종전까지입니다. 트레이너 파티·레벨·기술·출현표는 완성 롬에서 직접 읽은 값입니다. 각 단계 앞에 <span class="mk ck">확인</span>(에뮬레이터로 직접 플레이) · <span class="mk sc">스크립트</span>(롬 스크립트·대사표를 읽어 확인, 플레이는 못 함) · <span class="mk ds">설계</span>(설계표 순서, 직접 걷지는 못함) · <span class="mk nw">새로</span>(롬을 고쳐 가능해짐) · <span class="mk un">불확실</span> 표를 붙였습니다. 2부는 장면마다 따로 시험했고, 새 게임부터 엔딩까지 이어서 해 보지는 못했습니다.</p>
+  <div class="pills"><span class="pill">1부 수호자 8 · 4천왕 4 · 챔피언 1</span><span class="pill">2부 수호자 8 · 카이저 · 마일도</span><span class="pill">추천 파티 4종</span><span class="pill">새 게임 권장</span><span class="pill">v1.5: 2부 정우·마일도 전투 · 대사 끊김 128줄 수정 · 박사 이름 겐나이로 통일</span><span class="pill">종 이름은 게임 안 이름 기준</span><span class="pill">v1.4: 붉은 메가시드라몬 색</span><span class="pill">v1.3: 브이몬·호크몬 선물 · 레오몬 디지멘탈</span></div>
 </header>
 
 <nav class="nav" aria-label="목차"><ul>
-  <li><a href="#basics">먼저 읽기</a></li><li><a href="#level">레벨 곡선</a></li><li><a href="#parties">추천 파티</a></li>
-  <li><a href="#route">진행 순서</a></li><li><a href="#bosses">보스 도감</a></li><li><a href="#gifts">선물·고정</a></li><li><a href="#evo">진화표</a></li><li><a href="#darktiming">어둠의돌 시기</a></li><li><a href="#unknown">불확실</a></li>
+  <li><a href="#basics">1부 먼저 읽기</a></li><li><a href="#parties">추천 파티</a></li><li><a href="#route">1부 진행</a></li><li><a href="#bosses">1부 보스</a></li><li><a href="#gifts">1부 선물</a></li>
+  <li><a href="#p2basics">2부 먼저 읽기</a></li><li><a href="#p2route">2부 진행</a></li><li><a href="#p2boss">2부 보스</a></li><li><a href="#p2wild">2부 야생</a></li><li><a href="#p2fixed">2부 고정·심볼</a></li>
+  <li><a href="#evo">진화표</a></li><li><a href="#darktiming">어둠의돌 시기</a></li><li><a href="#unknown">불확실</a></li>
 </ul></nav>
+
+<div class="part" id="part1"><h2>1부<small>시작의 마을 ~ 챔피언 아포카리몬</small></h2></div>
 
 <section id="basics">
   <h2>먼저 읽기<small>이 롬에서만 다른 규칙 아홉 가지</small></h2>
@@ -294,8 +301,71 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
   <p class="note">도구: 행복의알(경험치 증가)은 장난감 마을에서 나리가, 기력의조각 3개는 미나가, 유인 피리는 장난감 마을 꽃집 언니가 줍니다.</p>
 </section>
 
+<div class="part" id="part2"><h2>2부<small>신대륙(관동) · 카이저 정우와 마일도</small></h2></div>
+
+<section id="p2basics">
+  <h2>2부 먼저 읽기<small>1부 클리어 세이브에서 이어집니다</small></h2>
+  <div class="basics">
+    <div><h3>이야기</h3><p>3년 뒤, 디지몬 카이저(정우)가 신대륙 곳곳에 어둠의 탑을 세워 디지몬을 검은 톱니로 지배합니다. 수호자 8명(산해·엔젤우몬·예지·릴리몬·재하·스팅몬·쥬드몬·리키)을 이기며 탑을 무너뜨립니다. 카이저를 이기면 정우는 아군이 되고, 진짜 흑막 마일도가 벨리얼묘티몬으로 막아섭니다.</p></div>
+    <div><h3>시작은 배표</h3><p>1부 챔피언을 이기고 겐나이에게서 승선티켓을 받아 톱니공장 항구의 쾌속선을 탑니다. 첫 항해는 아무 요일이나 되고 그 뒤로는 월요일·금요일만 출항합니다.</p></div>
+    <div><h3>스타팅은 공 셋</h3><p>신대륙 겐나이 마을 연구소에서 가트몬 · 엔젤몬 · 스팅몬 중 하나를 Lv45로 받습니다(레벨은 스크립트 값). 셋 모두 조그레스 짝이 있습니다.</p></div>
+    <div><h3>조그레스</h3><p>짝이 파티에 있는 채 레벨업하면 진화합니다. 태그를 지닌 채 레벨업해도 됩니다. 아래 표에 전부 있습니다(스팅몬 → 파일드라몬은 에뮬레이터로 확인).</p></div>
+    <div><h3>궁극체는 문장 4개</h3><p>궁극의 문장은 1부 리키가 2개, 2부 스팅몬·쥬드몬이 1개씩 줍니다. 문장을 지니고 레벨업하거나 Lv55가 되면 궁극체가 됩니다. 파일드라몬 → 황제드라몬도 같은 조건입니다(설계서의 Lv45가 아니라 Lv55).</p></div>
+    <div><h3>레벨 기준</h3><p>2부 야생은 Lv45~65, 수호자 에이스는 Lv58(리키 63), 정우 최고 Lv68, 마일도 최고 Lv78입니다. 엔딩 뒤 재대결은 Lv64~73까지 올라갑니다.</p></div>
+  </div>
+  <h4>조그레스(합체 진화) 한눈에</h4>
+  <div class="tw"><table>
+    <thead><tr><th>지금</th><th>파티에 있는 짝</th><th>진화 후</th><th>메모</th></tr></thead>
+    <tbody>{{P2JOGRESS}}</tbody></table></div>
+  <h4>디지멘탈 아홉 가지</h4>
+  <div class="tw"><table>
+    <thead><tr><th>도구</th><th>얻는 곳</th><th>진화 줄(롬 진화표)</th></tr></thead>
+    <tbody>{{P2DIGI}}</tbody></table></div>
+  <p class="note">쓰는 법은 1부와 같습니다. 「사용」은 가방에서 디지몬에게 쓰는 것, 「지니고 레벨업」은 들려 둔 채 레벨이 오르는 것입니다.</p>
+</section>
+
+<section id="p2level">
+  <h2>2부 레벨 곡선<small>각 보스의 에이스 레벨(롬에서 읽은 값)</small></h2>
+  <ol class="lvl">{{P2BARS}}</ol>
+</section>
+
+<section id="p2route">
+  <h2>2부 진행 순서<small>설계표의 사건 순서입니다. 직접 확인한 장면과 아닌 장면을 표지로 나눴습니다</small></h2>
+  <p class="note">수호자 순서와 장소 이름은 설계표(하트골드 관동 체육관 순서)를 따랐습니다. 롬에서 읽은 값은 파티·레벨·기술·야생 출현뿐이라, 어느 마을에서 어느 길로 가는지는 직접 걸어 확인하지 못했습니다.</p>
+  <div>{{P2ROUTE}}</div>
+</section>
+
+<section id="p2boss" class="rt">
+  <h2>2부 보스 도감<small>잘 먹히는 타입은 파티 전체를 4세대 상성으로 계산한 값</small></h2>
+  <h4>수호자 8곳</h4>
+  <div>{{P2GUARD}}</div>
+  <h4>카이저 정우 · 마일도</h4>
+  <div>{{P2BIG}}</div>
+  <h4>라이벌 매튜 6·7차</h4>
+  <div class="tw"><table><thead><tr><th>만남</th><th>장소</th><th>파티</th></tr></thead><tbody>{{P2RIVAL}}</tbody></table></div>
+  <h4>엔딩 뒤 재대결</h4>
+  <div>{{P2REM}}</div>
+</section>
+
+<section id="p2wild">
+  <h2>2부 야생 디지몬<small>관동 쪽 장소 전체. 칸 = 디지몬 레벨 출현률</small></h2>
+  <div class="evq"><input id="wq" type="search" placeholder="장소나 디지몬 이름 검색 (예: 11번도로, 메탈그레이몬)" aria-label="2부 야생 검색" autocomplete="off">
+    <p class="note">같은 장소가 여러 줄이면 층이 다른 파일입니다. 아침·낮·밤이 다르면 이름 뒤에 괄호로 표시했습니다.</p></div>
+  <div class="tw evt"><table id="wt">
+    <thead><tr><th>장소</th><th>걷기</th><th>낚시 · 파도타기</th></tr></thead>
+    <tbody>{{P2WILD}}</tbody></table><p class="evn" id="wn">일치하는 장소가 없습니다.</p></div>
+</section>
+
+<section id="p2fixed">
+  <h2>2부 고정·심볼 보스<small>이벤트표(설계) 기준. 직접 만나 확인하지는 못했습니다</small></h2>
+  <div class="tw"><table>
+    <thead><tr><th>디지몬</th><th>장소</th><th>레벨</th><th>메모</th></tr></thead>
+    <tbody>{{P2FIXED}}</tbody></table></div>
+  <p class="note">도구: 2부 시작 연구소 스타팅은 위 「2부 진행」에서 다룹니다. 오메가블레이드는 카이저 요새 제단에서 얻고, 워그레이몬·메탈가루몬 → 오메가몬, 황제드라몬 → 황제팔라딘에 씁니다(진화표).</p>
+</section>
+
 <section id="evo">
-  <h2>진화표<small>롬의 진화 데이터(a/0/3/4)를 그대로 옮긴 164줄. 이름을 입력하면 걸러집니다</small></h2>
+  <h2>진화표<small>롬의 진화 데이터(a/0/3/4)를 그대로 옮긴 {{EVOCOUNT}}줄. 이름을 입력하면 걸러집니다</small></h2>
   <div class="evq"><input id="evq" type="search" placeholder="디지몬 이름 검색 (예: 그레이몬, 오메가몬)" aria-label="진화표 검색" autocomplete="off">
     <p class="note">출발 디지몬 기준으로 묶었습니다. 어느 디지몬이 되는지 보려면 도착 이름으로 검색하세요. 같은 도착이 여러 줄이면 아무 조건이나 맞으면 진화합니다(「또는」).</p></div>
   <div class="tw evt"><table>
@@ -322,6 +392,9 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
     <ul>
       <li><b>리키 수련장 안(용암 위 화살표 돌판 퍼즐)</b>은 자동 시험으로 끝까지 걸어 보지 못했습니다. 원본 v1.6과 지도·이벤트·바닥 자료가 같고 바뀐 것은 리키 보상 도구뿐이라 원작 퍼즐 그대로입니다.</li>
       <li>v1.4(10/27): 4천왕 4번째·챔피언·명예의 전당·배표, 쿠가몬·돌핀몬·붉은 메가시드라몬 포획, 켄터스몬·아르마몬·호크몬·브이몬 선물, 디지멘탈 진화 장면, 매튜 4·5차, 카드키 길, 편지 심부름 전체, 궁극의 문장은 에뮬레이터로 확인했습니다. 롬이 바뀌었으니 <b>새 게임</b>으로 해 주세요.</li>
+      <li><b>2부(10/28)</b>: 에뮬레이터로 확인한 것은 배 승선, 겐나이 마을 연구소 스타팅, 조그레스 진화(스팅몬 → 파일드라몬), 예지 곶 장면, 정우 전, 마일도 최종전과 엔딩, 매튜 7차입니다. 수호자 8곳의 전투와 마을 사이 이동은 새 게임부터 이어서 해 보지 못했습니다.</li>
+      <li>배 안에서 산해가 말을 거는 장면이 실제로 시작되는지, 수호자 재전·심볼 보스·떠돌이를 만나는 방법, 겐나이가 카이저 요새를 허락하는 조건은 확인하지 못했습니다.</li>
+      <li>종 이름은 게임 안 이름으로 통일했습니다(v1.4까지는 설계표 이름이라 13종이 달랐습니다. 예: 서브마리몬 → 잠수몬, 아쿠이라몬 → 아큐라몬, 샤코몬 → 토우몬).</li>
       <li>매튜의 마지막 한 마리가 어느 스타팅에 어느 줄(팔몬·아구몬·쉬라몬)로 나오는지.</li>
       <li>시작의 마을에서 26·27번도로·나선산 길로 가는 길(파도타기 필요 여부).</li>
       <li>백호몬·주작몬·현무몬을 만나는 정확한 방법, 가지몬 선물의 조건.</li>
@@ -332,7 +405,7 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
 </section>
 
 <footer>
-  <p>출처: 디지몬골드 v1.4(이지+노래) 롬의 트레이너 데이터(a/0/5/5·a/0/5/6), 기술·진화·능력치(a/0/3/3·a/0/3/4·a/0/0/2), 야생 표(a/0/3/7), 이벤트·스크립트 표와 장면 대사표.</p>
+  <p>출처: 디지몬골드 v1.5(이지+노래) 롬의 트레이너 데이터(a/0/5/5·a/0/5/6), 기술·진화·능력치(a/0/3/3·a/0/3/4·a/0/0/2), 야생 표(a/0/3/7), 이벤트·스크립트 표와 장면 대사표.</p>
   <p>개인 비공개 팬 작업용 문서입니다. 디지몬의 권리는 반다이·토에이에 있습니다.</p>
 </footer>
 </div>
@@ -353,6 +426,15 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
     none.style.display = total ? 'none' : 'block';
   }
   q.addEventListener('input', run);
+})();
+(function () {
+  var q = document.getElementById('wq'); if (!q) return;
+  var rows = document.querySelectorAll('#wt tbody tr'), none = document.getElementById('wn');
+  q.addEventListener('input', function () {
+    var v = q.value.trim().toLowerCase().replace(/\s+/g, ''), n = 0;
+    rows.forEach(function (r) { var ok = !v || r.getAttribute('data-q').toLowerCase().replace(/\s+/g, '').indexOf(v) >= 0; r.hidden = !ok; if (ok) n++; });
+    none.style.display = n ? 'none' : 'block';
+  });
 })();
 </script>
 

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # 디지몬골드 1부 공략집 생성기 — 롬에서 뽑은 JSON(species_full / trainers / trnames / chart)을 읽어 guide.html 을 만든다.
 import json, html, os
+import rename
 S = os.path.dirname(os.path.abspath(__file__))
-DB = json.load(open(S + '/species_full.json', encoding='utf-8'))
-TR = json.load(open(S + '/trainers.json', encoding='utf-8'))
+def jload(name): return json.loads(rename.rn(open(S + '/' + name, encoding='utf-8').read()))   # 종 이름은 게임 안 이름으로(rename.py)
+DB = jload('species_full.json')
+TR = jload('trainers.json')
 CH = json.load(open(S + '/chart.json', encoding='utf-8'))
 E = html.escape
 
@@ -42,7 +44,9 @@ def attr_hint(idx):
     for m in ms: cnt[DB[m['sp']]['attr']] = cnt.get(DB[m['sp']]['attr'], 0) + 1
     # 백신>바이러스>데이터>백신 : 상대 속성을 이기는 속성
     beats = {'바이러스': '백신', '데이터': '바이러스', '백신': '데이터'}
-    best = max([k for k in cnt if k in beats], key=lambda k: cnt[k])
+    cand = [k for k in cnt if k in beats]
+    if not cand: return ' · '.join('%s %d' % (k, v) for k, v in sorted(cnt.items(), key=lambda x: -x[1])), None, None
+    best = max(cand, key=lambda k: cnt[k])
     parts = ' · '.join('%s %d' % (k, v) for k, v in sorted(cnt.items(), key=lambda x: -x[1]))
     return parts, beats[best], best
 
@@ -65,7 +69,7 @@ def boss_card(title, who, where, reward, idx, tip, extra=''):
             '<dl class="kv"><div><dt>장소</dt><dd>%s</dd></div><div><dt>보상</dt><dd>%s</dd></div>'
             '<div><dt>속성 구성</dt><dd>%s</dd></div><div><dt>잘 먹히는 타입</dt><dd>%s <span class="sm">(타입 상성 계산)</span></dd></div></dl>'
             '%s<p class="tip"><b>공략</b> %s</p>%s</div></details>' %
-            (E(title), E(who), E(where.split(' ')[0] if False else where), ace, E(where), E(reward), E(parts + ' → ' + good + ' 속성이 유리'),
+            (E(title), E(who), E(where.split(' ')[0] if False else where), ace, E(where), E(reward), E(parts + (' → ' + good + ' 속성이 유리' if good else ' → 속성 이득이 없는 구성')),
              ' '.join(tchip(t) for t in wt), party_html(idx), tip, extra))
 
 # ───────────────────────── 추천 파티 ─────────────────────────
@@ -376,10 +380,19 @@ CHAPTERS = [
 from chapters_v13 import build_chapters
 CHAPTERS = build_chapters(CHAPTERS)
 
+def _fx(o):
+    """코드 안 글(추천 파티·보스·장)의 종 이름·박사 이름을 게임 안 이름으로"""
+    if isinstance(o, str): return rename.fix(o)
+    if isinstance(o, list): return [_fx(x) for x in o]
+    if isinstance(o, tuple): return tuple(_fx(x) for x in o)
+    if isinstance(o, dict): return {k: _fx(v) for k, v in o.items()}
+    return o
+PARTIES = _fx(PARTIES); LEADERS = _fx(LEADERS); E4 = _fx(E4); RIVAL = _fx(RIVAL); DARK = _fx(DARK); CHAPTERS = _fx(CHAPTERS)
+
 def rich(t):
     """할 일 글: <b> 만 살리고 【확인】【스크립트】【새로】【불확실】【주의】 를 작은 표지로"""
     t = E(t).replace('&lt;b&gt;', '<b>').replace('&lt;/b&gt;', '</b>')
-    for k, cls in (('확인', 'ck'), ('스크립트', 'sc'), ('새로', 'nw'), ('불확실', 'un'), ('주의', 'wr')):
+    for k, cls in (('확인', 'ck'), ('스크립트', 'sc'), ('설계', 'ds'), ('새로', 'nw'), ('불확실', 'un'), ('주의', 'wr')):
         t = t.replace('【%s】' % k, '<span class="mk %s">%s</span>' % (cls, k))
     return t
 
@@ -387,11 +400,12 @@ def chapter(c):
     todo = ''.join('<li>%s</li>' % rich(t) for t in c['todo'])
     w = ''.join('<li><span class="wp">%s</span><span class="wl">%s</span></li>' % (E(a), E(b)) for a, b in c['wild'])
     return ('<details class="chap" id="%s" open><summary><span class="ct">%s</span><span class="cs">%s</span><span class="cl">%s</span></summary>'
-            '<div class="cb"><h5>할 일</h5><ul class="todo">%s</ul><h5>이 길의 야생 디지몬</h5><ul class="wildl">%s</ul><p class="tip"><b>팁</b> %s</p></div></details>' %
-            (c['id'], E(c['title']), E(c['sub']), E(c['lv']), todo, w, E(c['tip'])))
+            '<div class="cb"><h5>할 일</h5><ul class="todo">%s</ul>%s<p class="tip"><b>팁</b> %s</p></div></details>' %
+            (c['id'], E(c['title']), E(c['sub']), E(c['lv']), todo,
+             ('<h5>이 길의 야생 디지몬</h5><ul class="wildl">%s</ul>' % w) if c['wild'] else '', E(c['tip'])))
 
 # ---- 진화표 (롬 a/0/3/4 에서 읽은 값: evo_final.json) ----
-EVO = json.load(open(S + '/evo_final.json', encoding='utf-8'))
+EVO = jload('evo_final.json')
 STAGE_ORDER = ['유년기Ⅱ', '성장기', '성숙기', '아머체', '완전체', '궁극체']
 
 def josa(n, a, b):
@@ -463,7 +477,11 @@ def build():
     chapters = ''.join(chapter(c) for c in CHAPTERS)
     bars = lv_bar(LEVEL_ROWS)
     tpl = open(S + '/template.html', encoding='utf-8').read()
-    return (tpl.replace('{{PARTIES}}', parties).replace('{{LEADERS}}', leaders).replace('{{E4}}', e4).replace('{{RIVAL}}', rival)
+    import part2
+    P2 = part2.build(dict(boss_card=boss_card, TR=TR, EVO=EVO, attr=attr, chapter=chapter, rich=rich))
+    for k, v in P2.items(): tpl = tpl.replace(k, v)
+    tpl = tpl.replace('{{EVOCOUNT}}', str(len(EVO)))
+    return rename.fix(tpl.replace('{{PARTIES}}', parties).replace('{{LEADERS}}', leaders).replace('{{E4}}', e4).replace('{{RIVAL}}', rival)
             .replace('{{DARK}}', dark).replace('{{CHAPTERS}}', chapters).replace('{{BARS}}', bars).replace('{{EVO}}', evo_section()).replace('{{DARKEVO}}', dark_evo_html()).replace('{{DARKSAME}}', dark_same_html()))
 
 if __name__ == '__main__':
