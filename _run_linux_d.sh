@@ -38,7 +38,8 @@ run kz python3 $T/inject_kaiser.py _a26.nds _a27.nds                            
 run gn python3 $T/inject_gennai.py _a27.nds _a27g.nds                             # 10/27 박사 이름 통일: 오박사·공박사 116줄 → 겐나이 + 어색한 10줄 다듬기 (용어표 그대로)
 run sa python3 $T/inject_sanhae_ship.py _a27g.nds _a27s.nds                       # 10/27 배 안 산해 장면: 산해 대사를 첫 항해 장면(글 254:7)으로, 복도 인물 그림 343
 run ml python3 $T/inject_mildo.py _a27s.nds _a27m.nds                            # 10/27 마일도 최종전 대사 3종(전·졌을 때·이겼을 때) + 이긴 뒤 한마디
-run lab python3 $T/inject_labels.py _a27m.nds _a27l.nds                           # 10/28 2부 인물 필드 대사 23줄에 「이름:」 이름표(산해·예지·재하·릴리몬·스팅몬·쥬드몬·리키·겐나이·정우·나리·엔젤우몬)
+run rv python3 $T/inject_rival.py _a27m.nds _a27r.nds                            # 10/28 매튜 6·7차 설계 대사(검은 톱니는 버렸어 / 마지막 승부다) + 리키 첫 대사 고침
+run lab python3 $T/inject_labels.py _a27r.nds _a27l.nds                          # 10/28 2부 인물 필드 대사 23줄에 「이름:」 이름표(산해·예지·재하·릴리몬·스팅몬·쥬드몬·리키·겐나이·정우·나리·엔젤우몬)
 run lb python3 $T/fix_linebreaks.py _a27l.nds _a28.nds                          # 10/27 두 줄 대화창에서 셋째 줄로 넘쳐 끊기던 대사 128줄 줄바꿈 고침 (마지막에 둘 것)
 cp _a28.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
