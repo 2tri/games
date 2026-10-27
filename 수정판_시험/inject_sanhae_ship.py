@@ -16,7 +16,7 @@ nds = NDS(open(src, 'rb').read()); done = []
 BANK, MAP_EVENT, OBJ, OLD_SPR, NEW_SPR = 254, 278, 3, 341, 343
 SP = '{01DE}'
 def T(s): return s.replace(' ', SP)
-SANHAE = '너{01AD} 신대륙은 처음이지{01AC}\\n지금 카이저 때문에\\f난리라고{01AB}\\f나는 산해{01AB}\\f우리 같이 싸우자{01AB}\\r'
+SANHAE = '산해{01C4} 너{01AD} 신대륙은 처음이지{01AC}\\n지금 카이저 때문에\\f난리라고{01AB}\\f나는 산해{01AB}\\f우리 같이 싸우자{01AB}\\r'
 SAILOR = '이번 항해도 잘 부탁하네{01AB}\\n피곤하면 방에서 쉬게나\\r'
 draft = {r['이름'] for r in csv.DictReader((l for l in open(os.path.join(ROOT, 'NDS_종_초안.tsv'), encoding='utf-8') if not l.startswith('#')), delimiter='\t')}
 mn = NARC(nds.get(hg1.NARC_PATHS['msg'])); MSG = []

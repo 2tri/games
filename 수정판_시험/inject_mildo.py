@@ -16,10 +16,10 @@ TID, FIELD_BANK = 260, 125
 D = '{01AE}' * 6                      # 「……」
 SP = '{01DE}'
 def T(s): return s.replace(' ', SP)
-BATTLE_BEFORE = D + '왔군\\r나는 마일도\\n어둠의 씨앗을 심은 자\\r씨앗이여' + '{01AD}' + ' 깨어나라\\n벨리얼묘티몬{01AB}\\r'
+BATTLE_BEFORE = '마일도{01C4} ' + D + '왔군\\r나는 마일도\\n어둠의 씨앗을 심은 자\\r씨앗이여' + '{01AD}' + ' 깨어나라\\n벨리얼묘티몬{01AB}\\r'
 LOSE_LINE = '어둠이' + D + '\\n걷히다니\\r유대의 힘' + D + '\\n그것이 답이었나\\n'
 WIN_LINE = '어둠은\\n끝나지 않는다{01AB}\\n'
-AFTER_FIELD = D + '정우에게 전해 다오\\n미안했다고\\r'    # 전투 중 207 과 겹치지 않게 정우와 이어지는 끝맺음(에뮬: 207 을 되풀이하면 어색)
+AFTER_FIELD = '마일도{01C4} ' + D + '정우에게 전해 다오\\n미안했다고\\r'    # 전투 중 207 과 겹치지 않게 정우와 이어지는 끝맺음(에뮬: 207 을 되풀이하면 어색)
 
 draft = {r['이름'] for r in csv.DictReader((l for l in open(os.path.join(ROOT, 'NDS_종_초안.tsv'), encoding='utf-8') if not l.startswith('#')), delimiter='\t')}
 mn = NARC(nds.get(hg1.NARC_PATHS['msg'])); MSG = []
@@ -40,7 +40,7 @@ o = struct.unpack_from('<H', of, 2 * TID)[0] // 4
 at = {}
 while o < len(E) and E[o][0] == TID: at[E[o][1]] = o; o += 1
 assert 1 in at and 20 in at, '마일도 대사 칸(1·20)을 못 찾음: %s' % at
-assert CM.dec(MSG[FIELD_BANK][1][0]).startswith('{01AE}') and len(MSG[FIELD_BANK][1]) == 2, '글 125 가 예상과 다름'
+assert len(MSG[FIELD_BANK][1]) == 2, '글 125 가 예상과 다름'
 for (b, i), txt, name in (((FIELD_BANK, 0), BATTLE_BEFORE, '마일도 전투 전'), ((722, at[1]), LOSE_LINE, '마일도 졌을 때'),
                           ((722, at[20]), WIN_LINE, '마일도 이겼을 때'), ((FIELD_BANK, 1), AFTER_FIELD, '마일도 이긴 뒤')):
     if put(b, i, txt): done.append(name)
