@@ -35,7 +35,8 @@ run sf python3 $T/inject_story_fix.py _a23.nds _a24.nds                         
 run v14 python3 $T/inject_v14_fix.py _a24.nds _a25.nds                           # 10/26 PC 시험: 붉은 메가시드라몬 색 · 챔피언 방 이름표 아포카리몬 · 대사에 남은 원작 포켓몬 이름 82줄
 run v15 python3 $T/inject_v15_fix.py _a25.nds _a26.nds                           # 10/27 2부 점검: 수호자 7명 옛 기술머신 대사 · 매몰탑 메탈에테몬 Lv55 · 2부 대사 포켓몬 이름 42줄
 run kz python3 $T/inject_kaiser.py _a26.nds _a27.nds                             # 10/27 2부 카이저 정우 전투(28번도로) · 대사 3줄(안 쓰는 트레이너 540 칸 사용)
-run lb python3 $T/fix_linebreaks.py _a27.nds _a28.nds                            # 10/27 두 줄 대화창에서 셋째 줄로 넘쳐 끊기던 대사 128줄 줄바꿈 고침 (마지막에 둘 것)
+run ml python3 $T/inject_mildo.py _a27.nds _a27m.nds                              # 10/27 마일도 최종전 대사 3종(전·졌을 때·이겼을 때) + 이긴 뒤 한마디
+run lb python3 $T/fix_linebreaks.py _a27m.nds _a28.nds                           # 10/27 두 줄 대화창에서 셋째 줄로 넘쳐 끊기던 대사 128줄 줄바꿈 고침 (마지막에 둘 것)
 cp _a28.nds 최종_오늘.nds
 run rc1 python3 rom_check.py 최종_오늘.nds --base "$ROM" --out 롬검사_오늘.txt
 # (10/22 사용자 요청: 하드 판은 기본 빌드에서 뺌 — 필요할 때만) run 9b python3 hg_hard.py 최종_오늘.nds --out 최종_하드.nds
