@@ -14,14 +14,14 @@ PEOPLE = os.path.join(ROOT, 'games', 'digimon', 'art', 'src', 'people')
 
 # 이름, 시트, (열, 행), 높이(px), 파일 번호들, (프레임 고르기: 앞/뒤/옆 줄의 [서기, 걸음1, 걸음2] 열 번호)
 CAST = [
-    dict(name='산해', sheet='daisuke_walk_ds_ai.png', grid=(3, 4), h=26, members=[162]),
-    dict(name='예지', sheet='miyako_walk_ds_ai.png', grid=(3, 4), h=27, members=[164]),
-    dict(name='재하', sheet='iori_walk_ds_ai.png', grid=(3, 4), h=24, members=[166]),
-    dict(name='정우', sheet='ken_walk_ds_ai.png', grid=(3, 4), h=27, members=[215]),            # 시눈 관장 모델(쓰이는 곳 없음) 자리
-    dict(name='마일도', sheet='mildo_walk_ds_ai.png', grid=(3, 4), h=28, members=[170]),         # RED 자리(마일도 오브젝트)
-    dict(name='매튜', sheet='yamato_walk_ds_ai.png', grid=(5, 3), h=27, members=[58], cols=(0, 1, 4)),   # GSRIVEL = 라이벌 전부
-    dict(name='리키', sheet='takeru_walk_ds_ai.png', grid=(3, 4), h=25, members=[153, 169]),     # 1부·2부 8번째 수호자
-    dict(name='겐나이', sheet='gennai_ai.png', grid=(2, 3), h=26, members=[54, 160], cols=(0, 1, 1), side='left'),   # DOCTOR(시작의 마을·연구소) · OOKIDO(관동 연구소·항구 터미널)
+    dict(name='산해', sheet='daisuke_walk_ds_ai.png', grid=(3, 4), members=[162]),
+    dict(name='예지', sheet='miyako_walk_ds_ai.png', grid=(3, 4), members=[164]),
+    dict(name='재하', sheet='iori_walk_ds_ai.png', grid=(3, 4), members=[166]),
+    dict(name='정우', sheet='ken_walk_ds_ai.png', grid=(3, 4), body_w=0.85, members=[215]),            # 시눈 관장 모델(쓰이는 곳 없음) 자리
+    dict(name='마일도', sheet='mildo_walk_ds_ai.png', grid=(3, 4), body_w=0.8, members=[170]),         # RED 자리(마일도 오브젝트)
+    dict(name='매튜', sheet='yamato_walk_ds_ai.png', grid=(5, 3), members=[58], cols=(0, 1, 4)),   # GSRIVEL = 라이벌 전부
+    dict(name='리키', sheet='takeru_walk_ds_ai.png', grid=(3, 4), members=[153, 169]),     # 1부·2부 8번째 수호자
+    dict(name='겐나이', sheet='gennai_ai.png', grid=(2, 3), body_w=0.85, members=[54, 160], cols=(0, 1, 1), side='left'),   # DOCTOR(시작의 마을·연구소) · OOKIDO(관동 연구소·항구 터미널)
 ]
 # 말하는 사람과 모습이 안 맞던 곳(스크립트로 확인): (이벤트 파일, 오브젝트 번호, 옛 그림, 새 그림)
 OBJECT_FIXES = [(460, 5, 327, 126),      # 지도508 화산 섬: 「정우:」 대사를 하던 여자 NPC → 카이저 그림
@@ -129,21 +129,49 @@ def shrink(idx, w, h, tw, th, outline):
                 out[ty][tx] = max(c, key=c.get) if c else outline
     return out
 
+def neck_frac(f):
+    """서 있는 앞모습에서 목(머리 아래 가장 좁은 줄)의 높이 비율"""
+    a = f.getchannel('A').load(); w, h = f.size
+    prof = [sum(1 for x in range(w) if a[x, y]) for y in range(h)]
+    return min(range(int(h * .25), int(h * .5)), key=lambda y: prof[y]) / h
+
+# 10/28 사용자 「게임 안 인물은 대두 2등신인데 겉돈다」: 시트를 통째로 줄이면 3등신 그대로라 원래 NPC(머리 14줄·몸 10줄·발 29줄, 굵은 테두리)와 안 맞음.
+# → 목에서 잘라 머리·몸을 따로 줄여 원래 NPC 비율로 맞춘다. 칸 안 줄 번호는 원래 NPC(파일 10·30 등)를 잰 값.
+HEAD_ROWS, BODY_ROWS, FOOT = 13, 9, 28          # 테두리 안쪽 줄 수, 몸 마지막 줄(테두리는 29줄)
+CX = 16                                          # 원래 NPC 가운데 x
+
+def cut_part(f, y0, y1):
+    p = f.crop((0, y0, f.width, y1)); bb = p.getchannel('A').getbbox()
+    return p.crop(bb), bb
+
+def chibi_tile(f, nf, cols, outline, body_w):
+    w, h = f.size; ny = round(h * nf)
+    head, hb = cut_part(f, 0, ny); body, bb = cut_part(f, ny, h)
+    s = HEAD_ROWS / head.height                                           # 머리는 비율 그대로
+    hw = min(22, max(1, round(head.width * s))); bw = min(26, max(1, round(body.width * s * body_w)))
+    hi = shrink(to_indexed(head, cols), head.width, head.height, hw, HEAD_ROWS, outline)
+    bi = shrink(to_indexed(body, cols), body.width, body.height, bw, BODY_ROWS, outline)
+    tile = [[0] * 32 for _ in range(32)]
+    hcx = (hb[0] + hb[2]) / 2; bcx = (bb[0] + bb[2]) / 2; mid = (hcx * head.width + bcx * body.width) / (head.width + body.width)
+    def put(part, pw, ph, cx, top):
+        ox = round(CX + (cx - mid) * s - pw / 2)
+        for y in range(ph):
+            for x in range(pw):
+                if part[y][x] and 0 <= ox + x < 32: tile[top + y][ox + x] = part[y][x]
+    put(bi, bw, BODY_ROWS, bcx, FOOT - BODY_ROWS + 1)
+    put(hi, hw, HEAD_ROWS, hcx, FOOT - BODY_ROWS + 1 - HEAD_ROWS)
+    # 바깥 테두리: 투명과 닿은 윤곽선 점을 걷고 바깥에 1칸 새로 두른다(원래 NPC처럼 굵고 고르게)
+    edge = lambda x, y: any(not (0 <= x + dx < 32 and 0 <= y + dy < 32) or not tile[y + dy][x + dx] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+    for y, x in [(y, x) for y in range(32) for x in range(32) if tile[y][x] == outline and edge(x, y)]: tile[y][x] = 0
+    add = [(y, x) for y in range(32) for x in range(32) if not tile[y][x] and any(0 <= x + dx < 32 and 0 <= y + dy < 32 and tile[y + dy][x + dx] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
+    for y, x in add: tile[y][x] = outline
+    return tile
+
 def build_indexed(cfg):
     fr = build_frames(cfg); cols = palette_from(fr)
     outline = 1 + min(range(15), key=lambda i: sum(cols[i]))
-    allf = [f for v in fr.values() for f in v]; s = cfg['h'] / max(f.height for f in allf)
-    idx = {}
-    for d, v in fr.items():
-        idx[d] = []
-        for f in v:
-            w, h = f.size; tw, th = max(1, round(w * s)), max(1, round(h * s)); ind = to_indexed(f, cols); sm = shrink(ind, w, h, tw, th, outline)
-            if tw > 32:
-                a = (tw - 32) // 2; sm = [r[a:a + 32] for r in sm]; tw = 32
-            tile = [[0] * 32 for _ in range(32)]; ox = 15 - tw // 2; oy = 31 - th
-            for y in range(th):
-                for x in range(tw): tile[oy + y][ox + x] = sm[y][x]
-            idx[d].append(tile)
+    nf = cfg.get('neck') or neck_frac(fr['down'][0])
+    idx = {d: [chibi_tile(f, nf, cols, outline, cfg.get('body_w', 1.0)) for f in v] for d, v in fr.items()}
     return cols, idx
 
 def bgr555(c): return (c[0] >> 3) | ((c[1] >> 3) << 5) | ((c[2] >> 3) << 10)
