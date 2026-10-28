@@ -26,6 +26,12 @@ CAST = [
 # 말하는 사람과 모습이 안 맞던 곳(스크립트로 확인): (이벤트 파일, 오브젝트 번호, 옛 그림, 새 그림)
 OBJECT_FIXES = [(460, 5, 327, 126),      # 지도508 화산 섬: 「정우:」 대사를 하던 여자 NPC → 카이저 그림
                 (441, 2, 338, 370)]      # 지도489 발전기 방: 「예지:」 대사를 하던 남자 조수 → 예지 그림(GSLEADER11)
+# 디지몬 수호자 4명: 사람 관장 그림 → 디지골드 v1.6 이 이미 그려 둔 「데리고 걷기」 디지몬 그림(SPRITE_FOLLOWER_MON_종, pret sprites.h)
+# 종 칸: 엔젤우몬=286(BRELOOM) · 릴리몬=276(TAILLOW) · 쥬드몬=260(SWAMPERT) · 스팅몬=269(DUSTOX). 모든 지도의 해당 오브젝트(수련장·재전 장소 등 12곳)
+SPRITE_SWAP = {369: 747,     # GSLEADER10 → 엔젤우몬
+               371: 737,     # GSLEADER12 → 릴리몬
+               373: 721,     # GSLEADER14 → 쥬드몬
+               374: 730}     # GSLEADER15 → 스팅몬
 
 def is_bg(p): return max(p) - min(p) <= 30 and min(p) >= 105
 
@@ -224,6 +230,15 @@ if __name__ == '__main__':
         cur = struct.unpack_from('<H', g, o + 32 * oi + 2)[0]
         assert cur in (old, new), '이벤트 %d 오브젝트 %d 그림이 예상과 다름: %d' % (ei, oi, cur)
         if cur != new: struct.pack_into('<H', g, o + 32 * oi + 2, new); EV[ei] = bytes(g); changed = True; done.append('이벤트 %d 오브젝트 %d 그림 %d → %d' % (ei, oi, old, new))
+    sw = 0
+    for ei, f in enumerate(EV):
+        if len(f) < 8: continue
+        g = bytearray(f); o = 4 + 20 * struct.unpack_from('<I', g, 0)[0]; n = struct.unpack_from('<I', g, o)[0]; o += 4
+        for i in range(n):
+            cur = struct.unpack_from('<H', g, o + 32 * i + 2)[0]
+            if cur in SPRITE_SWAP: struct.pack_into('<H', g, o + 32 * i + 2, SPRITE_SWAP[cur]); sw += 1
+        if bytes(g) != f: EV[ei] = bytes(g); changed = True
+    if sw: done.append('디지몬 수호자 4명 오브젝트 %d곳 → 디지몬 그림' % sw)
     if changed: ev.files = EV; rom.put(hg1.NARC_PATHS['zone_event'], ev.build())
     open(A.out, 'wb').write(bytes(rom.d))
     for d in done: print(' -', d)
