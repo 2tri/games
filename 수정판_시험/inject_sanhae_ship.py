@@ -13,7 +13,7 @@ import hg1
 from hg1 import NDS, NARC, msg_decode, msg_encode
 src, dst = sys.argv[1], sys.argv[2]
 nds = NDS(open(src, 'rb').read()); done = []
-BANK, MAP_EVENT, OBJ, OLD_SPR, NEW_SPR = 254, 278, 3, 341, 343
+BANK, MAP_EVENT, OBJ, OLD_SPR, NEW_SPR = 254, 278, 3, 341, 368
 SP = '{01DE}'
 def T(s): return s.replace(' ', SP)
 SANHAE = '산해{01C4} 너{01AD} 신대륙은 처음이지{01AC}\\n지금 카이저 때문에\\f난리라고{01AB}\\f나는 산해{01AB}\\f우리 같이 싸우자{01AB}\\r'
@@ -34,10 +34,30 @@ if dirty:
 
 ev = NARC(nds.get(hg1.NARC_PATHS['zone_event'])); EV = list(ev.files); g = bytearray(EV[MAP_EVENT])
 o = 4 + 20 * struct.unpack_from('<I', g, 0)[0]; no = struct.unpack_from('<I', g, o)[0]; o += 4
-ob = list(struct.unpack_from('<16H', g, o + 32 * OBJ)); assert ob[0] == OBJ and ob[1] in (OLD_SPR, NEW_SPR), '지도307 오브젝트 3 이 예상과 다름: %s' % ob
+ob = list(struct.unpack_from('<16H', g, o + 32 * OBJ)); assert ob[0] == OBJ and ob[1] in (OLD_SPR, 343, NEW_SPR), '지도307 오브젝트 3 이 예상과 다름: %s' % ob
 if ob[1] != NEW_SPR:
     ob[1] = NEW_SPR; struct.pack_into('<16H', g, o + 32 * OBJ, *ob); EV[MAP_EVENT] = bytes(g); ev.files = EV
     nds.put(hg1.NARC_PATHS['zone_event'], ev.build()); done.append('복도 인물 그림 341 → 343')
+# ---- 10/28 에뮬 결과: 복도 칸을 밟으면 시작하는 원작 장면(좌표 이벤트 지도307 (22~26,14), 변수 0x40CB=0)은 시험에서 시작하지 않았다.
+# → 산해를 복도 입구 바로 앞(24,13)에 서 있는 NPC 로 세우고, 말을 걸면 대사(글 254:7)가 나오게 한다(원작 노신사의 「말 걸기」 스크립트 자리).
+#    원작 장면이 시작되면 그대로 달려와 말하고 떠나므로 둘 다 안전하다.
+SCRIPT, TALK_ENTRY = 156, 3
+sc = NARC(nds.get(hg1.NARC_PATHS['script'])); SF = list(sc.files); f = bytearray(SF[SCRIPT])
+cur = struct.unpack_from('<I', f, 4 * TALK_ENTRY)[0] + 4 * TALK_ENTRY + 4
+BLOCK = bytes.fromhex('4900dc0560006800' '2d00' '07' '32003500610002' '00')       # PlaySE · LockAll · FacePlayer · NPCMsg 7 · WaitButton · CloseMsg · ReleaseAll · End
+if bytes(f[cur:cur + 2]) == bytes([2, 0]) and cur + 2 >= len(f) - 2:                         # 원래 모양(바로 End)
+    new_at = len(f); f += BLOCK
+    struct.pack_into('<I', f, 4 * TALK_ENTRY, new_at - (4 * TALK_ENTRY + 4))
+    SF[SCRIPT] = bytes(f); sc.files = SF; nds.put(hg1.NARC_PATHS['script'], sc.build()); done.append('복도 인물 말 걸기 스크립트 → 산해 대사')
+else:
+    assert bytes(f[cur:cur + len(BLOCK)]) == BLOCK, '스크립트 156 의 말 걸기 자리가 예상과 다름'
+ev = NARC(nds.get(hg1.NARC_PATHS['zone_event'])); EV = list(ev.files); g = bytearray(EV[MAP_EVENT])
+o = 4 + 20 * struct.unpack_from('<I', g, 0)[0] + 4
+ob = list(struct.unpack_from('<16H', g, o + 32 * OBJ))
+want = [3, NEW_SPR, 16, 0, 0, 4, 1, 0, 0, 0, 0, 0, 24, 13, 0, 0]       # (24,13)에서 남쪽을 보고 섬, 숨김 깃발 없음
+if ob != want:
+    struct.pack_into('<16H', g, o + 32 * OBJ, *want); EV[MAP_EVENT] = bytes(g); ev.files = EV
+    nds.put(hg1.NARC_PATHS['zone_event'], ev.build()); done.append('복도 인물을 입구 앞 (24,13)에 항상 보이게')
 open(dst, 'wb').write(bytes(nds.d))
 for d in done: print(' -', d)
 print('배 안 산해 %d건' % len(done))

@@ -14,7 +14,7 @@ import hg1, hg4, hg4_trainer, trainer_cell
 from hg1 import NDS, NARC, msg_decode, msg_encode
 src, dst = sys.argv[1], sys.argv[2]
 nds = NDS(open(src, 'rb').read()); done = []
-TID, CLS, MAP, POS, SPRITE = 340, 53, 32, (885, 265), 324
+TID, CLS, MAP, POS, SPRITE = 340, 53, 32, (885, 265), 126
 NAME, CLSNAME = '정우', '디지몬 카이저'
 PARTY = [('메탈티라몬', 64), ('메가시드라몬', 64), ('다크퍼펫몬', 65), ('기가드라몬', 66), ('키메라몬', 68)]
 SP = '{01DE}'
@@ -115,7 +115,11 @@ assert len(cand) == 1, '28번도로 이벤트 파일을 하나로 못 찾음: %s
 ei = cand[0]; g = bytearray(EV[ei])
 o = 0; nb_ = struct.unpack_from('<I', g, o)[0]; o += 4 + 20 * nb_; no_at = o; no = struct.unpack_from('<I', g, o)[0]; o += 4
 objs = [list(struct.unpack_from('<16H', g, o + 32 * i)) for i in range(no)]
-if any(ob[5] == 2999 + TID for ob in objs): done.append('이미 있음: 28번도로 정우')
+if any(ob[5] == 2999 + TID for ob in objs):
+    k = [i for i, ob in enumerate(objs) if ob[5] == 2999 + TID][0]
+    if objs[k][1] != SPRITE:                                   # 그림만 갱신(걷기 그림 칸이 바뀐 롬)
+        struct.pack_into('<H', g, o + 32 * k + 2, SPRITE); EV[ei] = bytes(g); ev.files = EV; nds.put(hg1.NARC_PATHS['zone_event'], ev.build()); done.append('28번도로 정우 그림 → %d' % SPRITE)
+    else: done.append('이미 있음: 28번도로 정우')
 else:
     z = objs[0][14:16] if objs else [0, 0]
     ob = [no, SPRITE, 0, 1, 0, 2999 + TID, 1, 5, 0, 0, 0, 0, POS[0], POS[1]] + list(z)   # 아래를 보고, 시야 5
