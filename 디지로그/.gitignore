@@ -1,0 +1,7 @@
+# 포케로그 원본(다시 받으면 됨: README 참고)
+src/
+test/
+tools/_bgm_cache/
+tools/Galmuri9.ttf
+front_sheet.png
+devserver.log
